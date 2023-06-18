@@ -24,6 +24,9 @@
 
     <properties>
         <java.version>1.8</java.version>
+
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -31,12 +34,17 @@
     <modules>
         <module>Plugin</module>
         <module>Loader</module>
+        <module>InfinityLib-Standalone</module>
     </modules>
 
     <repositories>
         <repository>
             <id>PaperMC</id>
             <url>https://repo.papermc.io/repository/maven-public</url>
+        </repository>
+        <repository>
+            <id>JitPack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
