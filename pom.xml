@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>id.universenetwork.sfa_loader</groupId>
+    <artifactId>SlimefunAddon-Loader</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <description>SlimefunAddon features separated from UNUtilities, with a new system loader.</description>
+    <url>https://github.com/UniverseNetwork/SlimefunAddon-Loader</url>
+
+    <scm>
+        <url>${project.url}</url>
+        <connection>scm:git:git://UniverseNetwork/SlimefunAddon-Loader.git</connection>
+        <developerConnection>scm:git:git@github.com:UniverseNetwork/SlimefunAddon-Loader.git</developerConnection>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>${project.url}/issues</url>
+    </issueManagement>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <modules>
+        <module>Plugin</module>
+        <module>Loader</module>
+    </modules>
+
+    <repositories>
+        <repository>
+            <id>PaperMC</id>
+            <url>https://repo.papermc.io/repository/maven-public</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.28</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>
