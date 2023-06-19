@@ -1,6 +1,7 @@
 package id.universenetwork.sfa_loader;
 
-import io.github.mooy1.infinitylib.core.AbstractAddon;
+import id.universenetwork.infinitylib.core.AbstractAddon;
+
 public class Main extends AbstractAddon {
     @Override
     protected void enable() {

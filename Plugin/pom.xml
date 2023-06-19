@@ -44,16 +44,6 @@
                 </executions>
                 <configuration>
                     <minimizeJar>true</minimizeJar>
-                    <relocations>
-                        <relocation>
-                            <pattern>io.github.mooy1.infinitylib</pattern>
-                            <shadedPattern>id.universenetwork.sfa_loader.infinitylib</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>id.arvin3108.standalone</pattern>
-                            <shadedPattern>id.universenetwork.sfa_loader.infinitylib.core</shadedPattern>
-                        </relocation>
-                    </relocations>
                 </configuration>
             </plugin>
             <plugin>
