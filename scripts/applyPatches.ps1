@@ -1,6 +1,6 @@
 $basedir=(pwd)
 $gpgsign=(git config commit.gpgsign) -or "false"
-Write-Host "Rebuilding Forked projects.... "
+Write-Host "Rebuilding Forked projects..."
 
 function enableCommitSigningIfNeeded {
     if ($gpgsign -eq "true") {
@@ -17,9 +17,9 @@ function applyPatch($dir) {
     Write-Host "Resetting $name..."
     git reset --hard HEAD
 
-    Write-Host "  Applying patches to $name..."
+    Write-Host "  Applying a patch to $name..."
     git am --abort >$null 2>&1
-    git am --3way --ignore-whitespace "$basedir/patches/$name.patch"
+    git am --3way --ignore-whitespace "$basedir/patches/$name.patch" >$null 2>&1
     if ($LASTEXITCODE -ne 0) {
         Write-Host "  Something did not apply cleanly to $name."
         Write-Host "  Please review above details and finish the apply then"
