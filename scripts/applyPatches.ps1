@@ -10,8 +10,7 @@ function enableCommitSigningIfNeeded {
     }
 }
 
-function applyPatch {
-    param($dir)
+function applyPatch($dir) {
     $name=(Split-Path $dir -Leaf)
     Set-Location "$basedir/$dir"
 

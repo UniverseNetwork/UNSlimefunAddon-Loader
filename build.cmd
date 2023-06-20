@@ -1,3 +1,3 @@
 @echo off
 git submodule update --recursive --init
-powershell ./scripts/applyPatch.ps1
+powershell ./scripts/applyPatches.ps1
