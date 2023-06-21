@@ -3,3 +3,4 @@ description: ${project.parent.description}
 main: ${project.parent.groupId}.Main
 version: ${project.version}
 api-version: 1.13
+softdepend: [ Slimefun ]
