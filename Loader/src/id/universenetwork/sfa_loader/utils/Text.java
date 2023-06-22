@@ -7,6 +7,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+
 @UtilityClass
 public class Text {
     /**
@@ -30,5 +32,21 @@ public class Text {
         txt = StringUtils.replace(txt, "%p%",
                 AbstractAddon.config().getString("plugin-settings.prefix"));
         return ChatColor.translateAlternateColorCodes('&', txt);
+    }
+
+    public String convertArraysToString(String[] array) {
+        String txt = StringUtils.remove(StringUtils.remove(Arrays.toString(array), "["), "]");
+        if (array.length == 2) return StringUtils.replace(txt, ",", " and");
+        if (array.length > 2) {
+            int i = 0;
+            StringBuilder builder = new StringBuilder();
+            for (String str : array) {
+                ++i;
+                if (i == array.length) builder.append("and ").append(str);
+                else builder.append(str).append(", ");
+            }
+            return builder.toString();
+        }
+        return txt;
     }
 }

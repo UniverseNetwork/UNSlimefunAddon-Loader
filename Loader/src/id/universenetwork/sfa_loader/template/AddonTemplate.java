@@ -1,4 +1,4 @@
-package id.universenetwork.sfa_loader.templates;
+package id.universenetwork.sfa_loader.template;
 
 import id.universenetwork.infinitylib.core.AddonConfig;
 import lombok.Getter;
