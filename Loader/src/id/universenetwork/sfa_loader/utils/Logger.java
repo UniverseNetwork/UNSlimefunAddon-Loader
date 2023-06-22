@@ -32,9 +32,9 @@ public class Logger {
      * @author ARVIN3108 ID
      */
     public void log(Level lvl, String msg, Throwable e) {
-        if (lvl == Level.WARNING)
+        if (lvl.equals(Level.WARNING))
             Bukkit.getLogger().log(lvl, convertStringMessage("%p% &e" + msg), e);
-        if (lvl == Level.SEVERE)
+        if (lvl.equals(Level.SEVERE))
             Bukkit.getLogger().log(lvl, convertStringMessage("%p% &c" + msg), e);
         else Bukkit.getLogger().log(lvl, convertStringMessage("%p% &r" + msg), e);
     }
@@ -62,7 +62,7 @@ public class Logger {
     }
 
     /**
-     * Logs a error message in the console. See {@link Bukkit#getLogger#severe(String)}
+     * Logs an error message in the console. See {@link Bukkit#getLogger#severe(String)}
      * The message will be converted in colored strings with the chosen prefix in config.yml
      *
      * @param msg the message

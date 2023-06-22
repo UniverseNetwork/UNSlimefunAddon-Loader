@@ -41,7 +41,7 @@ public class Loader {
                         loadedAddons.add(addon);
                     }
                     switch (status) {
-                        case 0:
+                        default:
                             String str1 = msg.getString("normal", "&bSuccessfully registered &d%addon% &baddon!");
                             str1 = StringUtils.replace(str1, "%addon%", c.getSimpleName());
                             Logger.info(str1);
