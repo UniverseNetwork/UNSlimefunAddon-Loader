@@ -1,6 +1,6 @@
 package id.universenetwork.sfa_loader.template;
 
-import id.universenetwork.infinitylib.core.AddonConfig;
+import id.universenetwork.libraries.infinitylib.core.AddonConfig;
 import lombok.Getter;
 
 public abstract class AddonTemplate {

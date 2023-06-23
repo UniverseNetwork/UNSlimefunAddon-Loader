@@ -1,6 +1,6 @@
 package id.universenetwork.sfa_loader.utils;
 
-import id.universenetwork.infinitylib.core.AbstractAddon;
+import id.universenetwork.libraries.infinitylib.core.AbstractAddon;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 
 @UtilityClass
-public class Text {
+public class TextUtils {
     /**
      * Send a message to {@link CommandSender} with prefix and tranlated color codes
      */

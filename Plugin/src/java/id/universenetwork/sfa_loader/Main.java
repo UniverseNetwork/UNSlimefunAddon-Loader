@@ -1,6 +1,6 @@
 package id.universenetwork.sfa_loader;
 
-import id.universenetwork.infinitylib.core.AbstractAddon;
+import id.universenetwork.libraries.infinitylib.core.AbstractAddon;
 
 public class Main extends AbstractAddon {
     @Override

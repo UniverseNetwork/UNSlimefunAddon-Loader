@@ -1,11 +1,12 @@
 package id.universenetwork.sfa_loader.utils;
 
-import id.universenetwork.infinitylib.core.AbstractAddon;
+import id.universenetwork.libraries.infinitylib.core.AbstractAddon;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,12 +18,12 @@ import java.util.regex.Pattern;
  * @see <a href="https://www.spigotmc.org/threads/colors-in-console.87576">Original code/threads</a>
  */
 @UtilityClass
-public class Logger {
+public class LogUtils {
     private final String COLOR_PATTERN = "\u001b[38;5;%dm";
     private final String FORMAT_PATTERN = "\u001b[%dm";
 
     /**
-     * Logs a message in the console. See {@link Bukkit#getLogger#log(Level, String, Throwable)}
+     * Logs a message in the console. See {@link Logger#log(Level, String, Throwable)}
      * The message will be converted in colored strings with the chosen prefix in config.yml
      *
      * @param lvl the Level of the log
@@ -40,7 +41,7 @@ public class Logger {
     }
 
     /**
-     * Logs a message in the console. See {@link Bukkit#getLogger#info(String)}
+     * Logs a message in the console. See {@link Logger#info(String)}
      * The message will be converted in colored strings with the chosen prefix in config.yml
      *
      * @param msg the message
@@ -51,7 +52,7 @@ public class Logger {
     }
 
     /**
-     * Logs a warn message in the console. See {@link Bukkit#getLogger#warning(String)}
+     * Logs a warn message in the console. See {@link Logger#warning(String)}
      * The message will be converted in colored strings with the chosen prefix in config.yml
      *
      * @param msg the message
@@ -62,7 +63,7 @@ public class Logger {
     }
 
     /**
-     * Logs an error message in the console. See {@link Bukkit#getLogger#severe(String)}
+     * Logs an error message in the console. See {@link Logger#severe(String)}
      * The message will be converted in colored strings with the chosen prefix in config.yml
      *
      * @param msg the message
