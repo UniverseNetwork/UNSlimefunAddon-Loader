@@ -1,3 +1,7 @@
 [submodule "InfinityLib-Standalone"]
     path = InfinityLib-Standalone
     url = https://github.com/ARVIN3108/InfinityLib-Standalone
+
+[submodule "InfinityExpansion"]
+    path = Addons/InfinityExpansion
+    url = https://github.com/mooy1/InfinityExpansion

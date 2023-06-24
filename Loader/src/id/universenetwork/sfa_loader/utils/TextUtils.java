@@ -1,6 +1,6 @@
 package id.universenetwork.sfa_loader.utils;
 
-import id.universenetwork.libraries.infinitylib.core.AbstractAddon;
+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;

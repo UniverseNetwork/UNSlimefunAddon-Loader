@@ -4,3 +4,5 @@ main: ${project.parent.groupId}.Main
 version: ${project.version}
 api-version: 1.13
 softdepend: [ Slimefun ]
+website: ${project.parent.url}
+author: ARVIN3108 ID

@@ -1,19 +1,19 @@
 package id.universenetwork.sfa_loader.template;
 
-import id.universenetwork.libraries.infinitylib.core.AddonConfig;
+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
 import lombok.Getter;
 
 public abstract class AddonTemplate {
     @Getter
-    private AddonConfig config;
+    private static AddonConfig config;
 
     public AddonTemplate() {
+        AddonConfig cfg = null;
         try {
-            this.config = new AddonConfig("addons-config/" + getClass().getSimpleName() + "/config.yml");
-            return;
+            cfg = new AddonConfig("addons-config/" + getClass().getSimpleName() + "/config.yml");
         } catch (Exception ignored) {
         }
-        this.config = null;
+        config = cfg;
     }
 
     public abstract void onLoad();

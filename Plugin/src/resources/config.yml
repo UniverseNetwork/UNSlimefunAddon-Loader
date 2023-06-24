@@ -5,14 +5,25 @@ plugin-settings:
   prefix: "&bU&eN&aSFA&dLoader &8&l>"
 
   # Message if configuration is reloaded
-  reload: '%p% &aKonfigurasi berhasil dimuat ulang!'
+  reload: "%p% &aKonfigurasi berhasil dimuat ulang!"
+
+  # Message if player don't have permission to use command
+  no-perm: Unknown command. Type "/help" for help.
 
 # Loader Settings
 loader-settings:
+  # If set to true, all addons are not loaded at startup
+  # But it can be loaded using the command
+  disable-all-addons: false
+
+  # Loader log message
   load-msg:
     normal: "&bSuccessfully registered &d%addon% &baddon!"
     with-dependencies: "&a%dependencies% found. &bSuccessfully registered &d%addon% &baddon!"
     with-dependencies-not-found: "&e%dependencies% not found. &cYou need %dependencies% to use &d%addon% &caddon!"
-    error: "Failed to register Slimefun addon class!"
+    error: "An error occurred while registering &d%addon% &caddon!"
+    completed: "&bTook %time%ms &ato register all enabled addons to Slimefun!"
 
+# The addons loaded at startup
 addons:
+  infinityexpansion: true

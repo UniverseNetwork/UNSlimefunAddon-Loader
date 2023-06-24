@@ -39,6 +39,20 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>cloud.commandframework</pattern>
+                                    <shadedPattern>id.universenetwork.sfa_loader.libraries.cloud</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
@@ -50,15 +64,6 @@
                 <configuration>
                     <finalName>${project.parent.artifactId}-v${project.version}</finalName>
                     <outputDirectory>../build</outputDirectory>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -88,6 +93,12 @@
             <groupId>id.universenetwork.sfa_loader</groupId>
             <artifactId>Loader</artifactId>
             <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.mooy1</groupId>
+            <artifactId>InfinityExpansion</artifactId>
+            <version>MODIFIED</version>
         </dependency>
     </dependencies>
 </project>

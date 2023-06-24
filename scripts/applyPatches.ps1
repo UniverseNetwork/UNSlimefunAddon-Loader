@@ -1,5 +1,6 @@
 $basedir=(pwd)
-$gpgsign=(git config commit.gpgsign) -or "false"
+$gpgsign=(git config commit.gpgsign)
+if (!$gpgsign) {$gpgsign = "false"}
 echo "Rebuilding Forked projects..."
 
 function enableCommitSigningIfNeeded {
@@ -40,5 +41,6 @@ if ($gpgsign -eq "true") {
 }
 
 applyPatch InfinityLib-Standalone
+applyPatch Addons/InfinityExpansion
 
 enableCommitSigningIfNeeded
