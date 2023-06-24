@@ -18,11 +18,12 @@ loader-settings:
 
   # Loader log message
   load-msg:
-    normal: "&bSuccessfully registered &d%addon% &baddon!"
-    with-dependencies: "&a%dependencies% found. &bSuccessfully registered &d%addon% &baddon!"
+    start: "&eStart loading the enabled addons in the configuration file..."
+    normal: "&bSuccessfully loaded &d%addon% &baddon!"
+    with-dependencies: "&a%dependencies% found. &bSuccessfully loaded &d%addon% &baddon!"
     with-dependencies-not-found: "&e%dependencies% not found. &cYou need %dependencies% to use &d%addon% &caddon!"
-    error: "An error occurred while registering &d%addon% &caddon!"
-    completed: "&bTook %time%ms &ato register all enabled addons to Slimefun!"
+    error: "An error occurred while loading &d%addon% &caddon!"
+    completed: "&bTook %time%ms &ato load all enabled addons to Slimefun!"
 
 # The addons loaded at startup
 addons:

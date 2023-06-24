@@ -25,6 +25,8 @@ public class Loader {
 
     public void loadEnabledAddons() {
         new SlimefunAddonInstance("UniverseNetwork", "SlimefunAddon-Loader");
+        LogUtils.info(msg.getString("start",
+                "Start loading the enabled addons in the configuration file..."));
         TookTimeUtils tookTime = new TookTimeUtils();
         Set<Class<? extends AddonTemplate>> classes = getAllAddonsClasses();
         for (Class<? extends AddonTemplate> addon : classes) {
@@ -55,13 +57,13 @@ public class Loader {
             }
             switch (status) {
                 default:
-                    String str1 = msg.getString("normal", "&bSuccessfully registered &d%addon% &baddon!");
+                    String str1 = msg.getString("normal", "&bSuccessfully load &d%addon% &baddon!");
                     str1 = StringUtils.replace(str1, "%addon%", addonClass.getSimpleName());
                     LogUtils.info(str1);
                     break;
                 case 1:
                     String str2 = msg.getString("with-dependencies", "&a%dependencies% found. " +
-                            "&bSuccessfully registered &d%addon% &baddon!");
+                            "&bSuccessfully loaded &d%addon% &baddon!");
                     str2 = StringUtils.replaceEach(str2, new String[]{"%addon%", "%dependencies%"},
                             new String[]{addonClass.getSimpleName(), TextUtils.convertArraysToString(
                                     dependencies.value())});
@@ -76,7 +78,7 @@ public class Loader {
                     LogUtils.severe(str3);
             }
         } catch (Exception e) {
-            String str = msg.getString("error", "An error occurred while registering &d%addon% &caddon!");
+            String str = msg.getString("error", "An error occurred while loading &d%addon% &caddon!");
             str = StringUtils.replace(str, "%addon%", addonClass.getSimpleName());
             LogUtils.log(Level.SEVERE, str, e);
         }
