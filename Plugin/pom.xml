@@ -62,7 +62,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <finalName>${project.parent.artifactId}-v${project.version}</finalName>
+                    <finalName>${project.parent.artifactId}-${project.version}</finalName>
                     <outputDirectory>../build</outputDirectory>
                 </configuration>
             </plugin>
