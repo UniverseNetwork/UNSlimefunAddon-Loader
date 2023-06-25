@@ -27,4 +27,5 @@ loader-settings:
 
 # The addons loaded at startup
 addons:
+  extratools: true
   infinityexpansion: true

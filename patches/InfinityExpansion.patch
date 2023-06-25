@@ -1,11 +1,11 @@
-From 74a68d942dcdfc2f0f4d268535ca12dfe4dcdc26 Mon Sep 17 00:00:00 2001
+From e495d4300b8d6a96ab8b485f1a77c054cc16ab83 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Sat, 24 Jun 2023 13:06:59 +0700
+Date: Mon, 26 Jun 2023 03:56:26 +0700
 Subject: [PATCH] InfinityExpansion
 
 ---
  pom.xml                                       |  82 +-------
- .../infinityexpansion/InfinityExpansion.java  |  56 ++++++
+ .../infinityexpansion/InfinityExpansion.java  |  66 +++++++
  .../infinityexpansion/categories/Groups.java  |  22 +--
  .../categories/InfinityGroup.java             |  73 +++----
  .../commands/GiveRecipe.java                  |  20 +-
@@ -14,7 +14,7 @@ Subject: [PATCH] InfinityExpansion
  .../infinityexpansion/items/Researches.java   |  25 ++-
  .../items/SlimefunExtension.java              |  92 +++++----
  .../abstracts/AbstractEnergyCrafter.java      |  20 +-
- .../items/blocks/AdvancedAnvil.java           |  57 +++---
+ .../items/blocks/AdvancedAnvil.java           |  55 +++---
  .../items/blocks/Blocks.java                  |  32 ++-
  .../items/blocks/InfinityWorkbench.java       |  37 ++--
  .../items/blocks/StrainerBase.java            |  52 +++--
@@ -28,7 +28,7 @@ Subject: [PATCH] InfinityExpansion
  .../items/generators/GenerationType.java      |   8 +-
  .../items/generators/Generators.java          |  64 +++---
  .../items/generators/InfinityReactor.java     |  48 +++--
- .../items/machines/GearTransformer.java       |  48 +++--
+ .../items/machines/GearTransformer.java       |  46 +++--
  .../items/machines/GeoQuarry.java             |  43 ++--
  .../items/machines/GrowingMachine.java        |  42 ++--
  .../items/machines/Machines.java              | 187 +++++++++---------
@@ -40,16 +40,16 @@ Subject: [PATCH] InfinityExpansion
  .../items/machines/VoidHarvester.java         |  38 ++--
  .../items/materials/EnderEssence.java         |  15 +-
  .../items/materials/Materials.java            | 106 +++++-----
- .../items/materials/Singularity.java          |  26 ++-
+ .../items/materials/Singularity.java          |  24 ++-
  .../items/materials/Strainer.java             |  19 +-
- .../items/mobdata/MobData.java                | 124 ++++++------
+ .../items/mobdata/MobData.java                | 122 ++++++------
  .../items/mobdata/MobDataCard.java            |  24 +--
  .../items/mobdata/MobDataInfuser.java         |  24 ++-
  .../items/mobdata/MobDataTier.java            |   2 +-
- .../items/mobdata/MobSimulationChamber.java   |  49 +++--
+ .../items/mobdata/MobSimulationChamber.java   |  47 +++--
  .../items/quarries/Oscillator.java            |  26 ++-
- .../items/quarries/Quarries.java              |  69 ++++---
- .../items/quarries/Quarry.java                |  50 +++--
+ .../items/quarries/Quarries.java              |  67 ++++---
+ .../items/quarries/Quarry.java                |  46 ++---
  .../items/storage/Storage.java                |  42 ++--
  .../items/storage/StorageCache.java           | 150 ++++++--------
  .../items/storage/StorageForge.java           |  13 +-
@@ -60,7 +60,7 @@ Subject: [PATCH] InfinityExpansion
  .../InfinityExpansion}/config.yml             |  10 +-
  src/main/resources/plugin.yml                 |  27 ---
  .../TestInfinityExpansion.java                |  28 ---
- 56 files changed, 1144 insertions(+), 1474 deletions(-)
+ 56 files changed, 1146 insertions(+), 1466 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/Groups.java (70%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/InfinityGroup.java (93%)
@@ -70,7 +70,7 @@ Subject: [PATCH] InfinityExpansion
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/Researches.java (87%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/SlimefunExtension.java (90%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/abstracts/AbstractEnergyCrafter.java (92%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/blocks/AdvancedAnvil.java (92%)
+ rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/blocks/AdvancedAnvil.java (93%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/blocks/Blocks.java (73%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/blocks/InfinityWorkbench.java (83%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/blocks/StrainerBase.java (91%)
@@ -84,7 +84,7 @@ Subject: [PATCH] InfinityExpansion
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/generators/GenerationType.java (93%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/generators/Generators.java (83%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/generators/InfinityReactor.java (91%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/machines/GearTransformer.java (87%)
+ rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/machines/GearTransformer.java (89%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/machines/GeoQuarry.java (88%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/machines/GrowingMachine.java (85%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/machines/Machines.java (86%)
@@ -96,16 +96,16 @@ Subject: [PATCH] InfinityExpansion
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/machines/VoidHarvester.java (85%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/materials/EnderEssence.java (95%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/materials/Materials.java (86%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/materials/Singularity.java (75%)
+ rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/materials/Singularity.java (81%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/materials/Strainer.java (80%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/mobdata/MobData.java (82%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/mobdata/MobDataCard.java (89%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/mobdata/MobDataInfuser.java (86%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/mobdata/MobDataTier.java (90%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/mobdata/MobSimulationChamber.java (83%)
+ rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/mobdata/MobSimulationChamber.java (85%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/quarries/Oscillator.java (84%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/quarries/Quarries.java (81%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/quarries/Quarry.java (86%)
+ rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/quarries/Quarries.java (82%)
+ rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/quarries/Quarry.java (90%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/storage/Storage.java (82%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/storage/StorageCache.java (81%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/storage/StorageForge.java (80%)
@@ -254,10 +254,10 @@ index 937fc2e..cb79da9 100644
                              <artifact>*:*</artifact>
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
 new file mode 100644
-index 0000000..9f16188
+index 0000000..1b18cb4
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
-@@ -0,0 +1,56 @@
+@@ -0,0 +1,66 @@
 +package id.universenetwork.sfa_loader.addons.infinityexpansion;
 +
 +import id.universenetwork.sfa_loader.addons.infinityexpansion.categories.Groups;
@@ -274,6 +274,7 @@ index 0000000..9f16188
 +import id.universenetwork.sfa_loader.addons.infinityexpansion.items.storage.StorageSaveFix;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.common.Scheduler;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import org.bukkit.Bukkit;
 +import org.bukkit.plugin.Plugin;
@@ -281,14 +282,17 @@ index 0000000..9f16188
 +import java.util.logging.Level;
 +
 +public final class InfinityExpansion extends AddonTemplate {
++    private static InfinityExpansion instance;
++
 +    public InfinityExpansion() {
 +        StorageSaveFix.fixStuff();
++        instance = this;
 +    }
 +
 +    @Override
 +    public void onLoad() {
 +        Plugin lx = Bukkit.getPluginManager().getPlugin("LiteXpansion");
-+        if (lx != null && lx.getConfig().getBoolean("options.nerf-other-addons")) {
++        if (lx != null && lx.getConfig().getBoolean("options.nerf-other-addons"))
 +            Scheduler.run(() -> AbstractAddon.log(Level.WARNING,
 +                    "########################################################",
 +                    "LiteXpansion nerfs energy generation in this addon.",
@@ -296,7 +300,6 @@ index 0000000..9f16188
 +                    "Under 'options:' add 'nerf-other-addons: false'",
 +                    "########################################################"
 +            ));
-+        }
 +
 +        Groups.setup();
 +        MobData.setup();
@@ -309,11 +312,19 @@ index 0000000..9f16188
 +        Generators.setup();
 +        SlimefunExtension.setup();
 +
-+        if (getConfig().getBoolean("balance-options.enable-researches")) {
-+            Researches.setup();
-+        }
++        if (getConfig().getBoolean("balance-options.enable-researches")) Researches.setup();
++    }
++
++    @Override
++    public void onUnload() {
++        instance = null;
++    }
++
++    public static AddonConfig config() {
++        return instance.getConfig();
 +    }
 +}
+\ No newline at end of file
 diff --git a/src/main/java/io/github/mooy1/infinityexpansion/categories/Groups.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/categories/Groups.java
 similarity index 70%
 rename from src/main/java/io/github/mooy1/infinityexpansion/categories/Groups.java
@@ -936,10 +947,10 @@ index 5506d31..d45772b 100644
              }
          }
 diff --git a/src/main/java/io/github/mooy1/infinityexpansion/items/blocks/AdvancedAnvil.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/blocks/AdvancedAnvil.java
-similarity index 92%
+similarity index 93%
 rename from src/main/java/io/github/mooy1/infinityexpansion/items/blocks/AdvancedAnvil.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/blocks/AdvancedAnvil.java
-index b5857f0..268b7b2 100644
+index b5857f0..89fc22a 100644
 --- a/src/main/java/io/github/mooy1/infinityexpansion/items/blocks/AdvancedAnvil.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/blocks/AdvancedAnvil.java
 @@ -1,13 +1,18 @@
@@ -993,15 +1004,6 @@ index b5857f0..268b7b2 100644
  
  /**
   * Combines slimefun items, exceeds vanilla anvil limits
-@@ -40,7 +38,7 @@ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
- public final class AdvancedAnvil extends AbstractEnergyCrafter {
- 
-     private static final Map<Enchantment, Integer> MAX_LEVELS = Util.getEnchants(Objects.requireNonNull(
--            InfinityExpansion.config().getConfigurationSection("advanced-anvil-max-levels")
-+            InfinityExpansion.getConfig().getConfigurationSection("advanced-anvil-max-levels")
-     ));
-     private static final ItemStack ANVIL_SLOT = new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, " ");
-     private static final int[] INPUT_SLOTS = {
 @@ -68,12 +66,12 @@ public final class AdvancedAnvil extends AbstractEnergyCrafter {
      protected void setup(@Nonnull BlockMenuPreset blockMenuPreset) {
          blockMenuPreset.drawBackground(BACKGROUND);
@@ -1302,7 +1304,7 @@ diff --git a/src/main/java/io/github/mooy1/infinityexpansion/items/gear/Gear.jav
 similarity index 85%
 rename from src/main/java/io/github/mooy1/infinityexpansion/items/gear/Gear.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/gear/Gear.java
-index 3f7ccaa..9b673be 100644
+index 3f7ccaa..4c328cb 100644
 --- a/src/main/java/io/github/mooy1/infinityexpansion/items/gear/Gear.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/gear/Gear.java
 @@ -1,13 +1,17 @@
@@ -1514,7 +1516,7 @@ index 3f7ccaa..9b673be 100644
 -    private static void addInfinityEnchants(InfinityExpansion plugin, SlimefunItemStack... items) {
 -        ConfigurationSection typeSection = plugin.getConfig().getConfigurationSection("infinity-enchant-levels");
 +    private static void addInfinityEnchants(SlimefunItemStack... items) {
-+        ConfigurationSection typeSection = InfinityExpansion.getConfig().getConfigurationSection("infinity-enchant-levels");
++        ConfigurationSection typeSection = InfinityExpansion.config().getConfigurationSection("infinity-enchant-levels");
  
          if (typeSection == null) {
 -            InfinityExpansion.log(Level.SEVERE, "Config section \"infinity-enchant-levels\" missing, Check your config and report this!");
@@ -2137,10 +2139,10 @@ index a170a1e..c157fb4 100644
          }
      }
 diff --git a/src/main/java/io/github/mooy1/infinityexpansion/items/machines/GearTransformer.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/machines/GearTransformer.java
-similarity index 87%
+similarity index 89%
 rename from src/main/java/io/github/mooy1/infinityexpansion/items/machines/GearTransformer.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/machines/GearTransformer.java
-index 6dc74ce..d099140 100644
+index 6dc74ce..a52d27e 100644
 --- a/src/main/java/io/github/mooy1/infinityexpansion/items/machines/GearTransformer.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/machines/GearTransformer.java
 @@ -1,18 +1,8 @@
@@ -2181,14 +2183,12 @@ index 6dc74ce..d099140 100644
  
  /**
   * Machine that changes the material of gear and tools
-@@ -30,9 +28,9 @@ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
- @ParametersAreNonnullByDefault
+@@ -31,8 +29,8 @@ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
  public final class GearTransformer extends AbstractEnergyCrafter implements RecipeDisplayItem {
  
--    private static final boolean SF = InfinityExpansion.config().getBoolean("balance-options.allow-sf-item-transform");
+     private static final boolean SF = InfinityExpansion.config().getBoolean("balance-options.allow-sf-item-transform");
 -    private static final int[] OUTPUT_SLOTS = { 40 };
 -    private static final int[] INPUT_SLOTS = { 10, 16 };
-+    private static final boolean SF = InfinityExpansion.getConfig().getBoolean("balance-options.allow-sf-item-transform");
 +    private static final int[] OUTPUT_SLOTS = {40};
 +    private static final int[] INPUT_SLOTS = {10, 16};
      private static final int STATUS_SLOT = 13;
@@ -3670,10 +3670,10 @@ index 7706f45..f6bf587 100644
  
  }
 diff --git a/src/main/java/io/github/mooy1/infinityexpansion/items/materials/Singularity.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/materials/Singularity.java
-similarity index 75%
+similarity index 81%
 rename from src/main/java/io/github/mooy1/infinityexpansion/items/materials/Singularity.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/materials/Singularity.java
-index faded27..50ef578 100644
+index faded27..b970291 100644
 --- a/src/main/java/io/github/mooy1/infinityexpansion/items/materials/Singularity.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/materials/Singularity.java
 @@ -1,19 +1,17 @@
@@ -3706,15 +3706,6 @@ index faded27..50ef578 100644
  
  /**
   * Singularities and there recipe displays
-@@ -23,7 +21,7 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
- public final class Singularity extends UnplaceableBlock {
- 
-     private static final double COST_MULTIPLIER =
--            InfinityExpansion.config().getDouble("balance-options.singularity-cost-multiplier", 0.1, 100);
-+            InfinityExpansion.getConfig().getDouble("balance-options.singularity-cost-multiplier", 0.1, 100);
- 
-     public Singularity(SlimefunItemStack item, SlimefunItemStack recipe, int amount) {
-         super(Groups.INFINITY_MATERIALS, item, SingularityConstructor.TYPE,
 @@ -42,7 +40,7 @@ public final class Singularity extends UnplaceableBlock {
          int stacks = (int) Math.floor(amount / 64D);
          int extra = amount % 64;
@@ -3771,10 +3762,10 @@ diff --git a/src/main/java/io/github/mooy1/infinityexpansion/items/mobdata/MobDa
 similarity index 82%
 rename from src/main/java/io/github/mooy1/infinityexpansion/items/mobdata/MobData.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/mobdata/MobData.java
-index 357cb59..1b3a563 100644
+index 357cb59..74f6650 100644
 --- a/src/main/java/io/github/mooy1/infinityexpansion/items/mobdata/MobData.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/mobdata/MobData.java
-@@ -1,25 +1,25 @@
+@@ -1,19 +1,19 @@
 -package io.github.mooy1.infinityexpansion.items.mobdata;
 -
 -import lombok.experimental.UtilityClass;
@@ -3806,13 +3797,6 @@ index 357cb59..1b3a563 100644
  
  @UtilityClass
  public final class MobData {
- 
-     private static final int CHAMBER_INTERVAL =
--            InfinityExpansion.config().getInt("mob-simulation-options.ticks-per-output", 1, 1000);
-+            InfinityExpansion.getConfig().getInt("mob-simulation-options.ticks-per-output", 1, 1000);
-     private static final int CHAMBER_BUFFER = 15000;
-     private static final int CHAMBER_ENERGY = 150;
-     private static final int INFUSER_ENERGY = 20000;
 @@ -72,128 +72,134 @@ public final class MobData {
      public static final SlimefunItemStack WITHER = MobDataCard.create("Wither", MobDataTier.MINI_BOSS);
      public static final SlimefunItemStack ENDER_DRAGON = MobDataCard.create("Ender Dragon", MobDataTier.BOSS);
@@ -4099,10 +4083,10 @@ index 3596976..8b7504e 100644
  import org.bukkit.Material;
  
 diff --git a/src/main/java/io/github/mooy1/infinityexpansion/items/mobdata/MobSimulationChamber.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/mobdata/MobSimulationChamber.java
-similarity index 83%
+similarity index 85%
 rename from src/main/java/io/github/mooy1/infinityexpansion/items/mobdata/MobSimulationChamber.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/mobdata/MobSimulationChamber.java
-index 85605b6..3f55b09 100644
+index 85605b6..8089c3b 100644
 --- a/src/main/java/io/github/mooy1/infinityexpansion/items/mobdata/MobSimulationChamber.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/mobdata/MobSimulationChamber.java
 @@ -1,20 +1,12 @@
@@ -4135,7 +4119,7 @@ index 85605b6..3f55b09 100644
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
  import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-@@ -25,10 +17,18 @@ import me.mrCookieSlime.Slimefun.api.BlockStorage;
+@@ -25,6 +17,14 @@ import me.mrCookieSlime.Slimefun.api.BlockStorage;
  import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
  import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
  import me.mrCookieSlime.Slimefun.api.inventory.DirtyChestMenu;
@@ -4150,11 +4134,6 @@ index 85605b6..3f55b09 100644
  
  public final class MobSimulationChamber extends TickingMenuBlock implements EnergyNetComponent {
  
--    static final double XP_MULTIPLIER = InfinityExpansion.config().getDouble("mob-simulation-options.xp-multiplier", 0, 1000);
-+    static final double XP_MULTIPLIER = InfinityExpansion.getConfig().getDouble("mob-simulation-options.xp-multiplier", 0, 1000);
- 
-     private static final ItemStack NO_CARD = new CustomItemStack(Material.BARRIER, "&cInput a Mob Data Card!");
-     private static final int CARD_SLOT = 37;
 @@ -70,7 +70,7 @@ public final class MobSimulationChamber extends TickingMenuBlock implements Ener
  
      @Override
@@ -4259,10 +4238,10 @@ index 5fee750..df3641c 100644
                  SlimefunItems.BLISTERING_INGOT_3, new ItemStack(item.getType()), SlimefunItems.BLISTERING_INGOT_3,
                  Materials.MACHINE_PLATE, SlimefunItems.BLISTERING_INGOT_3, Materials.MACHINE_PLATE
 diff --git a/src/main/java/io/github/mooy1/infinityexpansion/items/quarries/Quarries.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/quarries/Quarries.java
-similarity index 81%
+similarity index 82%
 rename from src/main/java/io/github/mooy1/infinityexpansion/items/quarries/Quarries.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/quarries/Quarries.java
-index df8d493..b18e823 100644
+index df8d493..964d6a7 100644
 --- a/src/main/java/io/github/mooy1/infinityexpansion/items/quarries/Quarries.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/quarries/Quarries.java
 @@ -1,27 +1,26 @@
@@ -4311,18 +4290,14 @@ index df8d493..b18e823 100644
  
  @UtilityClass
  public final class Quarries {
-@@ -74,11 +73,11 @@ public final class Quarries {
-     public static final SlimefunItemStack EMERALD_OSCILLATOR = Oscillator.create(Material.EMERALD, EMERALD_CHANCE);
- 
-     private static double getOscillatorChance(String type) {
--        return InfinityExpansion.config().getDouble("quarry-options.oscillators." + type, 0, 1);
-+        return InfinityExpansion.getConfig().getDouble("quarry-options.oscillators." + type, 0, 1);
+@@ -77,8 +76,8 @@ public final class Quarries {
+         return InfinityExpansion.config().getDouble("quarry-options.oscillators." + type, 0, 1);
      }
  
 -    public static void setup(InfinityExpansion plugin) {
 -        ConfigurationSection section = plugin.getConfig().getConfigurationSection("quarry-options.resources");
 +    public static void setup() {
-+        ConfigurationSection section = InfinityExpansion.getConfig().getConfigurationSection("quarry-options.resources");
++        ConfigurationSection section = InfinityExpansion.config().getConfigurationSection("quarry-options.resources");
          Objects.requireNonNull(section);
          List<Material> outputs = new ArrayList<>();
  
@@ -4409,10 +4384,10 @@ index df8d493..b18e823 100644
  
  }
 diff --git a/src/main/java/io/github/mooy1/infinityexpansion/items/quarries/Quarry.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/quarries/Quarry.java
-similarity index 86%
+similarity index 90%
 rename from src/main/java/io/github/mooy1/infinityexpansion/items/quarries/Quarry.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/quarries/Quarry.java
-index b24ac75..29b36ca 100644
+index b24ac75..5080857 100644
 --- a/src/main/java/io/github/mooy1/infinityexpansion/items/quarries/Quarry.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/quarries/Quarry.java
 @@ -1,20 +1,8 @@
@@ -4458,18 +4433,6 @@ index b24ac75..29b36ca 100644
  
  /**
   * Mines stuff
-@@ -34,9 +33,9 @@ import me.mrCookieSlime.Slimefun.api.inventory.DirtyChestMenu;
- public final class Quarry extends AbstractMachineBlock implements RecipeDisplayItem {
- 
-     private static final boolean ALLOW_NETHER_IN_OVERWORLD =
--            InfinityExpansion.config().getBoolean("quarry-options.output-nether-materials-in-overworld");
-+            InfinityExpansion.getConfig().getBoolean("quarry-options.output-nether-materials-in-overworld");
-     private static final int INTERVAL =
--            InfinityExpansion.config().getInt("quarry-options.ticks-per-output", 1, 100);
-+            InfinityExpansion.getConfig().getInt("quarry-options.ticks-per-output", 1, 100);
-     private static final ItemStack MINING = new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&aMining...");
-     private static final ItemStack OSCILLATOR_INFO = new CustomItemStack(
-             Material.CYAN_STAINED_GLASS_PANE,
 @@ -68,7 +67,7 @@ public final class Quarry extends AbstractMachineBlock implements RecipeDisplayI
  
      @Override

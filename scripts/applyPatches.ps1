@@ -41,6 +41,8 @@ if ($gpgsign -eq "true") {
 }
 
 applyPatch InfinityLib-Standalone
+
+applyPatch Addons/ExtraTools
 applyPatch Addons/InfinityExpansion
 
 enableCommitSigningIfNeeded
