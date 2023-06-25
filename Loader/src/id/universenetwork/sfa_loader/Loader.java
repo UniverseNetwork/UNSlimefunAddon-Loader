@@ -26,7 +26,7 @@ public class Loader {
     public void loadEnabledAddons() {
         new SlimefunAddonInstance("UniverseNetwork", "SlimefunAddon-Loader");
         LogUtils.info(msg.getString("start",
-                "Start loading the enabled addons in the configuration file..."));
+                "&eStart loading the enabled addons in the configuration file..."));
         TookTimeUtils tookTime = new TookTimeUtils();
         Set<Class<? extends AddonTemplate>> classes = getAllAddonsClasses();
         for (Class<? extends AddonTemplate> addon : classes) {
