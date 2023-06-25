@@ -3,8 +3,8 @@ package id.universenetwork.sfa_loader.command;
 import cloud.commandframework.annotations.CommandDescription;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
+import id.universenetwork.sfa_loader.AddonsLoader;
 import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-import id.universenetwork.sfa_loader.Loader;
 import id.universenetwork.sfa_loader.template.AddonTemplate;
 import id.universenetwork.sfa_loader.utils.TextUtils;
 import org.bukkit.command.CommandSender;
@@ -27,7 +27,7 @@ public final class MainCommand {
     @CommandPermission("sfaloader.command.reload")
     public void cmdReload(CommandSender sender) {
         AbstractAddon.config().reload();
-        Set<AddonTemplate> loadedAddon = Loader.getLoadedAddons();
+        Set<AddonTemplate> loadedAddon = AddonsLoader.getLoadedAddons();
         for (AddonTemplate addon : loadedAddon) addon.getConfig().reload();
         if (sender instanceof Player) TextUtils.send(sender, AbstractAddon.config()
                 .getString("plugin-settings.reload"));

@@ -7,6 +7,7 @@ import id.universenetwork.sfa_loader.template.AddonTemplate;
 import id.universenetwork.sfa_loader.utils.LogUtils;
 import id.universenetwork.sfa_loader.utils.TextUtils;
 import id.universenetwork.sfa_loader.utils.TookTimeUtils;
+import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -18,18 +19,23 @@ import java.util.Set;
 import java.util.logging.Level;
 
 @UtilityClass
-public class Loader {
+public class AddonsLoader {
+    @Getter
+    private final static Set<Class<? extends AddonTemplate>> allAddonsClasses = new HashSet<>();
+    @Getter
     private final static Set<AddonTemplate> loadedAddons = new HashSet<>();
     private final ConfigurationSection msg = AbstractAddon.config()
             .getConfigurationSection("loader-settings.load-msg");
 
     public void loadEnabledAddons() {
+        Reflections reflections = new Reflections("id.universenetwork.sfa_loader.addons");
+        allAddonsClasses.addAll(reflections.getSubTypesOf(AddonTemplate.class));
+
         new SlimefunAddonInstance("UniverseNetwork", "SlimefunAddon-Loader");
         LogUtils.info(msg.getString("start",
                 "&eStart loading the enabled addons in the configuration file..."));
         TookTimeUtils tookTime = new TookTimeUtils();
-        Set<Class<? extends AddonTemplate>> classes = getAllAddonsClasses();
-        for (Class<? extends AddonTemplate> addon : classes) {
+        for (Class<? extends AddonTemplate> addon : allAddonsClasses) {
             if (AbstractAddon.config().getBoolean("addons." + addon.getSimpleName().toLowerCase()))
                 loadAddon(addon);
         }
@@ -86,14 +92,5 @@ public class Loader {
 
     public void unloadAllAddons() {
         for (AddonTemplate addon : loadedAddons) addon.onUnload();
-    }
-
-    public Set<Class<? extends AddonTemplate>> getAllAddonsClasses() {
-        Reflections reflections = new Reflections("id.universenetwork.sfa_loader.addons");
-        return reflections.getSubTypesOf(AddonTemplate.class);
-    }
-
-    public Set<AddonTemplate> getLoadedAddons() {
-        return loadedAddons;
     }
 }
