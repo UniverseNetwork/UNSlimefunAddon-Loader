@@ -5,3 +5,7 @@
 [submodule "InfinityExpansion"]
     path = Addons/InfinityExpansion
     url = https://github.com/Mooy1/InfinityExpansion
+
+[submodule "ExtraTools"]
+    path = Addons/ExtraTools
+    url = https://github.com/Sfiguz7/ExtraTools
