@@ -9,9 +9,7 @@ import id.universenetwork.sfa_loader.utils.TextUtils;
 import id.universenetwork.sfa_loader.utils.TookTimeUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
 import org.reflections.Reflections;
 
 import java.util.HashSet;
@@ -24,33 +22,28 @@ public class AddonsLoader {
     private final static Set<Class<? extends AddonTemplate>> allAddonsClasses = new HashSet<>();
     @Getter
     private final static Set<AddonTemplate> loadedAddons = new HashSet<>();
-    private final ConfigurationSection msg = AbstractAddon.config()
-            .getConfigurationSection("loader-settings.load-msg");
 
     public void loadEnabledAddons() {
         Reflections reflections = new Reflections("id.universenetwork.sfa_loader.addons");
         allAddonsClasses.addAll(reflections.getSubTypesOf(AddonTemplate.class));
 
         new SlimefunAddonInstance("UniverseNetwork", "SlimefunAddon-Loader");
-        LogUtils.info(msg.getString("start",
-                "&eStart loading the enabled addons in the configuration file..."));
+        LogUtils.info("&eStart loading the enabled addons in the configuration file...");
         TookTimeUtils tookTime = new TookTimeUtils();
         for (Class<? extends AddonTemplate> addon : allAddonsClasses) {
             if (AbstractAddon.config().getBoolean("addons." + addon.getSimpleName().toLowerCase()))
                 loadAddon(addon);
         }
-        String str = msg.getString("completed",
-                "&bTook %time%ms &ato register all enabled addons to Slimefun!");
-        str = StringUtils.replace(str, "%time%", tookTime.getTime());
+        String str = "&bTook " + tookTime.getTime() + "ms &ato register all enabled addons to Slimefun!";
         LogUtils.info(str);
     }
 
     public void loadAddon(Class<? extends AddonTemplate> addonClass) {
         try {
-            AddonTemplate addon = addonClass.getConstructor().newInstance();
+            final AddonTemplate addon = addonClass.getConstructor().newInstance();
             if (loadedAddons.contains(addon)) throw new IllegalStateException(
                     addonClass.getSimpleName() + " addon is already loaded!");
-            AddonDependencies dependencies = addonClass.getDeclaredAnnotation(AddonDependencies.class);
+            final AddonDependencies dependencies = addonClass.getDeclaredAnnotation(AddonDependencies.class);
             int status = 0;
             if (dependencies != null) {
                 status = 1;
@@ -63,29 +56,23 @@ public class AddonsLoader {
             }
             switch (status) {
                 default:
-                    String str1 = msg.getString("normal", "&bSuccessfully load &d%addon% &baddon!");
-                    str1 = StringUtils.replace(str1, "%addon%", addonClass.getSimpleName());
+                    String str1 = "&bSuccessfully loaded &d" + addonClass.getSimpleName() + " &baddon!";
                     LogUtils.info(str1);
                     break;
                 case 1:
-                    String str2 = msg.getString("with-dependencies", "&a%dependencies% found. " +
-                            "&bSuccessfully loaded &d%addon% &baddon!");
-                    str2 = StringUtils.replaceEach(str2, new String[]{"%addon%", "%dependencies%"},
-                            new String[]{addonClass.getSimpleName(), TextUtils.convertArraysToString(
-                                    dependencies.value())});
+                    String str2 = "&a" + TextUtils.convertArraysToString(dependencies.value()) +
+                            " found. &bSuccessfully loaded &d" + addonClass.getSimpleName() + " &baddon!";
                     LogUtils.info(str2);
                     break;
                 case 2:
-                    String str3 = msg.getString("with-dependencies", "&e%dependencies% not found. " +
-                            "&cYou need &e%dependencies% to use &d%addon% &caddon!");
-                    str3 = StringUtils.replaceEach(str3, new String[]{"%addon%", "%dependencies%"},
-                            new String[]{addonClass.getSimpleName(), TextUtils.convertArraysToString(
-                                    dependencies.value())});
+                    String str3 = "&e" + TextUtils.convertArraysToString(dependencies.value()) +
+                            " not found. &cYou need &e" +
+                            TextUtils.convertArraysToString(dependencies.value()) + " to use &d"
+                            + addonClass.getSimpleName() + " &caddon!";
                     LogUtils.severe(str3);
             }
         } catch (Exception e) {
-            String str = msg.getString("error", "An error occurred while loading &d%addon% &caddon!");
-            str = StringUtils.replace(str, "%addon%", addonClass.getSimpleName());
+            String str = "An error occurred while loading &d" + addonClass.getSimpleName() + " &caddon!";
             LogUtils.log(Level.SEVERE, str, e);
         }
     }
