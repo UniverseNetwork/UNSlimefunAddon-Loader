@@ -34,7 +34,7 @@ public class AddonsLoader {
             if (AbstractAddon.config().getBoolean("addons." + addon.getSimpleName().toLowerCase()))
                 loadAddon(addon);
         }
-        String str = "&bTook " + tookTime.getTime() + "ms &ato register all enabled addons to Slimefun!";
+        String str = "&bTook " + tookTime.getTime() + "ms &ato load all enabled addons to Slimefun!";
         LogUtils.info(str);
     }
 
