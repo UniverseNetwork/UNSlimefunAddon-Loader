@@ -2,10 +2,12 @@
     path = InfinityLib-Standalone
     url = https://github.com/ARVIN3108/InfinityLib-Standalone
 
-[submodule "InfinityExpansion"]
-    path = Addons/InfinityExpansion
-    url = https://github.com/Mooy1/InfinityExpansion
-
 [submodule "ExtraTools"]
     path = Addons/ExtraTools
     url = https://github.com/Sfiguz7/ExtraTools
+[submodule "InfinityExpansion"]
+    path = Addons/InfinityExpansion
+    url = https://github.com/Mooy1/InfinityExpansion
+[submodule "SMG"]
+    path = Addons/SMG
+    url = https://github.com/waleks647/SMG
