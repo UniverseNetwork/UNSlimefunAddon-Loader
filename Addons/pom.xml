@@ -16,6 +16,7 @@
     <modules>
         <module>ExtraTools</module>
         <module>InfinityExpansion</module>
+        <module>SMG</module>
     </modules>
 
     <dependencies>

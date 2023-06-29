@@ -44,5 +44,6 @@ applyPatch InfinityLib-Standalone
 
 applyPatch Addons/ExtraTools
 applyPatch Addons/InfinityExpansion
+applyPatch Addons/SMG
 
 enableCommitSigningIfNeeded

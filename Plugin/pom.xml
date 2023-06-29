@@ -92,14 +92,19 @@
 
         <!-- Added addons as dependencies -->
         <dependency>
+            <groupId>me.sfiguz7</groupId>
+            <artifactId>ExtraTools</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
             <groupId>io.github.mooy1</groupId>
             <artifactId>InfinityExpansion</artifactId>
             <version>MODIFIED</version>
         </dependency>
         <dependency>
-            <groupId>me.sfiguz7</groupId>
-            <artifactId>ExtraTools</artifactId>
-            <version>1.2</version>
+            <groupId>me.waleks</groupId>
+            <artifactId>SimpleMaterialGenerators</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 </project>
