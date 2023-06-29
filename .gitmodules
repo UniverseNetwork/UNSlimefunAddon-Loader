@@ -2,6 +2,9 @@
     path = InfinityLib-Standalone
     url = https://github.com/ARVIN3108/InfinityLib-Standalone
 
+[submodule "DynaTech"]
+    path = Addons/DynaTech
+    url = https://github.com/ProfElements/DynaTech
 [submodule "ExtraTools"]
     path = Addons/ExtraTools
     url = https://github.com/Sfiguz7/ExtraTools
