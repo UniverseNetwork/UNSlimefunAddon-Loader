@@ -15,6 +15,7 @@ loader-settings:
 
 # The addons loaded at startup
 addons:
+  dynatech: true
   extratools: true
   infinityexpansion: true
   simplematerialgenerators: true

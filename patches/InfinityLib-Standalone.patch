@@ -1,6 +1,6 @@
-From d1a28ee2cabbc561bca7b71494d311aa4ae32226 Mon Sep 17 00:00:00 2001
+From b686ccf4ba178366217c047a721742ffeb128dfa Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Sat, 24 Jun 2023 13:41:08 +0700
+Date: Sun, 2 Jul 2023 16:57:42 +0700
 Subject: [PATCH] InfinityLib-Standalone
 
 ---
@@ -20,7 +20,7 @@ Subject: [PATCH] InfinityLib-Standalone
  .../infinitylib/common/StackUtils.java        |  47 +++--
  .../infinitylib/common/StringUtils.java       |   3 +-
  .../infinitylib/core/AbstractAddon.java       |  14 +-
- .../infinitylib/core/AddonConfig.java         |   4 +-
+ .../infinitylib/core/AddonConfig.java         |  16 +-
  .../infinitylib/core/Environment.java         |   2 +-
  .../infinitylib/core/PathBuilder.java         |   2 +-
  .../core/SlimefunAddonInstance.java           |  73 +++++++
@@ -62,7 +62,7 @@ Subject: [PATCH] InfinityLib-Standalone
  src/test/resources/config.yml                 |   1 -
  src/test/resources/plugin.yml                 |  10 -
  src/test/resources/test.yml                   |  16 --
- 58 files changed, 161 insertions(+), 1803 deletions(-)
+ 58 files changed, 170 insertions(+), 1806 deletions(-)
  delete mode 100644 src/main/java-templates/io/github/mooy1/infinitylib/InfinityLib.java
  delete mode 100644 src/main/java/id/arvin3108/standalone/SlimefunAddonInstance.java
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/commands/AddonCommand.java (93%)
@@ -78,7 +78,7 @@ Subject: [PATCH] InfinityLib-Standalone
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/common/StackUtils.java (80%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/common/StringUtils.java (89%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/AbstractAddon.java (90%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/AddonConfig.java (97%)
+ rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/AddonConfig.java (93%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/Environment.java (83%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/PathBuilder.java (95%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/core/SlimefunAddonInstance.java
@@ -764,10 +764,10 @@ index 967e693..bc9fa3a 100644
              throw new IllegalStateException("Addon " + instance.getName() + " is already using this InfinityLib, Shade an relocate your own!");
          }
 diff --git a/src/main/java/io/github/mooy1/infinitylib/core/AddonConfig.java b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/core/AddonConfig.java
-similarity index 97%
+similarity index 93%
 rename from src/main/java/io/github/mooy1/infinitylib/core/AddonConfig.java
 rename to src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/core/AddonConfig.java
-index c2e14c9..303025c 100644
+index c2e14c9..3f199c8 100644
 --- a/src/main/java/io/github/mooy1/infinitylib/core/AddonConfig.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/core/AddonConfig.java
 @@ -1,4 +1,4 @@
@@ -776,15 +776,38 @@ index c2e14c9..303025c 100644
  
  import java.io.BufferedReader;
  import java.io.File;
-@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
+@@ -13,10 +13,10 @@ import javax.annotation.Nonnull;
  import javax.annotation.Nullable;
  import javax.annotation.ParametersAreNonnullByDefault;
  
 -import io.github.mooy1.infinitylib.common.StringUtils;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.StringUtils;
- 
+-
  import org.bukkit.configuration.file.YamlConfiguration;
  
++import id.universenetwork.sfa_loader.libraries.infinitylib.common.StringUtils;
++
+ /**
+  * A config which is able to save all of its comments and has some additional utility methods
+  *
+@@ -30,10 +30,16 @@ public final class AddonConfig extends YamlConfiguration {
+     private final File file;
+ 
+     public AddonConfig(String path) {
++        this(path, true);
++    }
++
++    public AddonConfig(String path, boolean loadDefault) {
+         AbstractAddon addon = AbstractAddon.instance();
+         file = new File(addon.getDataFolder(), path);
+-        super.defaults = defaults;
+-        loadDefaults(addon, path);
++        if (loadDefault) {
++            super.defaults = defaults;
++            loadDefaults(addon, path);
++        }
+     }
+ 
+     public int getInt(String path, int min, int max) {
 diff --git a/src/main/java/io/github/mooy1/infinitylib/core/Environment.java b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/core/Environment.java
 similarity index 83%
 rename from src/main/java/io/github/mooy1/infinitylib/core/Environment.java

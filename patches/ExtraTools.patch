@@ -1,13 +1,13 @@
-From e089466d8f01d6fc1d4e8fcccc95e70b70363220 Mon Sep 17 00:00:00 2001
+From 3aa3d871c35a00a893f3a060c53f2d46a8503480 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Mon, 26 Jun 2023 03:49:43 +0700
+Date: Sun, 2 Jul 2023 21:41:44 +0700
 Subject: [PATCH] ExtraTools
 
 ---
  pom.xml                                       | 105 ++------------
  .../addons/extratools/ExtraTools.java         |  84 +++++++++++
  .../interfaces/ETInventoryBlock.java          |   2 +-
- .../machines/CobblestoneGenerator.java        |  32 ++---
+ .../machines/CobblestoneGenerator.java        |  35 +++--
  .../machines/ConcreteFactory.java             | 130 ++++++++++++++++++
  .../machines/ElectricComposter.java           |  43 +++---
  .../machines/GoldTransmuter.java              |  64 ++++-----
@@ -20,7 +20,7 @@ Subject: [PATCH] ExtraTools
  .../me/sfiguz7/extratools/lists/ETItems.java  |  89 ------------
  src/main/resources/config.yml                 |   2 -
  src/main/resources/plugin.yml                 |  10 --
- 16 files changed, 434 insertions(+), 580 deletions(-)
+ 16 files changed, 435 insertions(+), 582 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/extratools/ExtraTools.java
  rename src/main/java/{me/sfiguz7 => id/universenetwork/sfa_loader/addons}/extratools/implementation/interfaces/ETInventoryBlock.java (94%)
  rename src/main/java/{me/sfiguz7 => id/universenetwork/sfa_loader/addons}/extratools/implementation/machines/CobblestoneGenerator.java (83%)
@@ -281,7 +281,7 @@ diff --git a/src/main/java/me/sfiguz7/extratools/implementation/machines/Cobbles
 similarity index 83%
 rename from src/main/java/me/sfiguz7/extratools/implementation/machines/CobblestoneGenerator.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/CobblestoneGenerator.java
-index c434fd2..65f5236 100644
+index c434fd2..7485cd6 100644
 --- a/src/main/java/me/sfiguz7/extratools/implementation/machines/CobblestoneGenerator.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/CobblestoneGenerator.java
 @@ -1,5 +1,7 @@
@@ -334,7 +334,7 @@ index c434fd2..65f5236 100644
  
          createPreset(this, this::constructMenu);
  
-@@ -55,15 +55,15 @@ public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implem
+@@ -55,18 +55,18 @@ public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implem
      private void constructMenu(BlockMenuPreset preset) {
          for (int i : border) {
              preset.addItem(i, new CustomItemStack(new ItemStack(Material.GRAY_STAINED_GLASS_PANE), " "),
@@ -352,8 +352,17 @@ index c434fd2..65f5236 100644
 +                    ChestMenuUtils.getEmptyClickHandler());
          }
  
-         for (int i : getOutputSlots()) {
-@@ -85,12 +85,12 @@ public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implem
+-        for (int i : getOutputSlots()) {
++        for (int i : getOutputSlots())
+             preset.addMenuClickHandler(i, new ChestMenu.AdvancedMenuClickHandler() {
+ 
+                 @Override
+@@ -80,17 +80,16 @@ public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implem
+                     return cursor == null || cursor.getType() == Material.AIR;
+                 }
+             });
+-        }
+     }
  
      @Override
      public int[] getInputSlots() {

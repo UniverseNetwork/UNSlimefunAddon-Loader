@@ -72,8 +72,7 @@ public final class MainCommand {
             if (sender instanceof Player) TextUtils.send(sender,
                     "%p% &aAll addons configuration files have been reloaded!");
             LogUtils.info("&aAll addons configuration files have been reloaded!");
-        } else if (loadedAddon.stream().anyMatch(addon ->
-                addon.getClass().getSimpleName().equalsIgnoreCase(addonName))) {
+        } else if (AddonsLoader.isAddonLoaded(addonName)) {
             Set<AddonTemplate> filtered = loadedAddon.stream().filter(addon ->
                             addon.getClass().getSimpleName().equalsIgnoreCase(addonName))
                     .collect(Collectors.toSet());

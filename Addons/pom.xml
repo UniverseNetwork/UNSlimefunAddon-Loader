@@ -14,6 +14,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>DynaTech</module>
         <module>ExtraTools</module>
         <module>InfinityExpansion</module>
         <module>SMG</module>

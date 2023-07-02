@@ -1,4 +1,4 @@
-package id.universenetwork.sfa_loader.annotation;
+package id.universenetwork.sfa_loader.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

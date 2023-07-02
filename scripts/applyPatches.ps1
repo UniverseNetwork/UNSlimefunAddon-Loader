@@ -42,6 +42,7 @@ if ($gpgsign -eq "true") {
 
 applyPatch InfinityLib-Standalone
 
+applyPatch Addons/DynaTech
 applyPatch Addons/ExtraTools
 applyPatch Addons/InfinityExpansion
 applyPatch Addons/SMG
