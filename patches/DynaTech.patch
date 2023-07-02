@@ -1,12 +1,12 @@
-From 3b9f129b90e0da5e8be7c28647461ae05be5502c Mon Sep 17 00:00:00 2001
+From fdde2d39c0f358b8fc09c9650d8ceb00f403386a Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Sun, 2 Jul 2023 22:29:55 +0700
+Date: Sun, 2 Jul 2023 22:41:31 +0700
 Subject: [PATCH] DynaTech
 
 ---
  pom.xml                                       | 106 +--
  .../sfa_loader/addons/dynatech/DynaTech.java  |  87 +++
- .../addons}/dynatech/DynaTechItems.java       |  85 +--
+ .../addons}/dynatech/DynaTechItems.java       |  82 +--
  .../dynatech/attributes/LiquidStorage.java    |  52 +-
  .../events/PicnicBasketFeedPlayerEvent.java   |  24 +-
  .../items/abstracts/AbstractContainer.java    |  64 +-
@@ -72,7 +72,7 @@ Subject: [PATCH] DynaTech
  .../addons-config/DynaTech/config.yml         |   1 +
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  24 -
- 68 files changed, 3988 insertions(+), 4704 deletions(-)
+ 68 files changed, 3985 insertions(+), 4704 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/DynaTechItems.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/attributes/LiquidStorage.java (80%)
@@ -401,7 +401,7 @@ diff --git a/src/main/java/me/profelements/dynatech/DynaTechItems.java b/src/mai
 similarity index 91%
 rename from src/main/java/me/profelements/dynatech/DynaTechItems.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTechItems.java
-index bf2df08..5fdb5f5 100644
+index bf2df08..443a145 100644
 --- a/src/main/java/me/profelements/dynatech/DynaTechItems.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTechItems.java
 @@ -1,6 +1,8 @@
@@ -414,7 +414,7 @@ index bf2df08..5fdb5f5 100644
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
  import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.groups.SubItemGroup;
-@@ -13,36 +15,35 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
+@@ -13,36 +15,32 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
  import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
  import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
@@ -427,9 +427,6 @@ index bf2df08..5fdb5f5 100644
  
 -    private DynaTechItems() {}
 -    
-+    private DynaTechItems() {
-+    }
-+
      //Categories
 -    public static final NestedItemGroup DT_GENERAL = new NestedItemGroup(new NamespacedKey(DynaTech.getInstance(), "DT_GENERAL"), new CustomItemStack(Material.CONDUIT, "&bDynaTech"));
 -    public static final SubItemGroup DT_RESOURCES = new SubItemGroup(new NamespacedKey(DynaTech.getInstance(), "DT_RESOURCES"), DT_GENERAL, new CustomItemStack(Material.PUFFERFISH, "&bDynaTech Resources"));
@@ -443,11 +440,11 @@ index bf2df08..5fdb5f5 100644
 +    public static final SubItemGroup DT_TOOLS = new SubItemGroup(AbstractAddon.createKey("DT_TOOLS"), DT_GENERAL, new CustomItemStack(Material.DIAMOND_AXE, "&bDynaTech Tools"));
 +    public static final SubItemGroup DT_MACHINES = new SubItemGroup(AbstractAddon.createKey("DT_MACHINES"), DT_GENERAL, new CustomItemStack(Material.SEA_LANTERN, "&bDynaTech Machines"));
 +    public static final SubItemGroup DT_GENERATORS = new SubItemGroup(AbstractAddon.createKey("DT_GENERATORS"), DT_GENERAL, new CustomItemStack(Material.PRISMARINE_BRICKS, "&bDynaTech Generators"));
-+
+ 
 +    public static final SubItemGroup DT_HIVES = new SubItemGroup(AbstractAddon.createKey("DT_HIVES"), DT_GENERAL, new CustomItemStack(Material.BEEHIVE, "&bDynaTech Apiaries"));
  
- 
 -    public static final RecipeType DynaTechScoop = new RecipeType(new NamespacedKey(DynaTech.getInstance(), "dt_scoop"),
++
 +    public static final RecipeType DynaTechScoop = new RecipeType(AbstractAddon.createKey("dt_scoop"),
          new CustomItemStack(Material.IRON_SHOVEL, "&bScoop the Bee using a Scoop")
      );
@@ -465,7 +462,7 @@ index bf2df08..5fdb5f5 100644
      //General
  
      //Resources
-@@ -72,9 +73,9 @@ public class DynaTechItems {
+@@ -72,9 +70,9 @@ public class DynaTechItems {
          "",
          "&7ID: <ID>",
          "",
@@ -477,7 +474,7 @@ index bf2df08..5fdb5f5 100644
      public static final SlimefunItemStack SOULBOUND_PICNIC_BASKET = new SlimefunItemStack("SOULBOUND_PICNIC_BASKET",
          new CustomItemStack(PlayerHead.getItemStack(PlayerSkin.fromHashCode("7a6bf916e28ccb80b4ebfacf98686ad6af7c4fb257e57a8cb78c71d19dccb2"))),
          "&6Soulbound Picnic Basket",
-@@ -87,7 +88,7 @@ public class DynaTechItems {
+@@ -87,7 +85,7 @@ public class DynaTechItems {
          "",
          "&7ID: <ID>",
          "",
@@ -486,7 +483,7 @@ index bf2df08..5fdb5f5 100644
          "",
          "&dSoulbound"
      );
-@@ -115,7 +116,7 @@ public class DynaTechItems {
+@@ -115,7 +113,7 @@ public class DynaTechItems {
      );
  
      public static final SlimefunItemStack ANGEL_GEM = new SlimefunItemStack("ANGEL_GEM",
@@ -495,7 +492,7 @@ index bf2df08..5fdb5f5 100644
          "&6Flight Gem",
          "",
          "&fPermanent Creative Flight.",
-@@ -127,14 +128,14 @@ public class DynaTechItems {
+@@ -127,14 +125,14 @@ public class DynaTechItems {
          "&7Flight Speed: <speed>"
      );
  
@@ -512,7 +509,7 @@ index bf2df08..5fdb5f5 100644
          LoreBuilder.powerCharged(0, 512)
      );
  
-@@ -154,10 +155,10 @@ public class DynaTechItems {
+@@ -154,10 +152,10 @@ public class DynaTechItems {
          new CustomItemStack(PlayerHead.getItemStack(PlayerSkin.fromHashCode("f1e2428cb359988f4c4ff0e61de21385c62269de19a69762d773223b75dd1666"))),
          "&6Healthy Item Band",
          "",
@@ -525,7 +522,7 @@ index bf2df08..5fdb5f5 100644
      );
  
      public static final SlimefunItemStack ITEM_BAND_HASTE = new SlimefunItemStack("ITEM_BAND_HASTE",
-@@ -168,8 +169,8 @@ public class DynaTechItems {
+@@ -168,8 +166,8 @@ public class DynaTechItems {
          "&fgives you 2 levels of Haste",
          "",
          "&f&oPowerup!"
@@ -536,7 +533,7 @@ index bf2df08..5fdb5f5 100644
      public static final SlimefunItemStack TESSERACT_BINDER = new SlimefunItemStack("TESSERACT_BINDER",
          Material.NETHERITE_HOE,
          "&6Tesseract Binder",
-@@ -178,7 +179,7 @@ public class DynaTechItems {
+@@ -178,7 +176,7 @@ public class DynaTechItems {
          "",
          "&fRight click to get Location of Tesseract",
          "&fCrouch Right Click to bind location to Tesseract",
@@ -545,7 +542,7 @@ index bf2df08..5fdb5f5 100644
      );
  
      public static final SlimefunItemStack LIQUID_TANK = new SlimefunItemStack("LIQUID_TANK",
-@@ -194,7 +195,7 @@ public class DynaTechItems {
+@@ -194,7 +192,7 @@ public class DynaTechItems {
          "&fAmount: 0mb / 16000",
          ""
      );
@@ -554,7 +551,7 @@ index bf2df08..5fdb5f5 100644
      public static final SlimefunItemStack WITHER_GOLEM = new SlimefunItemStack("WITHER_GOLEM",
          Material.WITHER_SKELETON_SKULL,
          "&6Wither Golem MultiBlock",
-@@ -278,7 +279,7 @@ public class DynaTechItems {
+@@ -278,7 +276,7 @@ public class DynaTechItems {
          "&c3x production.",
          LoreBuilder.machine(MachineTier.MEDIUM, MachineType.MACHINE),
          LoreBuilder.speed(3),
@@ -563,7 +560,7 @@ index bf2df08..5fdb5f5 100644
      );
  
      public static final SlimefunItemStack GROWTH_CHAMBER_NETHER = new SlimefunItemStack("GROWTH_CHAMBER_NETHER",
-@@ -305,7 +306,7 @@ public class DynaTechItems {
+@@ -305,7 +303,7 @@ public class DynaTechItems {
      );
  
      public static final SlimefunItemStack GROWTH_CHAMBER_OCEAN = new SlimefunItemStack("GROWTH_CHAMBER_OCEAN",
@@ -572,7 +569,7 @@ index bf2df08..5fdb5f5 100644
          "&bOcean Growth Chamber",
          "",
          "&fAutomatically grows &9water &fplants.",
-@@ -358,7 +359,7 @@ public class DynaTechItems {
+@@ -358,7 +356,7 @@ public class DynaTechItems {
          LoreBuilder.machine(MachineTier.MEDIUM, MachineType.MACHINE),
          LoreBuilderDynamic.powerPerSecond(32)
      );
@@ -581,7 +578,7 @@ index bf2df08..5fdb5f5 100644
      public static final SlimefunItemStack BARBED_WIRE = new SlimefunItemStack("BARBED_WIRE",
          new CustomItemStack(PlayerHead.getItemStack(PlayerSkin.fromHashCode("b2ac6c219004d82dfa627ffab664f29c53ecc112d91c9d7a9c915c426832412"))),
          "&6Barbed Wire",
-@@ -367,8 +368,8 @@ public class DynaTechItems {
+@@ -367,8 +365,8 @@ public class DynaTechItems {
          "",
          LoreBuilder.machine(MachineTier.MEDIUM, MachineType.MACHINE),
          LoreBuilderDynamic.powerPerSecond(16)
@@ -592,7 +589,7 @@ index bf2df08..5fdb5f5 100644
      public static final SlimefunItemStack MATERIAL_HIVE = new SlimefunItemStack("MATERIAL_HIVE",
          Material.BEEHIVE,
          "&6Material Hive",
-@@ -419,7 +420,7 @@ public class DynaTechItems {
+@@ -419,7 +417,7 @@ public class DynaTechItems {
          "",
          LoreBuilder.machine(MachineTier.END_GAME, MachineType.MACHINE),
          LoreBuilderDynamic.power(1024, " per block converted.")
@@ -601,7 +598,7 @@ index bf2df08..5fdb5f5 100644
  
      public static final SlimefunItemStack WIRELESS_ENERGY_POINT = new SlimefunItemStack("WIRELESS_ENERGY_POINT",
          new CustomItemStack(PlayerHead.getItemStack(PlayerSkin.fromHashCode("335a21d95e8597759fb259c951ea68e1ad3374ca41e56ef126ffabfe03c1e0"))),
-@@ -468,14 +469,14 @@ public class DynaTechItems {
+@@ -468,14 +466,14 @@ public class DynaTechItems {
          "&ffrom Wireless Item Input",
          "Right Click on the Wireless Item Output to connect!",
          "",
@@ -618,7 +615,7 @@ index bf2df08..5fdb5f5 100644
          "&6Tesseract",
          "",
          "&fTransfers Items and Energy Wirelessly",
-@@ -485,10 +486,10 @@ public class DynaTechItems {
+@@ -485,10 +483,10 @@ public class DynaTechItems {
          LoreBuilder.machine(MachineTier.END_GAME, MachineType.MACHINE),
          LoreBuilder.powerBuffer(65535),
          LoreBuilderDynamic.powerPerSecond(1024),
@@ -632,7 +629,7 @@ index bf2df08..5fdb5f5 100644
          Material.BRICKS,
          "&6External Heater",
          "",
-@@ -569,10 +570,10 @@ public class DynaTechItems {
+@@ -569,10 +567,10 @@ public class DynaTechItems {
          LoreBuilderDynamic.powerPerSecond(1024)
      );
  
