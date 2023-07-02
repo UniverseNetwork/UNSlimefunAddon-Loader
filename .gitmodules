@@ -11,6 +11,9 @@
 [submodule "InfinityExpansion"]
     path = Addons/InfinityExpansion
     url = https://github.com/Mooy1/InfinityExpansion
+[submodule "SFCalc"]
+    path = Addons/SFCalc
+    url = https://github.com/Seggan/SFCalc
 [submodule "SMG"]
     path = Addons/SMG
     url = https://github.com/waleks647/SMG
