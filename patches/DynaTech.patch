@@ -1,6 +1,6 @@
-From fdde2d39c0f358b8fc09c9650d8ceb00f403386a Mon Sep 17 00:00:00 2001
+From 7d0e9ebb9ee9b8e6da79ba1518f8c385f7ca6c67 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Sun, 2 Jul 2023 22:41:31 +0700
+Date: Mon, 3 Jul 2023 01:00:09 +0700
 Subject: [PATCH] DynaTech
 
 ---
@@ -18,13 +18,13 @@ Subject: [PATCH] DynaTech
  .../abstracts/AbstractTickingContainer.java   |  23 +-
  .../items/backpacks/PicnicBasket.java         | 141 ++--
  .../backpacks/SoulboundPicnicBacket.java      |  17 +-
- .../items/electric/AntigravityBubble.java     |  50 +-
+ .../items/electric/AntigravityBubble.java     |  51 +-
  .../items/electric/BandaidManager.java        |  93 ++-
  .../dynatech/items/electric/BarbedWire.java   |  36 +-
  .../items/electric/FurnaceController.java     |  44 +-
  .../items/electric/KitchenAutoCrafter.java    |  16 +-
  .../dynatech/items/electric/MaterialHive.java | 456 ++++++------
- .../items/electric/PotionSprinkler.java       | 284 ++++----
+ .../items/electric/PotionSprinkler.java       | 284 ++++---
  .../dynatech/items/electric/SeedPlucker.java  | 288 ++++----
  .../items/electric/WeatherController.java     |  63 +-
  .../items/electric/WirelessCharger.java       |  34 +-
@@ -46,8 +46,8 @@ Subject: [PATCH] DynaTech
  .../items/electric/transfer/Tesseract.java    | 130 ++--
  .../electric/transfer/WirelessEnergyBank.java |  70 +-
  .../transfer/WirelessEnergyPoint.java         | 346 +++++----
- .../electric/transfer/WirelessItemInput.java  | 323 ++++-----
- .../electric/transfer/WirelessItemOutput.java | 586 ++++++++-------
+ .../electric/transfer/WirelessItemInput.java  | 323 ++++----
+ .../electric/transfer/WirelessItemOutput.java | 586 +++++++--------
  .../addons}/dynatech/items/misc/Bee.java      |  12 +-
  .../items/misc/DimensionalHomeDimension.java  |  73 +-
  .../addons}/dynatech/items/misc/ItemBand.java |  24 +-
@@ -55,24 +55,24 @@ Subject: [PATCH] DynaTech
  .../dynatech/items/misc/StarDustMeteor.java   | 139 ++--
  .../addons}/dynatech/items/misc/VexGem.java   |  83 ++-
  .../dynatech/items/misc/WitherGolem.java      |  31 +
- .../dynatech/items/tools/AngelGem.java        | 285 ++++----
+ .../dynatech/items/tools/AngelGem.java        | 285 ++++---
  .../dynatech/items/tools/DimensionalHome.java |  61 +-
  .../items/tools/ElectricalStimulator.java     |   5 +-
  .../dynatech/items/tools/InventoryFilter.java |   4 +-
  .../dynatech/items/tools/LiquidTank.java      |  98 +--
  .../addons}/dynatech/items/tools/Scoop.java   |  19 +-
- .../dynatech/items/tools/TesseractBinder.java | 121 ++--
- .../ElectricalStimulatorListener.java         | 121 ++--
+ .../dynatech/items/tools/TesseractBinder.java | 121 ++-
+ .../ElectricalStimulatorListener.java         | 121 ++-
  .../listeners/InventoryFilterListener.java    | 143 ++--
  .../listeners/PicnicBasketListener.java       | 114 ++-
- .../dynatech/setup/DynaTechItemsSetup.java    | 684 +++++++++---------
+ .../dynatech/setup/DynaTechItemsSetup.java    | 695 +++++++++---------
  .../addons}/dynatech/tasks/ItemBandTask.java  | 134 ++--
  .../me/profelements/dynatech/DynaTech.java    | 120 ---
  .../dynatech/items/misc/WitherGolem.java      |  33 -
  .../addons-config/DynaTech/config.yml         |   1 +
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  24 -
- 68 files changed, 3985 insertions(+), 4704 deletions(-)
+ 68 files changed, 3992 insertions(+), 4709 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/DynaTechItems.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/attributes/LiquidStorage.java (80%)
@@ -86,7 +86,7 @@ Subject: [PATCH] DynaTech
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/abstracts/AbstractTickingContainer.java (77%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/backpacks/PicnicBasket.java (87%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/backpacks/SoulboundPicnicBacket.java (77%)
- rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/AntigravityBubble.java (68%)
+ rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/AntigravityBubble.java (67%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/BandaidManager.java (69%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/BarbedWire.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/FurnaceController.java (82%)
@@ -133,7 +133,7 @@ Subject: [PATCH] DynaTech
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/listeners/ElectricalStimulatorListener.java (67%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/listeners/InventoryFilterListener.java (75%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/listeners/PicnicBasketListener.java (65%)
- rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/setup/DynaTechItemsSetup.java (58%)
+ rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/setup/DynaTechItemsSetup.java (57%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/tasks/ItemBandTask.java (76%)
  delete mode 100644 src/main/java/me/profelements/dynatech/DynaTech.java
  delete mode 100644 src/main/java/me/profelements/dynatech/items/misc/WitherGolem.java
@@ -306,7 +306,7 @@ index adae2a8..fd90bf0 100644
  </project>
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
 new file mode 100644
-index 0000000..9d6fadf
+index 0000000..6d7b2a5
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
 @@ -0,0 +1,87 @@
@@ -352,7 +352,7 @@ index 0000000..9d6fadf
 +            worldCreator.createWorld();
 +        }
 +
-+        DynaTechItemsSetup.setup();
++        DynaTechItemsSetup.setup(this);
 +        new PicnicBasketListener((PicnicBasket) DynaTechItems.PICNIC_BASKET.getItem());
 +        new ElectricalStimulatorListener((ElectricalStimulator) DynaTechItems.ELECTRICAL_STIMULATOR.getItem());
 +        new InventoryFilterListener((InventoryFilter) DynaTechItems.INVENTORY_FILTER.getItem());
@@ -2021,10 +2021,10 @@ index 89ef0d4..c708ef0 100644
 +    }
  }
 diff --git a/src/main/java/me/profelements/dynatech/items/electric/AntigravityBubble.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/AntigravityBubble.java
-similarity index 68%
+similarity index 67%
 rename from src/main/java/me/profelements/dynatech/items/electric/AntigravityBubble.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/AntigravityBubble.java
-index 2feb454..c700814 100644
+index 2feb454..d83ec1f 100644
 --- a/src/main/java/me/profelements/dynatech/items/electric/AntigravityBubble.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/AntigravityBubble.java
 @@ -1,11 +1,10 @@
@@ -2072,7 +2072,7 @@ index 2feb454..c700814 100644
      }
  
      @Override
-@@ -47,36 +40,33 @@ public class AntigravityBubble extends AbstractElectricTicker {
+@@ -47,36 +40,34 @@ public class AntigravityBubble extends AbstractElectricTicker {
          }
  
          enabledPlayers.remove(l);
@@ -2083,6 +2083,7 @@ index 2feb454..c700814 100644
 -	protected void tick(Block b, SlimefunItem item) {
 +    @Override
 +    protected void tick(Block b, SlimefunItem item) {
++        enabledPlayers.computeIfAbsent(b.getLocation(), k -> new HashSet<>());
          Collection<Entity> bubbledEntities = b.getWorld().getNearbyEntities(b.getLocation(), 16, 16, 16, Player.class::isInstance);
          for (Entity entity : bubbledEntities) {
 -            Player p = (Player) entity; 
@@ -10456,10 +10457,10 @@ index f8d71e7..b25944b 100644
 +    }
  }
 diff --git a/src/main/java/me/profelements/dynatech/setup/DynaTechItemsSetup.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/setup/DynaTechItemsSetup.java
-similarity index 58%
+similarity index 57%
 rename from src/main/java/me/profelements/dynatech/setup/DynaTechItemsSetup.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/setup/DynaTechItemsSetup.java
-index 32b57d9..28157b3 100644
+index 32b57d9..d3d681d 100644
 --- a/src/main/java/me/profelements/dynatech/setup/DynaTechItemsSetup.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/setup/DynaTechItemsSetup.java
 @@ -1,8 +1,23 @@
@@ -10490,7 +10491,7 @@ index 32b57d9..28157b3 100644
  import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
-@@ -15,588 +30,533 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
+@@ -15,588 +30,534 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
  import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
@@ -10555,7 +10556,7 @@ index 32b57d9..28157b3 100644
 -    private DynaTechItemsSetup() {}
 -
 -    public static void setup(@Nonnull DynaTech plugin) {
-+    public static void setup() {
++    public static void setup(DynaTech main) {
  
          //General
          //Resources
@@ -10758,17 +10759,23 @@ index 32b57d9..28157b3 100644
                  new ItemStack(Material.WHITE_WOOL), SlimefunItems.BATTERY, new ItemStack(Material.WHITE_WOOL),
                  null, new ItemStack(Material.STICK), null
 -        }).register(plugin);
-+            }).register(SlimefunAddonInstance.getSFAInstance());
- 
-         new DimensionalHome(DynaTechItems.DT_TOOLS, DynaTechItems.DIMENSIONAL_HOME, RecipeType.MAGIC_WORKBENCH,
+-
+-        new DimensionalHome(DynaTechItems.DT_TOOLS, DynaTechItems.DIMENSIONAL_HOME, RecipeType.MAGIC_WORKBENCH,
 -            new ItemStack[] {
-+            new ItemStack[]{
-                 null, null, SlimefunItems.GOLD_24K_BLOCK,
-                 SlimefunItems.BRONZE_INGOT, new ItemStack(Material.BLAZE_ROD), null,
-                 SlimefunItems.SYNTHETIC_SAPPHIRE, SlimefunItems.BRONZE_INGOT, null
+-                null, null, SlimefunItems.GOLD_24K_BLOCK,
+-                SlimefunItems.BRONZE_INGOT, new ItemStack(Material.BLAZE_ROD), null,
+-                SlimefunItems.SYNTHETIC_SAPPHIRE, SlimefunItems.BRONZE_INGOT, null
 -        }).register(plugin);
 -        
 +            }).register(SlimefunAddonInstance.getSFAInstance());
++
++        if (!main.getConfig().getBoolean("disable-dimensionalhome-world"))
++            new DimensionalHome(DynaTechItems.DT_TOOLS, DynaTechItems.DIMENSIONAL_HOME, RecipeType.MAGIC_WORKBENCH,
++                new ItemStack[]{
++                    null, null, SlimefunItems.GOLD_24K_BLOCK,
++                    SlimefunItems.BRONZE_INGOT, new ItemStack(Material.BLAZE_ROD), null,
++                    SlimefunItems.SYNTHETIC_SAPPHIRE, SlimefunItems.BRONZE_INGOT, null
++                }).register(SlimefunAddonInstance.getSFAInstance());
 +
          new ItemBand(DynaTechItems.DT_TOOLS, DynaTechItems.ITEM_BAND_HEALTH, RecipeType.MAGIC_WORKBENCH,
 -            new ItemStack[] {
@@ -11362,7 +11369,7 @@ index 32b57d9..28157b3 100644
              SlimefunItem item = SlimefunItem.getById(id);
  
              if (item != null) {
-@@ -613,19 +573,19 @@ public class DynaTechItemsSetup {
+@@ -613,19 +574,19 @@ public class DynaTechItemsSetup {
                  );
  
                  new MineralizedApiary(DynaTechItems.DT_HIVES, apiary, RecipeType.ENHANCED_CRAFTING_TABLE,
@@ -11392,7 +11399,7 @@ index 32b57d9..28157b3 100644
              ItemStack item = new ItemStack(Material.matchMaterial(name));
  
              if (item != null) {
-@@ -642,17 +602,17 @@ public class DynaTechItemsSetup {
+@@ -642,17 +603,17 @@ public class DynaTechItemsSetup {
                  );
  
                  new MineralizedApiary(DynaTechItems.DT_HIVES, apiary, RecipeType.ENHANCED_CRAFTING_TABLE,
