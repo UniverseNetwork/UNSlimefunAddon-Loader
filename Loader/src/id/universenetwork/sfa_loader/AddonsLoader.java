@@ -43,7 +43,7 @@ public class AddonsLoader {
         }
         if (!addonsWithHooksClasses.isEmpty())
             for (Class<? extends AddonTemplate> addon : addonsWithHooksClasses)
-                loadAddonsWithHooks(addon);
+                loadAddonWithHooks(addon);
 
         String str = "&bTook " + tookTime.getTime() + "ms &ato load all enabled addons to Slimefun!";
         LogUtils.info(str);
@@ -102,7 +102,7 @@ public class AddonsLoader {
         }
     }
 
-    private void loadAddonsWithHooks(Class<? extends AddonTemplate> addonClass) {
+    private void loadAddonWithHooks(Class<? extends AddonTemplate> addonClass) {
         final Set<String> hooks = Arrays.stream(addonClass.getDeclaredAnnotation(AddonHooks.class)
                 .value()).collect(Collectors.toSet());
         for (Iterator<String> iterator = hooks.iterator(); iterator.hasNext(); ) {
