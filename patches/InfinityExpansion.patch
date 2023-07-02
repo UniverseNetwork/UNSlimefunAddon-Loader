@@ -1,10 +1,10 @@
-From e495d4300b8d6a96ab8b485f1a77c054cc16ab83 Mon Sep 17 00:00:00 2001
+From 184ac95d80b25b61482496d81bacf1898e84edb4 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Mon, 26 Jun 2023 03:56:26 +0700
+Date: Sun, 2 Jul 2023 22:25:22 +0700
 Subject: [PATCH] InfinityExpansion
 
 ---
- pom.xml                                       |  82 +-------
+ pom.xml                                       |  91 +--------
  .../infinityexpansion/InfinityExpansion.java  |  66 +++++++
  .../infinityexpansion/categories/Groups.java  |  22 +--
  .../categories/InfinityGroup.java             |  73 +++----
@@ -60,7 +60,7 @@ Subject: [PATCH] InfinityExpansion
  .../InfinityExpansion}/config.yml             |  10 +-
  src/main/resources/plugin.yml                 |  27 ---
  .../TestInfinityExpansion.java                |  28 ---
- 56 files changed, 1146 insertions(+), 1466 deletions(-)
+ 56 files changed, 1146 insertions(+), 1475 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/Groups.java (70%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/InfinityGroup.java (93%)
@@ -118,23 +118,23 @@ Subject: [PATCH] InfinityExpansion
  delete mode 100644 src/test/java/io/github/mooy1/infinityexpansion/TestInfinityExpansion.java
 
 diff --git a/pom.xml b/pom.xml
-index 937fc2e..cb79da9 100644
+index 937fc2e..6d56ae9 100644
 --- a/pom.xml
 +++ b/pom.xml
-@@ -1,28 +1,25 @@
+@@ -1,28 +1,24 @@
  <?xml version="1.0" encoding="UTF-8"?>
  <project xmlns="http://maven.apache.org/POM/4.0.0"
 -    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 -    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+-
 +         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 +         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
- 
      <modelVersion>4.0.0</modelVersion>
 +
 +    <parent>
 +        <groupId>id.universenetwork.sfa_loader</groupId>
 +        <artifactId>Addons</artifactId>
-+        <version>1.0.0</version>
++        <version>1.1.0</version>
 +    </parent>
 +
      <groupId>io.github.mooy1</groupId>
@@ -159,7 +159,7 @@ index 937fc2e..cb79da9 100644
      </repositories>
  
      <dependencies>
-@@ -32,92 +29,31 @@
+@@ -32,92 +28,23 @@
              <version>1.17.1-R0.1-SNAPSHOT</version>
              <scope>provided</scope>
          </dependency>
@@ -211,20 +211,20 @@ index 937fc2e..cb79da9 100644
          <finalName>${project.name} v${project.version}</finalName>
 -        <defaultGoal>clean package</defaultGoal>
 -        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
- 
-         <resources>
-             <resource>
-                 <directory>${basedir}/src/main/resources</directory>
-                 <filtering>true</filtering>
-             </resource>
+-
+-        <resources>
+-            <resource>
+-                <directory>${basedir}/src/main/resources</directory>
+-                <filtering>true</filtering>
+-            </resource>
 -            <resource>
 -                <directory>${basedir}</directory>
 -                <includes>
 -                    <include>LICENSE</include>
 -                </includes>
 -            </resource>
-         </resources>
- 
+-        </resources>
+-
          <plugins>
 -            <plugin>
 -                <groupId>org.apache.maven.plugins</groupId>
