@@ -1,10 +1,10 @@
-From 184ac95d80b25b61482496d81bacf1898e84edb4 Mon Sep 17 00:00:00 2001
+From 59a088c4213259a30eb09d26404d4dde72bb6167 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Sun, 2 Jul 2023 22:25:22 +0700
+Date: Mon, 3 Jul 2023 17:34:09 +0700
 Subject: [PATCH] InfinityExpansion
 
 ---
- pom.xml                                       |  91 +--------
+ pom.xml                                       |  97 +--------
  .../infinityexpansion/InfinityExpansion.java  |  66 +++++++
  .../infinityexpansion/categories/Groups.java  |  22 +--
  .../categories/InfinityGroup.java             |  73 +++----
@@ -60,7 +60,7 @@ Subject: [PATCH] InfinityExpansion
  .../InfinityExpansion}/config.yml             |  10 +-
  src/main/resources/plugin.yml                 |  27 ---
  .../TestInfinityExpansion.java                |  28 ---
- 56 files changed, 1146 insertions(+), 1475 deletions(-)
+ 56 files changed, 1147 insertions(+), 1480 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/Groups.java (70%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/InfinityGroup.java (93%)
@@ -118,10 +118,10 @@ Subject: [PATCH] InfinityExpansion
  delete mode 100644 src/test/java/io/github/mooy1/infinityexpansion/TestInfinityExpansion.java
 
 diff --git a/pom.xml b/pom.xml
-index 937fc2e..6d56ae9 100644
+index c107f82..d533744 100644
 --- a/pom.xml
 +++ b/pom.xml
-@@ -1,28 +1,24 @@
+@@ -1,32 +1,24 @@
  <?xml version="1.0" encoding="UTF-8"?>
  <project xmlns="http://maven.apache.org/POM/4.0.0"
 -    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -153,28 +153,32 @@ index 937fc2e..6d56ae9 100644
              <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
          </repository>
 -        <repository>
+-            <id>papermc</id>
+-            <url>https://repo.papermc.io/repository/maven-public/</url>
+-        </repository>
+-        <repository>
 -            <id>jitpack.io</id>
 -            <url>https://jitpack.io</url>
 -        </repository>
      </repositories>
  
      <dependencies>
-@@ -32,92 +28,23 @@
-             <version>1.17.1-R0.1-SNAPSHOT</version>
+@@ -36,92 +28,23 @@
+             <version>1.19-R0.1-SNAPSHOT</version>
              <scope>provided</scope>
          </dependency>
 -
 -        <dependency>
--            <groupId>io.github.Slimefun</groupId>
+-            <groupId>com.github.Slimefun</groupId>
 -            <artifactId>Slimefun4</artifactId>
--            <version>RC-28</version>
+-            <version>5dbe617205</version>
 -            <scope>provided</scope>
 -        </dependency>
 -
 -        <dependency>
 -            <groupId>org.projectlombok</groupId>
 -            <artifactId>lombok</artifactId>
--            <version>1.18.20</version>
+-            <version>1.18.24</version>
 -            <scope>provided</scope>
 -        </dependency>
 -
@@ -188,21 +192,21 @@ index 937fc2e..6d56ae9 100644
 -        <dependency>
 -            <groupId>io.github.mooy1</groupId>
 -            <artifactId>InfinityLib</artifactId>
--            <version>1.3.4</version>
+-            <version>f784252486</version>
 -            <scope>compile</scope>
 -        </dependency>
 -
 -        <dependency>
 -            <groupId>org.junit.jupiter</groupId>
 -            <artifactId>junit-jupiter</artifactId>
--            <version>5.7.2</version>
+-            <version>5.8.2</version>
 -            <scope>test</scope>
 -        </dependency>
 -
 -        <dependency>
 -            <groupId>com.github.seeseemelk</groupId>
--            <artifactId>MockBukkit-v1.16</artifactId>
--            <version>1.5.0</version>
+-            <artifactId>MockBukkit-v1.19</artifactId>
+-            <version>2.29.0</version>
 -            <scope>test</scope>
 -        </dependency>
      </dependencies>
@@ -229,7 +233,7 @@ index 937fc2e..6d56ae9 100644
 -            <plugin>
 -                <groupId>org.apache.maven.plugins</groupId>
 -                <artifactId>maven-surefire-plugin</artifactId>
--                <version>3.0.0-M5</version>
+-                <version>3.0.0-M7</version>
 -
 -                <configuration>
 -                    <junitArtifactName>org.junit.jupiter:junit-jupiter</junitArtifactName>
@@ -240,7 +244,8 @@ index 937fc2e..6d56ae9 100644
              <plugin>
                  <groupId>org.apache.maven.plugins</groupId>
                  <artifactId>maven-shade-plugin</artifactId>
-                 <version>3.2.4</version>
+-                <version>3.3.0</version>
++                <version>3.2.4</version>
                  <configuration>
                      <minimizeJar>true</minimizeJar>
 -                    <relocations>
@@ -329,7 +334,7 @@ diff --git a/src/main/java/io/github/mooy1/infinityexpansion/categories/Groups.j
 similarity index 70%
 rename from src/main/java/io/github/mooy1/infinityexpansion/categories/Groups.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/categories/Groups.java
-index 148c0f9..7cf8648 100644
+index 55a9cb0..595681f 100644
 --- a/src/main/java/io/github/mooy1/infinityexpansion/categories/Groups.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/categories/Groups.java
 @@ -1,12 +1,12 @@
@@ -360,17 +365,18 @@ index 148c0f9..7cf8648 100644
              new CustomItemStack(Material.RESPAWN_ANCHOR, "&bInfinity &7Recipes"), 3);
      public static final ItemGroup MAIN_MATERIALS = new SubGroup("main_materials",
              new CustomItemStack(Material.NETHER_STAR, "&bInfinity &7Materials"));
-@@ -35,10 +35,10 @@ public final class Groups {
+@@ -35,11 +35,11 @@ public final class Groups {
      public static final ItemGroup INFINITY_CHEAT = new SubGroup("infinity_cheat",
              new CustomItemStack(Material.RESPAWN_ANCHOR, "&bInfinity &7Recipes &c- INCORRECT RECIPES"));
  
 -    public static void setup(InfinityExpansion inst) {
 -        INFINITY.register(inst);
 -        MAIN_CATEGORY.register(inst);
--        INFINITY_CHEAT.register(inst);
 +    public static void setup() {
 +        INFINITY.register(SlimefunAddonInstance.getSFAInstance());
 +        MAIN_CATEGORY.register(SlimefunAddonInstance.getSFAInstance());
+         MOB_SIMULATION.setCrossAddonItemGroup(true);
+-        INFINITY_CHEAT.register(inst);
 +        INFINITY_CHEAT.register(SlimefunAddonInstance.getSFAInstance());
      }
  
@@ -3762,7 +3768,7 @@ diff --git a/src/main/java/io/github/mooy1/infinityexpansion/items/mobdata/MobDa
 similarity index 82%
 rename from src/main/java/io/github/mooy1/infinityexpansion/items/mobdata/MobData.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/mobdata/MobData.java
-index 357cb59..74f6650 100644
+index b3e54fb..79cda26 100644
 --- a/src/main/java/io/github/mooy1/infinityexpansion/items/mobdata/MobData.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/mobdata/MobData.java
 @@ -1,19 +1,19 @@
@@ -3837,7 +3843,7 @@ index 357cb59..74f6650 100644
 -        new MobDataCard(ZOMBIE, MobDataTier.HOSTILE, new ItemStack[] {
 +        new MobDataCard(ZOMBIE, MobDataTier.HOSTILE, new ItemStack[]{
                  new ItemStack(Material.IRON_SWORD, 1), new ItemStack(Material.ROTTEN_FLESH, 16), new ItemStack(Material.IRON_SHOVEL, 1),
-                 new ItemStack(Material.IRON_INGOT, 64), EMPTY_DATA_CARD, new ItemStack(Material.IRON_INGOT, 1),
+                 new ItemStack(Material.IRON_INGOT, 64), EMPTY_DATA_CARD, new ItemStack(Material.IRON_INGOT, 64),
                  new ItemStack(Material.CARROT, 64), new ItemStack(Material.ROTTEN_FLESH, 16), new ItemStack(Material.POTATO, 64)
 -        }).addDrop(Material.ROTTEN_FLESH, 1).register(plugin);
 -        new MobDataCard(SLIME, MobDataTier.NEUTRAL, new ItemStack[] {
