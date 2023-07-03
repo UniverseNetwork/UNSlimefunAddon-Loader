@@ -1,25 +1,19 @@
-From d47b6472cdb6450cb934c4b4ff0fb0b8a7b952fa Mon Sep 17 00:00:00 2001
+From 03410ef171e30c910ef8fa6f7e07ee771d5aaef5 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Sun, 2 Jul 2023 21:59:03 +0700
+Date: Mon, 3 Jul 2023 19:14:38 +0700
 Subject: [PATCH] InfinityLib-Standalone
 
 ---
  pom.xml                                       |  93 +--------
  .../github/mooy1/infinitylib/InfinityLib.java |  26 ---
  .../standalone/SlimefunAddonInstance.java     | 144 --------------
- .../infinitylib/commands/AddonCommand.java    |   6 +-
- .../infinitylib/commands/AliasesCommand.java  |   2 +-
- .../infinitylib/commands/HelpCommand.java     |   2 +-
- .../infinitylib/commands/InfoCommand.java     |   2 +-
- .../infinitylib/commands/ParentCommand.java   |   2 +-
- .../infinitylib/commands/SubCommand.java      |   2 +-
  .../infinitylib/common/CoolDowns.java         |   2 +-
  .../libraries}/infinitylib/common/Events.java |   4 +-
  .../infinitylib/common/PersistentType.java    |   2 +-
  .../infinitylib/common/Scheduler.java         |   4 +-
  .../infinitylib/common/StackUtils.java        |  47 +++--
  .../infinitylib/common/StringUtils.java       |   3 +-
- .../infinitylib/core/AbstractAddon.java       |  14 +-
+ .../infinitylib/core/AbstractAddon.java       |  31 +--
  .../infinitylib/core/AddonConfig.java         |  16 +-
  .../infinitylib/core/Environment.java         |   2 +-
  .../infinitylib/core/PathBuilder.java         |   2 +-
@@ -38,6 +32,12 @@ Subject: [PATCH] InfinityLib-Standalone
  .../infinitylib/machines/MenuBlock.java       |   2 +-
  .../infinitylib/machines/MenuBlockPreset.java |   2 +-
  .../machines/TickingMenuBlock.java            |   2 +-
+ .../infinitylib/commands/AddonCommand.java    | 100 ----------
+ .../infinitylib/commands/AliasesCommand.java  |  30 ---
+ .../infinitylib/commands/HelpCommand.java     |  38 ----
+ .../infinitylib/commands/InfoCommand.java     |  43 -----
+ .../infinitylib/commands/ParentCommand.java   | 100 ----------
+ .../infinitylib/commands/SubCommand.java      |  74 --------
  .../mooy1/infinitylib/TestInfinityLib.java    |  25 ---
  .../commands/MockParentCommand.java           |  19 --
  .../infinitylib/commands/MockSubCommand.java  |  34 ----
@@ -62,22 +62,16 @@ Subject: [PATCH] InfinityLib-Standalone
  src/test/resources/config.yml                 |   1 -
  src/test/resources/plugin.yml                 |  10 -
  src/test/resources/test.yml                   |  16 --
- 58 files changed, 170 insertions(+), 1806 deletions(-)
+ 58 files changed, 161 insertions(+), 2201 deletions(-)
  delete mode 100644 src/main/java-templates/io/github/mooy1/infinitylib/InfinityLib.java
  delete mode 100644 src/main/java/id/arvin3108/standalone/SlimefunAddonInstance.java
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/commands/AddonCommand.java (93%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/commands/AliasesCommand.java (91%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/commands/HelpCommand.java (93%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/commands/InfoCommand.java (95%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/commands/ParentCommand.java (97%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/commands/SubCommand.java (96%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/common/CoolDowns.java (91%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/common/Events.java (90%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/common/PersistentType.java (99%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/common/Scheduler.java (91%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/common/StackUtils.java (80%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/common/StringUtils.java (89%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/AbstractAddon.java (90%)
+ rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/AbstractAddon.java (82%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/AddonConfig.java (93%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/Environment.java (83%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/PathBuilder.java (95%)
@@ -96,6 +90,12 @@ Subject: [PATCH] InfinityLib-Standalone
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/machines/MenuBlock.java (98%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/machines/MenuBlockPreset.java (95%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/machines/TickingMenuBlock.java (95%)
+ delete mode 100644 src/main/java/io/github/mooy1/infinitylib/commands/AddonCommand.java
+ delete mode 100644 src/main/java/io/github/mooy1/infinitylib/commands/AliasesCommand.java
+ delete mode 100644 src/main/java/io/github/mooy1/infinitylib/commands/HelpCommand.java
+ delete mode 100644 src/main/java/io/github/mooy1/infinitylib/commands/InfoCommand.java
+ delete mode 100644 src/main/java/io/github/mooy1/infinitylib/commands/ParentCommand.java
+ delete mode 100644 src/main/java/io/github/mooy1/infinitylib/commands/SubCommand.java
  delete mode 100644 src/test/java/io/github/mooy1/infinitylib/TestInfinityLib.java
  delete mode 100644 src/test/java/io/github/mooy1/infinitylib/commands/MockParentCommand.java
  delete mode 100644 src/test/java/io/github/mooy1/infinitylib/commands/MockSubCommand.java
@@ -441,95 +441,6 @@ index 736b9ad..0000000
 -
 -}
 \ No newline at end of file
-diff --git a/src/main/java/io/github/mooy1/infinitylib/commands/AddonCommand.java b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/AddonCommand.java
-similarity index 93%
-rename from src/main/java/io/github/mooy1/infinitylib/commands/AddonCommand.java
-rename to src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/AddonCommand.java
-index 1221c46..5cfb5f3 100644
---- a/src/main/java/io/github/mooy1/infinitylib/commands/AddonCommand.java
-+++ b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/AddonCommand.java
-@@ -1,4 +1,4 @@
--package io.github.mooy1.infinitylib.commands;
-+package id.universenetwork.sfa_loader.libraries.infinitylib.commands;
- 
- import java.util.ArrayList;
- import java.util.Collections;
-@@ -18,8 +18,8 @@ import org.bukkit.event.Listener;
- import org.bukkit.event.player.PlayerCommandPreprocessEvent;
- import org.bukkit.event.server.ServerCommandEvent;
- 
--import io.github.mooy1.infinitylib.common.Events;
--import io.github.mooy1.infinitylib.core.AbstractAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
- 
- /**
-  * The main command of an addon, which can hold multiple sub commands
-diff --git a/src/main/java/io/github/mooy1/infinitylib/commands/AliasesCommand.java b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/AliasesCommand.java
-similarity index 91%
-rename from src/main/java/io/github/mooy1/infinitylib/commands/AliasesCommand.java
-rename to src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/AliasesCommand.java
-index 3e370d7..25992ac 100644
---- a/src/main/java/io/github/mooy1/infinitylib/commands/AliasesCommand.java
-+++ b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/AliasesCommand.java
-@@ -1,4 +1,4 @@
--package io.github.mooy1.infinitylib.commands;
-+package id.universenetwork.sfa_loader.libraries.infinitylib.commands;
- 
- import java.util.List;
- 
-diff --git a/src/main/java/io/github/mooy1/infinitylib/commands/HelpCommand.java b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/HelpCommand.java
-similarity index 93%
-rename from src/main/java/io/github/mooy1/infinitylib/commands/HelpCommand.java
-rename to src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/HelpCommand.java
-index 9f17b48..4706463 100644
---- a/src/main/java/io/github/mooy1/infinitylib/commands/HelpCommand.java
-+++ b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/HelpCommand.java
-@@ -1,4 +1,4 @@
--package io.github.mooy1.infinitylib.commands;
-+package id.universenetwork.sfa_loader.libraries.infinitylib.commands;
- 
- import java.util.List;
- 
-diff --git a/src/main/java/io/github/mooy1/infinitylib/commands/InfoCommand.java b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/InfoCommand.java
-similarity index 95%
-rename from src/main/java/io/github/mooy1/infinitylib/commands/InfoCommand.java
-rename to src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/InfoCommand.java
-index 9d07a5e..8bbfc8c 100644
---- a/src/main/java/io/github/mooy1/infinitylib/commands/InfoCommand.java
-+++ b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/InfoCommand.java
-@@ -1,4 +1,4 @@
--package io.github.mooy1.infinitylib.commands;
-+package id.universenetwork.sfa_loader.libraries.infinitylib.commands;
- 
- import java.util.List;
- 
-diff --git a/src/main/java/io/github/mooy1/infinitylib/commands/ParentCommand.java b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/ParentCommand.java
-similarity index 97%
-rename from src/main/java/io/github/mooy1/infinitylib/commands/ParentCommand.java
-rename to src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/ParentCommand.java
-index 2daeddf..997cd25 100644
---- a/src/main/java/io/github/mooy1/infinitylib/commands/ParentCommand.java
-+++ b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/ParentCommand.java
-@@ -1,4 +1,4 @@
--package io.github.mooy1.infinitylib.commands;
-+package id.universenetwork.sfa_loader.libraries.infinitylib.commands;
- 
- import java.util.Arrays;
- import java.util.HashMap;
-diff --git a/src/main/java/io/github/mooy1/infinitylib/commands/SubCommand.java b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/SubCommand.java
-similarity index 96%
-rename from src/main/java/io/github/mooy1/infinitylib/commands/SubCommand.java
-rename to src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/SubCommand.java
-index a9fc80d..52eac6a 100644
---- a/src/main/java/io/github/mooy1/infinitylib/commands/SubCommand.java
-+++ b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/commands/SubCommand.java
-@@ -1,4 +1,4 @@
--package io.github.mooy1.infinitylib.commands;
-+package id.universenetwork.sfa_loader.libraries.infinitylib.commands;
- 
- import java.util.List;
- import java.util.Locale;
 diff --git a/src/main/java/io/github/mooy1/infinitylib/common/CoolDowns.java b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/common/CoolDowns.java
 similarity index 91%
 rename from src/main/java/io/github/mooy1/infinitylib/common/CoolDowns.java
@@ -725,10 +636,10 @@ index 3605f64..f57f935 100644
 +
  }
 diff --git a/src/main/java/io/github/mooy1/infinitylib/core/AbstractAddon.java b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/core/AbstractAddon.java
-similarity index 90%
+similarity index 82%
 rename from src/main/java/io/github/mooy1/infinitylib/core/AbstractAddon.java
 rename to src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/core/AbstractAddon.java
-index 967e693..bc9fa3a 100644
+index 967e693..20a2121 100644
 --- a/src/main/java/io/github/mooy1/infinitylib/core/AbstractAddon.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/core/AbstractAddon.java
 @@ -1,4 +1,4 @@
@@ -737,17 +648,30 @@ index 967e693..bc9fa3a 100644
  
  import java.io.File;
  import java.util.Objects;
-@@ -14,8 +14,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
+@@ -9,14 +9,10 @@ import javax.annotation.Nonnull;
+ import javax.annotation.ParametersAreNonnullByDefault;
+ 
+ import org.bukkit.NamespacedKey;
+-import org.bukkit.command.PluginCommand;
+ import org.bukkit.plugin.PluginDescriptionFile;
  import org.bukkit.plugin.java.JavaPlugin;
  import org.bukkit.plugin.java.JavaPluginLoader;
  
 -import io.github.mooy1.infinitylib.InfinityLib;
 -import io.github.mooy1.infinitylib.commands.AddonCommand;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.commands.AddonCommand;
- 
+-
  /**
   * Extend this in your main plugin class to access a bunch of utilities
-@@ -64,15 +63,6 @@ public abstract class AbstractAddon extends JavaPlugin {
+  * <br><br> Standalone version of InfinityLib
+@@ -31,7 +27,6 @@ public abstract class AbstractAddon extends JavaPlugin {
+ 
+     private final Environment environment;
+ 
+-    private AddonCommand command;
+     private AddonConfig config;
+     private boolean brokenConfig;
+     private boolean disabling;
+@@ -64,15 +59,6 @@ public abstract class AbstractAddon extends JavaPlugin {
      }
  
      private void validate() {
@@ -763,6 +687,42 @@ index 967e693..bc9fa3a 100644
          if (instance != null) {
              throw new IllegalStateException("Addon " + instance.getName() + " is already using this InfinityLib, Shade an relocate your own!");
          }
+@@ -121,12 +107,6 @@ public abstract class AbstractAddon extends JavaPlugin {
+             e.printStackTrace();
+         }
+ 
+-        // Get plugin command
+-        PluginCommand pluginCommand = getCommand(getName());
+-        if (pluginCommand != null) {
+-            command = new AddonCommand(pluginCommand);
+-        }
+-
+         // Call addon enable
+         try {
+             enable();
+@@ -156,7 +136,6 @@ public abstract class AbstractAddon extends JavaPlugin {
+         finally {
+             disabling = false;
+             instance = null;
+-            command = null;
+             config = null;
+         }
+     }
+@@ -190,14 +169,6 @@ public abstract class AbstractAddon extends JavaPlugin {
+      */
+     protected abstract void disable();
+ 
+-    /**
+-     * Gets the command of the same name as this addon
+-     */
+-    @Nonnull
+-    protected final AddonCommand getAddonCommand() {
+-        return Objects.requireNonNull(instance().command, "Command '" + getName() + "' missing from plugin.yml!");
+-    }
+-
+     @Nonnull
+     @Override
+     public final AddonConfig getConfig() {
 diff --git a/src/main/java/io/github/mooy1/infinitylib/core/AddonConfig.java b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/core/AddonConfig.java
 similarity index 93%
 rename from src/main/java/io/github/mooy1/infinitylib/core/AddonConfig.java
@@ -1178,6 +1138,428 @@ index 07c5066..798a4bb 100644
  
  import javax.annotation.ParametersAreNonnullByDefault;
  
+diff --git a/src/main/java/io/github/mooy1/infinitylib/commands/AddonCommand.java b/src/main/java/io/github/mooy1/infinitylib/commands/AddonCommand.java
+deleted file mode 100644
+index 1221c46..0000000
+--- a/src/main/java/io/github/mooy1/infinitylib/commands/AddonCommand.java
++++ /dev/null
+@@ -1,100 +0,0 @@
+-package io.github.mooy1.infinitylib.commands;
+-
+-import java.util.ArrayList;
+-import java.util.Collections;
+-import java.util.List;
+-import java.util.Locale;
+-import java.util.Objects;
+-
+-import javax.annotation.ParametersAreNonnullByDefault;
+-
+-import org.bukkit.command.Command;
+-import org.bukkit.command.CommandSender;
+-import org.bukkit.command.PluginCommand;
+-import org.bukkit.command.TabExecutor;
+-import org.bukkit.event.EventHandler;
+-import org.bukkit.event.EventPriority;
+-import org.bukkit.event.Listener;
+-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+-import org.bukkit.event.server.ServerCommandEvent;
+-
+-import io.github.mooy1.infinitylib.common.Events;
+-import io.github.mooy1.infinitylib.core.AbstractAddon;
+-
+-/**
+- * The main command of an addon, which can hold multiple sub commands
+- *
+- * @author Mooy1
+- */
+-@ParametersAreNonnullByDefault
+-public final class AddonCommand extends ParentCommand implements TabExecutor, Listener {
+-
+-    private final String help;
+-    private final String slashHelp;
+-
+-    public AddonCommand(String command) {
+-        this(Objects.requireNonNull(AbstractAddon.instance().getCommand(command),
+-                "No such command '" + command + "'! Add it it to your plugin.yml!"));
+-    }
+-
+-    public AddonCommand(PluginCommand command) {
+-        super(command.getName(), command.getDescription());
+-
+-        command.setExecutor(this);
+-        command.setTabCompleter(this);
+-
+-        Events.registerListener(this);
+-
+-        help = "help " + command.getName();
+-        slashHelp = "/" + help;
+-
+-        addSub(new InfoCommand(AbstractAddon.instance()));
+-        addSub(new AliasesCommand(command));
+-    }
+-
+-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+-    private void onServerCommand(ServerCommandEvent e) {
+-        if (e.getCommand().toLowerCase(Locale.ROOT).startsWith(help)) {
+-            e.setCommand(name());
+-        }
+-    }
+-
+-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+-    private void onPlayerCommand(PlayerCommandPreprocessEvent e) {
+-        if (e.getMessage().toLowerCase(Locale.ROOT).startsWith(slashHelp)) {
+-            e.setMessage("/" + name());
+-        }
+-    }
+-
+-    @Override
+-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+-        execute(sender, args);
+-        return true;
+-    }
+-
+-    @Override
+-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+-        List<String> strings = new ArrayList<>();
+-        complete(sender, args, strings);
+-        List<String> returnList = new ArrayList<>();
+-        String arg = args[args.length - 1].toLowerCase(Locale.ROOT);
+-        for (String item : strings) {
+-            if (item.toLowerCase(Locale.ROOT).contains(arg)) {
+-                returnList.add(item);
+-                if (returnList.size() >= 64) {
+-                    break;
+-                }
+-            }
+-            else if (item.equalsIgnoreCase(arg)) {
+-                return Collections.emptyList();
+-            }
+-        }
+-        return returnList;
+-    }
+-
+-    @Override
+-    String fullName() {
+-        return name();
+-    }
+-
+-}
+diff --git a/src/main/java/io/github/mooy1/infinitylib/commands/AliasesCommand.java b/src/main/java/io/github/mooy1/infinitylib/commands/AliasesCommand.java
+deleted file mode 100644
+index 3e370d7..0000000
+--- a/src/main/java/io/github/mooy1/infinitylib/commands/AliasesCommand.java
++++ /dev/null
+@@ -1,30 +0,0 @@
+-package io.github.mooy1.infinitylib.commands;
+-
+-import java.util.List;
+-
+-import javax.annotation.ParametersAreNonnullByDefault;
+-
+-import org.bukkit.command.CommandSender;
+-import org.bukkit.command.PluginCommand;
+-
+-@ParametersAreNonnullByDefault
+-final class AliasesCommand extends SubCommand {
+-
+-    private final String message;
+-
+-    AliasesCommand(PluginCommand command) {
+-        super("aliases", "lists the available aliases for this command");
+-        message = "Aliases for /" + command.getName() + ": " + command.getAliases();
+-    }
+-
+-    @Override
+-    protected void execute(CommandSender sender, String[] args) {
+-        sender.sendMessage(message);
+-    }
+-
+-    @Override
+-    protected void complete(CommandSender sender, String[] args, List<String> completions) {
+-
+-    }
+-
+-}
+diff --git a/src/main/java/io/github/mooy1/infinitylib/commands/HelpCommand.java b/src/main/java/io/github/mooy1/infinitylib/commands/HelpCommand.java
+deleted file mode 100644
+index 9f17b48..0000000
+--- a/src/main/java/io/github/mooy1/infinitylib/commands/HelpCommand.java
++++ /dev/null
+@@ -1,38 +0,0 @@
+-package io.github.mooy1.infinitylib.commands;
+-
+-import java.util.List;
+-
+-import javax.annotation.ParametersAreNonnullByDefault;
+-
+-import org.bukkit.ChatColor;
+-import org.bukkit.command.CommandSender;
+-
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
+-
+-@ParametersAreNonnullByDefault
+-final class HelpCommand extends SubCommand {
+-
+-    private final ParentCommand command;
+-
+-    HelpCommand(ParentCommand command) {
+-        super("help", "Displays this");
+-        this.command = command;
+-    }
+-
+-    @Override
+-    public void execute(CommandSender sender, String[] args) {
+-        sender.sendMessage("");
+-        sender.sendMessage(ChatColors.color("&7----------&b /" + command.fullName() + " Help &7----------"));
+-        sender.sendMessage("");
+-        for (SubCommand sub : command.available(sender)) {
+-            sender.sendMessage("/" + sub.fullName() + ChatColor.YELLOW + " - " + sub.description());
+-        }
+-        sender.sendMessage("");
+-    }
+-
+-    @Override
+-    public void complete(CommandSender sender, String[] args, List<String> tabs) {
+-
+-    }
+-
+-}
+diff --git a/src/main/java/io/github/mooy1/infinitylib/commands/InfoCommand.java b/src/main/java/io/github/mooy1/infinitylib/commands/InfoCommand.java
+deleted file mode 100644
+index 9d07a5e..0000000
+--- a/src/main/java/io/github/mooy1/infinitylib/commands/InfoCommand.java
++++ /dev/null
+@@ -1,43 +0,0 @@
+-package io.github.mooy1.infinitylib.commands;
+-
+-import java.util.List;
+-
+-import javax.annotation.ParametersAreNonnullByDefault;
+-
+-import org.bukkit.command.CommandSender;
+-
+-import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
+-
+-@ParametersAreNonnullByDefault
+-final class InfoCommand extends SubCommand {
+-
+-    private final String[] message;
+-
+-    InfoCommand(SlimefunAddon addon) {
+-        super("info", "Gives addon and slimefun version and discord links");
+-        Slimefun slimefun = Slimefun.instance();
+-        message = new String[] {
+-                "",
+-                ChatColors.color("&b" + addon.getName() + " Info"),
+-                ChatColors.color("&bSlimefun Version: &7" + (slimefun == null ? "null" : slimefun.getPluginVersion())),
+-                ChatColors.color("&bSlimefun Discord: &7Discord.gg/slimefun"),
+-                ChatColors.color("&bAddon Version: &7" + addon.getPluginVersion()),
+-                ChatColors.color("&bAddon Community: &7Discord.gg/SqD3gg5SAU"),
+-                ChatColors.color("&bGithub: &7" + addon.getBugTrackerURL()),
+-                ""
+-        };
+-    }
+-
+-    @Override
+-    protected void execute(CommandSender sender, String[] args) {
+-        sender.sendMessage(message);
+-    }
+-
+-    @Override
+-    protected void complete(CommandSender sender, String[] args, List<String> tabs) {
+-
+-    }
+-
+-}
+diff --git a/src/main/java/io/github/mooy1/infinitylib/commands/ParentCommand.java b/src/main/java/io/github/mooy1/infinitylib/commands/ParentCommand.java
+deleted file mode 100644
+index 2daeddf..0000000
+--- a/src/main/java/io/github/mooy1/infinitylib/commands/ParentCommand.java
++++ /dev/null
+@@ -1,100 +0,0 @@
+-package io.github.mooy1.infinitylib.commands;
+-
+-import java.util.Arrays;
+-import java.util.HashMap;
+-import java.util.HashSet;
+-import java.util.List;
+-import java.util.Map;
+-import java.util.Set;
+-
+-import javax.annotation.Nonnull;
+-import javax.annotation.ParametersAreNonnullByDefault;
+-
+-import org.bukkit.command.CommandSender;
+-
+-@ParametersAreNonnullByDefault
+-public class ParentCommand extends SubCommand {
+-
+-    private final Map<String, SubCommand> commands = new HashMap<>();
+-    private final SubCommand helpCommand = new HelpCommand(this);
+-
+-    public ParentCommand(String name, String description, String perm) {
+-        super(name, description, perm);
+-        addSub(helpCommand);
+-    }
+-
+-    public ParentCommand(String name, String description, boolean op) {
+-        super(name, description, op);
+-        addSub(helpCommand);
+-    }
+-
+-    public ParentCommand(String name, String description) {
+-        super(name, description);
+-        addSub(helpCommand);
+-    }
+-
+-    @Nonnull
+-    public final ParentCommand addSub(SubCommand command) {
+-        if (command == this) {
+-            throw new IllegalArgumentException("'" + command.name() + "' cannot be added to itself!");
+-        }
+-        if (command == parent) {
+-            throw new IllegalArgumentException("Parent command '" + command.name() + "' cannot be added to child " + name());
+-        }
+-        commands.compute(command.name(), (name, cmd) -> {
+-            if (cmd != null) {
+-                throw new IllegalArgumentException("Duplicate command '" + command.name() + "' cannot be added to " + name());
+-            }
+-            command.parent = this;
+-            return command;
+-        });
+-        return this;
+-    }
+-
+-    @Override
+-    protected final void execute(CommandSender sender, String[] args) {
+-        if (args.length == 0) {
+-            execute(sender);
+-        }
+-        else {
+-            SubCommand command = commands.get(args[0]);
+-            if (command != null && command.canUse(sender)) {
+-                command.execute(sender, Arrays.copyOfRange(args, 1, args.length));
+-            }
+-        }
+-    }
+-
+-    /**
+-     * This is called when no sub command is used
+-     */
+-    protected void execute(CommandSender sender) {
+-        helpCommand.execute(sender, new String[0]);
+-    }
+-
+-    @Override
+-    protected final void complete(CommandSender sender, String[] args, List<String> completions) {
+-        SubCommand command = commands.get(args[0]);
+-        if (command != null && command.canUse(sender)) {
+-            command.complete(sender, Arrays.copyOfRange(args, 1, args.length), completions);
+-        }
+-        else {
+-            for (SubCommand sub : commands.values()) {
+-                if (sub.canUse(sender)) {
+-                    completions.add(sub.name());
+-                }
+-            }
+-        }
+-    }
+-
+-    @Nonnull
+-    final Set<SubCommand> available(CommandSender sender) {
+-        Set<SubCommand> set = new HashSet<>();
+-        for (SubCommand command : commands.values()) {
+-            if (command.canUse(sender)) {
+-                set.add(command);
+-            }
+-        }
+-        return set;
+-    }
+-
+-}
+\ No newline at end of file
+diff --git a/src/main/java/io/github/mooy1/infinitylib/commands/SubCommand.java b/src/main/java/io/github/mooy1/infinitylib/commands/SubCommand.java
+deleted file mode 100644
+index a9fc80d..0000000
+--- a/src/main/java/io/github/mooy1/infinitylib/commands/SubCommand.java
++++ /dev/null
+@@ -1,74 +0,0 @@
+-package io.github.mooy1.infinitylib.commands;
+-
+-import java.util.List;
+-import java.util.Locale;
+-import java.util.function.Predicate;
+-
+-import javax.annotation.ParametersAreNonnullByDefault;
+-
+-import org.bukkit.command.CommandSender;
+-
+-/**
+- * A command
+- *
+- * @author Mooy1
+- */
+-@ParametersAreNonnullByDefault
+-public abstract class SubCommand {
+-
+-    private final Predicate<CommandSender> permission;
+-    private final String description;
+-    private final String name;
+-    private String fullName;
+-    ParentCommand parent;
+-
+-    protected SubCommand(String name, String description, String perm) {
+-        this.name = name.toLowerCase(Locale.ROOT);
+-        this.description = description;
+-        this.permission = sender -> sender.hasPermission(perm);
+-    }
+-
+-    protected SubCommand(String name, String description, boolean op) {
+-        this.name = name.toLowerCase(Locale.ROOT);
+-        this.description = description;
+-        this.permission = op ? CommandSender::isOp : sender -> true;
+-    }
+-
+-    protected SubCommand(String name, String description) {
+-        this(name, description, false);
+-    }
+-
+-    protected abstract void execute(CommandSender sender, String[] args);
+-
+-    protected abstract void complete(CommandSender sender, String[] args, List<String> completions);
+-
+-    public final boolean canUse(CommandSender sender) {
+-        return permission.test(sender);
+-    }
+-
+-    public final String name() {
+-        return name;
+-    }
+-
+-    public final String description() {
+-        return description;
+-    }
+-
+-    String fullName() {
+-        if (fullName == null) {
+-            fullName = parent.fullName() + " " + name();
+-        }
+-        return fullName;
+-    }
+-
+-    @Override
+-    public int hashCode() {
+-        return name.hashCode();
+-    }
+-
+-    @Override
+-    public boolean equals(Object obj) {
+-        return obj instanceof SubCommand && ((SubCommand) obj).name.equals(name);
+-    }
+-
+-}
 diff --git a/src/test/java/io/github/mooy1/infinitylib/TestInfinityLib.java b/src/test/java/io/github/mooy1/infinitylib/TestInfinityLib.java
 deleted file mode 100644
 index beaebb2..0000000

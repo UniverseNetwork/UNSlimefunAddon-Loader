@@ -50,12 +50,13 @@ public class CommandManager {
         }
     }
 
-    public void register(Object cmd) {
-        try {
-            parser.parse(cmd);
-        } catch (Exception e) {
-            LogUtils.log(Level.SEVERE, "Failed to register command class: &e"
-                    + cmd.getClass().getSimpleName(), e);
-        }
+    public void register(Object... cmds) {
+        for (Object cmd : cmds)
+            try {
+                parser.parse(cmd);
+            } catch (Exception e) {
+                LogUtils.log(Level.SEVERE, "Failed to register command class: &e"
+                        + cmd.getClass().getSimpleName(), e);
+            }
     }
 }

@@ -45,6 +45,7 @@ applyPatch InfinityLib-Standalone
 applyPatch Addons/DynaTech
 applyPatch Addons/ExtraTools
 applyPatch Addons/InfinityExpansion
+applyPatch Addons/SFCalc
 applyPatch Addons/SMG
 
 enableCommitSigningIfNeeded

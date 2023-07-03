@@ -64,6 +64,10 @@
                                     <pattern>com.google.common</pattern>
                                     <shadedPattern>id.universenetwork.sfa_loader.libraries.guava</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>io.github.seggan.errorreporter</pattern>
+                                    <shadedPattern>id.universenetwork.sfa_loader.libraries.errorreporter</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
@@ -117,6 +121,11 @@
             <groupId>io.github.mooy1</groupId>
             <artifactId>InfinityExpansion</artifactId>
             <version>MODIFIED</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.seggan.sfcalc</groupId>
+            <artifactId>SFCalc</artifactId>
+            <version>UNOFFICIAL</version>
         </dependency>
         <dependency>
             <groupId>me.waleks</groupId>
