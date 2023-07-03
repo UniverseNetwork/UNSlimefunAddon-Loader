@@ -1,10 +1,10 @@
-From 59a088c4213259a30eb09d26404d4dde72bb6167 Mon Sep 17 00:00:00 2001
+From fc1ac82a30c69a98d4cb1f332bdfe365d416271b Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Mon, 3 Jul 2023 17:34:09 +0700
+Date: Mon, 3 Jul 2023 17:54:22 +0700
 Subject: [PATCH] InfinityExpansion
 
 ---
- pom.xml                                       |  97 +--------
+ pom.xml                                       |  95 +--------
  .../infinityexpansion/InfinityExpansion.java  |  66 +++++++
  .../infinityexpansion/categories/Groups.java  |  22 +--
  .../categories/InfinityGroup.java             |  73 +++----
@@ -60,7 +60,7 @@ Subject: [PATCH] InfinityExpansion
  .../InfinityExpansion}/config.yml             |  10 +-
  src/main/resources/plugin.yml                 |  27 ---
  .../TestInfinityExpansion.java                |  28 ---
- 56 files changed, 1147 insertions(+), 1480 deletions(-)
+ 56 files changed, 1146 insertions(+), 1479 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/Groups.java (70%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/InfinityGroup.java (93%)
@@ -118,7 +118,7 @@ Subject: [PATCH] InfinityExpansion
  delete mode 100644 src/test/java/io/github/mooy1/infinityexpansion/TestInfinityExpansion.java
 
 diff --git a/pom.xml b/pom.xml
-index c107f82..d533744 100644
+index c107f82..a475673 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,32 +1,24 @@
@@ -244,8 +244,7 @@ index c107f82..d533744 100644
              <plugin>
                  <groupId>org.apache.maven.plugins</groupId>
                  <artifactId>maven-shade-plugin</artifactId>
--                <version>3.3.0</version>
-+                <version>3.2.4</version>
+                 <version>3.3.0</version>
                  <configuration>
                      <minimizeJar>true</minimizeJar>
 -                    <relocations>
