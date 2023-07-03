@@ -1,6 +1,6 @@
-From 117610d3778a4f5b0a91b43cd73fa81f096d46a4 Mon Sep 17 00:00:00 2001
+From 6bf6fb08f50e9905e9687d2751665a30932bc6f6 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Mon, 3 Jul 2023 23:12:11 +0700
+Date: Mon, 3 Jul 2023 23:28:22 +0700
 Subject: [PATCH] InfinityExpansion
 
 ---
@@ -124,7 +124,7 @@ Subject: [PATCH] InfinityExpansion
  delete mode 100644 src/test/java/io/github/mooy1/infinityexpansion/TestInfinityExpansion.java
 
 diff --git a/pom.xml b/pom.xml
-index c107f82..a475673 100644
+index b0c29f5..a475673 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,32 +1,24 @@
@@ -177,7 +177,7 @@ index c107f82..a475673 100644
 -        <dependency>
 -            <groupId>com.github.Slimefun</groupId>
 -            <artifactId>Slimefun4</artifactId>
--            <version>5dbe617205</version>
+-            <version>RC-34</version>
 -            <scope>provided</scope>
 -        </dependency>
 -
