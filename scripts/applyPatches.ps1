@@ -19,8 +19,8 @@ function applyPatch($dir) {
     git reset --hard HEAD
 
     echo "  Applying a patch to $name..."
-    git am --abort >$null 2>&1
-    git am --3way --ignore-whitespace "$basedir/patches/$name.patch" >$null 2>&1
+    git am --abort
+    git am --3way --ignore-whitespace "$basedir/patches/$name.patch"
     if ($LASTEXITCODE -ne 0) {
         echo "  Something did not apply cleanly to $name."
         echo "  Please review above details and finish the apply then"
