@@ -7,8 +7,8 @@ on:
     paths:
       - '**'
       - '!*.md'
-      - '!/.github/**'
-      - '!/.gitignore'
+      - '!.github/**'
+      - '!.gitignore'
 
 jobs:
   build:
