@@ -1,10 +1,13 @@
 name: Java CI
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - master
+    paths:
+      - '**'
+      - '!*.md'
+      - '!/.github/**'
 
 jobs:
   build:
@@ -25,8 +28,8 @@ jobs:
       - name: Apply patches
         shell: cmd
         run: |
-          git config --global user.name ARVIN3108
-          git config --global user.email 31arvin08@gmail.com
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
           build.cmd
 
       - name: Build with Maven
