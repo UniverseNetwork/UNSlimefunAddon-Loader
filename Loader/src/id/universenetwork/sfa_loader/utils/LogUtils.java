@@ -4,6 +4,7 @@ import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,12 +19,13 @@ import java.util.regex.Pattern;
  * @see <a href="https://www.spigotmc.org/threads/colors-in-console.87576">Original code/threads</a>
  */
 @UtilityClass
+@SuppressWarnings("deprecation")
 public class LogUtils {
     private final String COLOR_PATTERN = "\u001b[38;5;%dm";
     private final String FORMAT_PATTERN = "\u001b[%dm";
 
     /**
-     * Logs a message in the console. See {@link Logger#log(Level, String, Throwable)}
+     * Logs a message in the console.
      * The message will be converted in colored strings with the chosen prefix in config.yml
      *
      * @param lvl the Level of the log
@@ -31,46 +33,63 @@ public class LogUtils {
      * @param e   the exception
      * @author Timeout
      * @author ARVIN3108 ID
+     * @see Logger#log(Level, String, Throwable)
      */
     public void log(Level lvl, String msg, Throwable e) {
         if (lvl.equals(Level.WARNING))
-            Bukkit.getLogger().log(lvl, convertStringMessage("%p% &e" + msg), e);
+            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &e" + msg), e);
         if (lvl.equals(Level.SEVERE))
-            Bukkit.getLogger().log(lvl, convertStringMessage("%p% &c" + msg), e);
-        else Bukkit.getLogger().log(lvl, convertStringMessage("%p% &r" + msg), e);
+            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &c" + msg), e);
+        else Bukkit.getLogger().log(lvl, checkAndConvert("%p% &r" + msg), e);
     }
 
     /**
-     * Logs a message in the console. See {@link Logger#info(String)}
+     * Logs a message in the console.
      * The message will be converted in colored strings with the chosen prefix in config.yml
      *
      * @param msg the message
      * @author ARVIN3108 ID
+     * @see Logger#info(String)
      */
     public void info(String msg) {
-        Bukkit.getLogger().info(convertStringMessage("%p% &r" + msg));
+        TextUtils.send(Bukkit.getConsoleSender(), "%p% &r" + msg);
     }
 
     /**
-     * Logs a warn message in the console. See {@link Logger#warning(String)}
+     * Logs a warn message in the console.
      * The message will be converted in colored strings with the chosen prefix in config.yml
      *
      * @param msg the message
      * @author ARVIN3108 ID
+     * @see Logger#warning(String)
      */
     public void warning(String msg) {
-        Bukkit.getLogger().warning(convertStringMessage("%p% &e" + msg));
+        Bukkit.getLogger().warning(checkAndConvert("%p% &e" + msg));
     }
 
     /**
-     * Logs an error message in the console. See {@link Logger#severe(String)}
+     * Logs an error message in the console.
      * The message will be converted in colored strings with the chosen prefix in config.yml
      *
      * @param msg the message
      * @author ARVIN3108 ID
+     * @see Logger#severe(String)
      */
     public void severe(String msg) {
-        Bukkit.getLogger().severe(convertStringMessage("%p% &c" + msg));
+        Bukkit.getLogger().severe(checkAndConvert("%p% &c" + msg));
+    }
+
+    /**
+     * Check if we can convert with ChatColor or not
+     *
+     * @param msg the message. Can be null
+     * @return the converted message from
+     * {@link ChatColor#translateAlternateColorCodes(char, String)} or
+     * {@link #convertStringMessage(String)}
+     */
+    private String checkAndConvert(String msg) {
+        if (JavaUtils.isClassDeprecated(ChatColor.class)) return convertStringMessage(msg);
+        return TextUtils.translateColor(msg);
     }
 
     /**

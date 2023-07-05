@@ -55,6 +55,7 @@ public class TextUtils {
     /**
      * Translate color codes to actual color using Bukkit API and replace %p% with prefix
      */
+    @SuppressWarnings("deprecation")
     public String translateColor(String txt) {
         txt = StringUtils.replace(txt, "%p%",
                 AbstractAddon.config().getString("plugin-settings.prefix"));

@@ -1,6 +1,6 @@
-From 7d0e9ebb9ee9b8e6da79ba1518f8c385f7ca6c67 Mon Sep 17 00:00:00 2001
+From c83f9d3bb955b3b836a9789860dcd156ee6bbc01 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Mon, 3 Jul 2023 01:00:09 +0700
+Date: Wed, 5 Jul 2023 09:32:17 +0700
 Subject: [PATCH] DynaTech
 
 ---
@@ -306,7 +306,7 @@ index adae2a8..fd90bf0 100644
  </project>
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
 new file mode 100644
-index 0000000..6d7b2a5
+index 0000000..22c75f6
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
 @@ -0,0 +1,87 @@
@@ -325,6 +325,7 @@ index 0000000..6d7b2a5
 +import id.universenetwork.sfa_loader.annotations.AddonHooks;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
++import id.universenetwork.sfa_loader.utils.JavaUtils;
 +import id.universenetwork.sfa_loader.utils.LogUtils;
 +import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 +import org.bukkit.Bukkit;
@@ -362,7 +363,7 @@ index 0000000..6d7b2a5
 +        Bukkit.getScheduler().runTaskTimer(AbstractAddon.instance(), () -> this.tickInterval++, 0, TICK_TIME);
 +
 +        //TODO: I have been updating javas left right and center 
-+        if (System.getProperty("java.version").startsWith("1.8")) {
++        if (JavaUtils.getJavaVersion() < 16) {
 +            LogUtils.warning("           DynaTech will be switching to JAVA 16        ");
 +            LogUtils.warning("                Please Update to JAVA 16                ");
 +        }
@@ -395,7 +396,6 @@ index 0000000..6d7b2a5
 +
 +        Bukkit.getScheduler().runTask(AbstractAddon.instance(), runnable);
 +    }
-+
 +}
 diff --git a/src/main/java/me/profelements/dynatech/DynaTechItems.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTechItems.java
 similarity index 91%
