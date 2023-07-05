@@ -6,6 +6,7 @@ import id.universenetwork.sfa_loader.manager.CommandManager;
 import id.universenetwork.sfa_loader.utils.LogUtils;
 import org.bukkit.Bukkit;
 
+@SuppressWarnings("unused")
 public final class Main extends AbstractAddon {
     @Override
     protected void enable() {
