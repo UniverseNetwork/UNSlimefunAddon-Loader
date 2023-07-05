@@ -20,8 +20,8 @@ jobs:
           distribution: 'adopt'
 
       - name: Apply patches
-        shell: pwsh
-        run: scripts/applyPatches.ps1
+        shell: cmd
+        run: build.cmd
 
       - name: Build with Maven
         run: mvn install
