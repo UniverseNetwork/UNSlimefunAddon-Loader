@@ -49,10 +49,6 @@
                             </filters>
                             <relocations>
                                 <relocation>
-                                    <pattern>cloud.commandframework</pattern>
-                                    <shadedPattern>id.universenetwork.sfa_loader.libraries.cloud</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>dev.j3fftw.extrautils</pattern>
                                     <shadedPattern>id.universenetwork.sfa_loader.libraries.extrautils</shadedPattern>
                                 </relocation>

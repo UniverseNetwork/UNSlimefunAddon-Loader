@@ -1,6 +1,6 @@
-From c83f9d3bb955b3b836a9789860dcd156ee6bbc01 Mon Sep 17 00:00:00 2001
+From c20cc549ea12f1b0c828151fa2afa3d0c291abb3 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Wed, 5 Jul 2023 09:32:17 +0700
+Date: Sun, 9 Jul 2023 18:31:38 +0700
 Subject: [PATCH] DynaTech
 
 ---
@@ -20,7 +20,7 @@ Subject: [PATCH] DynaTech
  .../backpacks/SoulboundPicnicBacket.java      |  17 +-
  .../items/electric/AntigravityBubble.java     |  51 +-
  .../items/electric/BandaidManager.java        |  93 ++-
- .../dynatech/items/electric/BarbedWire.java   |  36 +-
+ .../dynatech/items/electric/BarbedWire.java   |  41 +-
  .../items/electric/FurnaceController.java     |  44 +-
  .../items/electric/KitchenAutoCrafter.java    |  16 +-
  .../dynatech/items/electric/MaterialHive.java | 456 ++++++------
@@ -52,27 +52,28 @@ Subject: [PATCH] DynaTech
  .../items/misc/DimensionalHomeDimension.java  |  73 +-
  .../addons}/dynatech/items/misc/ItemBand.java |  24 +-
  .../dynatech/items/misc/MobDropItem.java      |  62 +-
- .../dynatech/items/misc/StarDustMeteor.java   | 139 ++--
+ .../dynatech/items/misc/StarDustMeteor.java   | 143 ++--
  .../addons}/dynatech/items/misc/VexGem.java   |  83 ++-
  .../dynatech/items/misc/WitherGolem.java      |  31 +
  .../dynatech/items/tools/AngelGem.java        | 285 ++++---
  .../dynatech/items/tools/DimensionalHome.java |  61 +-
  .../items/tools/ElectricalStimulator.java     |   5 +-
  .../dynatech/items/tools/InventoryFilter.java |   4 +-
- .../dynatech/items/tools/LiquidTank.java      |  98 +--
+ .../dynatech/items/tools/LiquidTank.java      | 168 +++++
  .../addons}/dynatech/items/tools/Scoop.java   |  19 +-
  .../dynatech/items/tools/TesseractBinder.java | 121 ++-
  .../ElectricalStimulatorListener.java         | 121 ++-
  .../listeners/InventoryFilterListener.java    | 143 ++--
- .../listeners/PicnicBasketListener.java       | 114 ++-
+ .../listeners/PicnicBasketListener.java       | 121 ++-
  .../dynatech/setup/DynaTechItemsSetup.java    | 695 +++++++++---------
  .../addons}/dynatech/tasks/ItemBandTask.java  | 134 ++--
  .../me/profelements/dynatech/DynaTech.java    | 120 ---
  .../dynatech/items/misc/WitherGolem.java      |  33 -
+ .../dynatech/items/tools/LiquidTank.java      | 218 ------
  .../addons-config/DynaTech/config.yml         |   1 +
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  24 -
- 68 files changed, 3992 insertions(+), 4709 deletions(-)
+ 69 files changed, 4136 insertions(+), 4869 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/DynaTechItems.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/attributes/LiquidStorage.java (80%)
@@ -88,7 +89,7 @@ Subject: [PATCH] DynaTech
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/backpacks/SoulboundPicnicBacket.java (77%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/AntigravityBubble.java (67%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/BandaidManager.java (69%)
- rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/BarbedWire.java (91%)
+ rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/BarbedWire.java (86%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/FurnaceController.java (82%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/KitchenAutoCrafter.java (66%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/MaterialHive.java (73%)
@@ -120,23 +121,24 @@ Subject: [PATCH] DynaTech
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/misc/DimensionalHomeDimension.java (79%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/misc/ItemBand.java (88%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/misc/MobDropItem.java (90%)
- rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/misc/StarDustMeteor.java (75%)
+ rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/misc/StarDustMeteor.java (70%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/misc/VexGem.java (92%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/misc/WitherGolem.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/AngelGem.java (62%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/DimensionalHome.java (51%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/ElectricalStimulator.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/InventoryFilter.java (89%)
- rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/LiquidTank.java (74%)
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/LiquidTank.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/Scoop.java (87%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/TesseractBinder.java (83%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/listeners/ElectricalStimulatorListener.java (67%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/listeners/InventoryFilterListener.java (75%)
- rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/listeners/PicnicBasketListener.java (65%)
+ rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/listeners/PicnicBasketListener.java (62%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/setup/DynaTechItemsSetup.java (57%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/tasks/ItemBandTask.java (76%)
  delete mode 100644 src/main/java/me/profelements/dynatech/DynaTech.java
  delete mode 100644 src/main/java/me/profelements/dynatech/items/misc/WitherGolem.java
+ delete mode 100644 src/main/java/me/profelements/dynatech/items/tools/LiquidTank.java
  create mode 100644 src/main/resources/addons-config/DynaTech/config.yml
  delete mode 100644 src/main/resources/config.yml
  delete mode 100644 src/main/resources/plugin.yml
@@ -2305,13 +2307,13 @@ index 5e6b049..6f91444 100644
 -    
  }
 diff --git a/src/main/java/me/profelements/dynatech/items/electric/BarbedWire.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/BarbedWire.java
-similarity index 91%
+similarity index 86%
 rename from src/main/java/me/profelements/dynatech/items/electric/BarbedWire.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/BarbedWire.java
-index 320f585..f058a59 100644
+index 320f585..8d3b07f 100644
 --- a/src/main/java/me/profelements/dynatech/items/electric/BarbedWire.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/BarbedWire.java
-@@ -1,10 +1,11 @@
+@@ -1,10 +1,13 @@
 -package me.profelements.dynatech.items.electric;
 -
 -import java.util.ArrayList;
@@ -2321,15 +2323,17 @@ index 320f585..f058a59 100644
 +package id.universenetwork.sfa_loader.addons.dynatech.items.electric;
  
 +import id.universenetwork.sfa_loader.addons.dynatech.items.abstracts.AbstractElectricTicker;
++import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 +import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
  import org.bukkit.Location;
  import org.bukkit.block.Block;
  import org.bukkit.entity.Entity;
-@@ -13,15 +14,11 @@ import org.bukkit.inventory.ItemStack;
+@@ -13,15 +16,11 @@ import org.bukkit.inventory.ItemStack;
  import org.bukkit.util.NumberConversions;
  import org.bukkit.util.Vector;
  
@@ -2348,7 +2352,7 @@ index 320f585..f058a59 100644
      private static final int DEFAULT_ENTITY_PUSH_FORCE = 10;
      private static final int DEFAULT_ENTITY_DETECT_RANGE = 9;
  
-@@ -29,7 +26,7 @@ public class BarbedWire extends AbstractElectricTicker {
+@@ -29,7 +28,7 @@ public class BarbedWire extends AbstractElectricTicker {
      private final ItemSetting<Integer> entityDetectRange = new ItemSetting<>(this, "entity-detect-range", DEFAULT_ENTITY_DETECT_RANGE);
  
      @ParametersAreNonnullByDefault
@@ -2357,7 +2361,17 @@ index 320f585..f058a59 100644
          super(group, item, recipeType, recipe);
          addItemSetting(entityPushForce, entityDetectRange);
      }
-@@ -87,22 +84,19 @@ public class BarbedWire extends AbstractElectricTicker {
+@@ -71,7 +70,8 @@ public class BarbedWire extends AbstractElectricTicker {
+         whitelist.add(EntityType.STRAY);
+         whitelist.add(EntityType.VEX);
+         whitelist.add(EntityType.VINDICATOR);
+-        whitelist.add(EntityType.WARDEN);
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_19))
++            whitelist.add(EntityType.WARDEN);
+         whitelist.add(EntityType.WITCH);
+         whitelist.add(EntityType.WITHER);
+         whitelist.add(EntityType.WITHER_SKELETON);
+@@ -87,22 +87,19 @@ public class BarbedWire extends AbstractElectricTicker {
          int entityDetectionRange = entityDetectRange.getValue();
          List<EntityType> entityTypeWhitelist = getEntityWhitelist();
          Location loc = block.getLocation();
@@ -8806,13 +8820,13 @@ index 809b38f..aa56ea8 100644
 +    }
 +}
 diff --git a/src/main/java/me/profelements/dynatech/items/misc/StarDustMeteor.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/misc/StarDustMeteor.java
-similarity index 75%
+similarity index 70%
 rename from src/main/java/me/profelements/dynatech/items/misc/StarDustMeteor.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/misc/StarDustMeteor.java
-index a31de5f..f9ba604 100644
+index a31de5f..3053df8 100644
 --- a/src/main/java/me/profelements/dynatech/items/misc/StarDustMeteor.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/misc/StarDustMeteor.java
-@@ -1,72 +1,67 @@
+@@ -1,72 +1,71 @@
 -package me.profelements.dynatech.items.misc;
 -
 -import io.github.thebusybiscuit.slimefun4.api.geo.GEOResource;
@@ -8888,10 +8902,12 @@ index a31de5f..f9ba604 100644
 +package id.universenetwork.sfa_loader.addons.dynatech.items.misc;
 +
 +import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
 +import io.github.thebusybiscuit.slimefun4.api.geo.GEOResource;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 +import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 +import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.UnplaceableBlock;
 +import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 +import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
@@ -8943,8 +8959,10 @@ index a31de5f..f9ba604 100644
 +
 +    @Override
 +    public int getDefaultSupply(@Nonnull Environment environment, @Nonnull Biome biome) {
-+        if (biome == Biome.MEADOW || biome == Biome.BADLANDS) return 16;
-+        else return 0;
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_18))
++            if (biome == Biome.MEADOW) return 16;
++        if (biome == Biome.BADLANDS) return 16;
++        return 0;
 +    }
 +
 +    @Override
@@ -9542,236 +9560,180 @@ index ef39be7..f08dc75 100644
      }
 -    
  }
-diff --git a/src/main/java/me/profelements/dynatech/items/tools/LiquidTank.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/LiquidTank.java
-similarity index 74%
-rename from src/main/java/me/profelements/dynatech/items/tools/LiquidTank.java
-rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/LiquidTank.java
-index ba772b5..e8e5ba8 100644
---- a/src/main/java/me/profelements/dynatech/items/tools/LiquidTank.java
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/LiquidTank.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/LiquidTank.java
+new file mode 100644
+index 0000000..68c845d
+--- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/LiquidTank.java
-@@ -1,6 +1,10 @@
--package me.profelements.dynatech.items.tools;
+@@ -0,0 +1,168 @@
 +package id.universenetwork.sfa_loader.addons.dynatech.items.tools;
- 
- 
++
++
 +import id.universenetwork.sfa_loader.addons.dynatech.DynaTech;
 +import id.universenetwork.sfa_loader.addons.dynatech.DynaTechItems;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
- import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
- import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
- import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
-@@ -8,21 +12,13 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
- import io.github.thebusybiscuit.slimefun4.core.attributes.NotPlaceable;
- import io.github.thebusybiscuit.slimefun4.core.handlers.EntityInteractHandler;
- import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
--import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
- import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
- import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
--import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
--import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
- import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
--import me.profelements.dynatech.DynaTech;
--import me.profelements.dynatech.DynaTechItems;
--import net.md_5.bungee.api.ChatColor;
--
--import org.bukkit.Bukkit;
-+import org.bukkit.ChatColor;
- import org.bukkit.Material;
- import org.bukkit.NamespacedKey;
- import org.bukkit.block.Block;
--import org.bukkit.block.BlockState;
- import org.bukkit.entity.EntityType;
- import org.bukkit.event.EventHandler;
- import org.bukkit.event.Listener;
-@@ -32,12 +28,10 @@ import org.bukkit.inventory.meta.ItemMeta;
- 
- import java.util.ArrayList;
- import java.util.List;
--import java.util.Optional;
- 
- public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
--
--    private static final NamespacedKey FLUID_NAME = new NamespacedKey(DynaTech.getInstance(), "liquid-name");
--    private static final NamespacedKey FLUID_AMOUNT = new NamespacedKey(DynaTech.getInstance(), "liquid-amount");
++import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
++import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++import io.github.thebusybiscuit.slimefun4.core.attributes.NotPlaceable;
++import io.github.thebusybiscuit.slimefun4.core.handlers.EntityInteractHandler;
++import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
++import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
++import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
++import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
++import org.bukkit.*;
++import org.bukkit.block.Block;
++import org.bukkit.entity.EntityType;
++import org.bukkit.entity.Player;
++import org.bukkit.event.EventHandler;
++import org.bukkit.event.Listener;
++import org.bukkit.event.player.PlayerBucketFillEvent;
++import org.bukkit.inventory.EquipmentSlot;
++import org.bukkit.inventory.ItemStack;
++import org.bukkit.inventory.meta.ItemMeta;
++
++import java.util.ArrayList;
++import java.util.List;
++
++public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
 +    private static final NamespacedKey FLUID_NAME = AbstractAddon.createKey("liquid-name");
 +    private static final NamespacedKey FLUID_AMOUNT = AbstractAddon.createKey("liquid-amount");
- 
-     private final int maxLiquidAmount;
- 
-@@ -46,7 +40,7 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
- 
-         this.maxLiquidAmount = maxLiquidAmount;
- 
--        Bukkit.getPluginManager().registerEvents(this, DynaTech.getInstance());
-+        Events.registerListener(this);
-         addItemHandler(onEntityClick());
-         addItemHandler(onRightClick());
-     }
-@@ -58,21 +52,22 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
-             }
-         };
-     }
 +
-     @EventHandler
-     private void onBucketChange(PlayerBucketFillEvent e) {
-         ItemStack item = e.getPlayer().getEquipment().getItem(e.getHand());
--        if (this.isItem(item) && this.canUse(e.getPlayer(), true) && SlimefunItem.getByItem(item) instanceof LiquidTank tank) {
++    private final int maxLiquidAmount;
++
++    public LiquidTank(ItemGroup itemGroup, SlimefunItemStack item, int maxLiquidAmount, RecipeType recipeType, ItemStack[] recipe) {
++        super(itemGroup, item, recipeType, recipe);
++
++        this.maxLiquidAmount = maxLiquidAmount;
++
++        Events.registerListener(this);
++        addItemHandler(onEntityClick());
++        addItemHandler(onRightClick());
++    }
++
++    private EntityInteractHandler onEntityClick() {
++        return (e, item, something) -> {
++            if ((e.getRightClicked().getType() == EntityType.COW || e.getRightClicked().getType() == EntityType.MUSHROOM_COW) && SlimefunUtils.isItemSimilar(item, DynaTechItems.LIQUID_TANK, true))
++                e.setCancelled(true);
++        };
++    }
++
++    @EventHandler
++    private void onBucketChange(PlayerBucketFillEvent e) {
++        ItemStack item;
++        if (this.isItem(e.getPlayer().getEquipment().getItemInMainHand()))
++            item = e.getPlayer().getEquipment().getItemInMainHand();
++        else {
++            if (e.getPlayer().getEquipment().getItemInMainHand()
++                .equals(new ItemStack(Material.BUCKET))) return;
++            item = e.getPlayer().getEquipment().getItemInOffHand();
++        }
 +        if (this.isItem(item) && this.canUse(e.getPlayer(), true) && SlimefunItem.getByItem(item) instanceof LiquidTank) {
-             e.setCancelled(true);
-             //Check if block == LAVA or WATER 
-             String fluidName = PersistentDataAPI.getString(item.getItemMeta(), FLUID_NAME, "NO_LIQUID");
-             int fluidAmount = PersistentDataAPI.getInt(item.getItemMeta(), FLUID_AMOUNT, 0);
-             Block block = e.getBlock();
-             if (block.isLiquid() && (fluidName.equals("NO_LIQUID") && fluidAmount == 0) || fluidName.equals(block.getType().toString()) && fluidAmount + 1000 <= getMaxLiquidAmount()) {
--                ItemMeta meta = item.getItemMeta(); 
--            
++            e.setCancelled(true);
++            if (e.getPlayer().isSneaking()) return;
++            //Check if block == LAVA or WATER 
++            String fluidName = PersistentDataAPI.getString(item.getItemMeta(), FLUID_NAME, "NO_LIQUID");
++            int fluidAmount = PersistentDataAPI.getInt(item.getItemMeta(), FLUID_AMOUNT, 0);
++            Block block = e.getBlock();
++            if (block.isLiquid() && (fluidName.equals("NO_LIQUID") && fluidAmount == 0) || fluidName.equals(block.getType().toString()) && fluidAmount + 1000 <= getMaxLiquidAmount()) {
 +                ItemMeta meta = item.getItemMeta();
 +
-                 PersistentDataAPI.setString(meta, FLUID_NAME, block.getType().toString());
--                PersistentDataAPI.setInt(meta, FLUID_AMOUNT, fluidAmount + 1000); 
--                
++                PersistentDataAPI.setString(meta, FLUID_NAME, block.getType().toString());
 +                PersistentDataAPI.setInt(meta, FLUID_AMOUNT, fluidAmount + 1000);
 +
-                 List<String> lore = new ArrayList<>();
-                 lore.add(ChatColor.GRAY + "A Liquid tank holding up to 16 buckets of some liquids");
-                 lore.add("");
-@@ -82,15 +77,15 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
-                 lore.add(ChatColor.WHITE + "Fluid Held: " + PersistentDataAPI.getString(meta, FLUID_NAME));
-                 lore.add(ChatColor.WHITE + "Fluid Amount: " + PersistentDataAPI.getInt(meta, FLUID_AMOUNT));
-                 meta.setLore(lore);
--                item.setItemMeta(meta); 
--                DynaTech.runSync(() -> { block.setType(Material.AIR); }); 
--            }    
++                List<String> lore = new ArrayList<>();
++                lore.add(ChatColor.GRAY + "A Liquid tank holding up to 16 buckets of some liquids");
++                lore.add("");
++                lore.add("Right click to grab a liquid");
++                lore.add("Shift right click to place a liquid");
++                lore.add("");
++                lore.add(ChatColor.WHITE + "Fluid Held: " + PersistentDataAPI.getString(meta, FLUID_NAME));
++                lore.add(ChatColor.WHITE + "Fluid Amount: " + PersistentDataAPI.getInt(meta, FLUID_AMOUNT));
++                meta.setLore(lore);
 +                item.setItemMeta(meta);
 +                DynaTech.runSync(() -> block.setType(Material.AIR));
 +            }
-         }
-     }
- 
--    private final ItemUseHandler onRightClick() {
++        }
++    }
++
 +    private ItemUseHandler onRightClick() {
-         return e -> {
--            if (e.getPlayer().isSneaking() && e.getClickedBlock().isPresent() && !e.getClickedBlock().get().isLiquid()) { 
-+            if (e.getPlayer().isSneaking() && e.getClickedBlock().isPresent() && !e.getClickedBlock().get().isLiquid()) {
-                 ItemStack item = e.getItem();
-                 String fluidName = PersistentDataAPI.getString(item.getItemMeta(), FLUID_NAME, "NO_LIQUID");
-                 int fluidAmount = PersistentDataAPI.getInt(item.getItemMeta(), FLUID_AMOUNT, 0);
-@@ -100,14 +95,11 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
-                     if (mat != null && e.getClickedBlock().isPresent()) {
-                         Block block = e.getClickedBlock().get().getRelative(e.getClickedFace());
-                         if ((block.isLiquid() || block.getType().isAir()) && !block.getWorld().isUltraWarm()) {
--                            ItemMeta meta = item.getItemMeta(); 
--                            if (fluidAmount - 1000 == 0) {
--                                PersistentDataAPI.setString(meta, FLUID_NAME, "NO_LIQUID");
--                            } else { 
--                                PersistentDataAPI.setString(meta, FLUID_NAME, fluidName);
--                            }
--                            PersistentDataAPI.setInt(meta, FLUID_AMOUNT, fluidAmount - 1000); 
--                            
++        return e -> {
++            ItemStack item = e.getItem();
++            String fluidName = PersistentDataAPI.getString(item.getItemMeta(), FLUID_NAME, "NO_LIQUID");
++            int fluidAmount = PersistentDataAPI.getInt(item.getItemMeta(), FLUID_AMOUNT, 0);
++            if (!e.getClickedBlock().isPresent()) return;
++            if (e.getPlayer().isSneaking() && !e.getClickedBlock().get().isLiquid()) {
++                if (this.canUse(e.getPlayer(), true) && this.isItem(item) && !fluidName.equals("NO_LIQUID") && fluidAmount >= 1000) {
++                    Material mat = Material.getMaterial(fluidName);
++
++                    if (mat != null) {
++                        Block block = e.getClickedBlock().get().getRelative(e.getClickedFace());
++                        if (block.isLiquid() || block.getType().isAir()) {
++                            if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17)) {
++                                if (block.getWorld().isUltraWarm()) return;
++                            } else if (block.getWorld().getEnvironment() == World.Environment.NETHER) return;
++
 +                            ItemMeta meta = item.getItemMeta();
 +                            if (fluidAmount - 1000 == 0) PersistentDataAPI.setString(meta, FLUID_NAME, "NO_LIQUID");
 +                            else PersistentDataAPI.setString(meta, FLUID_NAME, fluidName);
 +                            PersistentDataAPI.setInt(meta, FLUID_AMOUNT, fluidAmount - 1000);
 +
-                             List<String> lore = new ArrayList<>();
-                             lore.add(ChatColor.GRAY + "A Liquid tank holding up to 16 buckets of some liquids");
-                             lore.add("");
-@@ -117,13 +109,12 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
-                             lore.add(ChatColor.WHITE + "Fluid Held: " + PersistentDataAPI.getString(meta, FLUID_NAME));
-                             lore.add(ChatColor.WHITE + "Fluid Amount: " + PersistentDataAPI.getInt(meta, FLUID_AMOUNT));
-                             meta.setLore(lore);
--                            item.setItemMeta(meta); 
--                            DynaTech.runSync(() -> { block.setType(mat); });
++                            List<String> lore = new ArrayList<>();
++                            lore.add(ChatColor.GRAY + "A Liquid tank holding up to 16 buckets of some liquids");
++                            lore.add("");
++                            lore.add("Right click to grab a liquid");
++                            lore.add("Shift right click to place a liquid");
++                            lore.add("");
++                            lore.add(ChatColor.WHITE + "Fluid Held: " + PersistentDataAPI.getString(meta, FLUID_NAME));
++                            lore.add(ChatColor.WHITE + "Fluid Amount: " + PersistentDataAPI.getInt(meta, FLUID_AMOUNT));
++                            meta.setLore(lore);
 +                            item.setItemMeta(meta);
-+                            DynaTech.runSync(() -> block.setType(mat));
-                         }
-                     }
-                 }
-             }
--            
-         };
-     }
- 
-@@ -131,7 +122,7 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
-         return maxLiquidAmount;
-     }
- 
--    public static final List<String> getPlaceableFluids() {
-+    public static List<String> getPlaceableFluids() {
-         List<String> PLACEABLE_FLUIDS = new ArrayList<>();
-         PLACEABLE_FLUIDS.add("WATER");
-         PLACEABLE_FLUIDS.add("LAVA");
-@@ -146,13 +137,10 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
-         int itemFluidAmount = PersistentDataAPI.getInt(im, FLUID_AMOUNT);
- 
-         int resultFluidAmount = itemFluidAmount + fluidAmount;
--        if (itemFluidName != null && itemFluidName.equals(fluidName) && itemFluidAmount != 0 && resultFluidAmount <= getMaxLiquidAmount()) {
-+        if (itemFluidName != null && itemFluidName.equals(fluidName) && itemFluidAmount != 0 && resultFluidAmount <= getMaxLiquidAmount())
-             setLiquid(item, fluidName, resultFluidAmount);
--        } else if (resultFluidAmount >= getMaxLiquidAmount()) {
--            setLiquid(item, fluidName, getMaxLiquidAmount());
--        } else {
--            setLiquid(item, fluidName, fluidAmount);
--        }
-+        else if (resultFluidAmount >= getMaxLiquidAmount()) setLiquid(item, fluidName, getMaxLiquidAmount());
-+        else setLiquid(item, fluidName, fluidAmount);
- 
-     }
- 
-@@ -163,11 +151,9 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
-         int itemFluidAmount = PersistentDataAPI.getInt(im, FLUID_AMOUNT);
- 
-         int resultFluidAmount = itemFluidAmount - fluidAmount;
--        if (itemFluidName != null && itemFluidName.equals(fluidName) && itemFluidAmount != 0 && resultFluidAmount > 0) {
-+        if (itemFluidName != null && itemFluidName.equals(fluidName) && itemFluidAmount != 0 && resultFluidAmount > 0)
-             setLiquid(item, fluidName, resultFluidAmount);
--        } else {
--            setLiquid(item, "NO_FLUID", 0);
--        }
-+        else setLiquid(item, "NO_FLUID", 0);
-     }
- 
-     public void setLiquid(ItemStack item, String fluidName, int fluidAmount) {
-@@ -182,9 +168,7 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
-     public Pair<String, Integer> getLiquid(ItemStack item) {
-         String fluidName = PersistentDataAPI.getString(item.getItemMeta(), FLUID_NAME);
-         int fluidAmount = PersistentDataAPI.getInt(item.getItemMeta(), FLUID_AMOUNT);
--        if (item.hasItemMeta() && fluidName != null && fluidAmount != 0) {
--            return new Pair<>(fluidName, fluidAmount);
--        }
-+        if (item.hasItemMeta() && fluidName != null && fluidAmount != 0) return new Pair<>(fluidName, fluidAmount);
-         return new Pair<>("NO_FLUID", 0);
-     }
- 
-@@ -195,24 +179,16 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
-         ItemMeta im = item.getItemMeta();
-         List<String> lore = im.getLore();
- 
--        if (fluidName == null) {
--            return;
--        }
-+        if (fluidName == null) return;
- 
-         for (int i = 0; i < lore.size(); i++) {
--            if (lore.get(i).contains("Fluid Held: ")) {
--
--                lore.set(i, ChatColor.WHITE + "Fluid Held: " + fluidName);
--            }
--
--            if (lore.get(i).contains("Amount: ")) {
-+            if (lore.get(i).contains("Fluid Held: ")) lore.set(i, ChatColor.WHITE + "Fluid Held: " + fluidName);
- 
-+            if (lore.get(i).contains("Amount: "))
-                 lore.set(i, ChatColor.WHITE + "Amount: " + fluidAmount + "mb / " + getMaxLiquidAmount());
--            }
-         }
- 
-         im.setLore(lore);
-         item.setItemMeta(im);
-     }
--
- }
++                            DynaTech.runSync(() -> {
++                                block.setType(mat);
++                                Sound sound = mat == Material.LAVA ? Sound.ITEM_BUCKET_EMPTY_LAVA
++                                    : Sound.ITEM_BUCKET_EMPTY;
++                                e.getPlayer().playSound(
++                                    block.getLocation(),
++                                    sound,
++                                    SoundCategory.BLOCKS, 1f, 1f
++                                );
++                                for (Player p : Bukkit.getOnlinePlayers()) {
++                                    if (!p.equals(e.getPlayer()))
++                                        p.playSound(
++                                            block.getLocation(),
++                                            sound,
++                                            SoundCategory.PLAYERS, 1f, 1f
++                                        );
++                                }
++                            });
++                        }
++                    }
++                }
++            } else if (Slimefun.getMinecraftVersion().isBefore(MinecraftVersion.MINECRAFT_1_19)
++                && !e.getPlayer().isSneaking() && e.getClickedBlock().get().isLiquid()
++                && e.getHand() == EquipmentSlot.OFF_HAND
++                && (fluidName.equals("NO_LIQUID") && fluidAmount == 0)
++                || fluidName.equals(e.getClickedBlock().get().getType().toString())
++                && fluidAmount + 1000 <= getMaxLiquidAmount()) {
++                Events.call(new PlayerBucketFillEvent(
++                    e.getPlayer(),
++                    e.getClickedBlock().get(),
++                    e.getClickedBlock().get(),
++                    e.getClickedFace(),
++                    e.getItem().getType(),
++                    e.getItem()
++                ));
++            }
++        };
++    }
++
++    public int getMaxLiquidAmount() {
++        return maxLiquidAmount;
++    }
++}
 diff --git a/src/main/java/me/profelements/dynatech/items/tools/Scoop.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/Scoop.java
 similarity index 87%
 rename from src/main/java/me/profelements/dynatech/items/tools/Scoop.java
@@ -10252,13 +10214,13 @@ index 468e38d..12a34ad 100644
 +    }
 +}
 diff --git a/src/main/java/me/profelements/dynatech/listeners/PicnicBasketListener.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/listeners/PicnicBasketListener.java
-similarity index 65%
+similarity index 62%
 rename from src/main/java/me/profelements/dynatech/listeners/PicnicBasketListener.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/listeners/PicnicBasketListener.java
-index f8d71e7..b25944b 100644
+index f8d71e7..68f62cb 100644
 --- a/src/main/java/me/profelements/dynatech/listeners/PicnicBasketListener.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/listeners/PicnicBasketListener.java
-@@ -1,118 +1,97 @@
+@@ -1,118 +1,99 @@
 -package me.profelements.dynatech.listeners;
 +package id.universenetwork.sfa_loader.addons.dynatech.listeners;
  
@@ -10267,6 +10229,7 @@ index f8d71e7..b25944b 100644
 +import id.universenetwork.sfa_loader.addons.dynatech.items.backpacks.PicnicBasket;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
  import io.github.thebusybiscuit.exoticgarden.items.CustomFood;
++import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.player.PlayerBackpack;
  import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
@@ -10274,6 +10237,7 @@ index f8d71e7..b25944b 100644
 -import me.profelements.dynatech.events.PicnicBasketFeedPlayerEvent;
 -import me.profelements.dynatech.items.backpacks.PicnicBasket;
 -
++import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 +import org.bukkit.Bukkit;
  import org.bukkit.Material;
  import org.bukkit.Sound;
@@ -10411,7 +10375,7 @@ index f8d71e7..b25944b 100644
  
                      if (item.getAmount() > 1) {
                          item.setAmount(item.getAmount() - 1);
-@@ -120,11 +99,24 @@ public class PicnicBasketListener implements Listener {
+@@ -120,11 +101,24 @@ public class PicnicBasketListener implements Listener {
                          inv.setItem(slot, null);
                      }
  
@@ -10440,16 +10404,27 @@ index f8d71e7..b25944b 100644
                  }
              }
          }
-@@ -133,7 +125,7 @@ public class PicnicBasketListener implements Listener {
+@@ -132,8 +126,8 @@ public class PicnicBasketListener implements Listener {
+     }
  
      private Map<Material, Integer> getFoodItems() {
-         Map<Material, Integer> foods = new HashMap<Material, Integer>();
+-        Map<Material, Integer> foods = new HashMap<Material, Integer>();
 -                
++        Map<Material, Integer> foods = new HashMap<>();
 +
          foods.put(Material.COOKED_PORKCHOP, 8);
          foods.put(Material.PUMPKIN_PIE, 8);
          foods.put(Material.COOKED_BEEF, 8);
-@@ -164,5 +156,5 @@ public class PicnicBasketListener implements Listener {
+@@ -157,12 +151,13 @@ public class PicnicBasketListener implements Listener {
+         foods.put(Material.MUTTON, 2);
+         foods.put(Material.SALMON, 2);
+         foods.put(Material.SWEET_BERRIES, 2);
+-        foods.put(Material.GLOW_BERRIES, 2);
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            foods.put(Material.GLOW_BERRIES, 2);
+         foods.put(Material.BEETROOT, 1);
+         foods.put(Material.DRIED_KELP, 1);
+         foods.put(Material.POTATO, 1);
          foods.put(Material.TROPICAL_FISH, 1);
  
          return foods;
@@ -11734,6 +11709,230 @@ index 7b9519a..0000000
 -  }
 -
 -}
+diff --git a/src/main/java/me/profelements/dynatech/items/tools/LiquidTank.java b/src/main/java/me/profelements/dynatech/items/tools/LiquidTank.java
+deleted file mode 100644
+index ba772b5..0000000
+--- a/src/main/java/me/profelements/dynatech/items/tools/LiquidTank.java
++++ /dev/null
+@@ -1,218 +0,0 @@
+-package me.profelements.dynatech.items.tools;
+-
+-
+-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+-import io.github.thebusybiscuit.slimefun4.core.attributes.NotPlaceable;
+-import io.github.thebusybiscuit.slimefun4.core.handlers.EntityInteractHandler;
+-import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
+-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
+-import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
+-import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+-import me.profelements.dynatech.DynaTech;
+-import me.profelements.dynatech.DynaTechItems;
+-import net.md_5.bungee.api.ChatColor;
+-
+-import org.bukkit.Bukkit;
+-import org.bukkit.Material;
+-import org.bukkit.NamespacedKey;
+-import org.bukkit.block.Block;
+-import org.bukkit.block.BlockState;
+-import org.bukkit.entity.EntityType;
+-import org.bukkit.event.EventHandler;
+-import org.bukkit.event.Listener;
+-import org.bukkit.event.player.PlayerBucketFillEvent;
+-import org.bukkit.inventory.ItemStack;
+-import org.bukkit.inventory.meta.ItemMeta;
+-
+-import java.util.ArrayList;
+-import java.util.List;
+-import java.util.Optional;
+-
+-public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
+-
+-    private static final NamespacedKey FLUID_NAME = new NamespacedKey(DynaTech.getInstance(), "liquid-name");
+-    private static final NamespacedKey FLUID_AMOUNT = new NamespacedKey(DynaTech.getInstance(), "liquid-amount");
+-
+-    private final int maxLiquidAmount;
+-
+-    public LiquidTank(ItemGroup itemGroup, SlimefunItemStack item, int maxLiquidAmount, RecipeType recipeType, ItemStack[] recipe) {
+-        super(itemGroup, item, recipeType, recipe);
+-
+-        this.maxLiquidAmount = maxLiquidAmount;
+-
+-        Bukkit.getPluginManager().registerEvents(this, DynaTech.getInstance());
+-        addItemHandler(onEntityClick());
+-        addItemHandler(onRightClick());
+-    }
+-
+-    private final EntityInteractHandler onEntityClick() {
+-        return (e, item, something) -> {
+-            if ((e.getRightClicked().getType() == EntityType.COW || e.getRightClicked().getType() == EntityType.MUSHROOM_COW) && SlimefunUtils.isItemSimilar(item, DynaTechItems.LIQUID_TANK, true)) {
+-                e.setCancelled(true);
+-            }
+-        };
+-    }
+-    @EventHandler
+-    private void onBucketChange(PlayerBucketFillEvent e) {
+-        ItemStack item = e.getPlayer().getEquipment().getItem(e.getHand());
+-        if (this.isItem(item) && this.canUse(e.getPlayer(), true) && SlimefunItem.getByItem(item) instanceof LiquidTank tank) {
+-            e.setCancelled(true);
+-            //Check if block == LAVA or WATER 
+-            String fluidName = PersistentDataAPI.getString(item.getItemMeta(), FLUID_NAME, "NO_LIQUID");
+-            int fluidAmount = PersistentDataAPI.getInt(item.getItemMeta(), FLUID_AMOUNT, 0);
+-            Block block = e.getBlock();
+-            if (block.isLiquid() && (fluidName.equals("NO_LIQUID") && fluidAmount == 0) || fluidName.equals(block.getType().toString()) && fluidAmount + 1000 <= getMaxLiquidAmount()) {
+-                ItemMeta meta = item.getItemMeta(); 
+-            
+-                PersistentDataAPI.setString(meta, FLUID_NAME, block.getType().toString());
+-                PersistentDataAPI.setInt(meta, FLUID_AMOUNT, fluidAmount + 1000); 
+-                
+-                List<String> lore = new ArrayList<>();
+-                lore.add(ChatColor.GRAY + "A Liquid tank holding up to 16 buckets of some liquids");
+-                lore.add("");
+-                lore.add("Right click to grab a liquid");
+-                lore.add("Shift right click to place a liquid");
+-                lore.add("");
+-                lore.add(ChatColor.WHITE + "Fluid Held: " + PersistentDataAPI.getString(meta, FLUID_NAME));
+-                lore.add(ChatColor.WHITE + "Fluid Amount: " + PersistentDataAPI.getInt(meta, FLUID_AMOUNT));
+-                meta.setLore(lore);
+-                item.setItemMeta(meta); 
+-                DynaTech.runSync(() -> { block.setType(Material.AIR); }); 
+-            }    
+-        }
+-    }
+-
+-    private final ItemUseHandler onRightClick() {
+-        return e -> {
+-            if (e.getPlayer().isSneaking() && e.getClickedBlock().isPresent() && !e.getClickedBlock().get().isLiquid()) { 
+-                ItemStack item = e.getItem();
+-                String fluidName = PersistentDataAPI.getString(item.getItemMeta(), FLUID_NAME, "NO_LIQUID");
+-                int fluidAmount = PersistentDataAPI.getInt(item.getItemMeta(), FLUID_AMOUNT, 0);
+-                if (this.canUse(e.getPlayer(), true) && this.isItem(item) && !fluidName.equals("NO_LIQUID") && fluidAmount >= 1000) {
+-                    Material mat = Material.getMaterial(fluidName);
+-
+-                    if (mat != null && e.getClickedBlock().isPresent()) {
+-                        Block block = e.getClickedBlock().get().getRelative(e.getClickedFace());
+-                        if ((block.isLiquid() || block.getType().isAir()) && !block.getWorld().isUltraWarm()) {
+-                            ItemMeta meta = item.getItemMeta(); 
+-                            if (fluidAmount - 1000 == 0) {
+-                                PersistentDataAPI.setString(meta, FLUID_NAME, "NO_LIQUID");
+-                            } else { 
+-                                PersistentDataAPI.setString(meta, FLUID_NAME, fluidName);
+-                            }
+-                            PersistentDataAPI.setInt(meta, FLUID_AMOUNT, fluidAmount - 1000); 
+-                            
+-                            List<String> lore = new ArrayList<>();
+-                            lore.add(ChatColor.GRAY + "A Liquid tank holding up to 16 buckets of some liquids");
+-                            lore.add("");
+-                            lore.add("Right click to grab a liquid");
+-                            lore.add("Shift right click to place a liquid");
+-                            lore.add("");
+-                            lore.add(ChatColor.WHITE + "Fluid Held: " + PersistentDataAPI.getString(meta, FLUID_NAME));
+-                            lore.add(ChatColor.WHITE + "Fluid Amount: " + PersistentDataAPI.getInt(meta, FLUID_AMOUNT));
+-                            meta.setLore(lore);
+-                            item.setItemMeta(meta); 
+-                            DynaTech.runSync(() -> { block.setType(mat); });
+-                        }
+-                    }
+-                }
+-            }
+-            
+-        };
+-    }
+-
+-    public int getMaxLiquidAmount() {
+-        return maxLiquidAmount;
+-    }
+-
+-    public static final List<String> getPlaceableFluids() {
+-        List<String> PLACEABLE_FLUIDS = new ArrayList<>();
+-        PLACEABLE_FLUIDS.add("WATER");
+-        PLACEABLE_FLUIDS.add("LAVA");
+-
+-        return PLACEABLE_FLUIDS;
+-    }
+-
+-    public void addLiquid(ItemStack item, String fluidName, int fluidAmount) {
+-        ItemMeta im = item.getItemMeta();
+-
+-        String itemFluidName = PersistentDataAPI.getString(im, FLUID_NAME);
+-        int itemFluidAmount = PersistentDataAPI.getInt(im, FLUID_AMOUNT);
+-
+-        int resultFluidAmount = itemFluidAmount + fluidAmount;
+-        if (itemFluidName != null && itemFluidName.equals(fluidName) && itemFluidAmount != 0 && resultFluidAmount <= getMaxLiquidAmount()) {
+-            setLiquid(item, fluidName, resultFluidAmount);
+-        } else if (resultFluidAmount >= getMaxLiquidAmount()) {
+-            setLiquid(item, fluidName, getMaxLiquidAmount());
+-        } else {
+-            setLiquid(item, fluidName, fluidAmount);
+-        }
+-
+-    }
+-
+-    public void removeLiquid(ItemStack item, String fluidName, int fluidAmount) {
+-        ItemMeta im = item.getItemMeta();
+-
+-        String itemFluidName = PersistentDataAPI.getString(im, FLUID_NAME);
+-        int itemFluidAmount = PersistentDataAPI.getInt(im, FLUID_AMOUNT);
+-
+-        int resultFluidAmount = itemFluidAmount - fluidAmount;
+-        if (itemFluidName != null && itemFluidName.equals(fluidName) && itemFluidAmount != 0 && resultFluidAmount > 0) {
+-            setLiquid(item, fluidName, resultFluidAmount);
+-        } else {
+-            setLiquid(item, "NO_FLUID", 0);
+-        }
+-    }
+-
+-    public void setLiquid(ItemStack item, String fluidName, int fluidAmount) {
+-        ItemMeta im = item.getItemMeta();
+-
+-        PersistentDataAPI.setString(im, FLUID_NAME, fluidName);
+-        PersistentDataAPI.setInt(im, FLUID_AMOUNT, fluidAmount);
+-
+-        item.setItemMeta(im);
+-    }
+-
+-    public Pair<String, Integer> getLiquid(ItemStack item) {
+-        String fluidName = PersistentDataAPI.getString(item.getItemMeta(), FLUID_NAME);
+-        int fluidAmount = PersistentDataAPI.getInt(item.getItemMeta(), FLUID_AMOUNT);
+-        if (item.hasItemMeta() && fluidName != null && fluidAmount != 0) {
+-            return new Pair<>(fluidName, fluidAmount);
+-        }
+-        return new Pair<>("NO_FLUID", 0);
+-    }
+-
+-    public void updateLore(ItemStack item) {
+-        String fluidName = PersistentDataAPI.getString(item.getItemMeta(), FLUID_NAME);
+-        int fluidAmount = PersistentDataAPI.getInt(item.getItemMeta(), FLUID_AMOUNT);
+-
+-        ItemMeta im = item.getItemMeta();
+-        List<String> lore = im.getLore();
+-
+-        if (fluidName == null) {
+-            return;
+-        }
+-
+-        for (int i = 0; i < lore.size(); i++) {
+-            if (lore.get(i).contains("Fluid Held: ")) {
+-
+-                lore.set(i, ChatColor.WHITE + "Fluid Held: " + fluidName);
+-            }
+-
+-            if (lore.get(i).contains("Amount: ")) {
+-
+-                lore.set(i, ChatColor.WHITE + "Amount: " + fluidAmount + "mb / " + getMaxLiquidAmount());
+-            }
+-        }
+-
+-        im.setLore(lore);
+-        item.setItemMeta(im);
+-    }
+-
+-}
 diff --git a/src/main/resources/addons-config/DynaTech/config.yml b/src/main/resources/addons-config/DynaTech/config.yml
 new file mode 100644
 index 0000000..abeeebc
@@ -11781,5 +11980,5 @@ index eada68a..0000000
 -## This is the minimum minecraft version required to run your plugin.
 -api-version: 1.14
 -- 
-2.41.0.windows.1
+2.41.0.windows.2
 

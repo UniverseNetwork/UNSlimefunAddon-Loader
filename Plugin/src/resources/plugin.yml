@@ -6,3 +6,8 @@ api-version: 1.13
 softdepend: [ Slimefun ]
 website: ${project.parent.url}
 author: ARVIN3108 ID
+libraries:
+  - cloud.commandframework:cloud-core:${cloud.version}
+  - cloud.commandframework:cloud-annotations:${cloud.version}
+  - cloud.commandframework:cloud-paper:${cloud.version}
+  - org.apache.commons:commons-lang3:3.12.0
