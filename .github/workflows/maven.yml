@@ -33,5 +33,12 @@ jobs:
           git config --global user.email github-actions@github.com
           build.cmd
 
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
       - name: Build with Maven
         run: mvn install
