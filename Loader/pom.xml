@@ -16,6 +16,13 @@
         <sourceDirectory>src</sourceDirectory>
     </build>
 
+    <repositories>
+        <repository>
+            <id>AlessioDP</id>
+            <url>https://repo.alessiodp.com/releases</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>io.papermc.paper</groupId>
@@ -32,6 +39,12 @@
             <groupId>com.github.ronmamo</groupId>
             <artifactId>reflections</artifactId>
             <version>f5514b1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.byteflux</groupId>
+            <artifactId>libby-bukkit</artifactId>
+            <version>1.2.0</version>
         </dependency>
     </dependencies>
 </project>

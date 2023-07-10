@@ -3,6 +3,7 @@ package id.universenetwork.sfa_loader;
 import id.universenetwork.sfa_loader.command.MainCommand;
 import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
 import id.universenetwork.sfa_loader.manager.CommandManager;
+import id.universenetwork.sfa_loader.manager.LibraryManager;
 import id.universenetwork.sfa_loader.utils.LogUtils;
 import org.bukkit.Bukkit;
 
@@ -10,6 +11,7 @@ import org.bukkit.Bukkit;
 public final class Main extends AbstractAddon {
     @Override
     protected void enable() {
+        LibraryManager.init();
         CommandManager.init();
         CommandManager.register(new MainCommand());
         if (Bukkit.getPluginManager().isPluginEnabled("Slimefun")) {

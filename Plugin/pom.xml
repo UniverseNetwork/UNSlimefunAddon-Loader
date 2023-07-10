@@ -64,6 +64,10 @@
                                     <pattern>io.github.seggan.errorreporter</pattern>
                                     <shadedPattern>id.universenetwork.sfa_loader.libraries.errorreporter</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>net.byteflux.libby</pattern>
+                                    <shadedPattern>id.universenetwork.sfa_loader.libraries.libby</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>

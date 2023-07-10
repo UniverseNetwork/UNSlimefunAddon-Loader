@@ -10,6 +10,7 @@ import id.universenetwork.sfa_loader.utils.TextUtils;
 import id.universenetwork.sfa_loader.utils.TookTimeUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.reflections.Reflections;
 
@@ -38,8 +39,9 @@ public class AddonsLoader {
         TookTimeUtils tookTime = new TookTimeUtils();
 
         for (Class<? extends AddonTemplate> addon : allAddonsClasses) {
-            if (AbstractAddon.config().getBoolean("addons." + addon.getSimpleName().toLowerCase()))
+            if (AbstractAddon.config().getBoolean("addons." + addon.getSimpleName().toLowerCase())) {
                 loadAddon(addon, true);
+            }
         }
         if (!addonsWithHooksClasses.isEmpty())
             for (Class<? extends AddonTemplate> addon : addonsWithHooksClasses)
@@ -62,40 +64,30 @@ public class AddonsLoader {
                     addonClass.getSimpleName() + " addon is already loaded!");
 
             final AddonDependencies dependencies = addonClass.getDeclaredAnnotation(AddonDependencies.class);
+            boolean hasDependency = false;
 
-            int status = 0;
+            String str = "&bSuccessfully loaded &d" + addonClass.getSimpleName() + " &baddon!";
 
             if (dependencies != null) {
-                status = 1;
+                hasDependency = true;
                 for (String dpy : dependencies.value())
                     if (!Bukkit.getPluginManager().isPluginEnabled(dpy)) {
-                        status = 2;
-                        break;
+                        str = "&e" + TextUtils.convertArraysToString(dependencies.value()) +
+                                " not found. &cYou need &e" +
+                                TextUtils.convertArraysToString(dependencies.value()) + " to use &d"
+                                + addonClass.getSimpleName() + " &caddon!";
+                        LogUtils.severe(str);
+                        return;
                     }
             }
 
-            if (status == 0 || status == 1) {
-                addon.onLoad();
-                loadedAddons.add(addon);
-            }
+            addon.onLoad();
+            loadedAddons.add(addon);
 
-            switch (status) {
-                default:
-                    String str1 = "&bSuccessfully loaded &d" + addonClass.getSimpleName() + " &baddon!";
-                    LogUtils.info(str1);
-                    break;
-                case 1:
-                    String str2 = "&a" + TextUtils.convertArraysToString(dependencies.value()) +
-                            " found. &bSuccessfully loaded &d" + addonClass.getSimpleName() + " &baddon!";
-                    LogUtils.info(str2);
-                    break;
-                case 2:
-                    String str3 = "&e" + TextUtils.convertArraysToString(dependencies.value()) +
-                            " not found. &cYou need &e" +
-                            TextUtils.convertArraysToString(dependencies.value()) + " to use &d"
-                            + addonClass.getSimpleName() + " &caddon!";
-                    LogUtils.severe(str3);
-            }
+            if (hasDependency) str = StringUtils.replace(str, "&bS", "&a" +
+                    TextUtils.convertArraysToString(dependencies.value()) + " found. &bS");
+
+            LogUtils.info(str);
         } catch (Exception e) {
             String str = "An error occurred while loading &d" + addonClass.getSimpleName() + " &caddon!";
             LogUtils.log(Level.SEVERE, str, e);
@@ -127,61 +119,33 @@ public class AddonsLoader {
                     addonClass.getSimpleName() + " addon is already loaded!");
 
             final AddonDependencies dependencies = addonClass.getDeclaredAnnotation(AddonDependencies.class);
+            boolean hasDependency = false;
 
-            int status = 0;
+            String str = "&bSuccessfully loaded &d" + addonClass.getSimpleName() + " &baddon!";
 
             if (dependencies != null) {
-                status = 1;
+                hasDependency = true;
                 for (String dpy : dependencies.value())
                     if (!Bukkit.getPluginManager().isPluginEnabled(dpy)) {
-                        status = 2;
-                        break;
+                        str = "&e" + TextUtils.convertArraysToString(dependencies.value()) +
+                                " not found. &cYou need &e" +
+                                TextUtils.convertArraysToString(dependencies.value()) + " to use &d"
+                                + addonClass.getSimpleName() + " &caddon!";
+                        LogUtils.severe(str);
+                        return;
                     }
             }
 
-            if (status == 0 || status == 1) {
-                addon.onLoad();
-                loadedAddons.add(addon);
-            }
+            addon.onLoad();
+            loadedAddons.add(addon);
 
-            if (hooks.isEmpty()) switch (status) {
-                default:
-                    String str1 = "&bSuccessfully loaded &d" + addonClass.getSimpleName() + " &baddon!";
-                    LogUtils.info(str1);
-                    break;
-                case 1:
-                    String str2 = "&a" + TextUtils.convertArraysToString(dependencies.value()) +
-                            " found. &bSuccessfully loaded &d" + addonClass.getSimpleName() + " &baddon!";
-                    LogUtils.info(str2);
-                    break;
-                case 2:
-                    String str3 = "&e" + TextUtils.convertArraysToString(dependencies.value()) +
-                            " not found. &cYou need &e" +
-                            TextUtils.convertArraysToString(dependencies.value()) + " to use &d"
-                            + addonClass.getSimpleName() + " &caddon!";
-                    LogUtils.severe(str3);
-            }
-            else switch (status) {
-                default:
-                    String str1 = "&bSuccessfully loaded &d" + addonClass.getSimpleName() +
-                            " &baddon, &awith &d" + TextUtils.convertArraysToString(
-                            hooks.toArray(new String[0])) + " &asupport!";
-                    LogUtils.info(str1);
-                    break;
-                case 1:
-                    String str2 = "&a" + TextUtils.convertArraysToString(dependencies.value()) +
-                            " found. &bSuccessfully loaded &d" + addonClass.getSimpleName() +
-                            " &baddon, &awith &d" + TextUtils.convertArraysToString(
-                            hooks.toArray(new String[0])) + " &asupport!";
-                    LogUtils.info(str2);
-                    break;
-                case 2:
-                    String str3 = "&e" + TextUtils.convertArraysToString(dependencies.value()) +
-                            " not found. &cYou need &e" +
-                            TextUtils.convertArraysToString(dependencies.value()) + " to use &d"
-                            + addonClass.getSimpleName() + " &caddon!";
-                    LogUtils.severe(str3);
-            }
+            if (!hooks.isEmpty()) str = StringUtils.replace(str, "!", ", &awith &d" +
+                    TextUtils.convertArraysToString(hooks.toArray(new String[0])) + " &asupport!");
+
+            if (hasDependency) str = StringUtils.replace(str, "&bS", "&a" +
+                    TextUtils.convertArraysToString(dependencies.value()) + " found. &bS");
+
+            LogUtils.info(str);
         } catch (Exception e) {
             String str = "An error occurred while loading &d" + addonClass.getSimpleName() + " &caddon!";
             LogUtils.log(Level.SEVERE, str, e);
