@@ -1,4 +1,4 @@
-package id.universenetwork.sfa_loader.manager;
+package id.universenetwork.sfa_loader.managers;
 
 import cloud.commandframework.CommandTree;
 import cloud.commandframework.annotations.AnnotationParser;

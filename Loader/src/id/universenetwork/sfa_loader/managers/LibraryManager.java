@@ -1,4 +1,4 @@
-package id.universenetwork.sfa_loader.manager;
+package id.universenetwork.sfa_loader.managers;
 
 import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
 import id.universenetwork.sfa_loader.utils.LogUtils;
@@ -18,6 +18,7 @@ public class LibraryManager {
         manager = new BukkitLibraryManager(AbstractAddon.instance());
 
         // Add Repository
+        manager.addMavenCentral();
         manager.addJitPack();
 
         loadLibraries(

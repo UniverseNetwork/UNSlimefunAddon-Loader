@@ -1,11 +1,11 @@
-From c20cc549ea12f1b0c828151fa2afa3d0c291abb3 Mon Sep 17 00:00:00 2001
+From 4bf1d16c0d259fcd5e315692ee5361cb5a72fffc Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Sun, 9 Jul 2023 18:31:38 +0700
+Date: Tue, 11 Jul 2023 17:03:16 +0700
 Subject: [PATCH] DynaTech
 
 ---
- pom.xml                                       | 106 +--
- .../sfa_loader/addons/dynatech/DynaTech.java  |  87 +++
+ pom.xml                                       |  87 +--
+ .../sfa_loader/addons/dynatech/DynaTech.java  | 107 +++
  .../addons}/dynatech/DynaTechItems.java       |  82 +--
  .../dynatech/attributes/LiquidStorage.java    |  52 +-
  .../events/PicnicBasketFeedPlayerEvent.java   |  24 +-
@@ -73,7 +73,7 @@ Subject: [PATCH] DynaTech
  .../addons-config/DynaTech/config.yml         |   1 +
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  24 -
- 69 files changed, 4136 insertions(+), 4869 deletions(-)
+ 69 files changed, 4164 insertions(+), 4842 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/DynaTechItems.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/attributes/LiquidStorage.java (80%)
@@ -144,7 +144,7 @@ Subject: [PATCH] DynaTech
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index adae2a8..fd90bf0 100644
+index adae2a8..88ca075 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,16 +1,19 @@
@@ -173,7 +173,7 @@ index adae2a8..fd90bf0 100644
          <sonar.organization>profelements</sonar.organization>
          <sonar.host.url>https://sonarcloud.io</sonar.host.url>
      </properties>
-@@ -20,69 +23,10 @@
+@@ -20,37 +23,10 @@
              <id>paper-repo</id>
              <url>https://repo.destroystokyo.com/repository/maven-public/</url>
          </repository>
@@ -208,42 +208,34 @@ index adae2a8..fd90bf0 100644
 -                </includes>
 -            </resource>
 -        </resources>
--
--        <plugins>
--            <plugin>
--                <groupId>org.apache.maven.plugins</groupId>
--                <artifactId>maven-shade-plugin</artifactId>
--                <version>3.4.1</version>
--                <configuration>
--                    <relocations>
+ 
+         <plugins>
+             <plugin>
+@@ -59,17 +35,17 @@
+                 <version>3.4.1</version>
+                 <configuration>
+                     <relocations>
 -                        <relocation>
 -                            <pattern>org.bstats</pattern>
 -                            <shadedPattern>me.profelements.dynatech</shadedPattern>
 -                        </relocation>
--                        <relocation>
--                            <pattern>dev.j3fftw.extrautils</pattern>
+                         <relocation>
+                             <pattern>dev.j3fftw.extrautils</pattern>
 -                            <shadedPattern>me.profelements.dynatech.extrautils</shadedPattern>
--                        </relocation>
--                        <relocation>
--                            <pattern>io.github.bakedlibs.dough</pattern>
++                            <shadedPattern>id.universenetwork.sfa_loader.libraries.extrautils</shadedPattern>
+                         </relocation>
+                         <relocation>
+                             <pattern>io.github.bakedlibs.dough</pattern>
 -                            <shadedPattern>me.profelements.dynatech.dough</shadedPattern>
--                        </relocation>
--                    </relocations>
--                </configuration>
--                <executions>
--                    <execution>
--                        <phase>package</phase>
--                        <goals>
--                            <goal>shade</goal>
--                        </goals>
--                    </execution>
--                </executions>
--            </plugin>
--        </plugins>
-     </build>
- 
-     <dependencies>
-@@ -94,19 +38,7 @@
++                            <shadedPattern>id.universenetwork.sfa_loader.libraries.dough</shadedPattern>
++                        </relocation>
++                        <relocation>
++                            <pattern>com.google.common</pattern>
++                            <shadedPattern>id.universenetwork.sfa_loader.libraries.guava</shadedPattern>
+                         </relocation>
+                     </relocations>
+                 </configuration>
+@@ -94,19 +70,7 @@
          </dependency>
  
          <dependency>
@@ -264,7 +256,7 @@ index adae2a8..fd90bf0 100644
              <artifactId>exoticgarden</artifactId>
              <version>7f9a5f6</version>
              <scope>provided</scope>
-@@ -114,33 +46,31 @@
+@@ -114,33 +78,34 @@
          <dependency>
              <groupId>io.github.mooy1</groupId>
              <artifactId>InfinityExpansion</artifactId>
@@ -278,7 +270,7 @@ index adae2a8..fd90bf0 100644
              <version>2.0.1</version>
 +            <scope>provided</scope>
          </dependency>
--
+ 
          <dependency>
 -            <groupId>org.bstats</groupId>
 -            <artifactId>bstats-bukkit</artifactId>
@@ -286,14 +278,15 @@ index adae2a8..fd90bf0 100644
 -            <scope>compile</scope>
 +            <groupId>com.google.guava</groupId>
 +            <artifactId>guava</artifactId>
-+            <version>31.0.1-jre</version>
++            <version>32.1.1-jre</version>
++            <scope>provided</scope>
          </dependency>
-+
          <dependency>
              <groupId>com.github.Slimefun-Addon-Community</groupId>
              <artifactId>extrautils</artifactId>
              <version>73e76ac</version>
 -            <scope>compile</scope>
++            <scope>provided</scope>
          </dependency>
 -        
 -        <dependency> 
@@ -303,15 +296,16 @@ index adae2a8..fd90bf0 100644
              <artifactId>dough-api</artifactId>
              <version>1.2.0</version>
 -            <scope>compile</scope>
++            <scope>provided</scope>
          </dependency>
      </dependencies>
  </project>
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
 new file mode 100644
-index 0000000..22c75f6
+index 0000000..5ed7140
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
-@@ -0,0 +1,87 @@
+@@ -0,0 +1,107 @@
 +package id.universenetwork.sfa_loader.addons.dynatech;
 +
 +import com.google.common.base.Preconditions;
@@ -325,6 +319,7 @@ index 0000000..22c75f6
 +import id.universenetwork.sfa_loader.addons.dynatech.setup.DynaTechItemsSetup;
 +import id.universenetwork.sfa_loader.addons.dynatech.tasks.ItemBandTask;
 +import id.universenetwork.sfa_loader.annotations.AddonHooks;
++import id.universenetwork.sfa_loader.annotations.AddonLibrary;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import id.universenetwork.sfa_loader.utils.JavaUtils;
@@ -336,6 +331,25 @@ index 0000000..22c75f6
 +import javax.annotation.Nonnull;
 +
 +@AddonHooks("InfinityExpansion")
++@AddonLibrary(
++    groupId = "com{}google{}guava",
++    artifactId = "guava",
++    version = "32.1.1-jre",
++    packageRelocation = "com{}google{}common",
++    packageRelocationName = "guava"
++)
++@AddonLibrary(
++    groupId = "com{}github{}Slimefun-Addon-Community",
++    artifactId = "extrautils",
++    version = "73e76ac",
++    packageRelocation = "dev{}j3fftw{}extrautils"
++)
++@AddonLibrary(
++    groupId = "io{}github{}baked-libs",
++    artifactId = "dough-api",
++    version = "1.2.0",
++    packageRelocation = "io{}github{}bakedlibs{}dough"
++)
 +public class DynaTech extends AddonTemplate {
 +    private static DynaTech instance;
 +    private static boolean exoticGardenInstalled;

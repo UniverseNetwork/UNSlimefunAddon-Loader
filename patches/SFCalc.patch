@@ -1,6 +1,6 @@
-From 7ebf470197949e766d6734b3b6552143c2436ebe Mon Sep 17 00:00:00 2001
+From f53440d60ce8110ff18906f419add3a0c49fc8eb Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Tue, 11 Jul 2023 11:26:29 +0700
+Date: Tue, 11 Jul 2023 17:10:14 +0700
 Subject: [PATCH] SFCalc
 
 ---
@@ -461,7 +461,7 @@ diff --git a/src/main/java/io/github/seggan/sfcalc/SFCalc.java b/src/main/java/i
 similarity index 55%
 rename from src/main/java/io/github/seggan/sfcalc/SFCalc.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/SFCalc.java
-index fc98879..20ece8c 100644
+index fc98879..6b34407 100644
 --- a/src/main/java/io/github/seggan/sfcalc/SFCalc.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/SFCalc.java
 @@ -1,52 +1,43 @@
@@ -470,7 +470,7 @@ index fc98879..20ece8c 100644
  
 -import io.github.mooy1.infinitylib.core.AbstractAddon;
 +import id.universenetwork.sfa_loader.annotations.AddonLibrary;
-+import id.universenetwork.sfa_loader.manager.CommandManager;
++import id.universenetwork.sfa_loader.managers.CommandManager;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
  import io.github.seggan.errorreporter.ErrorReporter;
  import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;

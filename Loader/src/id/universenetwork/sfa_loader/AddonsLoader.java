@@ -2,10 +2,11 @@ package id.universenetwork.sfa_loader;
 
 import id.universenetwork.sfa_loader.annotations.AddonDependencies;
 import id.universenetwork.sfa_loader.annotations.AddonHooks;
+import id.universenetwork.sfa_loader.annotations.AddonLibraries;
 import id.universenetwork.sfa_loader.annotations.AddonLibrary;
 import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
 import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
-import id.universenetwork.sfa_loader.manager.LibraryManager;
+import id.universenetwork.sfa_loader.managers.LibraryManager;
 import id.universenetwork.sfa_loader.template.AddonTemplate;
 import id.universenetwork.sfa_loader.utils.LogUtils;
 import id.universenetwork.sfa_loader.utils.TextUtils;
@@ -66,6 +67,9 @@ public class AddonsLoader {
             if (addonClass.isAnnotationPresent(AddonLibrary.class))
                 loadAddonLibraries(addonClass.getAnnotationsByType(AddonLibrary.class));
 
+            else if (addonClass.isAnnotationPresent(AddonLibraries.class))
+                loadAddonLibraries(addonClass.getAnnotation(AddonLibraries.class).value());
+
             final AddonDependencies dependencies = addonClass.getAnnotation(AddonDependencies.class);
             boolean hasDependency = false;
 
@@ -123,6 +127,9 @@ public class AddonsLoader {
 
             if (addonClass.isAnnotationPresent(AddonLibrary.class))
                 loadAddonLibraries(addonClass.getAnnotationsByType(AddonLibrary.class));
+
+            else if (addonClass.isAnnotationPresent(AddonLibraries.class))
+                loadAddonLibraries(addonClass.getAnnotation(AddonLibraries.class).value());
 
             final AddonDependencies dependencies = addonClass.getAnnotation(AddonDependencies.class);
             boolean hasDependency = false;

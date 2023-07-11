@@ -2,8 +2,8 @@ package id.universenetwork.sfa_loader;
 
 import id.universenetwork.sfa_loader.command.MainCommand;
 import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-import id.universenetwork.sfa_loader.manager.CommandManager;
-import id.universenetwork.sfa_loader.manager.LibraryManager;
+import id.universenetwork.sfa_loader.managers.CommandManager;
+import id.universenetwork.sfa_loader.managers.LibraryManager;
 import id.universenetwork.sfa_loader.utils.LogUtils;
 import org.bukkit.Bukkit;
 

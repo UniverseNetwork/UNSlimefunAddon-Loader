@@ -49,18 +49,6 @@
                             </filters>
                             <relocations>
                                 <relocation>
-                                    <pattern>dev.j3fftw.extrautils</pattern>
-                                    <shadedPattern>id.universenetwork.sfa_loader.libraries.extrautils</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>io.github.bakedlibs.dough</pattern>
-                                    <shadedPattern>id.universenetwork.sfa_loader.libraries.dough</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.google.common</pattern>
-                                    <shadedPattern>id.universenetwork.sfa_loader.libraries.guava</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>net.byteflux.libby</pattern>
                                     <shadedPattern>id.universenetwork.sfa_loader.libraries.libby</shadedPattern>
                                 </relocation>

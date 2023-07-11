@@ -1,6 +1,6 @@
-From 23f83c30d1563306adc7d64e1a220f6fa1c2e1cb Mon Sep 17 00:00:00 2001
+From b649b02fe8d22762b7b0427f9a9f99cf01a36fb9 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Mon, 10 Jul 2023 07:56:00 +0700
+Date: Tue, 11 Jul 2023 17:11:30 +0700
 Subject: [PATCH] InfinityExpansion
 
 ---
@@ -264,7 +264,7 @@ index 4e75192..a475673 100644
                              <artifact>*:*</artifact>
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
 new file mode 100644
-index 0000000..45b72a2
+index 0000000..02a666f
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
 @@ -0,0 +1,72 @@
@@ -288,7 +288,7 @@ index 0000000..45b72a2
 +import id.universenetwork.sfa_loader.libraries.infinitylib.common.Scheduler;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
-+import id.universenetwork.sfa_loader.manager.CommandManager;
++import id.universenetwork.sfa_loader.managers.CommandManager;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import org.bukkit.Bukkit;
 +import org.bukkit.plugin.Plugin;
