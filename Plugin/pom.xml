@@ -61,10 +61,6 @@
                                     <shadedPattern>id.universenetwork.sfa_loader.libraries.guava</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>io.github.seggan.errorreporter</pattern>
-                                    <shadedPattern>id.universenetwork.sfa_loader.libraries.errorreporter</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>net.byteflux.libby</pattern>
                                     <shadedPattern>id.universenetwork.sfa_loader.libraries.libby</shadedPattern>
                                 </relocation>

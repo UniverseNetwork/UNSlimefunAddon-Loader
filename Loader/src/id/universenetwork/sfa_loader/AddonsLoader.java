@@ -2,8 +2,10 @@ package id.universenetwork.sfa_loader;
 
 import id.universenetwork.sfa_loader.annotations.AddonDependencies;
 import id.universenetwork.sfa_loader.annotations.AddonHooks;
+import id.universenetwork.sfa_loader.annotations.AddonLibrary;
 import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
 import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
+import id.universenetwork.sfa_loader.manager.LibraryManager;
 import id.universenetwork.sfa_loader.template.AddonTemplate;
 import id.universenetwork.sfa_loader.utils.LogUtils;
 import id.universenetwork.sfa_loader.utils.TextUtils;
@@ -38,11 +40,9 @@ public class AddonsLoader {
         LogUtils.info("&eStart loading the enabled addons in the configuration file...");
         TookTimeUtils tookTime = new TookTimeUtils();
 
-        for (Class<? extends AddonTemplate> addon : allAddonsClasses) {
-            if (AbstractAddon.config().getBoolean("addons." + addon.getSimpleName().toLowerCase())) {
+        for (Class<? extends AddonTemplate> addon : allAddonsClasses)
+            if (AbstractAddon.config().getBoolean("addons." + addon.getSimpleName().toLowerCase()))
                 loadAddon(addon, true);
-            }
-        }
         if (!addonsWithHooksClasses.isEmpty())
             for (Class<? extends AddonTemplate> addon : addonsWithHooksClasses)
                 loadAddonWithHooks(addon);
@@ -52,18 +52,21 @@ public class AddonsLoader {
     }
 
     public void loadAddon(Class<? extends AddonTemplate> addonClass, boolean scanHooks) {
-        try {
-            if (addonClass.getDeclaredAnnotation(AddonHooks.class) != null && scanHooks) {
-                addonsWithHooksClasses.add(addonClass);
-                return;
-            }
+        if (addonClass.isAnnotationPresent(AddonHooks.class) && scanHooks) {
+            addonsWithHooksClasses.add(addonClass);
+            return;
+        }
 
+        try {
             final AddonTemplate addon = addonClass.getConstructor().newInstance();
 
             if (loadedAddons.contains(addon)) throw new IllegalStateException(
                     addonClass.getSimpleName() + " addon is already loaded!");
 
-            final AddonDependencies dependencies = addonClass.getDeclaredAnnotation(AddonDependencies.class);
+            if (addonClass.isAnnotationPresent(AddonLibrary.class))
+                loadAddonLibraries(addonClass.getAnnotationsByType(AddonLibrary.class));
+
+            final AddonDependencies dependencies = addonClass.getAnnotation(AddonDependencies.class);
             boolean hasDependency = false;
 
             String str = "&bSuccessfully loaded &d" + addonClass.getSimpleName() + " &baddon!";
@@ -95,7 +98,7 @@ public class AddonsLoader {
     }
 
     private void loadAddonWithHooks(Class<? extends AddonTemplate> addonClass) {
-        final Set<String> hooks = Arrays.stream(addonClass.getDeclaredAnnotation(AddonHooks.class)
+        final Set<String> hooks = Arrays.stream(addonClass.getAnnotation(AddonHooks.class)
                 .value()).collect(Collectors.toSet());
         for (Iterator<String> iterator = hooks.iterator(); iterator.hasNext(); ) {
             String hook = iterator.next();
@@ -118,7 +121,10 @@ public class AddonsLoader {
             if (loadedAddons.contains(addon)) throw new IllegalStateException(
                     addonClass.getSimpleName() + " addon is already loaded!");
 
-            final AddonDependencies dependencies = addonClass.getDeclaredAnnotation(AddonDependencies.class);
+            if (addonClass.isAnnotationPresent(AddonLibrary.class))
+                loadAddonLibraries(addonClass.getAnnotationsByType(AddonLibrary.class));
+
+            final AddonDependencies dependencies = addonClass.getAnnotation(AddonDependencies.class);
             boolean hasDependency = false;
 
             String str = "&bSuccessfully loaded &d" + addonClass.getSimpleName() + " &baddon!";
@@ -159,5 +165,23 @@ public class AddonsLoader {
 
     public void unloadAllAddons() {
         for (AddonTemplate addon : loadedAddons) addon.onUnload();
+    }
+
+    private void loadAddonLibraries(AddonLibrary[] libraries) {
+        for (AddonLibrary lib : libraries) {
+            String packageRelocation = lib.packageRelocation();
+            String packageRelocationName = lib.packageRelocationName();
+            if (packageRelocation.isEmpty()) packageRelocation = null;
+            if (packageRelocationName.isEmpty()) packageRelocationName = null;
+            LibraryManager.loadLibraries(
+                    LibraryManager.createLibrary(
+                            lib.groupId(),
+                            lib.artifactId(),
+                            lib.version(),
+                            packageRelocation,
+                            packageRelocationName
+                    )
+            );
+        }
     }
 }

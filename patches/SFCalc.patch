@@ -1,23 +1,23 @@
-From 5a8e52b9334931dacd8935d8482aa9e1f11901ad Mon Sep 17 00:00:00 2001
+From 7ebf470197949e766d6734b3b6552143c2436ebe Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Mon, 3 Jul 2023 23:07:02 +0700
+Date: Tue, 11 Jul 2023 11:26:29 +0700
 Subject: [PATCH] SFCalc
 
 ---
- pom.xml                                       | 117 +-----------------
- .../sfa_loader/addons/sfcalc/CalcCommand.java |  22 ++++
- .../sfa_loader/addons}/sfcalc/Calculator.java |  77 +++++-------
- .../addons/sfcalc/NeededCommand.java          |  67 ++++++++++
- .../sfa_loader/addons}/sfcalc/SFCalc.java     |  56 ++-------
- .../addons}/sfcalc/StringRegistry.java        |  18 ++-
- .../addons/sfcalc/WebsiteCommand.java         |  29 +++++
- .../io/github/seggan/sfcalc/CalcCommand.java  |  91 --------------
- .../github/seggan/sfcalc/NeededCommand.java   |  97 ---------------
- .../github/seggan/sfcalc/SFCalcMetrics.java   |  60 ---------
- .../github/seggan/sfcalc/WebsiteCommand.java  |  43 -------
- .../{ => addons-config/SFCalc}/config.yml     |   2 -
- src/main/resources/plugin.yml                 |  13 --
- 13 files changed, 174 insertions(+), 518 deletions(-)
+ pom.xml                                       | 96 ++----------------
+ .../sfa_loader/addons/sfcalc/CalcCommand.java | 22 +++++
+ .../sfa_loader/addons}/sfcalc/Calculator.java | 77 ++++++---------
+ .../addons/sfcalc/NeededCommand.java          | 67 +++++++++++++
+ .../sfa_loader/addons}/sfcalc/SFCalc.java     | 63 ++++--------
+ .../addons}/sfcalc/StringRegistry.java        | 18 ++--
+ .../addons/sfcalc/WebsiteCommand.java         | 29 ++++++
+ .../io/github/seggan/sfcalc/CalcCommand.java  | 91 -----------------
+ .../github/seggan/sfcalc/NeededCommand.java   | 97 -------------------
+ .../github/seggan/sfcalc/SFCalcMetrics.java   | 60 ------------
+ .../github/seggan/sfcalc/WebsiteCommand.java  | 43 --------
+ .../{ => addons-config/SFCalc}/config.yml     |  2 -
+ src/main/resources/plugin.yml                 | 13 ---
+ 13 files changed, 183 insertions(+), 495 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/CalcCommand.java
  rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/Calculator.java (67%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java
@@ -32,7 +32,7 @@ Subject: [PATCH] SFCalc
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 5cea970..9d800d8 100644
+index 5cea970..6ba92af 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -4,12 +4,17 @@
@@ -54,7 +54,7 @@ index 5cea970..9d800d8 100644
          <author>Seggan</author>
          <sonar.projectKey>Seggan_SFCalc</sonar.projectKey>
          <sonar.organization>seggan</sonar.organization>
-@@ -18,97 +23,9 @@
+@@ -18,78 +23,19 @@
  
      <build>
          <finalName>${project.name} v${project.version}</finalName>
@@ -69,7 +69,7 @@ index 5cea970..9d800d8 100644
 -                    <include>config.yml</include>
 -                </includes>
 -            </resource>
--
+ 
 -            <resource>
 -                <directory>${basedir}</directory>
 -                <filtering>false</filtering>
@@ -78,7 +78,7 @@ index 5cea970..9d800d8 100644
 -                </includes>
 -            </resource>
 -        </resources>
--        <plugins>
+         <plugins>
 -            <plugin>
 -                <groupId>org.apache.maven.plugins</groupId>
 -                <artifactId>maven-compiler-plugin</artifactId>
@@ -89,10 +89,10 @@ index 5cea970..9d800d8 100644
 -                </configuration>
 -            </plugin>
 -
--            <plugin>
--                <groupId>org.apache.maven.plugins</groupId>
--                <artifactId>maven-shade-plugin</artifactId>
--                <version>3.2.4</version>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-shade-plugin</artifactId>
+                 <version>3.2.4</version>
 -                <dependencies>
 -                    <dependency>
 -                        <groupId>org.ow2.asm</groupId>
@@ -105,17 +105,18 @@ index 5cea970..9d800d8 100644
 -                        <version>9.1</version>
 -                    </dependency>
 -                </dependencies>
--                <configuration>
--                    <relocations>
+                 <configuration>
+                     <relocations>
 -                        <relocation>
 -                            <pattern>io.github.mooy1.infinitylib</pattern>
 -                            <shadedPattern>io.github.seggan.sfcalc.infinitylib</shadedPattern>
 -                        </relocation>
--                        <relocation>
--                            <pattern>io.github.seggan.errorreporter</pattern>
+                         <relocation>
+                             <pattern>io.github.seggan.errorreporter</pattern>
 -                            <shadedPattern>io.github.seggan.sfcalc.errorreporter</shadedPattern>
--                        </relocation>
--                    </relocations>
++                            <shadedPattern>id.universenetwork.sfa_loader.libraries.errorreporter</shadedPattern>
+                         </relocation>
+                     </relocations>
 -                    <filters>
 -                        <filter>
 -                            <artifact>io.github.mooy1:InfinityLib</artifact>
@@ -130,17 +131,10 @@ index 5cea970..9d800d8 100644
 -                            </excludes>
 -                        </filter>
 -                    </filters>
--                </configuration>
--                <executions>
--                    <execution>
--                        <phase>package</phase>
--                        <goals>
--                            <goal>shade</goal>
--                        </goals>
--                    </execution>
--                </executions>
--            </plugin>
--        </plugins>
+                 </configuration>
+                 <executions>
+                     <execution>
+@@ -104,11 +50,6 @@
      </build>
  
      <repositories>
@@ -152,7 +146,7 @@ index 5cea970..9d800d8 100644
          <repository>
              <id>spigot-repo</id>
              <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-@@ -123,20 +40,6 @@
+@@ -123,20 +64,6 @@
              <scope>provided</scope>
          </dependency>
  
@@ -173,7 +167,7 @@ index 5cea970..9d800d8 100644
          <dependency>
              <groupId>com.google.code.findbugs</groupId>
              <artifactId>jsr305</artifactId>
-@@ -144,18 +47,10 @@
+@@ -144,18 +71,11 @@
              <scope>provided</scope>
          </dependency>
  
@@ -189,6 +183,7 @@ index 5cea970..9d800d8 100644
              <artifactId>ErrorReporter-Java</artifactId>
              <version>1.1.0</version>
 -            <scope>compile</scope>
++            <scope>provided</scope>
          </dependency>
      </dependencies>
  </project>
@@ -466,14 +461,15 @@ diff --git a/src/main/java/io/github/seggan/sfcalc/SFCalc.java b/src/main/java/i
 similarity index 55%
 rename from src/main/java/io/github/seggan/sfcalc/SFCalc.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/SFCalc.java
-index fc98879..6068ece 100644
+index fc98879..20ece8c 100644
 --- a/src/main/java/io/github/seggan/sfcalc/SFCalc.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/SFCalc.java
-@@ -1,52 +1,36 @@
+@@ -1,52 +1,43 @@
 -package io.github.seggan.sfcalc;
 +package id.universenetwork.sfa_loader.addons.sfcalc;
  
 -import io.github.mooy1.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.annotations.AddonLibrary;
 +import id.universenetwork.sfa_loader.manager.CommandManager;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
  import io.github.seggan.errorreporter.ErrorReporter;
@@ -489,6 +485,12 @@ index fc98879..6068ece 100644
  @Getter
 -public class SFCalc extends AbstractAddon implements Listener {
 -
++@AddonLibrary(
++        groupId = "com{}github{}seggan",
++        artifactId = "ErrorReporter-Java",
++        version = "1.1.0",
++        packageRelocation = "io{}github{}seggan{}errorreporter"
++)
 +public class SFCalc extends AddonTemplate {
      public static ErrorReporter REPORTER;
  
@@ -532,7 +534,7 @@ index fc98879..6068ece 100644
  
              blacklistedRecipes.add(RecipeType.ORE_WASHER);
              blacklistedRecipes.add(RecipeType.GEO_MINER);
-@@ -61,24 +45,10 @@ public class SFCalc extends AbstractAddon implements Listener {
+@@ -61,24 +52,10 @@ public class SFCalc extends AbstractAddon implements Listener {
              blacklistedIds.add("FALLEN_METEOR");
              blacklistedIds.add("RUBBER");
              blacklistedIds.add("VOID_BIT");
@@ -1004,5 +1006,5 @@ index 48349f4..0000000
 -      - sfc
 \ No newline at end of file
 -- 
-2.41.0.windows.1
+2.41.0.windows.2
 

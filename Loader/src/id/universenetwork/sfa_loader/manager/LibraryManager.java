@@ -32,12 +32,19 @@ public class LibraryManager {
     }
 
     public Library createLibrary(String groupId, String artifactId, String version, String packageRelocation) {
+        return createLibrary(groupId, artifactId, version, packageRelocation, null);
+    }
+
+    public Library createLibrary(String groupId, String artifactId, String version,
+                                 String packageRelocation, String packageRelocationName) {
         final Library.Builder builder = Library.builder();
         builder.groupId(groupId).artifactId(artifactId).version(version);
         if (packageRelocation != null) {
             String[] splitted = StringUtils.split(packageRelocation, "{}");
+            String relocationName = packageRelocationName != null ?
+                    packageRelocationName : splitted[splitted.length - 1];
             builder.relocate(packageRelocation, "id{}universenetwork{}sfa_loader{}libraries{}"
-                    + splitted[splitted.length]);
+                    + relocationName);
         }
         return builder.build();
     }
