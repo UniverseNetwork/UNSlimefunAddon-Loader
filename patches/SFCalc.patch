@@ -1,6 +1,6 @@
-From f53440d60ce8110ff18906f419add3a0c49fc8eb Mon Sep 17 00:00:00 2001
+From 2b791db1c673101f70e5279b4e281afe4c4672d8 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Tue, 11 Jul 2023 17:10:14 +0700
+Date: Tue, 11 Jul 2023 21:23:36 +0700
 Subject: [PATCH] SFCalc
 
 ---
@@ -385,7 +385,7 @@ index d483255..1536b5b 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java
 new file mode 100644
-index 0000000..943ffa5
+index 0000000..ba964bf
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java
 @@ -0,0 +1,67 @@
@@ -417,7 +417,7 @@ index 0000000..943ffa5
 +        SFCalc.REPORTER.executeOrElseReport(() -> {
 +            StringRegistry registry = instance.getStringRegistry();
 +
-+            if (!(sender instanceof Player)) {
++            if (!(sender instanceof Player) && needed) {
 +                sender.sendMessage(StringRegistry.format(registry.getNotAPlayerString()));
 +                return;
 +            }
@@ -429,7 +429,7 @@ index 0000000..943ffa5
 +                return;
 +            }
 +
-+            instance.getCalc().printResults(sender, item, amount, true);
++            instance.getCalc().printResults(sender, item, amount, needed);
 +        });
 +    }
 +
