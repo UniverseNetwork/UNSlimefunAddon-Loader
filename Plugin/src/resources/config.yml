@@ -18,4 +18,6 @@ addons:
   dynatech: true
   extratools: true
   infinityexpansion: true
+  networks: true
+  sfcalc: true
   simplematerialgenerators: true
