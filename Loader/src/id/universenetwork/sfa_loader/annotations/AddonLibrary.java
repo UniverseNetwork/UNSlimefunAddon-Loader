@@ -16,4 +16,6 @@ public @interface AddonLibrary {
     String packageRelocation() default "";
 
     String packageRelocationName() default "";
+
+    String repository() default "";
 }

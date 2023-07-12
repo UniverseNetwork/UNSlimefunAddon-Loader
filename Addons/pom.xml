@@ -17,6 +17,7 @@
         <module>DynaTech</module>
         <module>ExtraTools</module>
         <module>InfinityExpansion</module>
+        <module>Networks</module>
         <module>SFCalc</module>
         <module>SMG</module>
     </modules>

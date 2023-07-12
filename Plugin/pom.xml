@@ -107,6 +107,11 @@
             <version>MODIFIED</version>
         </dependency>
         <dependency>
+            <groupId>io.github.sefiraat</groupId>
+            <artifactId>networks</artifactId>
+            <version>MODIFIED_1.2.0</version>
+        </dependency>
+        <dependency>
             <groupId>io.github.seggan.sfcalc</groupId>
             <artifactId>SFCalc</artifactId>
             <version>UNOFFICIAL</version>

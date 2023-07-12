@@ -178,15 +178,20 @@ public class AddonsLoader {
         for (AddonLibrary lib : libraries) {
             String packageRelocation = lib.packageRelocation();
             String packageRelocationName = lib.packageRelocationName();
+            String repository = lib.packageRelocationName();
+
             if (packageRelocation.isEmpty()) packageRelocation = null;
             if (packageRelocationName.isEmpty()) packageRelocationName = null;
+            if (repository.isEmpty()) repository = null;
+
             LibraryManager.loadLibraries(
                     LibraryManager.createLibrary(
                             lib.groupId(),
                             lib.artifactId(),
                             lib.version(),
                             packageRelocation,
-                            packageRelocationName
+                            packageRelocationName,
+                            repository
                     )
             );
         }

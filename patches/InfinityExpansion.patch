@@ -1,6 +1,6 @@
-From b649b02fe8d22762b7b0427f9a9f99cf01a36fb9 Mon Sep 17 00:00:00 2001
+From 7920ed10ea55397f19d1a345e998367442055878 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Tue, 11 Jul 2023 17:11:30 +0700
+Date: Wed, 12 Jul 2023 09:00:51 +0700
 Subject: [PATCH] InfinityExpansion
 
 ---
@@ -54,7 +54,7 @@ Subject: [PATCH] InfinityExpansion
  .../items/storage/StorageCache.java           | 236 ++++++------------
  .../items/storage/StorageForge.java           |  21 +-
  .../items/storage/StorageSaveFix.java         |  21 +-
- .../items/storage/StorageUnit.java            | 125 ++++------
+ .../items/storage/StorageUnit.java            | 120 ++++-----
  .../addons}/infinityexpansion/utils/Util.java |  57 ++---
  .../infinityexpansion/InfinityExpansion.java  |  85 -------
  .../commands/GiveRecipe.java                  |  68 -----
@@ -63,7 +63,7 @@ Subject: [PATCH] InfinityExpansion
  .../InfinityExpansion}/config.yml             |  10 +-
  src/main/resources/plugin.yml                 |  27 --
  .../TestInfinityExpansion.java                |  28 ---
- 59 files changed, 1576 insertions(+), 2323 deletions(-)
+ 59 files changed, 1576 insertions(+), 2318 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/Groups.java (70%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/InfinityGroup.java (76%)
@@ -113,7 +113,7 @@ Subject: [PATCH] InfinityExpansion
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/storage/StorageCache.java (70%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/storage/StorageForge.java (68%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/storage/StorageSaveFix.java (86%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/storage/StorageUnit.java (72%)
+ rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/storage/StorageUnit.java (73%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/utils/Util.java (85%)
  delete mode 100644 src/main/java/io/github/mooy1/infinityexpansion/InfinityExpansion.java
  delete mode 100644 src/main/java/io/github/mooy1/infinityexpansion/commands/GiveRecipe.java
@@ -6737,10 +6737,10 @@ index 1eb8d59..c3bf6df 100644
      }
  
 diff --git a/src/main/java/io/github/mooy1/infinityexpansion/items/storage/StorageUnit.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/storage/StorageUnit.java
-similarity index 72%
+similarity index 73%
 rename from src/main/java/io/github/mooy1/infinityexpansion/items/storage/StorageUnit.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/storage/StorageUnit.java
-index 62ed348..a5533f5 100644
+index 62ed348..140dc82 100644
 --- a/src/main/java/io/github/mooy1/infinityexpansion/items/storage/StorageUnit.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/storage/StorageUnit.java
 @@ -1,32 +1,10 @@
@@ -6906,7 +6906,7 @@ index 62ed348..a5533f5 100644
                  6, 7, 8, 15, 17, 24, 25, 26
          });
          blockMenuPreset.addMenuClickHandler(DISPLAY_SLOT, ChestMenuUtils.getEmptyClickHandler());
-@@ -166,38 +147,28 @@ public final class StorageUnit extends MenuBlock implements DistinctiveItem {
+@@ -166,21 +147,18 @@ public final class StorageUnit extends MenuBlock implements DistinctiveItem {
          StorageCache cache = this.caches.get(((BlockMenu) dirtyChestMenu).getLocation());
          if (cache != null && (cache.isEmpty() || cache.matches(itemStack))) {
              cache.input();
@@ -6932,14 +6932,8 @@ index 62ed348..a5533f5 100644
      }
  
      public void reloadCache(Block b) {
-         this.caches.get(b.getLocation()).reloadData();
-     }
+@@ -194,10 +172,8 @@ public final class StorageUnit extends MenuBlock implements DistinctiveItem {
  
--    @Nullable
--    public StorageCache getCache(Location location) {
--        return this.caches.get(location);
--    }
--
      static void transferToStack(@Nonnull ItemStack source, @Nonnull ItemStack target) {
          Pair<ItemStack, Integer> data = loadFromStack(source);
 -        if (data != null) {
@@ -6951,7 +6945,7 @@ index 62ed348..a5533f5 100644
      }
  
      static ItemMeta saveToStack(ItemMeta meta, ItemStack displayItem, String displayName, int amount) {
-@@ -218,9 +189,7 @@ public final class StorageUnit extends MenuBlock implements DistinctiveItem {
+@@ -218,9 +194,7 @@ public final class StorageUnit extends MenuBlock implements DistinctiveItem {
              Integer amount = con.get(AMOUNT_KEY, PersistentDataType.INTEGER);
              if (amount != null) {
                  ItemStack item = con.get(ITEM_KEY, PersistentType.ITEM_STACK_OLD);
@@ -6962,7 +6956,7 @@ index 62ed348..a5533f5 100644
              }
          }
          return null;
-@@ -230,4 +199,4 @@ public final class StorageUnit extends MenuBlock implements DistinctiveItem {
+@@ -230,4 +204,4 @@ public final class StorageUnit extends MenuBlock implements DistinctiveItem {
      public boolean canStack(@Nonnull ItemMeta sfItemMeta, @Nonnull ItemMeta itemMeta) {
          return sfItemMeta.getPersistentDataContainer().equals(itemMeta.getPersistentDataContainer());
      }
