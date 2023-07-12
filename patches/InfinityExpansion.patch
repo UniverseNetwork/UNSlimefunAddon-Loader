@@ -1,10 +1,10 @@
-From 7920ed10ea55397f19d1a345e998367442055878 Mon Sep 17 00:00:00 2001
+From ccec314c50e60be4c80d9e380af8f626105b5790 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Wed, 12 Jul 2023 09:00:51 +0700
+Date: Wed, 12 Jul 2023 18:21:42 +0700
 Subject: [PATCH] InfinityExpansion
 
 ---
- pom.xml                                       |  95 +------
+ pom.xml                                       | 121 +--------
  .../infinityexpansion/InfinityExpansion.java  |  72 ++++++
  .../infinityexpansion/categories/Groups.java  |  24 +-
  .../categories/InfinityGroup.java             | 182 +++++---------
@@ -63,7 +63,7 @@ Subject: [PATCH] InfinityExpansion
  .../InfinityExpansion}/config.yml             |  10 +-
  src/main/resources/plugin.yml                 |  27 --
  .../TestInfinityExpansion.java                |  28 ---
- 59 files changed, 1576 insertions(+), 2318 deletions(-)
+ 59 files changed, 1576 insertions(+), 2344 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/Groups.java (70%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/InfinityGroup.java (76%)
@@ -124,7 +124,7 @@ Subject: [PATCH] InfinityExpansion
  delete mode 100644 src/test/java/io/github/mooy1/infinityexpansion/TestInfinityExpansion.java
 
 diff --git a/pom.xml b/pom.xml
-index 4e75192..a475673 100644
+index 4e75192..530ab3a 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,32 +1,24 @@
@@ -169,7 +169,7 @@ index 4e75192..a475673 100644
      </repositories>
  
      <dependencies>
-@@ -36,92 +28,23 @@
+@@ -36,110 +28,15 @@
              <version>1.19-R0.1-SNAPSHOT</version>
              <scope>provided</scope>
          </dependency>
@@ -235,7 +235,7 @@ index 4e75192..a475673 100644
 -            </resource>
 -        </resources>
 -
-         <plugins>
+-        <plugins>
 -            <plugin>
 -                <groupId>org.apache.maven.plugins</groupId>
 -                <artifactId>maven-surefire-plugin</artifactId>
@@ -247,21 +247,40 @@ index 4e75192..a475673 100644
 -                </configuration>
 -            </plugin>
 -
-             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-shade-plugin</artifactId>
-                 <version>3.3.0</version>
-                 <configuration>
-                     <minimizeJar>true</minimizeJar>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-shade-plugin</artifactId>
+-                <version>3.3.0</version>
+-                <configuration>
+-                    <minimizeJar>true</minimizeJar>
 -                    <relocations>
 -                        <relocation>
 -                            <pattern>io.github.mooy1.infinitylib</pattern>
 -                            <shadedPattern>io.github.mooy1.infinityexpansion.infinitylib</shadedPattern>
 -                        </relocation>
 -                    </relocations>
-                     <filters>
-                         <filter>
-                             <artifact>*:*</artifact>
+-                    <filters>
+-                        <filter>
+-                            <artifact>*:*</artifact>
+-                            <excludes>
+-                                <exclude>META-INF/*</exclude>
+-                            </excludes>
+-                        </filter>
+-                    </filters>
+-                </configuration>
+-                <executions>
+-                    <execution>
+-                        <phase>package</phase>
+-                        <goals>
+-                            <goal>shade</goal>
+-                        </goals>
+-                    </execution>
+-                </executions>
+-            </plugin>
+-        </plugins>
+     </build>
+ </project>
+\ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
 new file mode 100644
 index 0000000..02a666f

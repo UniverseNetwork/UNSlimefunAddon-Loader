@@ -1,10 +1,10 @@
-From 03410ef171e30c910ef8fa6f7e07ee771d5aaef5 Mon Sep 17 00:00:00 2001
+From 2c48c8c5507b4597463dc6786af51459a07a1573 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Mon, 3 Jul 2023 19:14:38 +0700
+Date: Wed, 12 Jul 2023 17:59:41 +0700
 Subject: [PATCH] InfinityLib-Standalone
 
 ---
- pom.xml                                       |  93 +--------
+ pom.xml                                       | 128 +------------
  .../github/mooy1/infinitylib/InfinityLib.java |  26 ---
  .../standalone/SlimefunAddonInstance.java     | 144 --------------
  .../infinitylib/common/CoolDowns.java         |   2 +-
@@ -62,7 +62,7 @@ Subject: [PATCH] InfinityLib-Standalone
  src/test/resources/config.yml                 |   1 -
  src/test/resources/plugin.yml                 |  10 -
  src/test/resources/test.yml                   |  16 --
- 58 files changed, 161 insertions(+), 2201 deletions(-)
+ 58 files changed, 159 insertions(+), 2238 deletions(-)
  delete mode 100644 src/main/java-templates/io/github/mooy1/infinitylib/InfinityLib.java
  delete mode 100644 src/main/java/id/arvin3108/standalone/SlimefunAddonInstance.java
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/common/CoolDowns.java (91%)
@@ -122,7 +122,7 @@ Subject: [PATCH] InfinityLib-Standalone
  delete mode 100644 src/test/resources/test.yml
 
 diff --git a/pom.xml b/pom.xml
-index 6f2d23e..d058b4f 100644
+index 6f2d23e..ccc6361 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -2,24 +2,19 @@
@@ -157,7 +157,7 @@ index 6f2d23e..d058b4f 100644
          <repository>
              <id>spigot-repo</id>
              <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-@@ -41,13 +36,6 @@
+@@ -41,124 +36,15 @@
              <scope>provided</scope>
          </dependency>
  
@@ -171,10 +171,16 @@ index 6f2d23e..d058b4f 100644
          <dependency>
              <groupId>com.google.code.findbugs</groupId>
              <artifactId>jsr305</artifactId>
-@@ -61,84 +49,21 @@
-             <version>2.2.1</version>
-             <scope>compile</scope>
+             <version>3.0.2</version>
+             <scope>provided</scope>
          </dependency>
+-
+-        <dependency>
+-            <groupId>org.bstats</groupId>
+-            <artifactId>bstats-bukkit</artifactId>
+-            <version>2.2.1</version>
+-            <scope>compile</scope>
+-        </dependency>
 -
 -        <dependency>
 -            <groupId>org.junit.jupiter</groupId>
@@ -196,7 +202,7 @@ index 6f2d23e..d058b4f 100644
 -        <defaultGoal>clean package</defaultGoal>
          <finalName>${project.name} v${project.version}</finalName>
 -
-         <plugins>
+-        <plugins>
 -            <plugin>
 -                <groupId>org.apache.maven.plugins</groupId>
 -                <artifactId>maven-help-plugin</artifactId>
@@ -243,21 +249,40 @@ index 6f2d23e..d058b4f 100644
 -                </executions>
 -            </plugin>
 -
-             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-shade-plugin</artifactId>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-shade-plugin</artifactId>
 -                <version>3.2.4</version>
-+                <version>3.5.0</version>
- 
-                 <configuration>
-                     <relocations>
-                         <relocation>
-                             <pattern>org.bstats</pattern>
+-
+-                <configuration>
+-                    <relocations>
+-                        <relocation>
+-                            <pattern>org.bstats</pattern>
 -                            <shadedPattern>io.github.mooy1.infinitylib.metrics</shadedPattern>
-+                            <shadedPattern>id.universenetwork.sfa_loader.libraries.infinitylib.metrics</shadedPattern>
-                         </relocation>
-                     </relocations>
-                     <filters>
+-                        </relocation>
+-                    </relocations>
+-                    <filters>
+-                        <filter>
+-                            <artifact>*:*</artifact>
+-                            <excludes>
+-                                <exclude>META-INF/*</exclude>
+-                            </excludes>
+-                        </filter>
+-                    </filters>
+-                </configuration>
+-                <executions>
+-                    <execution>
+-                        <phase>package</phase>
+-                        <goals>
+-                            <goal>shade</goal>
+-                        </goals>
+-                    </execution>
+-                </executions>
+-            </plugin>
+-        </plugins>
+     </build>
+ </project>
+\ No newline at end of file
 diff --git a/src/main/java-templates/io/github/mooy1/infinitylib/InfinityLib.java b/src/main/java-templates/io/github/mooy1/infinitylib/InfinityLib.java
 deleted file mode 100644
 index 10e8dfd..0000000
@@ -3183,5 +3208,5 @@ index ef30e3c..0000000
 -  # test
 -  test: test
 -- 
-2.41.0.windows.1
+2.41.0.windows.2
 
