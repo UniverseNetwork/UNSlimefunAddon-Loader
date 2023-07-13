@@ -2,6 +2,9 @@ package id.universenetwork.sfa_loader.utils;
 
 import lombok.experimental.UtilityClass;
 
+import java.lang.reflect.Field;
+import java.util.logging.Level;
+
 @UtilityClass
 public class JavaUtils {
     /**
@@ -40,19 +43,35 @@ public class JavaUtils {
     public int getJavaVersion() {
         String version = System.getProperty("java.version");
 
-        if (version.startsWith("1."))
-            version = version.substring(2, 3);
+        if (version.startsWith("1.")) version = version.substring(2, 3);
 
         else {
             final int dot = version.indexOf(".");
 
-            if (dot != -1)
-                version = version.substring(0, dot);
+            if (dot != -1) version = version.substring(0, dot);
         }
 
-        if (version.contains("-"))
-            version = version.split("-")[0];
+        if (version.contains("-")) version = version.split("-")[0];
 
         return Integer.parseInt(version);
+    }
+
+    /**
+     * Get the value of a field in a class that isn't declared public
+     *
+     * @param name     Field name
+     * @param instance Instance of the class
+     * @return The value of the field
+     * @author ARVIN3108 ID
+     */
+    public Object getField(Object instance, String name) {
+        try {
+            Field field = instance.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            return field.get(instance);
+        } catch (Exception e) {
+            LogUtils.log(Level.SEVERE, "An error occurred while obtaining the value of the field &e" + name, e);
+        }
+        return null;
     }
 }

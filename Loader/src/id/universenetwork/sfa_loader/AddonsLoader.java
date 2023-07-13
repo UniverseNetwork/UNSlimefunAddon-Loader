@@ -45,8 +45,8 @@ public class AddonsLoader {
             if (AbstractAddon.config().getBoolean("addons." + addon.getSimpleName().toLowerCase()))
                 loadAddon(addon, true);
         if (!addonsWithHooksClasses.isEmpty())
-            for (Class<? extends AddonTemplate> addon : addonsWithHooksClasses)
-                loadAddonWithHooks(addon);
+            for (Iterator<Class<? extends AddonTemplate>> i = addonsWithHooksClasses.iterator(); i.hasNext(); )
+                loadAddonWithHooks(i);
 
         String str = "&bTook " + tookTime.getTime() + "ms &ato load all enabled addons to Slimefun!";
         LogUtils.info(str);
@@ -101,20 +101,20 @@ public class AddonsLoader {
         }
     }
 
-    private void loadAddonWithHooks(Class<? extends AddonTemplate> addonClass) {
+    private void loadAddonWithHooks(Iterator<Class<? extends AddonTemplate>> addonIterator) {
+        final Class<? extends AddonTemplate> addonClass = addonIterator.next();
         final Set<String> hooks = Arrays.stream(addonClass.getAnnotation(AddonHooks.class)
                 .value()).collect(Collectors.toSet());
         for (Iterator<String> iterator = hooks.iterator(); iterator.hasNext(); ) {
             String hook = iterator.next();
             if (AbstractAddon.config().getBoolean("addons." + hook.toLowerCase())) {
                 if (isAddonLoaded(hook)) {
-                    addonsWithHooksClasses.remove(addonClass);
+                    addonIterator.remove();
                     continue;
-                } else {
-                    addonsWithHooksClasses.remove(addonClass);
-                    addonsWithHooksClasses.add(addonClass);
-                    return;
                 }
+                addonIterator.remove();
+                addonsWithHooksClasses.add(addonClass);
+                return;
             }
             iterator.remove();
         }
@@ -178,7 +178,7 @@ public class AddonsLoader {
         for (AddonLibrary lib : libraries) {
             String packageRelocation = lib.packageRelocation();
             String packageRelocationName = lib.packageRelocationName();
-            String repository = lib.packageRelocationName();
+            String repository = lib.repository();
 
             if (packageRelocation.isEmpty()) packageRelocation = null;
             if (packageRelocationName.isEmpty()) packageRelocationName = null;
