@@ -1,11 +1,11 @@
-From 4bf1d16c0d259fcd5e315692ee5361cb5a72fffc Mon Sep 17 00:00:00 2001
+From 118b41806dc531b467370269593f01fd43c7a072 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Tue, 11 Jul 2023 17:03:16 +0700
+Date: Fri, 14 Jul 2023 13:04:20 +0700
 Subject: [PATCH] DynaTech
 
 ---
- pom.xml                                       |  87 +--
- .../sfa_loader/addons/dynatech/DynaTech.java  | 107 +++
+ pom.xml                                       |  85 +--
+ .../sfa_loader/addons/dynatech/DynaTech.java  | 114 +++
  .../addons}/dynatech/DynaTechItems.java       |  82 +--
  .../dynatech/attributes/LiquidStorage.java    |  52 +-
  .../events/PicnicBasketFeedPlayerEvent.java   |  24 +-
@@ -73,7 +73,7 @@ Subject: [PATCH] DynaTech
  .../addons-config/DynaTech/config.yml         |   1 +
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  24 -
- 69 files changed, 4164 insertions(+), 4842 deletions(-)
+ 69 files changed, 4167 insertions(+), 4844 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/DynaTechItems.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/attributes/LiquidStorage.java (80%)
@@ -144,7 +144,7 @@ Subject: [PATCH] DynaTech
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index adae2a8..88ca075 100644
+index adae2a8..855346b 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,16 +1,19 @@
@@ -256,7 +256,7 @@ index adae2a8..88ca075 100644
              <artifactId>exoticgarden</artifactId>
              <version>7f9a5f6</version>
              <scope>provided</scope>
-@@ -114,33 +78,34 @@
+@@ -114,33 +78,28 @@
          <dependency>
              <groupId>io.github.mooy1</groupId>
              <artifactId>InfinityExpansion</artifactId>
@@ -271,16 +271,12 @@ index adae2a8..88ca075 100644
 +            <scope>provided</scope>
          </dependency>
  
-         <dependency>
+-        <dependency>
 -            <groupId>org.bstats</groupId>
 -            <artifactId>bstats-bukkit</artifactId>
 -            <version>1.8</version>
 -            <scope>compile</scope>
-+            <groupId>com.google.guava</groupId>
-+            <artifactId>guava</artifactId>
-+            <version>32.1.1-jre</version>
-+            <scope>provided</scope>
-         </dependency>
+-        </dependency>
          <dependency>
              <groupId>com.github.Slimefun-Addon-Community</groupId>
              <artifactId>extrautils</artifactId>
@@ -302,10 +298,10 @@ index adae2a8..88ca075 100644
  </project>
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
 new file mode 100644
-index 0000000..5ed7140
+index 0000000..c6becc1
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
-@@ -0,0 +1,107 @@
+@@ -0,0 +1,114 @@
 +package id.universenetwork.sfa_loader.addons.dynatech;
 +
 +import com.google.common.base.Preconditions;
@@ -334,7 +330,14 @@ index 0000000..5ed7140
 +@AddonLibrary(
 +    groupId = "com{}google{}guava",
 +    artifactId = "guava",
-+    version = "32.1.1-jre",
++    version = "31.1-jre",
++    packageRelocation = "com{}google{}common",
++    packageRelocationName = "guava"
++)
++@AddonLibrary(
++    groupId = "com{}google{}guava",
++    artifactId = "failureaccess",
++    version = "1.0.1",
 +    packageRelocation = "com{}google{}common",
 +    packageRelocationName = "guava"
 +)
