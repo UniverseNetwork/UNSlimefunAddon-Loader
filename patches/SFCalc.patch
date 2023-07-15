@@ -1,6 +1,6 @@
-From 2b791db1c673101f70e5279b4e281afe4c4672d8 Mon Sep 17 00:00:00 2001
+From f82448afb3d1fd65f36d5b6d85fa01ccd881f5c7 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Tue, 11 Jul 2023 21:23:36 +0700
+Date: Sat, 15 Jul 2023 18:59:22 +0700
 Subject: [PATCH] SFCalc
 
 ---
@@ -32,7 +32,7 @@ Subject: [PATCH] SFCalc
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 5cea970..6ba92af 100644
+index 5cea970..88ebffd 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -4,12 +4,17 @@
@@ -42,7 +42,7 @@ index 5cea970..6ba92af 100644
 +    <parent>
 +        <groupId>id.universenetwork.sfa_loader</groupId>
 +        <artifactId>Addons</artifactId>
-+        <version>1.1.0</version>
++        <version>1.2.0</version>
 +    </parent>
 +
      <groupId>io.github.seggan.sfcalc</groupId>
@@ -1006,5 +1006,5 @@ index 48349f4..0000000
 -      - sfc
 \ No newline at end of file
 -- 
-2.41.0.windows.2
+2.41.0.windows.3
 

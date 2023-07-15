@@ -24,7 +24,7 @@ function applyPatch($dir) {
     if ($LASTEXITCODE -ne 0) {
         echo "  Something did not apply cleanly to $name."
         echo "  Please review above details and finish the apply then"
-        echo "  save the changes with rebuildPatches.sh"
+        echo "  save the changes with rebuildPatches.ps1"
         enableCommitSigningIfNeeded
         exit 1
     } else {

@@ -1,6 +1,6 @@
-From 7e74b5ebb4ddba38d6b962cb5fc3e3b1509d0e51 Mon Sep 17 00:00:00 2001
+From 4f22a84449425522b008751a71d90f93bdb948ef Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Sun, 2 Jul 2023 22:28:15 +0700
+Date: Sat, 15 Jul 2023 18:57:54 +0700
 Subject: [PATCH] SMG
 
 ---
@@ -28,7 +28,7 @@ Subject: [PATCH] SMG
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 663ca5f..76e5dae 100644
+index 663ca5f..1baf5ac 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,24 +1,19 @@
@@ -41,7 +41,7 @@ index 663ca5f..76e5dae 100644
 +    <parent>
 +        <groupId>id.universenetwork.sfa_loader</groupId>
 +        <artifactId>Addons</artifactId>
-+        <version>1.1.0</version>
++        <version>1.2.0</version>
 +    </parent>
 +
      <groupId>me.waleks</groupId>
@@ -1022,5 +1022,5 @@ index c464a0f..0000000
 -- Slimefun
 \ No newline at end of file
 -- 
-2.41.0.windows.1
+2.41.0.windows.3
 

@@ -32,7 +32,7 @@ jobs:
         run: |
           git config --global user.name github-actions
           git config --global user.email github-actions@github.com
-          build.cmd
+          patchTools patch
 
       - name: Cache Maven packages
         uses: actions/cache@v3

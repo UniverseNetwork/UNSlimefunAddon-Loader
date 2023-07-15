@@ -1,6 +1,6 @@
-From 2c48c8c5507b4597463dc6786af51459a07a1573 Mon Sep 17 00:00:00 2001
+From 610851fcd55c8b583cc231872a1912780c4b689b Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Wed, 12 Jul 2023 17:59:41 +0700
+Date: Sat, 15 Jul 2023 17:05:30 +0700
 Subject: [PATCH] InfinityLib-Standalone
 
 ---
@@ -122,7 +122,7 @@ Subject: [PATCH] InfinityLib-Standalone
  delete mode 100644 src/test/resources/test.yml
 
 diff --git a/pom.xml b/pom.xml
-index 6f2d23e..ccc6361 100644
+index 6f2d23e..3f75902 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -2,24 +2,19 @@
@@ -135,7 +135,7 @@ index 6f2d23e..ccc6361 100644
 +    <parent>
 +        <groupId>id.universenetwork.sfa_loader</groupId>
 +        <artifactId>SlimefunAddon-Loader</artifactId>
-+        <version>1.1.0</version>
++        <version>1.2.0</version>
 +    </parent>
 +
      <groupId>io.github.mooy1</groupId>
@@ -3208,5 +3208,5 @@ index ef30e3c..0000000
 -  # test
 -  test: test
 -- 
-2.41.0.windows.2
+2.41.0.windows.3
 

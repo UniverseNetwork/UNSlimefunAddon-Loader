@@ -1,10 +1,10 @@
-From 118b41806dc531b467370269593f01fd43c7a072 Mon Sep 17 00:00:00 2001
+From 5a4d80677f3a81b5b49c50ce02bf53a030f2dd23 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <31arvin08@gmail.com>
-Date: Fri, 14 Jul 2023 13:04:20 +0700
+Date: Sat, 15 Jul 2023 17:08:13 +0700
 Subject: [PATCH] DynaTech
 
 ---
- pom.xml                                       |  85 +--
+ pom.xml                                       |  86 +--
  .../sfa_loader/addons/dynatech/DynaTech.java  | 114 +++
  .../addons}/dynatech/DynaTechItems.java       |  82 +--
  .../dynatech/attributes/LiquidStorage.java    |  52 +-
@@ -73,7 +73,7 @@ Subject: [PATCH] DynaTech
  .../addons-config/DynaTech/config.yml         |   1 +
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  24 -
- 69 files changed, 4167 insertions(+), 4844 deletions(-)
+ 69 files changed, 4168 insertions(+), 4844 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/DynaTechItems.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/attributes/LiquidStorage.java (80%)
@@ -144,7 +144,7 @@ Subject: [PATCH] DynaTech
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index adae2a8..855346b 100644
+index adae2a8..0db5806 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,16 +1,19 @@
@@ -159,7 +159,7 @@ index adae2a8..855346b 100644
 +    <parent>
 +        <groupId>id.universenetwork.sfa_loader</groupId>
 +        <artifactId>Addons</artifactId>
-+        <version>1.1.0</version>
++        <version>1.2.0</version>
 +    </parent>
 +
      <groupId>me.profelements</groupId>
@@ -235,7 +235,15 @@ index adae2a8..855346b 100644
                          </relocation>
                      </relocations>
                  </configuration>
-@@ -94,19 +70,7 @@
+@@ -86,6 +62,7 @@
+     </build>
+ 
+     <dependencies>
++        <!--suppress VulnerableLibrariesLocal -->
+         <dependency>
+             <groupId>org.spigotmc</groupId>
+             <artifactId>spigot-api</artifactId>
+@@ -94,19 +71,7 @@
          </dependency>
  
          <dependency>
@@ -256,7 +264,7 @@ index adae2a8..855346b 100644
              <artifactId>exoticgarden</artifactId>
              <version>7f9a5f6</version>
              <scope>provided</scope>
-@@ -114,33 +78,28 @@
+@@ -114,33 +79,28 @@
          <dependency>
              <groupId>io.github.mooy1</groupId>
              <artifactId>InfinityExpansion</artifactId>
@@ -11997,5 +12005,5 @@ index eada68a..0000000
 -## This is the minimum minecraft version required to run your plugin.
 -api-version: 1.14
 -- 
-2.41.0.windows.2
+2.41.0.windows.3
 
