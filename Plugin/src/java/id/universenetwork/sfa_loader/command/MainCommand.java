@@ -25,11 +25,9 @@ public final class MainCommand {
     @CommandMethod("slimefunaddon-loader|sfa-loader|sfal|sfa")
     @CommandDescription("Main command of SlimefunAddon-Loader")
     public void cmd(final CommandSender sender) {
-        sender.sendMessage("");
-        TextUtils.sendCentered(sender, "&aSF&dAddon &bLoader &6v" + AbstractAddon.instance()
-                .getDescription().getVersion());
-        TextUtils.sendCentered(sender, "&dMade By &bARVIN&a3108 &cI&fD &dfor &bUniverse&eNetwork");
-        sender.sendMessage("");
+        TextUtils.sendCentered(sender,
+                "", "&aSF&dAddon &bLoader &6v" + AbstractAddon.instance().getDescription().getVersion(),
+                "&dMade By &bARVIN&a3108 &cI&fD &dfor &bUniverse&eNetwork", "");
     }
 
     @CommandMethod("slimefunaddon-loader|sfa-loader|sfal|sfa reload-config all")

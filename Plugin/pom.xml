@@ -69,13 +69,6 @@
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <id>PaperMC</id>
-            <url>https://repo.papermc.io/repository/maven-public</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>io.papermc.paper</groupId>
@@ -91,6 +84,11 @@
         </dependency>
 
         <!-- Added addons as dependencies -->
+        <dependency>
+            <groupId>id.arvin3108</groupId>
+            <artifactId>ArvinMemories</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
         <dependency>
             <groupId>me.profelements</groupId>
             <artifactId>DynaTech</artifactId>

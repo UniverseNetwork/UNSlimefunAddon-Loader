@@ -10,11 +10,11 @@ plugin-settings:
 # Loader Settings
 loader-settings:
   # If set to true, all addons are not loaded at startup
-  # But it can be loaded using the command
   disable-all-addons: false
 
 # The addons loaded at startup
 addons:
+  arvinmemories: false
   dynatech: true
   extratools: true
   infinityexpansion: true

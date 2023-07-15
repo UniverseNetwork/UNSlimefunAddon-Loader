@@ -5,51 +5,98 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 
 @UtilityClass
 public class TextUtils {
     /**
-     * Send a message to {@link CommandSender} with prefix and tranlated color codes
+     * Send multiple messages to {@link CommandSender} with prefix and translated color codes
      */
-    public void send(CommandSender sender, String txt) {
-        sender.sendMessage(translateColor(txt));
+    public void send(CommandSender sender, String... txt) {
+        for (String s : txt) sender.sendMessage(translateColor(s));
     }
 
     /**
-     * Send a center-aligned message to {@link CommandSender} with a translated prefix and color codes
+     * Send multiple messages to {@link Player} with prefix and translated color codes
      */
-    public void sendCentered(CommandSender sender, String txt) {
-        if (txt == null || txt.equals("")) {
-            sender.sendMessage("");
-            return;
-        }
-        txt = translateColor(txt);
-        int messagePxSize = 0;
-        boolean previousCode = false;
-        boolean isBold = false;
-        for (char c : txt.toCharArray())
-            if (c == '§') previousCode = true;
-            else if (previousCode) {
-                previousCode = false;
-                isBold = c == 'l' || c == 'L';
-            } else {
-                Font FI = Font.getFontInfo(c);
-                messagePxSize += isBold ? FI.getBoldLength() : FI.getLength();
-                messagePxSize++;
+    public void send(Player player, String... txt) {
+        for (String s : txt) player.sendMessage(translateColor(s));
+    }
+
+    /**
+     * Send multiple center-aligned messages to {@link CommandSender} with a translated prefix and color codes
+     */
+    public void sendCentered(CommandSender sender, String... txt) {
+        for (String s : txt) {
+            if (s == null || s.isEmpty()) {
+                sender.sendMessage("");
+                continue;
             }
-        int CENTER_PX = 154;
-        int halvedMessageSize = messagePxSize / 2;
-        int toCompensate = CENTER_PX - halvedMessageSize;
-        int spaceLength = Font.SPACE.getLength() + 1;
-        int compensated = 0;
-        StringBuilder sb = new StringBuilder();
-        while (compensated < toCompensate) {
-            sb.append(" ");
-            compensated += spaceLength;
+            s = translateColor(s);
+            int messagePxSize = 0;
+            boolean previousCode = false;
+            boolean isBold = false;
+            for (char c : s.toCharArray())
+                if (c == '§') previousCode = true;
+                else if (previousCode) {
+                    previousCode = false;
+                    isBold = c == 'l' || c == 'L';
+                } else {
+                    Font FI = Font.getFontInfo(c);
+                    messagePxSize += isBold ? FI.getBoldLength() : FI.getLength();
+                    messagePxSize++;
+                }
+            int CENTER_PX = 154;
+            int halvedMessageSize = messagePxSize / 2;
+            int toCompensate = CENTER_PX - halvedMessageSize;
+            int spaceLength = Font.SPACE.getLength() + 1;
+            int compensated = 0;
+            StringBuilder sb = new StringBuilder();
+            while (compensated < toCompensate) {
+                sb.append(" ");
+                compensated += spaceLength;
+            }
+            sender.sendMessage(sb + s);
         }
-        sender.sendMessage(sb + txt);
+    }
+
+    /**
+     * Send multiple center-aligned message to {@link Player} with prefix and translated color codes
+     */
+    public void sendCentered(Player player, String... txt) {
+        for (String s : txt) {
+            if (s == null || s.isEmpty()) {
+                player.sendMessage("");
+                continue;
+            }
+            s = translateColor(s);
+            int messagePxSize = 0;
+            boolean previousCode = false;
+            boolean isBold = false;
+            for (char c : s.toCharArray())
+                if (c == '§') previousCode = true;
+                else if (previousCode) {
+                    previousCode = false;
+                    isBold = c == 'l' || c == 'L';
+                } else {
+                    Font FI = Font.getFontInfo(c);
+                    messagePxSize += isBold ? FI.getBoldLength() : FI.getLength();
+                    messagePxSize++;
+                }
+            int CENTER_PX = 154;
+            int halvedMessageSize = messagePxSize / 2;
+            int toCompensate = CENTER_PX - halvedMessageSize;
+            int spaceLength = Font.SPACE.getLength() + 1;
+            int compensated = 0;
+            StringBuilder sb = new StringBuilder();
+            while (compensated < toCompensate) {
+                sb.append(" ");
+                compensated += spaceLength;
+            }
+            player.sendMessage(sb + s);
+        }
     }
 
     /**
