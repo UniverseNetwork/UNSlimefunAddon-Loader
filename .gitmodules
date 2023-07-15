@@ -8,6 +8,9 @@
 [submodule "ExtraTools"]
     path = Addons/ExtraTools
     url = https://github.com/Sfiguz7/ExtraTools
+[submodule "Addons/FluffyMachines"]
+	path = Addons/FluffyMachines
+	url = https://github.com/NCBPFluffyBear/FluffyMachines
 [submodule "InfinityExpansion"]
     path = Addons/InfinityExpansion
     url = https://github.com/Mooy1/InfinityExpansion

@@ -11,6 +11,11 @@ function enableCommitSigningIfNeeded {
 }
 
 $dir=$args[0]
+$method="rebuild"
+if ($dir -eq "--new") {
+    $method = "create"
+    $dir = $args[1]
+}
 
 if ($dir) {
     if ($gpgsign -eq "true") {
@@ -21,8 +26,10 @@ if ($dir) {
     $name=(Split-Path $dir -Leaf)
     Set-Location "$basedir/$dir"
 
-    echo "Rolling back $name..."
-    git reset --soft HEAD~1
+    if ($method -eq "rebuild") {
+        echo "Rolling back $name..."
+        git reset --soft HEAD~1
+    }
 
     echo "  Creating a patch from $name..."
     git add . >$null 2>&1
@@ -37,12 +44,14 @@ if ($dir) {
     } else {
         echo "  Patches created cleanly for $name"
         echo "Go to the \"build\" folder to see the results"
-
+        if ($method -eq "create") {
+            echo "Before applying the patch, make sure to commit"
+            echo "the repository first."
+        }
+        enableCommitSigningIfNeeded
     }} else {
     echo "The directory argument is empty"
-    echo "Please repeat in the following way: patchTools rebuild <directory>"
-    echo "Example 1: patchTools rebuild InfinityLib-Standalone"
-    echo "Example 2: patchTools rebuild Addons/Networks"
+    echo "Please repeat in the following way: patchTools $method <directory>"
+    echo "Example 1: patchTools $method InfinityLib-Standalone"
+    echo "Example 2: patchTools $method Addons/Networks"
 }
-
-enableCommitSigningIfNeeded
