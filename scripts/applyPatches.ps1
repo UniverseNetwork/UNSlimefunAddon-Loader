@@ -44,6 +44,7 @@ applyPatch InfinityLib-Standalone
 
 applyPatch Addons/DynaTech
 applyPatch Addons/ExtraTools
+applyPatch Addons/FluffyMachines
 applyPatch Addons/InfinityExpansion
 applyPatch Addons/Networks
 applyPatch Addons/SFCalc

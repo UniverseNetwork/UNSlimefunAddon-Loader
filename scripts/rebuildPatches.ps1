@@ -43,7 +43,7 @@ if ($dir) {
         exit 1
     } else {
         echo "  Patches created cleanly for $name"
-        echo "Go to the \"build\" folder to see the results"
+        echo 'Go to the "build" folder to see the results'
         if ($method -eq "create") {
             echo "Before applying the patch, make sure to commit"
             echo "the repository first."
