@@ -1,12 +1,12 @@
-From 3f1cca6478ef0d4fe294b76561d9110a75c25c7e Mon Sep 17 00:00:00 2001
+From 60fa8506e1f98c27af438b97f85ccb6867e5d419 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Tue, 2 Jan 2024 08:25:21 +0700
+Date: Wed, 3 Jan 2024 15:48:44 +0700
 Subject: [PATCH] FluffyMachines
 
 ---
- pom.xml                                       |  90 +------
- .../fluffymachines/FluffyItemSetup.java       | 184 ++++++--------
- .../addons/fluffymachines/FluffyMachines.java | 123 +++++++++
+ pom.xml                                       |  92 ++-----
+ .../fluffymachines/FluffyItemSetup.java       | 184 ++++++-------
+ .../addons/fluffymachines/FluffyMachines.java | 120 +++++++++
  .../addons}/fluffymachines/items/Barrel.java  | 179 ++++---------
  .../items/EnderChestExtractionNode.java       |  62 ++---
  .../items/EnderChestInsertionNode.java        |  29 +--
@@ -48,23 +48,23 @@ Subject: [PATCH] FluffyMachines
  .../multiblocks/ExpDispenser.java             |  17 +-
  .../fluffymachines/multiblocks/Foundry.java   |  44 ++--
  .../multiblocks/components/GeneratorCore.java |   9 +-
- .../components/SuperheatedFurnace.java        | 203 ++++++---------
+ .../components/SuperheatedFurnace.java        | 203 +++++----------
  .../fluffymachines/objects/AutoCrafter.java   |  90 +++----
- .../objects/DoubleHologramOwner.java          |  17 +-
+ .../objects/DoubleHologramOwner.java          |  16 +-
  .../objects/NonHopperableBlock.java           |  13 +-
  .../fluffymachines/utils/CancelPlace.java     |   4 +
  .../fluffymachines/utils/Constants.java       |  25 +-
  .../fluffymachines/utils/EventUtils.java}     |  59 ++---
- .../fluffymachines/utils/FluffyItems.java     |  29 +--
- .../fluffymachines/utils/GlowEnchant.java     |  10 +-
+ .../fluffymachines/utils/FluffyItems.java     |  42 ++-
+ .../fluffymachines/utils/GlowEnchant.java     |  11 +-
  .../fluffymachines/utils/McMMOEvents.java     |  10 +-
  .../addons}/fluffymachines/utils/Utils.java   |  81 ++----
- .../fluffymachines/FluffyMachines.java        | 239 ------------------
+ .../fluffymachines/FluffyMachines.java        | 242 ------------------
  .../machines/AutoArmorForge.java              |  15 --
  .../fluffymachines/utils/CancelPlace.java     |   4 -
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  31 ---
- 60 files changed, 1227 insertions(+), 2372 deletions(-)
+ 60 files changed, 1231 insertions(+), 2383 deletions(-)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/FluffyItemSetup.java (81%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/Barrel.java (84%)
@@ -110,13 +110,13 @@ Subject: [PATCH] FluffyMachines
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/multiblocks/components/GeneratorCore.java (82%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/multiblocks/components/SuperheatedFurnace.java (75%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/objects/AutoCrafter.java (86%)
- rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/objects/DoubleHologramOwner.java (91%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/objects/DoubleHologramOwner.java (93%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/objects/NonHopperableBlock.java (78%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/CancelPlace.java
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/utils/Constants.java (64%)
  rename src/main/java/{io/ncbpfluffybear/fluffymachines/utils/Events.java => id/universenetwork/sfa_loader/addons/fluffymachines/utils/EventUtils.java} (86%)
- rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/utils/FluffyItems.java (94%)
- rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/utils/GlowEnchant.java (92%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/utils/FluffyItems.java (92%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/utils/GlowEnchant.java (91%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/utils/McMMOEvents.java (83%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/utils/Utils.java (71%)
  delete mode 100644 src/main/java/io/ncbpfluffybear/fluffymachines/FluffyMachines.java
@@ -126,7 +126,7 @@ Subject: [PATCH] FluffyMachines
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 4d2b7ce..39e3d95 100644
+index 0413fe6..39e3d95 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,34 +1,24 @@
@@ -147,8 +147,8 @@ index 4d2b7ce..39e3d95 100644
 -    <version>1.0.0</version>
 -
 -    <properties>
--        <maven.compiler.source>1.8</maven.compiler.source>
--        <maven.compiler.target>1.8</maven.compiler.target>
+-        <maven.compiler.source>16</maven.compiler.source>
+-        <maven.compiler.target>16</maven.compiler.target>
 -        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 -    </properties>
 +    <version>1.2.0</version>
@@ -172,7 +172,7 @@ index 4d2b7ce..39e3d95 100644
          <repository>
              <id>CodeMC</id>
              <url>https://repo.codemc.org/repository/maven-public</url>
-@@ -37,26 +27,7 @@
+@@ -37,52 +27,18 @@
  
      <build>
          <finalName>${project.name} v${project.version}</finalName>
@@ -199,7 +199,8 @@ index 4d2b7ce..39e3d95 100644
              <plugin>
                  <groupId>org.apache.maven.plugins</groupId>
                  <artifactId>maven-shade-plugin</artifactId>
-@@ -64,25 +35,10 @@
+-                <version>3.5.1</version>
++                <version>3.2.4</version>
                  <configuration>
                      <relocations>
                          <relocation>
@@ -234,7 +235,7 @@ index 4d2b7ce..39e3d95 100644
 -        <dependency>
 -            <groupId>io.github.TheBusyBiscuit</groupId>
 -            <artifactId>Slimefun4</artifactId>
--            <version>RC-32</version>
+-            <version>RC-36</version>
 -            <scope>provided</scope>
 -        </dependency>
 -
@@ -809,16 +810,14 @@ index 42146e0..17306b4 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
 new file mode 100644
-index 0000000..81092b9
+index 0000000..b02729c
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
-@@ -0,0 +1,123 @@
+@@ -0,0 +1,120 @@
 +package id.universenetwork.sfa_loader.addons.fluffymachines;
 +
 +import id.universenetwork.sfa_loader.addons.fluffymachines.listeners.KeyedCrafterListener;
-+import id.universenetwork.sfa_loader.addons.fluffymachines.utils.Constants;
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.EventUtils;
-+import id.universenetwork.sfa_loader.addons.fluffymachines.utils.GlowEnchant;
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.McMMOEvents;
 +import id.universenetwork.sfa_loader.annotations.AddonLibrary;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
@@ -852,16 +851,14 @@ index 0000000..81092b9
 +    public void onLoad() {
 +        // Register Glow
 +        try {
-+            if (!Enchantment.isAcceptingRegistrations()) {
-+                Field accepting = Enchantment.class.getDeclaredField("acceptingNew");
-+                accepting.setAccessible(true);
-+                accepting.set(null, true);
-+            }
++            Field accepting = Enchantment.class.getDeclaredField("acceptingNew");
++            accepting.setAccessible(true);
++            if (!accepting.getBoolean(null)) accepting.set(null, true);
 +        } catch (IllegalAccessException | NoSuchFieldException e) {
 +            LogUtils.warning("Failed to register enchantment.");
 +        }
 +
-+        registerGlow();
++        //registerGlow();
 +
 +        // Register ACT Recipes
 +        Iterator<Recipe> recipeIterator = Bukkit.recipeIterator();
@@ -927,13 +924,14 @@ index 0000000..81092b9
 +    }
 +
 +    private void registerGlow() {
-+        Enchantment glowEnchantment = new GlowEnchant(Constants.GLOW_ENCHANT, new String[]{
-+                "SMALL_PORTABLE_CHARGER", "MEDIUM_PORTABLE_CHARGER", "BIG_PORTABLE_CHARGER",
-+                "LARGE_PORTABLE_CHARGER", "CARBONADO_PORTABLE_CHARGER", "PAXEL"
-+        });
++        //Enchantment glowEnchantment = new GlowEnchant(Constants.GLOW_ENCHANT, new String[]{
++        //        "SMALL_PORTABLE_CHARGER", "MEDIUM_PORTABLE_CHARGER", "BIG_PORTABLE_CHARGER",
++        //        "LARGE_PORTABLE_CHARGER", "CARBONADO_PORTABLE_CHARGER", "PAXEL"
++        //});
 +
 +        // Prevent double-registration errors
-+        if (Enchantment.getByKey(glowEnchantment.getKey()) == null) Enchantment.registerEnchantment(glowEnchantment);
++        // Disabled indefinitely due to 1.20.2 enchantment
++        //if (Enchantment.getByKey(glowEnchantment.getKey()) == null) Enchantment.registerEnchantment(glowEnchantment);
 +    }
 +}
 \ No newline at end of file
@@ -5518,7 +5516,7 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/machines/BackpackUnl
 similarity index 85%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/machines/BackpackUnloader.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/machines/BackpackUnloader.java
-index 45811d2..d3d6675 100644
+index 4248ad8..96307db 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/machines/BackpackUnloader.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/machines/BackpackUnloader.java
 @@ -1,23 +1,23 @@
@@ -5641,11 +5639,11 @@ index 45811d2..d3d6675 100644
 -                }
  
                  PlayerProfile.getBackpack(inputItem, backpack -> {
- 
-@@ -154,10 +141,7 @@ public class BackpackUnloader extends SlimefunItem implements EnergyNetComponent
+                     Inventory bpinv = backpack.getInventory();
+@@ -152,10 +139,7 @@ public class BackpackUnloader extends SlimefunItem implements EnergyNetComponent
+                         }
                      }
                  });
- 
 -            } else {
 -                // Not a backpack
 -                rejectInput(inv);
@@ -5654,7 +5652,7 @@ index 45811d2..d3d6675 100644
          }
      }
  
-@@ -185,5 +169,4 @@ public class BackpackUnloader extends SlimefunItem implements EnergyNetComponent
+@@ -183,5 +167,4 @@ public class BackpackUnloader extends SlimefunItem implements EnergyNetComponent
      public int[] getOutputSlots() {
          return OUTPUT_SLOTS;
      }
@@ -7257,13 +7255,13 @@ index 32298e3..2b40d3c 100644
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/objects/DoubleHologramOwner.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/objects/DoubleHologramOwner.java
-similarity index 91%
+similarity index 93%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/objects/DoubleHologramOwner.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/objects/DoubleHologramOwner.java
-index ffe831d..2ba9633 100644
+index 2ffda66..2ba9633 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/objects/DoubleHologramOwner.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/objects/DoubleHologramOwner.java
-@@ -1,18 +1,18 @@
+@@ -1,17 +1,18 @@
 -package io.ncbpfluffybear.fluffymachines.objects;
 +package id.universenetwork.sfa_loader.addons.fluffymachines.objects;
  
@@ -7273,7 +7271,6 @@ index ffe831d..2ba9633 100644
  import io.github.thebusybiscuit.slimefun4.core.services.holograms.HologramsService;
  import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
  import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.HologramProjector;
--import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 -import io.ncbpfluffybear.fluffymachines.utils.Utils;
 -import javax.annotation.Nonnull;
 -import javax.annotation.Nullable;
@@ -7287,7 +7284,7 @@ index ffe831d..2ba9633 100644
  /**
   * This {@link ItemAttribute} manages holograms.
   * Modified version of {@link io.github.thebusybiscuit.slimefun4.core.attributes.HologramOwner}
-@@ -20,13 +20,10 @@ import org.bukkit.util.Vector;
+@@ -19,13 +20,10 @@ import org.bukkit.util.Vector;
   *
   * @author TheBusyBiscuit
   * @author NCBPFluffyBear
@@ -7301,7 +7298,7 @@ index ffe831d..2ba9633 100644
      default void updateHologram(@Nonnull Block b, @Nullable String topText, @Nonnull String bottomText) {
          Location locTop = b.getLocation().add(getTopHologramOffset(b));
          Location locBot = b.getLocation().add(getBottomHologramOffset(b));
-@@ -46,7 +43,6 @@ public interface DoubleHologramOwner extends ItemAttribute {
+@@ -45,7 +43,6 @@ public interface DoubleHologramOwner extends ItemAttribute {
          return Slimefun.getHologramsService().getDefaultOffset();
      }
  
@@ -7309,7 +7306,7 @@ index ffe831d..2ba9633 100644
      default double getHologramSpacing() {
          return 0.2;
      }
-@@ -60,5 +56,4 @@ public interface DoubleHologramOwner extends ItemAttribute {
+@@ -59,5 +56,4 @@ public interface DoubleHologramOwner extends ItemAttribute {
      default Vector getBottomHologramOffset(@Nonnull Block block) {
          return getHologramOffset(block);
      }
@@ -7564,10 +7561,10 @@ index 0cefe17..8f76aff 100644
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/utils/FluffyItems.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/FluffyItems.java
-similarity index 94%
+similarity index 92%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/utils/FluffyItems.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/FluffyItems.java
-index e9bd0dc..a2009cc 100644
+index 26f2060..dcf108f 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/utils/FluffyItems.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/FluffyItems.java
 @@ -1,28 +1,18 @@
@@ -7607,7 +7604,7 @@ index e9bd0dc..a2009cc 100644
  import org.bukkit.Color;
  import org.bukkit.Material;
  import org.bukkit.enchantments.Enchantment;
-@@ -31,7 +21,6 @@ import org.bukkit.enchantments.Enchantment;
+@@ -33,7 +23,6 @@ import org.bukkit.inventory.meta.ItemMeta;
   * Specifies all plugin items
   */
  public class FluffyItems {
@@ -7615,18 +7612,41 @@ index e9bd0dc..a2009cc 100644
      private FluffyItems() {
      }
  
-@@ -476,4 +465,4 @@ public class FluffyItems {
-         LARGE_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
-         CARBONADO_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
+@@ -467,16 +456,15 @@ public class FluffyItems {
+             LoreBuilderDynamic.powerPerTick(SmartFactory.getEnergyConsumption())
+     );
+ 
+-
+-    // private static final Enchantment glowEnchant = Enchantment.getByKey(Constants.GLOW_ENCHANT);
++    //private static final Enchantment glowEnchant = Enchantment.getByKey(Constants.GLOW_ENCHANT);
+ 
+     static {
+         FireproofRune.setFireproof(FIREPROOF_RUNE);
+-//        SMALL_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
+-//        MEDIUM_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
+-//        BIG_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
+-//        LARGE_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
+-//        CARBONADO_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
++        //SMALL_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
++        //MEDIUM_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
++        //BIG_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
++        //LARGE_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
++        //CARBONADO_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
+ 
+         SMALL_PORTABLE_CHARGER.addUnsafeEnchantment(Enchantment.BINDING_CURSE, 1);
+         MEDIUM_PORTABLE_CHARGER.addUnsafeEnchantment(Enchantment.BINDING_CURSE, 1);
+@@ -504,4 +492,4 @@ public class FluffyItems {
+         CPCMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+         CARBONADO_PORTABLE_CHARGER.setItemMeta(CPCMeta);
      }
 -}
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/utils/GlowEnchant.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/GlowEnchant.java
-similarity index 92%
+similarity index 91%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/utils/GlowEnchant.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/GlowEnchant.java
-index ed45f4a..367ebf8 100644
+index 1c72b61..4a782dd 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/utils/GlowEnchant.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/GlowEnchant.java
 @@ -1,4 +1,4 @@
@@ -7635,15 +7655,28 @@ index ed45f4a..367ebf8 100644
  
  import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
  import org.bukkit.NamespacedKey;
-@@ -21,7 +21,6 @@ import java.util.Set;
+@@ -18,12 +18,10 @@ import java.util.Set;
+  *
+  * @author NCBPFluffyBear
+  * @author J3fftw1
+- *
+  * @deprecated Disabled indefinitely due to 1.20.2 enchantment changes
   */
  @SuppressWarnings("NullableProblems")
  public class GlowEnchant extends Enchantment {
 -
      private final Set<String> ids = new HashSet<>();
+     private final NamespacedKey key;
  
-     public GlowEnchant(@Nonnull NamespacedKey key, @Nonnull String[] applicableItems) {
-@@ -74,11 +73,8 @@ public class GlowEnchant extends Enchantment {
+@@ -51,7 +49,6 @@ public class GlowEnchant extends Enchantment {
+     }
+ 
+     @Override
+-    @SuppressWarnings("deprecation")
+     public EnchantmentTarget getItemTarget() {
+         return EnchantmentTarget.ALL;
+     }
+@@ -78,9 +75,7 @@ public class GlowEnchant extends Enchantment {
              final ItemMeta itemMeta = item.getItemMeta();
              final Optional<String> id = Slimefun.getItemDataService().getItemData(itemMeta);
  
@@ -7654,7 +7687,10 @@ index ed45f4a..367ebf8 100644
          }
          return false;
      }
--
+@@ -89,4 +84,4 @@ public class GlowEnchant extends Enchantment {
+     public NamespacedKey getKey() {
+         return this.key;
+     }
 -}
 +}
 \ No newline at end of file
@@ -7868,21 +7904,21 @@ index 8c1b280..4885dcc 100644
 \ No newline at end of file
 diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/FluffyMachines.java b/src/main/java/io/ncbpfluffybear/fluffymachines/FluffyMachines.java
 deleted file mode 100644
-index 15329c6..0000000
+index f1792af..0000000
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/FluffyMachines.java
 +++ /dev/null
-@@ -1,239 +0,0 @@
+@@ -1,242 +0,0 @@
 -package io.ncbpfluffybear.fluffymachines;
 -
 -import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 -import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 -import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 -import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.BlobBuildUpdater;
 -import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.GitHubBuildsUpdater;
 -import io.ncbpfluffybear.fluffymachines.listeners.KeyedCrafterListener;
 -import io.ncbpfluffybear.fluffymachines.utils.Constants;
 -import io.ncbpfluffybear.fluffymachines.utils.Events;
--import io.ncbpfluffybear.fluffymachines.utils.GlowEnchant;
 -import io.ncbpfluffybear.fluffymachines.utils.McMMOEvents;
 -import io.ncbpfluffybear.fluffymachines.utils.Utils;
 -import java.lang.reflect.Field;
@@ -7899,9 +7935,11 @@ index 15329c6..0000000
 -import org.bstats.bukkit.Metrics;
 -import org.bukkit.Bukkit;
 -import org.bukkit.ChatColor;
+-import org.bukkit.Registry;
 -import org.bukkit.command.Command;
 -import org.bukkit.command.CommandSender;
 -import org.bukkit.enchantments.Enchantment;
+-import org.bukkit.enchantments.EnchantmentWrapper;
 -import org.bukkit.entity.Player;
 -import org.bukkit.inventory.ItemStack;
 -import org.bukkit.inventory.Recipe;
@@ -7926,22 +7964,22 @@ index 15329c6..0000000
 -        Config cfg = new Config(this);
 -
 -        if (cfg.getBoolean("options.auto-update") && getDescription().getVersion().startsWith("DEV - ")) {
--            new GitHubBuildsUpdater(this, getFile(), "NCBPFluffyBear/FluffyMachines/master/").start();
+-            new BlobBuildUpdater(this, getFile(), "FluffyMachines", "Dev").start();
 -        }
 -
 -        // Register Glow
 -
--        try {
--            if (!Enchantment.isAcceptingRegistrations()) {
--                Field accepting = Enchantment.class.getDeclaredField("acceptingNew");
--                accepting.setAccessible(true);
--                accepting.set(null, true);
--            }
--        } catch (IllegalAccessException | NoSuchFieldException ignored) {
--            getLogger().warning("Failed to register enchantment.");
--        }
+-//        try {
+-//            Field accepting = Enchantment.class.getDeclaredField("acceptingNew");
+-//            accepting.setAccessible(true);
+-//            if (!accepting.getBoolean(null)) {
+-//                accepting.set(null, true);
+-//            }
+-//        } catch (IllegalAccessException | NoSuchFieldException ignored) {
+-//            getLogger().warning("Failed to register enchantment.");
+-//        }
 -
--        registerGlow();
+-        // registerGlow();
 -
 -        // Register ACT Recipes
 -        Iterator<Recipe> recipeIterator = Bukkit.recipeIterator();
@@ -8084,15 +8122,16 @@ index 15329c6..0000000
 -    }
 -
 -    private void registerGlow() {
--        Enchantment glowEnchantment = new GlowEnchant(Constants.GLOW_ENCHANT, new String[]{
--                "SMALL_PORTABLE_CHARGER", "MEDIUM_PORTABLE_CHARGER", "BIG_PORTABLE_CHARGER",
--                "LARGE_PORTABLE_CHARGER", "CARBONADO_PORTABLE_CHARGER", "PAXEL"
--        });
+-//        Enchantment glowEnchantment = new GlowEnchant(Constants.GLOW_ENCHANT, new String[]{
+-//                "SMALL_PORTABLE_CHARGER", "MEDIUM_PORTABLE_CHARGER", "BIG_PORTABLE_CHARGER",
+-//                "LARGE_PORTABLE_CHARGER", "CARBONADO_PORTABLE_CHARGER", "PAXEL"
+-//        });
 -
 -        // Prevent double-registration errors
--        if (Enchantment.getByKey(glowEnchantment.getKey()) == null) {
--            Enchantment.registerEnchantment(glowEnchantment);
--        }
+-        // Disabled indefinitely due to 1.20.2 enchantment changes
+-//        if (Enchantment.getByKey(glowEnchantment.getKey()) == null) {
+-//            Enchantment.registerEnchantment(glowEnchantment);
+-//        }
 -    }
 -
 -    @Override
@@ -8191,5 +8230,5 @@ index f1301b3..0000000
 -    description: Allows you to use FluffyMachines admin commands
 \ No newline at end of file
 -- 
-2.41.0.windows.3
+2.43.0.windows.1
 
