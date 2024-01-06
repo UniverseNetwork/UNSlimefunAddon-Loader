@@ -1,6 +1,6 @@
-From 187160b79b7b24963a957b71c6c7fb18bbeac716 Mon Sep 17 00:00:00 2001
+From 331c0c5ca8095644fa614f19bea2b07161b6281c Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Tue, 2 Jan 2024 13:58:54 +0700
+Date: Sun, 7 Jan 2024 06:28:12 +0700
 Subject: [PATCH] DynaTech
 
 ---
@@ -310,7 +310,7 @@ index 83f8b2d..6457b6c 100644
  </project>
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
 new file mode 100644
-index 0000000..d2c1e6f
+index 0000000..a999282
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
 @@ -0,0 +1,112 @@
@@ -394,7 +394,7 @@ index 0000000..d2c1e6f
 +        Bukkit.getScheduler().runTaskTimer(AbstractAddon.instance(), () -> this.tickInterval++, 0, TICK_TIME);
 +
 +        if (Slimefun.getMinecraftVersion().isBefore(MinecraftVersion.MINECRAFT_1_19))
-+            LogUtils.warning("DynaTech only supports 1.19+," +
++            LogUtils.warning("DynaTech only supports 1.19+, " +
 +                "&abut with the help of this project, the minimum version supported by DynaTech is 1.16+.");
 +    }
 +
@@ -10281,5 +10281,5 @@ index eada68a..0000000
 -## This is the minimum minecraft version required to run your plugin.
 -api-version: 1.14
 -- 
-2.41.0.windows.3
+2.43.0.windows.1
 
