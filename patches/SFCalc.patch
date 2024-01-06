@@ -1,38 +1,64 @@
-From f82448afb3d1fd65f36d5b6d85fa01ccd881f5c7 Mon Sep 17 00:00:00 2001
+From b4b5a21fb06629b5c1782d76d054f013221a6450 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 15 Jul 2023 18:59:22 +0700
+Date: Sat, 6 Jan 2024 11:17:00 +0700
 Subject: [PATCH] SFCalc
 
 ---
- pom.xml                                       | 96 ++----------------
+ README.md                                     | 10 +-
+ pom.xml                                       | 84 ++---------------
  .../sfa_loader/addons/sfcalc/CalcCommand.java | 22 +++++
- .../sfa_loader/addons}/sfcalc/Calculator.java | 77 ++++++---------
- .../addons/sfcalc/NeededCommand.java          | 67 +++++++++++++
- .../sfa_loader/addons}/sfcalc/SFCalc.java     | 63 ++++--------
- .../addons}/sfcalc/StringRegistry.java        | 18 ++--
- .../addons/sfcalc/WebsiteCommand.java         | 29 ++++++
- .../io/github/seggan/sfcalc/CalcCommand.java  | 91 -----------------
- .../github/seggan/sfcalc/NeededCommand.java   | 97 -------------------
- .../github/seggan/sfcalc/SFCalcMetrics.java   | 60 ------------
- .../github/seggan/sfcalc/WebsiteCommand.java  | 43 --------
+ .../sfa_loader/addons}/sfcalc/Calculator.java | 74 +++++++--------
+ .../addons/sfcalc/NeededCommand.java          | 67 ++++++++++++++
+ .../sfa_loader/addons}/sfcalc/SFCalc.java     | 62 ++++---------
+ .../addons}/sfcalc/StringRegistry.java        | 26 ++----
+ .../io/github/seggan/sfcalc/CalcCommand.java  | 91 -------------------
+ .../github/seggan/sfcalc/SFCalcMetrics.java   | 54 -----------
  .../{ => addons-config/SFCalc}/config.yml     |  2 -
  src/main/resources/plugin.yml                 | 13 ---
- 13 files changed, 183 insertions(+), 495 deletions(-)
+ 11 files changed, 163 insertions(+), 342 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/CalcCommand.java
- rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/Calculator.java (67%)
+ rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/Calculator.java (66%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java
- rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/SFCalc.java (55%)
- rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/StringRegistry.java (90%)
- create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/WebsiteCommand.java
+ rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/SFCalc.java (50%)
+ rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/StringRegistry.java (79%)
  delete mode 100644 src/main/java/io/github/seggan/sfcalc/CalcCommand.java
- delete mode 100644 src/main/java/io/github/seggan/sfcalc/NeededCommand.java
  delete mode 100644 src/main/java/io/github/seggan/sfcalc/SFCalcMetrics.java
- delete mode 100644 src/main/java/io/github/seggan/sfcalc/WebsiteCommand.java
  rename src/main/resources/{ => addons-config/SFCalc}/config.yml (96%)
  delete mode 100644 src/main/resources/plugin.yml
 
+diff --git a/README.md b/README.md
+index b738bfd..4825e14 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,20 @@
+ # SFCalc
+ A calculator for the plugin Slimefun. This is based off of john000708's SlimeCalculator.
+ 
+-Find most recent build [here](https://blob.build/project/SFCalc/Dev).
++Find most recent build [here](https://thebusybiscuit.github.io/builds/Seggan/SFCalc/master).
+ 
+ ## Usage
+ 
+ This addon for Slimefun adds a new command: /sfcalc. This command can calculate how much basic slimefun resources you need to make the specified item.
+ 
+-Usage: `/sfcalc [required: item] [optional: amount]`
++Usage: `/sfcalc calc [required: item] [optional: amount]`
+ 
+ Item is the id of the item you want to craft. An item id is like this: "electric_motor", "carbonado", "solar_generator" (basic solar generator), etc. For tiered machines that are not lowest tier, add the tier number after the id. For example: "solar_generator_3" (carbonado solar generator), "lava_generator_2" (advanced lava generator), "carbon_press" (carbon press [tier 1]), etc.
+ 
+ Amount is the number of items you want to craft. It defaults to 1 if you don't specify any amount.
+ 
+-Minecraft version: 1.16+
++Using `/sfcalc needed` instead of `/sfcalc calc` will show the items needed for the calculated item.
+ 
+-Slimefun version: RC-36 or newer
+\ No newline at end of file
++Minecraft version: 1.15-1.17
++
++Slimefun version: RC-20 or newer
+\ No newline at end of file
 diff --git a/pom.xml b/pom.xml
-index 5cea970..88ebffd 100644
+index 7ce30c7..88ebffd 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -4,12 +4,17 @@
@@ -54,10 +80,11 @@ index 5cea970..88ebffd 100644
          <author>Seggan</author>
          <sonar.projectKey>Seggan_SFCalc</sonar.projectKey>
          <sonar.organization>seggan</sonar.organization>
-@@ -18,78 +23,19 @@
+@@ -17,63 +22,18 @@
+     </properties>
  
      <build>
-         <finalName>${project.name} v${project.version}</finalName>
+-        <finalName>${project.name}</finalName>
 -        <defaultGoal>clean package -T 2.0C</defaultGoal>
 -
 -        <resources>
@@ -69,6 +96,7 @@ index 5cea970..88ebffd 100644
 -                    <include>config.yml</include>
 -                </includes>
 -            </resource>
++        <finalName>${project.name} v${project.version}</finalName>
  
 -            <resource>
 -                <directory>${basedir}</directory>
@@ -84,8 +112,8 @@ index 5cea970..88ebffd 100644
 -                <artifactId>maven-compiler-plugin</artifactId>
 -                <version>3.1</version>
 -                <configuration>
--                    <source>11</source>
--                    <target>11</target>
+-                    <source>17</source>
+-                    <target>17</target>
 -                </configuration>
 -            </plugin>
 -
@@ -107,67 +135,51 @@ index 5cea970..88ebffd 100644
 -                </dependencies>
                  <configuration>
                      <relocations>
--                        <relocation>
--                            <pattern>io.github.mooy1.infinitylib</pattern>
--                            <shadedPattern>io.github.seggan.sfcalc.infinitylib</shadedPattern>
--                        </relocation>
                          <relocation>
                              <pattern>io.github.seggan.errorreporter</pattern>
 -                            <shadedPattern>io.github.seggan.sfcalc.errorreporter</shadedPattern>
+-                        </relocation>
+-                        <relocation>
+-                            <pattern>org.bstats</pattern>
+-                            <shadedPattern>io.github.seggan.sfcalc.bstats</shadedPattern>
 +                            <shadedPattern>id.universenetwork.sfa_loader.libraries.errorreporter</shadedPattern>
                          </relocation>
                      </relocations>
--                    <filters>
--                        <filter>
--                            <artifact>io.github.mooy1:InfinityLib</artifact>
--                            <excludes>
--                                <exclude>**/infinitylib/slimefun/**</exclude>
--                                <exclude>**/infinitylib/categories/**</exclude>
--                                <exclude>**/infinitylib/items/**</exclude>
--                                <exclude>**/infinitylib/players/**</exclude>
--                                <exclude>**/infinitylib/persistence/**</exclude>
--                                <exclude>**/infinitylib/presets/**</exclude>
--                                <exclude>**/infinitylib/recipes/**</exclude>
--                            </excludes>
--                        </filter>
--                    </filters>
                  </configuration>
-                 <executions>
-                     <execution>
-@@ -104,11 +50,6 @@
+@@ -90,11 +50,6 @@
      </build>
  
      <repositories>
 -        <repository>
--            <id>jittpack</id>
--            <url>https://jitpack.io</url>
+-            <id>jitpack.io</id>
+-            <url>https://jitpack.io/</url>
 -        </repository>
 -
          <repository>
              <id>spigot-repo</id>
              <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-@@ -123,20 +64,6 @@
+@@ -109,20 +64,6 @@
              <scope>provided</scope>
          </dependency>
  
 -        <dependency>
--            <groupId>com.github.TheBusyBiscuit</groupId>
--            <artifactId>Slimefun4</artifactId>
--            <version>RC-27</version>
--            <scope>provided</scope>
+-            <groupId>org.bstats</groupId>
+-            <artifactId>bstats-bukkit</artifactId>
+-            <version>3.0.2</version>
+-            <scope>compile</scope>
 -        </dependency>
 -
 -        <dependency>
--            <groupId>io.github.mooy1</groupId>
--            <artifactId>InfinityLib</artifactId>
--            <version>1.0.0</version>
--            <scope>compile</scope>
+-            <groupId>com.github.Slimefun</groupId>
+-            <artifactId>Slimefun4</artifactId>
+-            <version>RC-36</version>
+-            <scope>provided</scope>
 -        </dependency>
 -
          <dependency>
              <groupId>com.google.code.findbugs</groupId>
              <artifactId>jsr305</artifactId>
-@@ -144,18 +71,11 @@
+@@ -130,18 +71,11 @@
              <scope>provided</scope>
          </dependency>
  
@@ -218,10 +230,10 @@ index 0000000..161800f
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/github/seggan/sfcalc/Calculator.java b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/Calculator.java
-similarity index 67%
+similarity index 66%
 rename from src/main/java/io/github/seggan/sfcalc/Calculator.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/Calculator.java
-index d483255..1536b5b 100644
+index b0e328c..1536b5b 100644
 --- a/src/main/java/io/github/seggan/sfcalc/Calculator.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/Calculator.java
 @@ -1,5 +1,6 @@
@@ -232,24 +244,16 @@ index d483255..1536b5b 100644
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
-@@ -9,15 +10,9 @@ import org.bukkit.command.CommandSender;
- import org.bukkit.entity.Player;
- import org.bukkit.inventory.ItemStack;
- 
--import java.util.ArrayList;
--import java.util.Comparator;
--import java.util.HashMap;
--import java.util.List;
--import java.util.Map;
- import javax.annotation.Nonnull;
+@@ -13,8 +14,6 @@ import javax.annotation.Nonnull;
  import javax.annotation.Nullable;
--
--import static io.github.seggan.sfcalc.StringRegistry.*;
-+import java.util.*;
+ import java.util.*;
  
+-import static io.github.seggan.sfcalc.StringRegistry.format;
+-
  /**
   * The main class for the calculator
-@@ -26,34 +21,31 @@ import static io.github.seggan.sfcalc.StringRegistry.*;
+  *
+@@ -22,34 +21,31 @@ import static io.github.seggan.sfcalc.StringRegistry.format;
   * @author TheBusyBiscuit
   */
  public class Calculator {
@@ -293,7 +297,7 @@ index d483255..1536b5b 100644
  
              sender.sendMessage(header);
  
-@@ -71,12 +63,10 @@ public class Calculator {
+@@ -67,12 +63,10 @@ public class Calculator {
                      if (a < 0) a = 0;
                      String parsedAmount;
                      int maxStackSize = entry.getKey().getMaxStackSize();
@@ -310,7 +314,7 @@ index d483255..1536b5b 100644
                  }
              } else {
                  for (Map.Entry<ItemStack, Long> entry : entries) {
-@@ -84,12 +74,10 @@ public class Calculator {
+@@ -80,12 +74,10 @@ public class Calculator {
                      if (originalValues <= 0) continue;
                      String parsedAmount;
                      int maxStackSize = entry.getKey().getMaxStackSize();
@@ -327,7 +331,7 @@ index d483255..1536b5b 100644
                  }
              }
          });
-@@ -101,9 +89,7 @@ public class Calculator {
+@@ -97,9 +89,7 @@ public class Calculator {
  
          for (ItemStack item : player.getInventory().getContents()) {
              // if the Item is null or air, it will return null too
@@ -338,7 +342,7 @@ index d483255..1536b5b 100644
              add(inv, item, item.getAmount());
          }
  
-@@ -114,10 +100,10 @@ public class Calculator {
+@@ -110,10 +100,10 @@ public class Calculator {
      public Map<ItemStack, Long> calculate(@Nonnull SlimefunItem parent, long amount) {
  
          Map<ItemStack, Long> result = new HashMap<>();
@@ -353,14 +357,15 @@ index d483255..1536b5b 100644
          for (ItemStack item : parent.getRecipe()) {
              if (item == null) continue;
              add(result, item, item.getAmount() * operations);
-@@ -148,18 +134,15 @@ public class Calculator {
+@@ -144,17 +134,15 @@ public class Calculator {
       */
      @Nullable
      private SlimefunItemStack getNextItem(Map<ItemStack, Long> map) {
 -        for (Map.Entry<ItemStack, Long> entry : map.entrySet()) {
+-            if (entry.getKey() instanceof SlimefunItemStack ingredient) {
 +        for (Map.Entry<ItemStack, Long> entry : map.entrySet())
-             if (entry.getKey() instanceof SlimefunItemStack) {
-                 SlimefunItemStack ingredient = (SlimefunItemStack) entry.getKey();
++            if (entry.getKey() instanceof SlimefunItemStack) {
++                SlimefunItemStack ingredient = (SlimefunItemStack) entry.getKey();
                  if (ingredient.getItem() != null &&
 -                    !plugin.getBlacklistedRecipes().contains(ingredient.getItem().getRecipeType()) &&
 -					!plugin.getBlacklistedIds().contains(ingredient.getItem().getId())) {
@@ -376,7 +381,7 @@ index d483255..1536b5b 100644
          return null;
      }
  
-@@ -173,4 +156,4 @@ public class Calculator {
+@@ -168,4 +156,4 @@ public class Calculator {
      private String getBasicName(ItemStack stack) {
          return ChatColor.stripColor(ItemUtils.getItemName(stack));
      }
@@ -458,32 +463,34 @@ index 0000000..ba964bf
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/github/seggan/sfcalc/SFCalc.java b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/SFCalc.java
-similarity index 55%
+similarity index 50%
 rename from src/main/java/io/github/seggan/sfcalc/SFCalc.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/SFCalc.java
-index fc98879..6b34407 100644
+index a88739d..b1693ec 100644
 --- a/src/main/java/io/github/seggan/sfcalc/SFCalc.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/SFCalc.java
 @@ -1,52 +1,43 @@
 -package io.github.seggan.sfcalc;
 +package id.universenetwork.sfa_loader.addons.sfcalc;
  
--import io.github.mooy1.infinitylib.core.AbstractAddon;
 +import id.universenetwork.sfa_loader.annotations.AddonLibrary;
 +import id.universenetwork.sfa_loader.managers.CommandManager;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
  import io.github.seggan.errorreporter.ErrorReporter;
  import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
  import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
--import org.bukkit.event.Listener;
--
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.BlobBuildUpdater;
  import lombok.Getter;
+-import org.bukkit.command.TabExecutor;
+-import org.bukkit.event.Listener;
+-import org.bukkit.plugin.java.JavaPlugin;
  
+-import java.io.File;
  import java.util.HashSet;
  import java.util.Set;
  
  @Getter
--public class SFCalc extends AbstractAddon implements Listener {
+-public class SFCalc extends JavaPlugin implements Listener {
 -
 +@AddonLibrary(
 +        groupId = "com{}github{}seggan",
@@ -501,40 +508,38 @@ index fc98879..6b34407 100644
 +    private Calculator calc;
      private StringRegistry stringRegistry;
  
--    public SFCalc() {
--        super("Seggan", "SFCalc", "master", "auto-updates");
--    }
--
      @Override
--    protected void enable() {
+-    public void onEnable() {
 -        instance = this;
 -
--        REPORTER  = new ErrorReporter("Seggan", "SFCalc", () ->
--            "SFCalc " +
--            getPluginVersion() +
--            "\nSlimefun " +
--            Slimefun.getVersion() +
--            "\nMinecraft " +
--            Slimefun.getMinecraftVersion().getName()
+-        new BlobBuildUpdater(this, getFile(), "SFCalc").start();
+-
 +    public void onLoad() {
-+        REPORTER = new ErrorReporter("Seggan", "SFCalc", () ->
+         REPORTER = new ErrorReporter("Seggan", "SFCalc", () ->
+-                "SFCalc " +
+-                        getDescription().getVersion() +
+-                        "\nSlimefun " +
+-                        Slimefun.getVersion() +
+-                        "\nMinecraft " +
+-                        Slimefun.getMinecraftVersion().getName()
 +                "SFCalc DEV - 37 (git dfc0fc41)\nSlimefun " + Slimefun.getVersion() +
 +                        "\nMinecraft " + Slimefun.getMinecraftVersion().getName()
          );
--        REPORTER.preSend(obj -> !getPluginVersion().equals("UNOFFICIAL"));
+-        REPORTER.preSend(obj -> !getDescription().getVersion().equals("UNOFFICIAL"));
  
          REPORTER.setOn(getConfig().getBoolean("error-reports", true));
  
          REPORTER.executeOrElseReport(() -> {
 -            new SFCalcMetrics(this);
 -
-             stringRegistry = new StringRegistry(getConfig());
+-            stringRegistry = new StringRegistry(getConfig(), new File(getDataFolder(), "config.yml"));
 -            calculator = new Calculator(this);
++            stringRegistry = new StringRegistry(getConfig());
 +            calc = new Calculator(this);
  
              blacklistedRecipes.add(RecipeType.ORE_WASHER);
              blacklistedRecipes.add(RecipeType.GEO_MINER);
-@@ -61,24 +52,10 @@ public class SFCalc extends AbstractAddon implements Listener {
+@@ -61,23 +52,10 @@ public class SFCalc extends JavaPlugin implements Listener {
              blacklistedIds.add("FALLEN_METEOR");
              blacklistedIds.add("RUBBER");
              blacklistedIds.add("VOID_BIT");
@@ -543,16 +548,15 @@ index fc98879..6b34407 100644
                  blacklistedIds.add("CARBON");
 -            }
  
--            getCommand()
--                .addSub(new CalcCommand(this))
--                .addSub(new NeededCommand(this))
--                .addSub(new WebsiteCommand());
-+            CommandManager.register(new CalcCommand(this), new WebsiteCommand());
+-            TabExecutor calcCommand = new CalcCommand(this);
+-            getCommand("sfcalc").setExecutor(calcCommand);
+-            getCommand("sfcalc").setTabCompleter(calcCommand);
++            CommandManager.register(new CalcCommand(this));
          });
      }
 -
 -    @Override
--    protected void disable() {
+-    public void onDisable() {
 -        instance = null;
 -    }
 -
@@ -564,28 +568,28 @@ index fc98879..6b34407 100644
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/github/seggan/sfcalc/StringRegistry.java b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/StringRegistry.java
-similarity index 90%
+similarity index 79%
 rename from src/main/java/io/github/seggan/sfcalc/StringRegistry.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/StringRegistry.java
-index 4e91e19..dda5161 100644
+index e3ea036..dda5161 100644
 --- a/src/main/java/io/github/seggan/sfcalc/StringRegistry.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/StringRegistry.java
-@@ -1,18 +1,16 @@
+@@ -1,20 +1,16 @@
 -package io.github.seggan.sfcalc;
 +package id.universenetwork.sfa_loader.addons.sfcalc;
  
--import io.github.mooy1.infinitylib.core.AddonConfig;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
--import org.apache.commons.lang.Validate;
--
  import lombok.Getter;
-+import org.apache.commons.lang.Validate;
+ import org.apache.commons.lang.Validate;
+-import org.bukkit.configuration.file.FileConfiguration;
  
-+import javax.annotation.Nonnull;
+ import javax.annotation.Nonnull;
+-import java.io.File;
+-import java.io.IOException;
+-import java.io.UncheckedIOException;
  import java.util.concurrent.atomic.AtomicInteger;
  import java.util.regex.Pattern;
--import javax.annotation.Nonnull;
  
  @Getter
  public final class StringRegistry {
@@ -593,7 +597,29 @@ index 4e91e19..dda5161 100644
      private final Pattern percentPattern = Pattern.compile("(%s|%d)");
      private final String headerString;
      private final String headerAmountString;
-@@ -49,9 +47,8 @@ public final class StringRegistry {
+@@ -28,7 +24,7 @@ public final class StringRegistry {
+     private final String notAPlayerString;
+     private final String invalidNumberString;
+ 
+-    StringRegistry(FileConfiguration config, File file) {
++    StringRegistry(AddonConfig config) {
+         headerString = reformat(config, "header-string", 1);
+         headerAmountString = reformat(config, "header-amount-string", 2, 1);
+         stackString = reformat(config, "stack-string", 1, 2, 3, 4);
+@@ -41,11 +37,7 @@ public final class StringRegistry {
+         notAPlayerString = config.getString("not-a-player-string");
+         invalidNumberString = config.getString("invalid-number-string");
+ 
+-        try {
+-            config.save(file);
+-        } catch (IOException e) {
+-            throw new UncheckedIOException(e);
+-        }
++        config.save();
+     }
+ 
+     @Nonnull
+@@ -55,19 +47,18 @@ public final class StringRegistry {
  
          String finalString = formatString;
  
@@ -604,7 +630,10 @@ index 4e91e19..dda5161 100644
  
          return ChatColors.color(finalString);
      }
-@@ -61,7 +58,7 @@ public final class StringRegistry {
+ 
+-    private String reformat(FileConfiguration config, String key, int... numbers) {
++    private String reformat(AddonConfig config, String key, int... numbers) {
+         String val = config.getString(key);
  
          AtomicInteger i = new AtomicInteger();
          String formatted = this.percentPattern.matcher(val)
@@ -613,7 +642,7 @@ index 4e91e19..dda5161 100644
  
          if (i.get() == numbers.length) {
              config.set(key, formatted);
-@@ -70,5 +67,4 @@ public final class StringRegistry {
+@@ -76,5 +67,4 @@ public final class StringRegistry {
  
          return val;
      }
@@ -621,76 +650,37 @@ index 4e91e19..dda5161 100644
 -}
 +}
 \ No newline at end of file
-diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/WebsiteCommand.java b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/WebsiteCommand.java
-new file mode 100644
-index 0000000..0ee2875
---- /dev/null
-+++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/WebsiteCommand.java
-@@ -0,0 +1,29 @@
-+package id.universenetwork.sfa_loader.addons.sfcalc;
-+
-+import cloud.commandframework.annotations.CommandDescription;
-+import cloud.commandframework.annotations.CommandMethod;
-+import net.md_5.bungee.api.ChatColor;
-+import net.md_5.bungee.api.chat.ClickEvent;
-+import net.md_5.bungee.api.chat.ComponentBuilder;
-+import org.bukkit.command.CommandSender;
-+import org.bukkit.entity.Player;
-+
-+@SuppressWarnings("unused")
-+public class WebsiteCommand {
-+    @CommandMethod("sfcalc|sfc website")
-+    @CommandDescription("Gives the SFCalc website")
-+    public void cmdWebsite(CommandSender sender) {
-+        SFCalc.REPORTER.executeOrElseReport(() -> {
-+            ClickEvent event = new ClickEvent(ClickEvent.Action.OPEN_URL, "https://sfcalc-online.pages.dev");
-+            if (sender instanceof Player) {
-+                Player p = (Player) sender;
-+                p.spigot().sendMessage(new ComponentBuilder()
-+                        .color(ChatColor.YELLOW)
-+                        .event(event)
-+                        .append("Click to go to the SFCalc website")
-+                        .create()
-+                );
-+            } else sender.sendMessage("https://sfcalc-online.pages.dev");
-+        });
-+    }
-+}
-\ No newline at end of file
 diff --git a/src/main/java/io/github/seggan/sfcalc/CalcCommand.java b/src/main/java/io/github/seggan/sfcalc/CalcCommand.java
 deleted file mode 100644
-index d481d2b..0000000
+index fb9107c..0000000
 --- a/src/main/java/io/github/seggan/sfcalc/CalcCommand.java
 +++ /dev/null
 @@ -1,91 +0,0 @@
 -package io.github.seggan.sfcalc;
 -
--import io.github.mooy1.infinitylib.commands.SubCommand;
 -import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 -import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 -import io.github.thebusybiscuit.slimefun4.libraries.dough.common.CommonPatterns;
+-import org.bukkit.command.Command;
 -import org.bukkit.command.CommandSender;
+-import org.bukkit.command.TabExecutor;
 -
--import java.util.HashSet;
--import java.util.List;
--import java.util.Locale;
--import java.util.Set;
 -import javax.annotation.Nonnull;
+-import java.util.*;
 -
--import static io.github.seggan.sfcalc.StringRegistry.*;
+-import static io.github.seggan.sfcalc.StringRegistry.format;
 -
--public class CalcCommand extends SubCommand {
+-public class CalcCommand implements TabExecutor {
 -
 -    private static final Set<String> ids = new HashSet<>();
 -    private final SFCalc plugin;
 -
 -    public CalcCommand(SFCalc pl) {
--        super("calc", "Calculates the resources needed for a given item", false);
 -        this.plugin = pl;
 -    }
 -
 -    @Override
--    public void execute(@Nonnull CommandSender sender, @Nonnull String[] args) {
+-    public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String alias, @Nonnull String[] args) {
 -        SFCalc.REPORTER.executeOrElseReport(() -> {
 -            long amount;
 -            String reqItem;
@@ -733,10 +723,12 @@ index d481d2b..0000000
 -
 -            plugin.getCalc().printResults(sender, item, amount, false);
 -        });
+-        return true;
 -    }
 -
 -    @Override
--    public void complete(@Nonnull CommandSender sender, @Nonnull String[] args, @Nonnull List<String> tabs) {
+-    public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String alias, @Nonnull String[] args) {
+-        List<String> tabs = new ArrayList<>();
 -        SFCalc.REPORTER.executeOrElseReport(() -> {
 -            if (ids.isEmpty()) {
 -                for (SlimefunItem item : Slimefun.getRegistry().getEnabledSlimefunItems()) {
@@ -752,131 +744,23 @@ index d481d2b..0000000
 -                }
 -            }
 -        });
--    }
--}
-diff --git a/src/main/java/io/github/seggan/sfcalc/NeededCommand.java b/src/main/java/io/github/seggan/sfcalc/NeededCommand.java
-deleted file mode 100644
-index e81027d..0000000
---- a/src/main/java/io/github/seggan/sfcalc/NeededCommand.java
-+++ /dev/null
-@@ -1,97 +0,0 @@
--package io.github.seggan.sfcalc;
--
--import io.github.mooy1.infinitylib.commands.SubCommand;
--import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
--import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
--import io.github.thebusybiscuit.slimefun4.libraries.dough.common.CommonPatterns;
--import org.bukkit.command.CommandSender;
--import org.bukkit.entity.Player;
--
--import java.util.HashSet;
--import java.util.List;
--import java.util.Locale;
--import java.util.Set;
--import javax.annotation.Nonnull;
--
--import static io.github.seggan.sfcalc.StringRegistry.*;
--
--public class NeededCommand extends SubCommand {
--
--    private static final Set<String> ids = new HashSet<>();
--    private final SFCalc plugin;
--
--    public NeededCommand(SFCalc pl) {
--        super("needed", "Tells you how much more resources are needed", false);
--        this.plugin = pl;
--    }
--
--    @Override
--    public void execute(@Nonnull CommandSender sender, @Nonnull String[] args) {
--        SFCalc.REPORTER.executeOrElseReport(() -> {
--            long amount;
--            String reqItem;
--            SlimefunItem item;
--
--            StringRegistry registry = plugin.getStringRegistry();
--
--            if (!(sender instanceof Player)) {
--                sender.sendMessage(format(registry.getNotAPlayerString()));
--                return;
--            }
--
--            if (args.length > 2 || args.length == 0) {
--                return;
--            }
--
--            reqItem = args[0];
--
--            if (args.length == 1) {
--                amount = 1;
--            } else if (!CommonPatterns.NUMERIC.matcher(args[1]).matches()) {
--                sender.sendMessage(format(registry.getNotANumberString()));
--                return;
--            } else {
--                try {
--                    amount = Long.parseLong(args[1]);
--                    if (amount == 0 || amount > Integer.MAX_VALUE) {
--                        sender.sendMessage(format(registry.getInvalidNumberString()));
--                        return;
--                    }
--                } catch (NumberFormatException e) {
--                    sender.sendMessage(format(registry.getInvalidNumberString()));
--                    return;
--                }
--            }
--
--            item = SlimefunItem.getById(reqItem.toUpperCase());
--
--            if (item == null) {
--                sender.sendMessage(format(registry.getNoItemString()));
--                return;
--            }
--
--            SFCalcMetrics.addItemSearched(item.getItemName());
--
--            plugin.getCalc().printResults(sender, item, amount, true);
--        });
--    }
--
--    @Override
--    public void complete(@Nonnull CommandSender sender, @Nonnull String[] args, @Nonnull List<String> tabs) {
--        SFCalc.REPORTER.executeOrElseReport(() -> {
--            if (ids.isEmpty()) {
--                for (SlimefunItem item : Slimefun.getRegistry().getEnabledSlimefunItems()) {
--                    ids.add(item.getId().toLowerCase(Locale.ROOT));
--                }
--            }
--
--            if (args.length == 1) {
--                for (String id : ids) {
--                    if (id.contains(args[0].toLowerCase(Locale.ROOT))) {
--                        tabs.add(id);
--                    }
--                }
--            }
--        });
+-        return tabs;
 -    }
 -}
 diff --git a/src/main/java/io/github/seggan/sfcalc/SFCalcMetrics.java b/src/main/java/io/github/seggan/sfcalc/SFCalcMetrics.java
 deleted file mode 100644
-index 425d7f1..0000000
+index a138aa0..0000000
 --- a/src/main/java/io/github/seggan/sfcalc/SFCalcMetrics.java
 +++ /dev/null
-@@ -1,60 +0,0 @@
+@@ -1,54 +0,0 @@
 -package io.github.seggan.sfcalc;
 -
--import io.github.mooy1.infinitylib.metrics.bukkit.Metrics;
--import io.github.mooy1.infinitylib.metrics.charts.AdvancedPie;
--import io.github.mooy1.infinitylib.metrics.charts.SingleLineChart;
 -import io.github.thebusybiscuit.slimefun4.utils.ChatUtils;
+-import org.bstats.bukkit.Metrics;
+-import org.bstats.charts.AdvancedPie;
+-import org.bstats.charts.SingleLineChart;
 -
--import java.util.ArrayList;
--import java.util.Collections;
--import java.util.HashMap;
--import java.util.HashSet;
--import java.util.List;
--import java.util.Map;
--import java.util.Set;
+-import java.util.*;
 -
 -public class SFCalcMetrics extends Metrics {
 -
@@ -923,55 +807,6 @@ index 425d7f1..0000000
 -        itemsSearched.add(ChatUtils.removeColorCodes(s));
 -    }
 -}
-diff --git a/src/main/java/io/github/seggan/sfcalc/WebsiteCommand.java b/src/main/java/io/github/seggan/sfcalc/WebsiteCommand.java
-deleted file mode 100644
-index abbb15c..0000000
---- a/src/main/java/io/github/seggan/sfcalc/WebsiteCommand.java
-+++ /dev/null
-@@ -1,43 +0,0 @@
--package io.github.seggan.sfcalc;
--
--import io.github.mooy1.infinitylib.commands.SubCommand;
--import net.md_5.bungee.api.ChatColor;
--import net.md_5.bungee.api.chat.ClickEvent;
--import net.md_5.bungee.api.chat.ComponentBuilder;
--import org.bukkit.command.CommandSender;
--import org.bukkit.entity.Player;
--
--import java.util.List;
--import javax.annotation.Nonnull;
--import javax.annotation.ParametersAreNonnullByDefault;
--
--public class WebsiteCommand extends SubCommand {
--
--    public WebsiteCommand() {
--        super("website", "Gives the SFCalc website", false);
--    }
--
--    @Override
--    public void execute(@Nonnull CommandSender commandSender, @Nonnull String[] strings) {
--        SFCalc.REPORTER.executeOrElseReport(() -> {
--            ClickEvent event = new ClickEvent(ClickEvent.Action.OPEN_URL, "https://sfcalc-online.pages.dev");
--            if (commandSender instanceof Player) {
--                Player p = (Player) commandSender;
--                p.spigot().sendMessage(new ComponentBuilder()
--                    .color(ChatColor.YELLOW)
--                    .event(event)
--                    .append("Click to go to the SFCalc website")
--                    .create()
--                );
--            } else {
--                commandSender.sendMessage("https://sfcalc-online.pages.dev");
--            }
--        });
--    }
--
--    @Override
--    @ParametersAreNonnullByDefault
--    protected void complete(CommandSender sender, String[] args, List<String> completions) {
--
--    }
--}
 diff --git a/src/main/resources/config.yml b/src/main/resources/addons-config/SFCalc/config.yml
 similarity index 96%
 rename from src/main/resources/config.yml
@@ -1006,5 +841,5 @@ index 48349f4..0000000
 -      - sfc
 \ No newline at end of file
 -- 
-2.41.0.windows.3
+2.43.0.windows.1
 

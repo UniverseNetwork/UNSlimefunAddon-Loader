@@ -1,70 +1,69 @@
-From 60fa8506e1f98c27af438b97f85ccb6867e5d419 Mon Sep 17 00:00:00 2001
+From ecbac7fb31f65001f490760a22c3df39a5b98dbb Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Wed, 3 Jan 2024 15:48:44 +0700
+Date: Sat, 6 Jan 2024 11:28:41 +0700
 Subject: [PATCH] FluffyMachines
 
 ---
- pom.xml                                       |  92 ++-----
- .../fluffymachines/FluffyItemSetup.java       | 184 ++++++-------
- .../addons/fluffymachines/FluffyMachines.java | 120 +++++++++
- .../addons}/fluffymachines/items/Barrel.java  | 179 ++++---------
+ pom.xml                                       |  92 ++------
+ .../fluffymachines/FluffyItemSetup.java       | 184 ++++++---------
+ .../addons/fluffymachines/FluffyMachines.java |  96 ++++++++
+ .../addons}/fluffymachines/items/Barrel.java  | 179 +++++----------
  .../items/EnderChestExtractionNode.java       |  62 ++---
  .../items/EnderChestInsertionNode.java        |  29 +--
- .../fluffymachines/items/FireproofRune.java   |  56 ++--
+ .../fluffymachines/items/FireproofRune.java   |  56 ++---
  .../fluffymachines/items/HelicopterHat.java   |  11 +-
  .../fluffymachines/items/MiniBarrel.java      |  17 +-
- .../items/tools/ACBUpgradeCard.java           |  31 +--
+ .../items/tools/ACBUpgradeCard.java           |  31 ++-
  .../items/tools/AlternateBreakEvent.java      |   5 +-
- .../items/tools/CargoManipulator.java         |  76 ++----
- .../fluffymachines/items/tools/Dolly.java     |  92 +++----
+ .../items/tools/CargoManipulator.java         |  76 ++-----
+ .../fluffymachines/items/tools/Dolly.java     |  92 +++-----
  .../items/tools/FluffyWrench.java             |  60 ++---
- .../fluffymachines/items/tools/Paxel.java     |  65 ++---
- .../items/tools/PortableCharger.java          |  65 ++---
- .../fluffymachines/items/tools/Scythe.java    |  34 +--
+ .../fluffymachines/items/tools/Paxel.java     |  65 ++----
+ .../items/tools/PortableCharger.java          |  65 ++----
+ .../fluffymachines/items/tools/Scythe.java    |  34 ++-
  .../items/tools/UpgradedExplosivePickaxe.java |  14 +-
  .../items/tools/UpgradedExplosiveShovel.java  |  22 +-
- .../items/tools/UpgradedExplosiveTool.java    |  92 ++-----
- .../items/tools/UpgradedLumberAxe.java        |  54 ++--
+ .../items/tools/UpgradedExplosiveTool.java    |  92 +++-----
+ .../items/tools/UpgradedLumberAxe.java        |  54 ++---
  .../items/tools/WarpPadConfigurator.java      |  62 ++---
- .../items/tools/WateringCan.java              | 109 +++-----
+ .../items/tools/WateringCan.java              | 109 +++------
  .../listeners/KeyedCrafterListener.java       |  37 +--
- .../machines/AdvancedAutoDisenchanter.java    | 104 +++-----
- .../machines/AdvancedChargingBench.java       |  28 +-
- .../machines/AlternateElevatorPlate.java      |  81 +++---
- .../machines/AutoAncientAltar.java            | 152 ++++-------
- .../machines/AutoArmorForge.java              |  14 +
- .../machines/AutoCraftingTable.java           | 172 +++++--------
+ .../machines/AdvancedAutoDisenchanter.java    | 104 +++------
+ .../machines/AdvancedChargingBench.java       |  28 +--
+ .../machines/AlternateElevatorPlate.java      |  81 +++----
+ .../machines/AutoAncientAltar.java            | 152 ++++---------
+ .../machines/AutoArmorForge.java              |  14 ++
+ .../machines/AutoCraftingTable.java           | 172 +++++---------
  .../machines/AutoEnhancedCraftingTable.java   |  10 +-
  .../machines/AutoMagicWorkbench.java          |  34 +--
- .../fluffymachines/machines/AutoTableSaw.java |  82 +++---
- .../machines/BackpackLoader.java              |  84 +++---
- .../machines/BackpackUnloader.java            |  55 ++--
- .../machines/ElectricDustFabricator.java      |  41 ++-
+ .../fluffymachines/machines/AutoTableSaw.java |  82 +++----
+ .../machines/BackpackLoader.java              |  84 +++----
+ .../machines/BackpackUnloader.java            |  55 ++---
+ .../machines/ElectricDustFabricator.java      |  41 ++--
  .../machines/ElectricDustRecycler.java        |  24 +-
- .../fluffymachines/machines/SmartFactory.java | 109 +++-----
+ .../fluffymachines/machines/SmartFactory.java | 113 +++------
  .../fluffymachines/machines/WarpPad.java      |  21 +-
- .../machines/WaterSprinkler.java              |  80 +++---
+ .../machines/WaterSprinkler.java              |  80 +++----
  .../multiblocks/CrankGenerator.java           |  36 +--
  .../multiblocks/ExpDispenser.java             |  17 +-
  .../fluffymachines/multiblocks/Foundry.java   |  44 ++--
  .../multiblocks/components/GeneratorCore.java |   9 +-
- .../components/SuperheatedFurnace.java        | 203 +++++----------
- .../fluffymachines/objects/AutoCrafter.java   |  90 +++----
+ .../components/SuperheatedFurnace.java        | 203 ++++++-----------
+ .../fluffymachines/objects/AutoCrafter.java   |  90 +++-----
  .../objects/DoubleHologramOwner.java          |  16 +-
  .../objects/NonHopperableBlock.java           |  13 +-
  .../fluffymachines/utils/CancelPlace.java     |   4 +
- .../fluffymachines/utils/Constants.java       |  25 +-
+ .../fluffymachines/utils/Constants.java       |  21 +-
  .../fluffymachines/utils/EventUtils.java}     |  59 ++---
- .../fluffymachines/utils/FluffyItems.java     |  42 ++-
- .../fluffymachines/utils/GlowEnchant.java     |  11 +-
+ .../fluffymachines/utils/FluffyItems.java     |  29 +--
  .../fluffymachines/utils/McMMOEvents.java     |  10 +-
- .../addons}/fluffymachines/utils/Utils.java   |  81 ++----
- .../fluffymachines/FluffyMachines.java        | 242 ------------------
+ .../addons}/fluffymachines/utils/Utils.java   |  81 ++-----
+ .../fluffymachines/FluffyMachines.java        | 215 ------------------
  .../machines/AutoArmorForge.java              |  15 --
  .../fluffymachines/utils/CancelPlace.java     |   4 -
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  31 ---
- 60 files changed, 1231 insertions(+), 2383 deletions(-)
+ 59 files changed, 1196 insertions(+), 2343 deletions(-)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/FluffyItemSetup.java (81%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/Barrel.java (84%)
@@ -101,7 +100,7 @@ Subject: [PATCH] FluffyMachines
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/machines/BackpackUnloader.java (85%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/machines/ElectricDustFabricator.java (79%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/machines/ElectricDustRecycler.java (88%)
- rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/machines/SmartFactory.java (85%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/machines/SmartFactory.java (84%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/machines/WarpPad.java (85%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/machines/WaterSprinkler.java (70%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/multiblocks/CrankGenerator.java (57%)
@@ -113,10 +112,9 @@ Subject: [PATCH] FluffyMachines
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/objects/DoubleHologramOwner.java (93%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/objects/NonHopperableBlock.java (78%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/CancelPlace.java
- rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/utils/Constants.java (64%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/utils/Constants.java (59%)
  rename src/main/java/{io/ncbpfluffybear/fluffymachines/utils/Events.java => id/universenetwork/sfa_loader/addons/fluffymachines/utils/EventUtils.java} (86%)
- rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/utils/FluffyItems.java (92%)
- rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/utils/GlowEnchant.java (91%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/utils/FluffyItems.java (94%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/utils/McMMOEvents.java (83%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/utils/Utils.java (71%)
  delete mode 100644 src/main/java/io/ncbpfluffybear/fluffymachines/FluffyMachines.java
@@ -810,10 +808,10 @@ index 42146e0..17306b4 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
 new file mode 100644
-index 0000000..b02729c
+index 0000000..6246a99
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
-@@ -0,0 +1,120 @@
+@@ -0,0 +1,96 @@
 +package id.universenetwork.sfa_loader.addons.fluffymachines;
 +
 +import id.universenetwork.sfa_loader.addons.fluffymachines.listeners.KeyedCrafterListener;
@@ -828,10 +826,8 @@ index 0000000..b02729c
 +import lombok.SneakyThrows;
 +import org.bukkit.Bukkit;
 +import org.bukkit.ChatColor;
-+import org.bukkit.enchantments.Enchantment;
 +import org.bukkit.inventory.*;
 +
-+import java.lang.reflect.Field;
 +import java.util.*;
 +
 +@AddonLibrary(
@@ -849,17 +845,6 @@ index 0000000..b02729c
 +    @SneakyThrows
 +    @Override
 +    public void onLoad() {
-+        // Register Glow
-+        try {
-+            Field accepting = Enchantment.class.getDeclaredField("acceptingNew");
-+            accepting.setAccessible(true);
-+            if (!accepting.getBoolean(null)) accepting.set(null, true);
-+        } catch (IllegalAccessException | NoSuchFieldException e) {
-+            LogUtils.warning("Failed to register enchantment.");
-+        }
-+
-+        //registerGlow();
-+
 +        // Register ACT Recipes
 +        Iterator<Recipe> recipeIterator = Bukkit.recipeIterator();
 +        while (recipeIterator.hasNext()) {
@@ -921,17 +906,6 @@ index 0000000..b02729c
 +        }
 +
 +        if (players > 0) LogUtils.info("Auto-saved all player data for " + players + " player(s)!");
-+    }
-+
-+    private void registerGlow() {
-+        //Enchantment glowEnchantment = new GlowEnchant(Constants.GLOW_ENCHANT, new String[]{
-+        //        "SMALL_PORTABLE_CHARGER", "MEDIUM_PORTABLE_CHARGER", "BIG_PORTABLE_CHARGER",
-+        //        "LARGE_PORTABLE_CHARGER", "CARBONADO_PORTABLE_CHARGER", "PAXEL"
-+        //});
-+
-+        // Prevent double-registration errors
-+        // Disabled indefinitely due to 1.20.2 enchantment
-+        //if (Enchantment.getByKey(glowEnchantment.getKey()) == null) Enchantment.registerEnchantment(glowEnchantment);
 +    }
 +}
 \ No newline at end of file
@@ -5838,10 +5812,10 @@ index a393283..ae72f29 100644
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/machines/SmartFactory.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/machines/SmartFactory.java
-similarity index 85%
+similarity index 84%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/machines/SmartFactory.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/machines/SmartFactory.java
-index e5c91f2..b879ff9 100644
+index eb8a514..a955071 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/machines/SmartFactory.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/machines/SmartFactory.java
 @@ -1,5 +1,6 @@
@@ -6026,10 +6000,16 @@ index e5c91f2..b879ff9 100644
          }
  
          return ingredientSlots;
-@@ -307,9 +274,7 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
-         HashMap<Material, Integer> rawVanilla = new HashMap<>();
+@@ -308,14 +275,10 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
          HashMap<SlimefunItem, Integer> rawSlimefun = new HashMap<>();
-         for (ItemStack item : key.getRecipe()) {
+ 
+         ItemStack[] recipe = key.getRecipe();
+-        if (key == SlimefunItems.COPPER_WIRE.getItem()) {
+-            recipe = new SlimefunItemStack[] {SlimefunItems.COPPER_DUST};
+-        }
++        if (key == SlimefunItems.COPPER_WIRE.getItem()) recipe = new SlimefunItemStack[]{SlimefunItems.COPPER_DUST};
+ 
+         for (ItemStack item : recipe) {
 -            if (item == null) {
 -                continue;
 -            }
@@ -6037,7 +6017,7 @@ index e5c91f2..b879ff9 100644
              if (!isReduced(item)) {
                  // Recursively add reduced recipe until all vanilla
                  Pair<HashMap<Material, Integer>, HashMap<SlimefunItem, Integer>> reduced = reduceRecipe(SlimefunItem.getByItem(item));
-@@ -321,23 +286,20 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -327,23 +290,20 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
                      rawSlimefun.put(recipeItem, rawSlimefun.getOrDefault(recipeItem, 0) + amt * item.getAmount());
                  });
              } else {
@@ -6074,7 +6054,7 @@ index e5c91f2..b879ff9 100644
                  }
              }
          }
-@@ -382,9 +344,8 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -388,9 +348,8 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
              ItemMeta displayMeta = display.getItemMeta();
  
              List<String> lore = new ArrayList<>();
@@ -6085,7 +6065,7 @@ index e5c91f2..b879ff9 100644
  
              displayMeta.setLore(lore);
              display.setItemMeta(displayMeta);
-@@ -429,4 +390,4 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -435,4 +394,4 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
      public int getCapacity() {
          return getEnergyCapacity();
      }
@@ -7366,27 +7346,27 @@ index 0000000..54c5d6e
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/utils/Constants.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/Constants.java
-similarity index 64%
+similarity index 59%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/utils/Constants.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/Constants.java
-index 04377df..576ef9b 100644
+index 5e615af..097e089 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/utils/Constants.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/Constants.java
-@@ -1,9 +1,9 @@
+@@ -1,11 +1,8 @@
 -package io.ncbpfluffybear.fluffymachines.utils;
 +package id.universenetwork.sfa_loader.addons.fluffymachines.utils;
  
 -import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 -import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 -import io.ncbpfluffybear.fluffymachines.FluffyMachines;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
-+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 +import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
  import org.bukkit.Bukkit;
- import org.bukkit.NamespacedKey;
+-import org.bukkit.NamespacedKey;
  
-@@ -13,28 +13,23 @@ import java.util.List;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+@@ -13,22 +10,18 @@ import java.util.List;
  import java.util.regex.Pattern;
  
  public final class Constants {
@@ -7395,14 +7375,7 @@ index 04377df..576ef9b 100644
 -        ")", "").replace(".", ""));
 +            ")", "").replace(".", ""));
  
-     public static final String SLIMEFUN_VERSION = Slimefun.getVersion();
-     public static boolean SLIMEFUN_UPDATED = false;
- 
      public static final Pattern VERSION_PATTERN = Pattern.compile("(DEV - )([0-9]+)");
- 
--    public static final NamespacedKey GLOW_ENCHANT = new NamespacedKey(FluffyMachines.getInstance(),
--        "fm_glow_enchant");
-+    public static final NamespacedKey GLOW_ENCHANT = AbstractAddon.createKey("fm_glow_enchant");
  
      public static final boolean isSoulJarsInstalled = Bukkit.getPluginManager().isPluginEnabled("SoulJars");
  
@@ -7561,10 +7534,10 @@ index 0cefe17..8f76aff 100644
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/utils/FluffyItems.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/FluffyItems.java
-similarity index 92%
+similarity index 94%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/utils/FluffyItems.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/FluffyItems.java
-index 26f2060..dcf108f 100644
+index 04bf3ca..ef860c8 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/utils/FluffyItems.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/FluffyItems.java
 @@ -1,28 +1,18 @@
@@ -7604,7 +7577,7 @@ index 26f2060..dcf108f 100644
  import org.bukkit.Color;
  import org.bukkit.Material;
  import org.bukkit.enchantments.Enchantment;
-@@ -33,7 +23,6 @@ import org.bukkit.inventory.meta.ItemMeta;
+@@ -34,7 +24,6 @@ import org.bukkit.inventory.meta.ItemMeta;
   * Specifies all plugin items
   */
  public class FluffyItems {
@@ -7612,84 +7585,9 @@ index 26f2060..dcf108f 100644
      private FluffyItems() {
      }
  
-@@ -467,16 +456,15 @@ public class FluffyItems {
-             LoreBuilderDynamic.powerPerTick(SmartFactory.getEnergyConsumption())
-     );
- 
--
--    // private static final Enchantment glowEnchant = Enchantment.getByKey(Constants.GLOW_ENCHANT);
-+    //private static final Enchantment glowEnchant = Enchantment.getByKey(Constants.GLOW_ENCHANT);
- 
-     static {
-         FireproofRune.setFireproof(FIREPROOF_RUNE);
--//        SMALL_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
--//        MEDIUM_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
--//        BIG_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
--//        LARGE_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
--//        CARBONADO_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
-+        //SMALL_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
-+        //MEDIUM_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
-+        //BIG_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
-+        //LARGE_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
-+        //CARBONADO_PORTABLE_CHARGER.addEnchantment(glowEnchant, 1);
- 
-         SMALL_PORTABLE_CHARGER.addUnsafeEnchantment(Enchantment.BINDING_CURSE, 1);
-         MEDIUM_PORTABLE_CHARGER.addUnsafeEnchantment(Enchantment.BINDING_CURSE, 1);
-@@ -504,4 +492,4 @@ public class FluffyItems {
-         CPCMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-         CARBONADO_PORTABLE_CHARGER.setItemMeta(CPCMeta);
-     }
--}
-+}
-\ No newline at end of file
-diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/utils/GlowEnchant.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/GlowEnchant.java
-similarity index 91%
-rename from src/main/java/io/ncbpfluffybear/fluffymachines/utils/GlowEnchant.java
-rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/GlowEnchant.java
-index 1c72b61..4a782dd 100644
---- a/src/main/java/io/ncbpfluffybear/fluffymachines/utils/GlowEnchant.java
-+++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/GlowEnchant.java
-@@ -1,4 +1,4 @@
--package io.ncbpfluffybear.fluffymachines.utils;
-+package id.universenetwork.sfa_loader.addons.fluffymachines.utils;
- 
- import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
- import org.bukkit.NamespacedKey;
-@@ -18,12 +18,10 @@ import java.util.Set;
-  *
-  * @author NCBPFluffyBear
-  * @author J3fftw1
-- *
-  * @deprecated Disabled indefinitely due to 1.20.2 enchantment changes
-  */
- @SuppressWarnings("NullableProblems")
- public class GlowEnchant extends Enchantment {
--
-     private final Set<String> ids = new HashSet<>();
-     private final NamespacedKey key;
- 
-@@ -51,7 +49,6 @@ public class GlowEnchant extends Enchantment {
-     }
- 
-     @Override
--    @SuppressWarnings("deprecation")
-     public EnchantmentTarget getItemTarget() {
-         return EnchantmentTarget.ALL;
-     }
-@@ -78,9 +75,7 @@ public class GlowEnchant extends Enchantment {
-             final ItemMeta itemMeta = item.getItemMeta();
-             final Optional<String> id = Slimefun.getItemDataService().getItemData(itemMeta);
- 
--            if (id.isPresent()) {
--                return ids.contains(id.get());
--            }
-+            if (id.isPresent()) return ids.contains(id.get());
-         }
-         return false;
-     }
-@@ -89,4 +84,4 @@ public class GlowEnchant extends Enchantment {
-     public NamespacedKey getKey() {
-         return this.key;
+@@ -483,4 +472,4 @@ public class FluffyItems {
+         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+         item.setItemMeta(meta);
      }
 -}
 +}
@@ -7904,10 +7802,10 @@ index 8c1b280..4885dcc 100644
 \ No newline at end of file
 diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/FluffyMachines.java b/src/main/java/io/ncbpfluffybear/fluffymachines/FluffyMachines.java
 deleted file mode 100644
-index f1792af..0000000
+index 23b9ff2..0000000
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/FluffyMachines.java
 +++ /dev/null
-@@ -1,242 +0,0 @@
+@@ -1,215 +0,0 @@
 -package io.ncbpfluffybear.fluffymachines;
 -
 -import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
@@ -7963,23 +7861,9 @@ index f1792af..0000000
 -        // Read something from your config.yml
 -        Config cfg = new Config(this);
 -
--        if (cfg.getBoolean("options.auto-update") && getDescription().getVersion().startsWith("DEV - ")) {
+-        if (cfg.getBoolean("options.auto-update") && getDescription().getVersion().startsWith("Dev - ")) {
 -            new BlobBuildUpdater(this, getFile(), "FluffyMachines", "Dev").start();
 -        }
--
--        // Register Glow
--
--//        try {
--//            Field accepting = Enchantment.class.getDeclaredField("acceptingNew");
--//            accepting.setAccessible(true);
--//            if (!accepting.getBoolean(null)) {
--//                accepting.set(null, true);
--//            }
--//        } catch (IllegalAccessException | NoSuchFieldException ignored) {
--//            getLogger().warning("Failed to register enchantment.");
--//        }
--
--        // registerGlow();
 -
 -        // Register ACT Recipes
 -        Iterator<Recipe> recipeIterator = Bukkit.recipeIterator();
@@ -8119,19 +8003,6 @@ index f1792af..0000000
 -        if (players > 0) {
 -            Bukkit.getLogger().log(Level.INFO, "Auto-saved all player data for {0} player(s)!", players);
 -        }
--    }
--
--    private void registerGlow() {
--//        Enchantment glowEnchantment = new GlowEnchant(Constants.GLOW_ENCHANT, new String[]{
--//                "SMALL_PORTABLE_CHARGER", "MEDIUM_PORTABLE_CHARGER", "BIG_PORTABLE_CHARGER",
--//                "LARGE_PORTABLE_CHARGER", "CARBONADO_PORTABLE_CHARGER", "PAXEL"
--//        });
--
--        // Prevent double-registration errors
--        // Disabled indefinitely due to 1.20.2 enchantment changes
--//        if (Enchantment.getByKey(glowEnchantment.getKey()) == null) {
--//            Enchantment.registerEnchantment(glowEnchantment);
--//        }
 -    }
 -
 -    @Override

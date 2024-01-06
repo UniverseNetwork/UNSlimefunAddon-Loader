@@ -1,6 +1,6 @@
 @echo off
 
-if (%1=="") (goto noarg)
+if ["%~1"]==[""] (goto noarg)
 
 if ["%~1"]==["create"] (
 powershell ./scripts/rebuildPatch.ps1 --new %~2
@@ -8,6 +8,14 @@ powershell ./scripts/rebuildPatch.ps1 --new %~2
 
 if ["%~1"]==["rebuild"] (
 powershell ./scripts/rebuildPatch.ps1 %~2
+)
+
+if ["%~1"]==["fetch"] (
+powershell ./scripts/rebuildPatch.ps1 --fetch %~2
+)
+
+if ["%~1"]==["merge"] (
+powershell ./scripts/rebuildPatch.ps1 --merge %~2
 )
 
 if ["%~1"]==["patch"] (
@@ -27,6 +35,10 @@ echo.
 echo Commands:
 echo   * create  - Create a patch
 echo   * rebuild - Rebuild a patch
+echo   * fetch   - Fetch a repository and perform a soft-reset on
+echo               the repository before the merge is performed
+echo   * merge   - Merge the repository with a previously created
+echo               patch after the fetch and soft-reset are performed
 echo   * patch   - Apply the patch(es) to SFALoader
 echo   * check   - Check(s) the addon(s)/library repository upstream
 
