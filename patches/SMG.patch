@@ -1,34 +1,59 @@
-From 4f22a84449425522b008751a71d90f93bdb948ef Mon Sep 17 00:00:00 2001
+From 53192b0733e08bd13b7ead3ccc85fb3cfe3d2dfd Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 15 Jul 2023 18:57:54 +0700
+Date: Sat, 6 Jan 2024 20:13:02 +0700
 Subject: [PATCH] SMG
 
 ---
- pom.xml                                       |  71 +-------
- .../simplematerialgenerators/SMGItems.java    | 133 ++++++++++++++
- .../SimpleMaterialGenerators.java             | 155 ++++++++++++++++
- .../items/BrokenGenerator.java                |  17 +-
- .../items/GeneratorMultiblock.java            |  22 ++-
- .../items/MaterialGenerator.java              |  26 ++-
- .../SMGItemSetup.java                         | 170 ------------------
- .../simplematerialgenerators/SMGItems.java    | 147 ---------------
- .../SimpleMaterialGenerators.java             |  55 ------
+ .github/FUNDING.yml                           |   3 -
+ README.md                                     |   4 +-
+ pom.xml                                       |  66 +----
+ .../simplematerialgenerators/SMGItems.java    | 185 ++++++-------
+ .../SimpleMaterialGenerators.java             | 221 ++++++++++++++++
+ .../items/BrokenGenerator.java                |   7 +-
+ .../items/GeneratorMultiblock.java            |  14 +-
+ .../items/MaterialGenerator.java              |  12 +-
+ .../SMGItemSetup.java                         | 242 ------------------
+ .../SimpleMaterialGenerators.java             |  53 ----
  src/main/resources/config.yml                 |   2 -
- src/main/resources/plugin.yml                 |  25 ---
- 11 files changed, 324 insertions(+), 499 deletions(-)
- create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SMGItems.java
+ src/main/resources/plugin.yml                 |  25 --
+ 12 files changed, 328 insertions(+), 506 deletions(-)
+ delete mode 100644 .github/FUNDING.yml
+ rename src/main/java/{me/waleks => id/universenetwork/sfa_loader/addons}/simplematerialgenerators/SMGItems.java (54%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SimpleMaterialGenerators.java
- rename src/main/java/{me/waleks => id/universenetwork/sfa_loader/addons}/simplematerialgenerators/items/BrokenGenerator.java (57%)
- rename src/main/java/{me/waleks => id/universenetwork/sfa_loader/addons}/simplematerialgenerators/items/GeneratorMultiblock.java (57%)
- rename src/main/java/{me/waleks => id/universenetwork/sfa_loader/addons}/simplematerialgenerators/items/MaterialGenerator.java (77%)
+ rename src/main/java/{me/waleks => id/universenetwork/sfa_loader/addons}/simplematerialgenerators/items/BrokenGenerator.java (92%)
+ rename src/main/java/{me/waleks => id/universenetwork/sfa_loader/addons}/simplematerialgenerators/items/GeneratorMultiblock.java (88%)
+ rename src/main/java/{me/waleks => id/universenetwork/sfa_loader/addons}/simplematerialgenerators/items/MaterialGenerator.java (94%)
  delete mode 100644 src/main/java/me/waleks/simplematerialgenerators/SMGItemSetup.java
- delete mode 100644 src/main/java/me/waleks/simplematerialgenerators/SMGItems.java
  delete mode 100644 src/main/java/me/waleks/simplematerialgenerators/SimpleMaterialGenerators.java
  delete mode 100644 src/main/resources/config.yml
  delete mode 100644 src/main/resources/plugin.yml
 
+diff --git a/.github/FUNDING.yml b/.github/FUNDING.yml
+deleted file mode 100644
+index 037f6f8..0000000
+--- a/.github/FUNDING.yml
++++ /dev/null
+@@ -1,3 +0,0 @@
+-# These are supported funding model platforms
+-
+-github: [Sefiraat, waleks647]
+diff --git a/README.md b/README.md
+index 536c546..bcefb14 100644
+--- a/README.md
++++ b/README.md
+@@ -13,8 +13,8 @@ The `Rate` of their production is measured in Slimefun `Ticks`.<br>
+ 
+ ## Downloads
+ You can find the prebuilt plugin in:<br>
+-https://thebusybiscuit.github.io/builds/Sefiraat/SMG/master/<br>
++https://thebusybiscuit.github.io/builds/waleks647/SMG/master<br>
+ 
+ ## Plans
+ There are plans to add more generators in the future (once I figure out how to do it)<br>
+-Namely generators for Water, Lava and dusts.<br>
++Namely generators for Dirt, Water, Lava, Obsidian and dusts.<br>
 diff --git a/pom.xml b/pom.xml
-index 663ca5f..1baf5ac 100644
+index 4391eb0..1baf5ac 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,24 +1,19 @@
@@ -63,7 +88,7 @@ index 663ca5f..1baf5ac 100644
          <repository>
              <id>spigot-repo</id>
              <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-@@ -32,24 +27,6 @@
+@@ -32,19 +27,6 @@
              <version>1.16.5-R0.1-SNAPSHOT</version>
              <scope>provided</scope>
          </dependency>
@@ -71,24 +96,19 @@ index 663ca5f..1baf5ac 100644
 -        <dependency>
 -            <groupId>com.github.Slimefun</groupId>
 -            <artifactId>Slimefun4</artifactId>
--            <version>RC-22</version>
+-            <version>RC-28</version>
 -            <scope>provided</scope>
 -            <exclusions>
 -                <exclusion>
--                    <groupId>io.github.thebusybiscuit</groupId>
--                    <artifactId>cscorelib2</artifactId>
+-                    <groupId>io.github.baked-libs</groupId>
+-                    <artifactId>dough-api</artifactId>
 -                </exclusion>
 -            </exclusions>
--        </dependency>
--        <dependency>
--            <groupId>com.github.thebusybiscuit</groupId>
--            <artifactId>CS-CoreLib2</artifactId>
--            <version>0.31.0</version>
 -        </dependency>
          <dependency>
              <groupId>com.google.code.findbugs</groupId>
              <artifactId>jsr305</artifactId>
-@@ -60,37 +37,5 @@
+@@ -55,37 +37,5 @@
  
      <build>
          <finalName>${project.name} v${project.version}</finalName>
@@ -128,27 +148,56 @@ index 663ca5f..1baf5ac 100644
 -</project>
 +</project>
 \ No newline at end of file
-diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SMGItems.java b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SMGItems.java
-new file mode 100644
-index 0000000..5b7224b
---- /dev/null
+diff --git a/src/main/java/me/waleks/simplematerialgenerators/SMGItems.java b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SMGItems.java
+similarity index 54%
+rename from src/main/java/me/waleks/simplematerialgenerators/SMGItems.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SMGItems.java
+index ccf49a1..03013de 100644
+--- a/src/main/java/me/waleks/simplematerialgenerators/SMGItems.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SMGItems.java
-@@ -0,0 +1,133 @@
+@@ -1,150 +1,135 @@
+-package me.waleks.simplematerialgenerators;
 +package id.universenetwork.sfa_loader.addons.simplematerialgenerators;
-+
+ 
 +import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
-+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
-+import org.bukkit.Material;
-+
-+public final class SMGItems {
-+    public static final ItemGroup SMG_ITEM_CATEGORY = new ItemGroup(
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+ import org.bukkit.Material;
+-import org.bukkit.NamespacedKey;
+ 
+ public final class SMGItems {
+-
+-    private SMGItems() {}
+-
+     public static final ItemGroup SMG_ITEM_CATEGORY = new ItemGroup(
+-        new NamespacedKey(SimpleMaterialGenerators.getInstance(), "simplematerialgenerators"),
+-        new CustomItemStack(Material.SMOOTH_STONE, "&9Simple Material Generators")
 +            AbstractAddon.createKey("simplematerialgenerators"),
 +            new CustomItemStack(Material.SMOOTH_STONE, "&9Simple Material Generators")
-+    );
-+
-+    public static final SlimefunItemStack SMG_GENERATOR_MULTIBLOCK = new SlimefunItemStack(
+     );
+ 
+     public static final SlimefunItemStack SMG_GENERATOR_MULTIBLOCK = new SlimefunItemStack(
+-        "SMG_GENERATOR_MULTIBLOCK",
+-        Material.BEDROCK,
+-        "&9Generator multiblock",
+-        "",
+-        "&dBuild any of this addon's",
+-        "&dgenerators like this.",
+-        "&aThey will only output to a chest",
+-        "&adirectly above it."
+-    );
+-	
+-	/*	Template for adding more generator items
+-	public static final SlimefunItemStack SMG_GENERATOR_ = new SlimefunItemStack(
+-		"SMG_GENERATOR_",
+-		Material.,
+-		"& generator",
+-		"&6Rate: &e ticks",
+-		"",
+-		"&9&oSimpleMaterialGenerators"
+-	);
+-	*/
 +            "SMG_GENERATOR_MULTIBLOCK",
 +            Material.BEDROCK,
 +            "&9Generator multiblock",
@@ -158,122 +207,196 @@ index 0000000..5b7224b
 +            "&aThey will only output to a chest",
 +            "&adirectly above it."
 +    );
-+
-+    public static final SlimefunItemStack SMG_GENERATOR_COBBLESTONE = new SlimefunItemStack(
+ 
+     public static final SlimefunItemStack SMG_GENERATOR_COBBLESTONE = new SlimefunItemStack(
+-        "SMG_GENERATOR_COBBLESTONE",
+-        Material.COBBLESTONE,
+-        "&7Cobblestone generator",
+-        "&6Rate: &e4 ticks",
+-        "",
+-        "&9&oSimpleMaterialGenerators"
 +            "SMG_GENERATOR_COBBLESTONE",
 +            Material.COBBLESTONE,
 +            "&7Cobblestone generator",
 +            "&6Rate: &e4 ticks",
 +            "",
 +            "&9&oSimpleMaterialGenerators"
-+    );
-+
-+    public static final SlimefunItemStack SMG_GENERATOR_STONE_BROKEN = new SlimefunItemStack(
+     );
+ 
+     public static final SlimefunItemStack SMG_GENERATOR_STONE_BROKEN = new SlimefunItemStack(
+-        "SMG_GENERATOR_STONE_BROKEN",
+-        Material.STONE,
+-        "&7Stone generator &8(Broken)",
+-        "&8Needs to be repaired",
+-        "",
+-        "&9&oSimpleMaterialGenerators"
 +            "SMG_GENERATOR_STONE_BROKEN",
 +            Material.STONE,
 +            "&7Stone generator &8(Broken)",
 +            "&8Needs to be repaired",
 +            "",
 +            "&9&oSimpleMaterialGenerators"
-+    );
-+
-+    public static final SlimefunItemStack SMG_GENERATOR_STONE = new SlimefunItemStack(
+     );
+ 
+     public static final SlimefunItemStack SMG_GENERATOR_STONE = new SlimefunItemStack(
+-        "SMG_GENERATOR_STONE",
+-        Material.STONE,
+-        "&7Stone generator",
+-        "&6Rate: &e8 ticks",
+-        "",
+-        "&9&oSimpleMaterialGenerators"
 +            "SMG_GENERATOR_STONE",
 +            Material.STONE,
 +            "&7Stone generator",
 +            "&6Rate: &e8 ticks",
 +            "",
 +            "&9&oSimpleMaterialGenerators"
-+    );
-+
-+    public static final SlimefunItemStack SMG_GENERATOR_SMOOTH_STONE_BROKEN = new SlimefunItemStack(
+     );
+ 
+     public static final SlimefunItemStack SMG_GENERATOR_SMOOTH_STONE_BROKEN = new SlimefunItemStack(
+-        "SMG_GENERATOR_SMOOTH_STONE_BROKEN",
+-        Material.SMOOTH_STONE,
+-        "&7Smooth stone generator &8(Broken)",
+-        "&8Needs to be repaired",
+-        "",
+-        "&9&oSimpleMaterialGenerators"
 +            "SMG_GENERATOR_SMOOTH_STONE_BROKEN",
 +            Material.SMOOTH_STONE,
 +            "&7Smooth stone generator &8(Broken)",
 +            "&8Needs to be repaired",
 +            "",
 +            "&9&oSimpleMaterialGenerators"
-+    );
-+
-+    public static final SlimefunItemStack SMG_GENERATOR_SMOOTH_STONE = new SlimefunItemStack(
+     );
+ 
+     public static final SlimefunItemStack SMG_GENERATOR_SMOOTH_STONE = new SlimefunItemStack(
+-        "SMG_GENERATOR_SMOOTH_STONE",
+-        Material.SMOOTH_STONE,
+-        "&7Smooth stone generator",
+-        "&6Rate: &e12 ticks",
+-        "",
+-        "&9&oSimpleMaterialGenerators"
 +            "SMG_GENERATOR_SMOOTH_STONE",
 +            Material.SMOOTH_STONE,
 +            "&7Smooth stone generator",
 +            "&6Rate: &e12 ticks",
 +            "",
 +            "&9&oSimpleMaterialGenerators"
-+    );
-+
-+    public static final SlimefunItemStack SMG_GENERATOR_GRAVEL_BROKEN = new SlimefunItemStack(
+     );
+ 
+     public static final SlimefunItemStack SMG_GENERATOR_GRAVEL_BROKEN = new SlimefunItemStack(
+-        "SMG_GENERATOR_GRAVEL_BROKEN",
+-        Material.GRAVEL,
+-        "&7Gravel generator &8(Broken)",
+-        "&8Needs to be repaired",
+-        "",
+-        "&9&oSimpleMaterialGenerators"
 +            "SMG_GENERATOR_GRAVEL_BROKEN",
 +            Material.GRAVEL,
 +            "&7Gravel generator &8(Broken)",
 +            "&8Needs to be repaired",
 +            "",
 +            "&9&oSimpleMaterialGenerators"
-+    );
-+
-+    public static final SlimefunItemStack SMG_GENERATOR_GRAVEL = new SlimefunItemStack(
+     );
+ 
+     public static final SlimefunItemStack SMG_GENERATOR_GRAVEL = new SlimefunItemStack(
+-        "SMG_GENERATOR_GRAVEL",
+-        Material.ANDESITE,
+-        "&7Gravel generator",
+-        "&6Rate: &e6 ticks",
+-        "",
+-        "&9&oSimpleMaterialGenerators"
 +            "SMG_GENERATOR_GRAVEL",
 +            Material.ANDESITE,
 +            "&7Gravel generator",
 +            "&6Rate: &e6 ticks",
 +            "",
 +            "&9&oSimpleMaterialGenerators"
-+    );
-+
-+    public static final SlimefunItemStack SMG_GENERATOR_SAND_BROKEN = new SlimefunItemStack(
+     );
+ 
+     public static final SlimefunItemStack SMG_GENERATOR_SAND_BROKEN = new SlimefunItemStack(
+-        "SMG_GENERATOR_SAND_BROKEN",
+-        Material.SAND,
+-        "&eSand generator &8(Broken)",
+-        "&8Needs to be repaired",
+-        "",
+-        "&9&oSimpleMaterialGenerators"
 +            "SMG_GENERATOR_SAND_BROKEN",
 +            Material.SAND,
 +            "&eSand generator &8(Broken)",
 +            "&8Needs to be repaired",
 +            "",
 +            "&9&oSimpleMaterialGenerators"
-+    );
-+
-+    public static final SlimefunItemStack SMG_GENERATOR_SAND = new SlimefunItemStack(
+     );
+ 
+     public static final SlimefunItemStack SMG_GENERATOR_SAND = new SlimefunItemStack(
+-        "SMG_GENERATOR_SAND",
+-        Material.SANDSTONE,
+-        "&eSand generator",
+-        "&6Rate: &e8 ticks",
+-        "",
+-        "&9&oSimpleMaterialGenerators"
 +            "SMG_GENERATOR_SAND",
 +            Material.SANDSTONE,
 +            "&eSand generator",
 +            "&6Rate: &e8 ticks",
 +            "",
 +            "&9&oSimpleMaterialGenerators"
-+    );
-+
-+    public static final SlimefunItemStack SMG_GENERATOR_GLASS = new SlimefunItemStack(
+     );
+ 
+     public static final SlimefunItemStack SMG_GENERATOR_GLASS = new SlimefunItemStack(
+-        "SMG_GENERATOR_GLASS",
+-        Material.GLASS,
+-        "&fGlass generator",
+-        "&6Rate: &e12 ticks",
+-        "",
+-        "&9&oSimpleMaterialGenerators"
 +            "SMG_GENERATOR_GLASS",
 +            Material.GLASS,
 +            "&fGlass generator",
 +            "&6Rate: &e12 ticks",
 +            "",
 +            "&9&oSimpleMaterialGenerators"
-+    );
-+
-+    public static final SlimefunItemStack SMG_GENERATOR_NETHERRACK = new SlimefunItemStack(
+     );
+ 
+     public static final SlimefunItemStack SMG_GENERATOR_NETHERRACK = new SlimefunItemStack(
+-        "SMG_GENERATOR_NETHERRACK",
+-        Material.NETHERRACK,
+-        "&cNetherrack generator",
+-        "&6Rate: &e6 ticks",
+-        "",
+-        "&9&oSimpleMaterialGenerators"
 +            "SMG_GENERATOR_NETHERRACK",
 +            Material.NETHERRACK,
 +            "&cNetherrack generator",
 +            "&6Rate: &e6 ticks",
 +            "",
 +            "&9&oSimpleMaterialGenerators"
-+    );
-+
-+    public static final SlimefunItemStack SMG_GENERATOR_SOUL_SAND = new SlimefunItemStack(
+     );
+ 
+     public static final SlimefunItemStack SMG_GENERATOR_SOUL_SAND = new SlimefunItemStack(
+-        "SMG_GENERATOR_SOUL_SAND",
+-        Material.SOUL_SAND,
+-        "&8Soul sand generator",
+-        "&6Rate: &e8 ticks",
+-        "",
+-        "&9&oSimpleMaterialGenerators"
 +            "SMG_GENERATOR_SOUL_SAND",
 +            Material.SOUL_SAND,
 +            "&8Soul sand generator",
 +            "&6Rate: &e8 ticks",
 +            "",
 +            "&9&oSimpleMaterialGenerators"
-+    );
-+}
-\ No newline at end of file
+     );
+-
+     public static final SlimefunItemStack SMG_GENERATOR_REDSTONE_BADLY_FORMED = new SlimefunItemStack(
+             "SMG_GENERATOR_REDSTONE_BADLY_FORMED",
+             Material.REDSTONE_BLOCK,
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SimpleMaterialGenerators.java b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SimpleMaterialGenerators.java
 new file mode 100644
-index 0000000..1a953e0
+index 0000000..39329fb
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SimpleMaterialGenerators.java
-@@ -0,0 +1,155 @@
+@@ -0,0 +1,221 @@
 +package id.universenetwork.sfa_loader.addons.simplematerialgenerators;
 +
 +import id.universenetwork.sfa_loader.addons.simplematerialgenerators.items.BrokenGenerator;
@@ -292,19 +415,16 @@ index 0000000..1a953e0
 +        new GeneratorMultiblock(SMGItems.SMG_ITEM_CATEGORY, SMGItems.SMG_GENERATOR_MULTIBLOCK)
 +                .register(SlimefunAddonInstance.getSFAInstance());
 +
-+        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
++        new MaterialGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
 +                SMGItems.SMG_GENERATOR_COBBLESTONE,
 +                RecipeType.ENHANCED_CRAFTING_TABLE,
 +                new ItemStack[]{
-+                        new ItemStack(Material.SMOOTH_STONE), new ItemStack(Material.SMOOTH_STONE),
-+                        new ItemStack(Material.SMOOTH_STONE),
-+                        new ItemStack(Material.LAVA_BUCKET), new ItemStack(Material.IRON_PICKAXE),
-+                        new ItemStack(Material.WATER_BUCKET),
-+                        new ItemStack(Material.SMOOTH_STONE), new ItemStack(Material.SMOOTH_STONE),
-+                        new ItemStack(Material.SMOOTH_STONE)
-+                })
++                        new ItemStack(Material.SMOOTH_STONE), new ItemStack(Material.SMOOTH_STONE), new ItemStack(Material.SMOOTH_STONE),
++                        new ItemStack(Material.LAVA_BUCKET), new ItemStack(Material.IRON_PICKAXE), new ItemStack(Material.WATER_BUCKET),
++                        new ItemStack(Material.SMOOTH_STONE), new ItemStack(Material.SMOOTH_STONE), new ItemStack(Material.SMOOTH_STONE)
++                }, 4)
 +                .setItem(Material.COBBLESTONE)
-+                .setRate(4)
 +                .register(SlimefunAddonInstance.getSFAInstance());
 +
 +        new BrokenGenerator(SMGItems.SMG_ITEM_CATEGORY,
@@ -323,12 +443,12 @@ index 0000000..1a953e0
 +                        new ItemStack(Material.STONE), SlimefunItems.SOLDER_INGOT, new ItemStack(Material.STONE),
 +                        SlimefunItems.SOLDER_INGOT, SMGItems.SMG_GENERATOR_STONE_BROKEN, SlimefunItems.SOLDER_INGOT,
 +                        new ItemStack(Material.STONE), SlimefunItems.SOLDER_INGOT, new ItemStack(Material.STONE)
-+                })
++                }, 8)
 +                .setItem(Material.STONE)
-+                .setRate(8)
 +                .register(SlimefunAddonInstance.getSFAInstance());
 +
-+        new BrokenGenerator(SMGItems.SMG_ITEM_CATEGORY,
++        new BrokenGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
 +                SMGItems.SMG_GENERATOR_SMOOTH_STONE_BROKEN,
 +                RecipeType.SMELTERY,
 +                new ItemStack[]{
@@ -337,20 +457,20 @@ index 0000000..1a953e0
 +                        null, null, null
 +                }).register(SlimefunAddonInstance.getSFAInstance());
 +
-+        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
++        new MaterialGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
 +                SMGItems.SMG_GENERATOR_SMOOTH_STONE,
 +                RecipeType.SMELTERY,
 +                new ItemStack[]{
 +                        new ItemStack(Material.SMOOTH_STONE), SlimefunItems.STEEL_INGOT, new ItemStack(Material.SMOOTH_STONE),
-+                        new ItemStack(Material.IRON_BARS), SMGItems.SMG_GENERATOR_SMOOTH_STONE_BROKEN,
-+                        new ItemStack(Material.IRON_BARS),
++                        new ItemStack(Material.IRON_BARS), SMGItems.SMG_GENERATOR_SMOOTH_STONE_BROKEN, new ItemStack(Material.IRON_BARS),
 +                        new ItemStack(Material.SMOOTH_STONE), SlimefunItems.STEEL_INGOT, new ItemStack(Material.SMOOTH_STONE)
-+                })
++                }, 12)
 +                .setItem(Material.SMOOTH_STONE)
-+                .setRate(12)
 +                .register(SlimefunAddonInstance.getSFAInstance());
 +
-+        new BrokenGenerator(SMGItems.SMG_ITEM_CATEGORY,
++        new BrokenGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
 +                SMGItems.SMG_GENERATOR_GRAVEL_BROKEN,
 +                RecipeType.GRIND_STONE,
 +                new ItemStack[]{
@@ -359,19 +479,20 @@ index 0000000..1a953e0
 +                        null, null, null
 +                }).register(SlimefunAddonInstance.getSFAInstance());
 +
-+        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
++        new MaterialGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
 +                SMGItems.SMG_GENERATOR_GRAVEL,
 +                RecipeType.ENHANCED_CRAFTING_TABLE,
 +                new ItemStack[]{
 +                        new ItemStack(Material.STONE_BRICKS), SlimefunItems.BILLON_INGOT, new ItemStack(Material.STONE_BRICKS),
 +                        SlimefunItems.BILLON_INGOT, SMGItems.SMG_GENERATOR_GRAVEL_BROKEN, SlimefunItems.BILLON_INGOT,
 +                        new ItemStack(Material.STONE_BRICKS), SlimefunItems.BILLON_INGOT, new ItemStack(Material.STONE_BRICKS)
-+                })
++                }, 6)
 +                .setItem(Material.GRAVEL)
-+                .setRate(6)
 +                .register(SlimefunAddonInstance.getSFAInstance());
 +
-+        new BrokenGenerator(SMGItems.SMG_ITEM_CATEGORY,
++        new BrokenGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
 +                SMGItems.SMG_GENERATOR_SAND_BROKEN,
 +                RecipeType.ORE_CRUSHER,
 +                new ItemStack[]{
@@ -380,91 +501,153 @@ index 0000000..1a953e0
 +                        null, null, null
 +                }).register(SlimefunAddonInstance.getSFAInstance());
 +
-+        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
++        new MaterialGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
 +                SMGItems.SMG_GENERATOR_SAND,
 +                RecipeType.ENHANCED_CRAFTING_TABLE,
 +                new ItemStack[]{
 +                        new ItemStack(Material.SANDSTONE), SlimefunItems.DURALUMIN_INGOT, new ItemStack(Material.SANDSTONE),
 +                        SlimefunItems.DURALUMIN_INGOT, SMGItems.SMG_GENERATOR_SAND_BROKEN, SlimefunItems.DURALUMIN_INGOT,
 +                        new ItemStack(Material.SANDSTONE), SlimefunItems.DURALUMIN_INGOT, new ItemStack(Material.SANDSTONE)
-+                })
++                }, 8)
 +                .setItem(Material.SAND)
-+                .setRate(8)
 +                .register(SlimefunAddonInstance.getSFAInstance());
 +
-+        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
++        new MaterialGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
 +                SMGItems.SMG_GENERATOR_GLASS,
 +                RecipeType.SMELTERY,
 +                new ItemStack[]{
 +                        SlimefunItems.BRONZE_INGOT, SlimefunItems.GOLD_8K, SlimefunItems.BRONZE_INGOT,
 +                        SlimefunItems.BRASS_INGOT, SMGItems.SMG_GENERATOR_SAND, SlimefunItems.BRASS_INGOT,
 +                        null, null, null
-+                })
++                }, 12)
 +                .setItem(Material.GLASS)
-+                .setRate(12)
 +                .register(SlimefunAddonInstance.getSFAInstance());
 +
-+        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
++        new MaterialGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
 +                SMGItems.SMG_GENERATOR_NETHERRACK,
 +                RecipeType.ENHANCED_CRAFTING_TABLE,
 +                new ItemStack[]{
 +                        SlimefunItems.SOLDER_INGOT, SlimefunItems.SOLDER_INGOT, SlimefunItems.SOLDER_INGOT,
 +                        SMGItems.SMG_GENERATOR_STONE, new ItemStack(Material.LAVA_BUCKET), SMGItems.SMG_GENERATOR_STONE,
 +                        SMGItems.SMG_GENERATOR_STONE, SlimefunItems.COMPOSTER, SMGItems.SMG_GENERATOR_STONE
-+                })
++                }, 6)
 +                .setItem(Material.NETHERRACK)
-+                .setRate(6)
 +                .register(SlimefunAddonInstance.getSFAInstance());
 +
-+        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
++        new MaterialGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
 +                SMGItems.SMG_GENERATOR_SOUL_SAND,
 +                RecipeType.ENHANCED_CRAFTING_TABLE,
 +                new ItemStack[]{
 +                        SlimefunItems.STEEL_INGOT, new ItemStack(Material.SPIDER_EYE), SlimefunItems.STEEL_INGOT,
 +                        new ItemStack(Material.ROTTEN_FLESH), new ItemStack(Material.WATER_BUCKET), new ItemStack(Material.BONE),
 +                        SMGItems.SMG_GENERATOR_SAND, SlimefunItems.COMPOSTER, SMGItems.SMG_GENERATOR_SAND
-+                })
++                }, 8)
 +                .setItem(Material.SOUL_SAND)
-+                .setRate(8)
++                .register(SlimefunAddonInstance.getSFAInstance());
++
++        new BrokenGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
++                SMGItems.SMG_GENERATOR_REDSTONE_BADLY_FORMED,
++                RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        SMGItems.SMG_GENERATOR_SAND, null, SMGItems.SMG_GENERATOR_GRAVEL,
++                        null, null, null,
++                        null, null, null
++                })
++                .register(SlimefunAddonInstance.getSFAInstance());
++
++        new BrokenGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
++                SMGItems.SMG_GENERATOR_REDSTONE_BROKEN,
++                RecipeType.ORE_CRUSHER,
++                new ItemStack[]{
++                        SMGItems.SMG_GENERATOR_REDSTONE_BADLY_FORMED, null, null,
++                        null, null, null,
++                        null, null, null
++                })
++                .register(SlimefunAddonInstance.getSFAInstance());
++
++        new MaterialGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
++                SMGItems.SMG_GENERATOR_REDSTONE,
++                RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        SMGItems.SMG_GENERATOR_REDSTONE_BROKEN, new ItemStack(Material.REDSTONE_ORE), SMGItems.SMG_GENERATOR_REDSTONE_BROKEN,
++                        SMGItems.SMG_GENERATOR_REDSTONE_BROKEN, SMGItems.SMG_GENERATOR_GRAVEL, SMGItems.SMG_GENERATOR_REDSTONE_BROKEN,
++                        SlimefunItems.DAMASCUS_STEEL_INGOT, SlimefunItems.DURALUMIN_INGOT, SlimefunItems.DAMASCUS_STEEL_INGOT
++                }, 24)
++                .setItem(Material.REDSTONE)
++                .register(SlimefunAddonInstance.getSFAInstance());
++
++        new BrokenGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
++                SMGItems.SMG_GENERATOR_OBSIDIAN_BADLY_FORMED,
++                RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        SMGItems.SMG_GENERATOR_COBBLESTONE, null, SMGItems.SMG_GENERATOR_STONE,
++                        null, SlimefunItems.COBALT_PICKAXE, null,
++                        SMGItems.SMG_GENERATOR_SMOOTH_STONE, null, SMGItems.SMG_GENERATOR_NETHERRACK
++                })
++                .register(SlimefunAddonInstance.getSFAInstance());
++
++        new BrokenGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
++                SMGItems.SMG_GENERATOR_OBSIDIAN_BROKEN,
++                RecipeType.ORE_CRUSHER,
++                new ItemStack[]{
++                        SMGItems.SMG_GENERATOR_OBSIDIAN_BADLY_FORMED, null, null,
++                        null, null, null,
++                        null, null, null
++                })
++                .register(SlimefunAddonInstance.getSFAInstance());
++
++        new MaterialGenerator(
++                SMGItems.SMG_ITEM_CATEGORY,
++                SMGItems.SMG_GENERATOR_OBSIDIAN,
++                RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        SlimefunItems.REINFORCED_ALLOY_INGOT, new ItemStack(Material.WATER_BUCKET), SlimefunItems.REINFORCED_ALLOY_INGOT,
++                        SMGItems.SMG_GENERATOR_OBSIDIAN_BROKEN, SMGItems.SMG_GENERATOR_STONE, SMGItems.SMG_GENERATOR_OBSIDIAN_BROKEN,
++                        SMGItems.SMG_GENERATOR_OBSIDIAN_BROKEN, new ItemStack(Material.LAVA_BUCKET), SMGItems.SMG_GENERATOR_OBSIDIAN_BROKEN
++                }, 128)
++                .setItem(Material.OBSIDIAN)
 +                .register(SlimefunAddonInstance.getSFAInstance());
 +    }
 +}
+\ No newline at end of file
 diff --git a/src/main/java/me/waleks/simplematerialgenerators/items/BrokenGenerator.java b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/items/BrokenGenerator.java
-similarity index 57%
+similarity index 92%
 rename from src/main/java/me/waleks/simplematerialgenerators/items/BrokenGenerator.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/items/BrokenGenerator.java
-index 0ef977c..9fe1af7 100644
+index c5e4a4a..9fe1af7 100644
 --- a/src/main/java/me/waleks/simplematerialgenerators/items/BrokenGenerator.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/items/BrokenGenerator.java
-@@ -1,21 +1,19 @@
+@@ -1,19 +1,17 @@
 -package me.waleks.simplematerialgenerators.items;
 +package id.universenetwork.sfa_loader.addons.simplematerialgenerators.items;
  
  import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 -import org.bukkit.inventory.ItemStack;
 -
-+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
-+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
  import io.github.thebusybiscuit.slimefun4.core.attributes.NotPlaceable;
  import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
  import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
--import me.mrCookieSlime.Slimefun.Lists.RecipeType;
--import me.mrCookieSlime.Slimefun.Objects.Category;
--import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 +import org.bukkit.inventory.ItemStack;
  
  import javax.annotation.Nonnull;
  
  public class BrokenGenerator extends SimpleSlimefunItem<ItemUseHandler> implements NotPlaceable {
 -
--    public BrokenGenerator(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
--        super(category, item, recipeType, recipe);
-+    public BrokenGenerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
-+        super(itemGroup, item, recipeType, recipe);
+     public BrokenGenerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+         super(itemGroup, item, recipeType, recipe);
      }
- 
-     @Nonnull
 @@ -23,5 +21,4 @@ public class BrokenGenerator extends SimpleSlimefunItem<ItemUseHandler> implemen
      public ItemUseHandler getItemHandler() {
          return PlayerRightClickEvent::cancel;
@@ -473,29 +656,26 @@ index 0ef977c..9fe1af7 100644
  }
 \ No newline at end of file
 diff --git a/src/main/java/me/waleks/simplematerialgenerators/items/GeneratorMultiblock.java b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/items/GeneratorMultiblock.java
-similarity index 57%
+similarity index 88%
 rename from src/main/java/me/waleks/simplematerialgenerators/items/GeneratorMultiblock.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/items/GeneratorMultiblock.java
-index 099f409..038a87e 100644
+index 21253c7..038a87e 100644
 --- a/src/main/java/me/waleks/simplematerialgenerators/items/GeneratorMultiblock.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/items/GeneratorMultiblock.java
-@@ -1,25 +1,23 @@
+@@ -1,22 +1,20 @@
 -package me.waleks.simplematerialgenerators.items;
--
--import org.bukkit.Material;
--import org.bukkit.inventory.ItemStack;
 +package id.universenetwork.sfa_loader.addons.simplematerialgenerators.items;
  
-+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
-+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+-import org.bukkit.Material;
+-import org.bukkit.inventory.ItemStack;
+-
  import io.github.thebusybiscuit.slimefun4.core.attributes.NotPlaceable;
  import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
  import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
--import me.mrCookieSlime.Slimefun.Lists.RecipeType;
--import me.mrCookieSlime.Slimefun.Objects.Category;
--import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
--import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 +import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 +import org.bukkit.Material;
 +import org.bukkit.inventory.ItemStack;
@@ -504,61 +684,35 @@ index 099f409..038a87e 100644
  
  public class GeneratorMultiblock extends SimpleSlimefunItem<ItemUseHandler> implements NotPlaceable {
 -
--    public GeneratorMultiblock(Category category, SlimefunItemStack item) {
--        super(category, item, RecipeType.MULTIBLOCK, new ItemStack[] {
+-    public GeneratorMultiblock(ItemGroup itemGroup , SlimefunItemStack item) {
+-        super(itemGroup, item, RecipeType.MULTIBLOCK, new ItemStack[] {
 +    public GeneratorMultiblock(ItemGroup itemGroup, SlimefunItemStack item) {
 +        super(itemGroup, item, RecipeType.MULTIBLOCK, new ItemStack[]{
                  null, null, null,
                  null, new ItemStack(Material.CHEST), null,
--                null, new CustomItem(Material.BEDROCK, "Any SMG generator"), null
-+                null, new CustomItemStack(Material.BEDROCK, "Any SMG generator"), null
-         });
-     }
- 
+                 null, new CustomItemStack(Material.BEDROCK, "Any SMG generator"), null
 diff --git a/src/main/java/me/waleks/simplematerialgenerators/items/MaterialGenerator.java b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/items/MaterialGenerator.java
-similarity index 77%
+similarity index 94%
 rename from src/main/java/me/waleks/simplematerialgenerators/items/MaterialGenerator.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/items/MaterialGenerator.java
-index 23501ee..1bc5f09 100644
+index ebc638b..1c51502 100644
 --- a/src/main/java/me/waleks/simplematerialgenerators/items/MaterialGenerator.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/items/MaterialGenerator.java
-@@ -1,13 +1,13 @@
+@@ -1,4 +1,4 @@
 -package me.waleks.simplematerialgenerators.items;
 +package id.universenetwork.sfa_loader.addons.simplematerialgenerators.items;
  
-+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
-+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-+import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.BlockPosition;
- import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
- import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
--import me.mrCookieSlime.Slimefun.Lists.RecipeType;
--import me.mrCookieSlime.Slimefun.Objects.Category;
--import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
- import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
--import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
--import me.mrCookieSlime.Slimefun.cscorelib2.blocks.BlockPosition;
- import org.bukkit.Material;
- import org.bukkit.block.Block;
- import org.bukkit.block.BlockFace;
-@@ -22,23 +22,22 @@ import java.util.HashMap;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
+@@ -24,7 +24,6 @@ import java.util.HashMap;
  import java.util.Map;
  
  public class MaterialGenerator extends SlimefunItem {
 -
      private static final Map<BlockPosition, Integer> generatorProgress = new HashMap<>();
  
-     private int rate = 2;
-     private ItemStack item;
- 
-     @ParametersAreNonnullByDefault
--    public MaterialGenerator(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
--        super(category, item, recipeType, recipe);
-+    public MaterialGenerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
-+        super(itemGroup, item, recipeType, recipe);
-     }
- 
+     private final ItemSetting<Integer> rate;
+@@ -40,9 +39,9 @@ public class MaterialGenerator extends SlimefunItem {
      @Override
      public void preRegister() {
          addItemHandler(new BlockTicker() {
@@ -569,8 +723,8 @@ index 23501ee..1bc5f09 100644
              public void tick(Block b, SlimefunItem sf, Config data) {
                  MaterialGenerator.this.tick(b);
              }
-@@ -63,9 +62,7 @@ public class MaterialGenerator extends SlimefunItem {
-                     if (progress >= this.rate) {
+@@ -67,9 +66,7 @@ public class MaterialGenerator extends SlimefunItem {
+                     if (progress >= this.rate.getValue()) {
                          progress = 0;
                          inv.addItem(this.item);
 -                    } else {
@@ -580,8 +734,8 @@ index 23501ee..1bc5f09 100644
                      generatorProgress.put(pos, progress);
                  }
              }
-@@ -81,5 +78,4 @@ public class MaterialGenerator extends SlimefunItem {
-         this.rate = Math.max(rateTicks, 2);
+@@ -80,5 +77,4 @@ public class MaterialGenerator extends SlimefunItem {
+         this.item = new ItemStack(material);
          return this;
      }
 -}
@@ -590,14 +744,14 @@ index 23501ee..1bc5f09 100644
 \ No newline at end of file
 diff --git a/src/main/java/me/waleks/simplematerialgenerators/SMGItemSetup.java b/src/main/java/me/waleks/simplematerialgenerators/SMGItemSetup.java
 deleted file mode 100644
-index 3153ec6..0000000
+index a192c0c..0000000
 --- a/src/main/java/me/waleks/simplematerialgenerators/SMGItemSetup.java
 +++ /dev/null
-@@ -1,170 +0,0 @@
+@@ -1,242 +0,0 @@
 -package me.waleks.simplematerialgenerators;
 -
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 -import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
--import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 -import me.waleks.simplematerialgenerators.items.BrokenGenerator;
 -import me.waleks.simplematerialgenerators.items.GeneratorMultiblock;
 -import me.waleks.simplematerialgenerators.items.MaterialGenerator;
@@ -627,310 +781,226 @@ index 3153ec6..0000000
 -		.register(plugin);
 -		*/
 -
--        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
+-        new MaterialGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
 -            SMGItems.SMG_GENERATOR_COBBLESTONE,
 -            RecipeType.ENHANCED_CRAFTING_TABLE,
 -            new ItemStack[] {
--                new ItemStack(Material.SMOOTH_STONE), new ItemStack(Material.SMOOTH_STONE),
--				new ItemStack(Material.SMOOTH_STONE),
--                new ItemStack(Material.LAVA_BUCKET), new ItemStack(Material.IRON_PICKAXE),
--				new ItemStack(Material.WATER_BUCKET),
--                new ItemStack(Material.SMOOTH_STONE), new ItemStack(Material.SMOOTH_STONE),
--				new ItemStack(Material.SMOOTH_STONE)
--            })
+-                new ItemStack(Material.SMOOTH_STONE), new ItemStack(Material.SMOOTH_STONE), new ItemStack(Material.SMOOTH_STONE),
+-                new ItemStack(Material.LAVA_BUCKET), new ItemStack(Material.IRON_PICKAXE), new ItemStack(Material.WATER_BUCKET),
+-                new ItemStack(Material.SMOOTH_STONE), new ItemStack(Material.SMOOTH_STONE), new ItemStack(Material.SMOOTH_STONE)
+-            }, 4)
 -            .setItem(Material.COBBLESTONE)
--            .setRate(4)
 -            .register(plugin);
 -
--        new BrokenGenerator(SMGItems.SMG_ITEM_CATEGORY,
+-        new BrokenGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
 -            SMGItems.SMG_GENERATOR_STONE_BROKEN,
 -            RecipeType.SMELTERY,
 -            new ItemStack[] {
 -                SMGItems.SMG_GENERATOR_COBBLESTONE, null, null,
 -                null, null, null,
 -                null, null, null
--            }).register(plugin);
+-            })
+-            .register(plugin);
 -
--        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
+-        new MaterialGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
 -            SMGItems.SMG_GENERATOR_STONE,
 -            RecipeType.ENHANCED_CRAFTING_TABLE,
 -            new ItemStack[] {
 -                new ItemStack(Material.STONE), SlimefunItems.SOLDER_INGOT, new ItemStack(Material.STONE),
 -                SlimefunItems.SOLDER_INGOT, SMGItems.SMG_GENERATOR_STONE_BROKEN, SlimefunItems.SOLDER_INGOT,
 -                new ItemStack(Material.STONE), SlimefunItems.SOLDER_INGOT, new ItemStack(Material.STONE)
--            })
+-            }, 8)
 -            .setItem(Material.STONE)
--            .setRate(8)
 -            .register(plugin);
 -
--        new BrokenGenerator(SMGItems.SMG_ITEM_CATEGORY,
+-        new BrokenGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
 -            SMGItems.SMG_GENERATOR_SMOOTH_STONE_BROKEN,
 -            RecipeType.SMELTERY,
 -            new ItemStack[] {
 -                SMGItems.SMG_GENERATOR_STONE, null, null,
 -                null, null, null,
 -                null, null, null
--            }).register(plugin);
+-            })
+-            .register(plugin);
 -
--        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
+-        new MaterialGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
 -            SMGItems.SMG_GENERATOR_SMOOTH_STONE,
 -            RecipeType.SMELTERY,
 -            new ItemStack[] {
 -                new ItemStack(Material.SMOOTH_STONE), SlimefunItems.STEEL_INGOT, new ItemStack(Material.SMOOTH_STONE),
--                new ItemStack(Material.IRON_BARS), SMGItems.SMG_GENERATOR_SMOOTH_STONE_BROKEN,
--				new ItemStack(Material.IRON_BARS),
+-                new ItemStack(Material.IRON_BARS), SMGItems.SMG_GENERATOR_SMOOTH_STONE_BROKEN, new ItemStack(Material.IRON_BARS),
 -                new ItemStack(Material.SMOOTH_STONE), SlimefunItems.STEEL_INGOT, new ItemStack(Material.SMOOTH_STONE)
--            })
+-            }, 12)
 -            .setItem(Material.SMOOTH_STONE)
--            .setRate(12)
 -            .register(plugin);
 -
--        new BrokenGenerator(SMGItems.SMG_ITEM_CATEGORY,
+-        new BrokenGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
 -            SMGItems.SMG_GENERATOR_GRAVEL_BROKEN,
 -            RecipeType.GRIND_STONE,
 -            new ItemStack[] {
 -                SMGItems.SMG_GENERATOR_COBBLESTONE, null, null,
 -                null, null, null,
 -                null, null, null
--            }).register(plugin);
+-            })
+-            .register(plugin);
 -
--        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
+-        new MaterialGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
 -            SMGItems.SMG_GENERATOR_GRAVEL,
 -            RecipeType.ENHANCED_CRAFTING_TABLE,
 -            new ItemStack[] {
 -                new ItemStack(Material.STONE_BRICKS), SlimefunItems.BILLON_INGOT, new ItemStack(Material.STONE_BRICKS),
 -                SlimefunItems.BILLON_INGOT, SMGItems.SMG_GENERATOR_GRAVEL_BROKEN, SlimefunItems.BILLON_INGOT,
 -                new ItemStack(Material.STONE_BRICKS), SlimefunItems.BILLON_INGOT, new ItemStack(Material.STONE_BRICKS)
--            })
+-            }, 6)
 -            .setItem(Material.GRAVEL)
--            .setRate(6)
 -            .register(plugin);
 -
--        new BrokenGenerator(SMGItems.SMG_ITEM_CATEGORY,
+-        new BrokenGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
 -            SMGItems.SMG_GENERATOR_SAND_BROKEN,
 -            RecipeType.ORE_CRUSHER,
 -            new ItemStack[] {
 -                SMGItems.SMG_GENERATOR_GRAVEL, null, null,
 -                null, null, null,
 -                null, null, null
--            }).register(plugin);
+-            })
+-            .register(plugin);
 -
--        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
+-        new MaterialGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
 -            SMGItems.SMG_GENERATOR_SAND,
 -            RecipeType.ENHANCED_CRAFTING_TABLE,
 -            new ItemStack[] {
 -                new ItemStack(Material.SANDSTONE), SlimefunItems.DURALUMIN_INGOT, new ItemStack(Material.SANDSTONE),
 -                SlimefunItems.DURALUMIN_INGOT, SMGItems.SMG_GENERATOR_SAND_BROKEN, SlimefunItems.DURALUMIN_INGOT,
 -                new ItemStack(Material.SANDSTONE), SlimefunItems.DURALUMIN_INGOT, new ItemStack(Material.SANDSTONE)
--            })
+-            }, 8)
 -            .setItem(Material.SAND)
--            .setRate(8)
 -            .register(plugin);
 -
--        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
+-        new MaterialGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
 -            SMGItems.SMG_GENERATOR_GLASS,
 -            RecipeType.SMELTERY,
 -            new ItemStack[] {
 -                SlimefunItems.BRONZE_INGOT, SlimefunItems.GOLD_8K, SlimefunItems.BRONZE_INGOT,
 -                SlimefunItems.BRASS_INGOT, SMGItems.SMG_GENERATOR_SAND, SlimefunItems.BRASS_INGOT,
 -                null, null, null
--            })
+-            }, 12)
 -            .setItem(Material.GLASS)
--            .setRate(12)
 -            .register(plugin);
 -
--        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
+-        new MaterialGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
 -            SMGItems.SMG_GENERATOR_NETHERRACK,
 -            RecipeType.ENHANCED_CRAFTING_TABLE,
 -            new ItemStack[] {
 -                SlimefunItems.SOLDER_INGOT, SlimefunItems.SOLDER_INGOT, SlimefunItems.SOLDER_INGOT,
 -                SMGItems.SMG_GENERATOR_STONE, new ItemStack(Material.LAVA_BUCKET), SMGItems.SMG_GENERATOR_STONE,
 -                SMGItems.SMG_GENERATOR_STONE, SlimefunItems.COMPOSTER, SMGItems.SMG_GENERATOR_STONE
--            })
+-            }, 6)
 -            .setItem(Material.NETHERRACK)
--            .setRate(6)
 -            .register(plugin);
 -
--        new MaterialGenerator(SMGItems.SMG_ITEM_CATEGORY,
+-        new MaterialGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
 -            SMGItems.SMG_GENERATOR_SOUL_SAND,
 -            RecipeType.ENHANCED_CRAFTING_TABLE,
 -            new ItemStack[] {
 -                SlimefunItems.STEEL_INGOT, new ItemStack(Material.SPIDER_EYE), SlimefunItems.STEEL_INGOT,
 -                new ItemStack(Material.ROTTEN_FLESH), new ItemStack(Material.WATER_BUCKET), new ItemStack(Material.BONE),
 -                SMGItems.SMG_GENERATOR_SAND, SlimefunItems.COMPOSTER, SMGItems.SMG_GENERATOR_SAND
--            })
+-            }, 8)
 -            .setItem(Material.SOUL_SAND)
--            .setRate(8)
+-            .register(plugin);
+-
+-        new BrokenGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
+-                SMGItems.SMG_GENERATOR_REDSTONE_BADLY_FORMED,
+-                RecipeType.ENHANCED_CRAFTING_TABLE,
+-                new ItemStack[] {
+-                    SMGItems.SMG_GENERATOR_SAND, null, SMGItems.SMG_GENERATOR_GRAVEL,
+-                    null, null, null,
+-                    null, null, null
+-                })
+-            .register(plugin);
+-
+-        new BrokenGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
+-                SMGItems.SMG_GENERATOR_REDSTONE_BROKEN,
+-                RecipeType.ORE_CRUSHER,
+-                new ItemStack[] {
+-                    SMGItems.SMG_GENERATOR_REDSTONE_BADLY_FORMED, null, null,
+-                    null, null, null,
+-                    null, null, null
+-                })
+-            .register(plugin);
+-
+-        new MaterialGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
+-            SMGItems.SMG_GENERATOR_REDSTONE,
+-            RecipeType.ENHANCED_CRAFTING_TABLE,
+-            new ItemStack[] {
+-                SMGItems.SMG_GENERATOR_REDSTONE_BROKEN, new ItemStack(Material.REDSTONE_ORE), SMGItems.SMG_GENERATOR_REDSTONE_BROKEN,
+-                SMGItems.SMG_GENERATOR_REDSTONE_BROKEN, SMGItems.SMG_GENERATOR_GRAVEL, SMGItems.SMG_GENERATOR_REDSTONE_BROKEN,
+-                SlimefunItems.DAMASCUS_STEEL_INGOT, SlimefunItems.DURALUMIN_INGOT, SlimefunItems.DAMASCUS_STEEL_INGOT
+-            }, 24)
+-            .setItem(Material.REDSTONE)
+-            .register(plugin);
+-
+-        new BrokenGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
+-            SMGItems.SMG_GENERATOR_OBSIDIAN_BADLY_FORMED,
+-            RecipeType.ENHANCED_CRAFTING_TABLE,
+-            new ItemStack[] {
+-                SMGItems.SMG_GENERATOR_COBBLESTONE, null, SMGItems.SMG_GENERATOR_STONE,
+-                null, SlimefunItems.COBALT_PICKAXE, null,
+-                SMGItems.SMG_GENERATOR_SMOOTH_STONE, null, SMGItems.SMG_GENERATOR_NETHERRACK
+-            })
+-            .register(plugin);
+-
+-        new BrokenGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
+-            SMGItems.SMG_GENERATOR_OBSIDIAN_BROKEN,
+-            RecipeType.ORE_CRUSHER,
+-            new ItemStack[] {
+-                SMGItems.SMG_GENERATOR_OBSIDIAN_BADLY_FORMED, null, null,
+-                null, null, null,
+-                null, null, null
+-            })
+-            .register(plugin);
+-
+-        new MaterialGenerator(
+-            SMGItems.SMG_ITEM_CATEGORY,
+-            SMGItems.SMG_GENERATOR_OBSIDIAN,
+-            RecipeType.ENHANCED_CRAFTING_TABLE,
+-            new ItemStack[] {
+-                SlimefunItems.REINFORCED_ALLOY_INGOT, new ItemStack(Material.WATER_BUCKET), SlimefunItems.REINFORCED_ALLOY_INGOT,
+-                SMGItems.SMG_GENERATOR_OBSIDIAN_BROKEN, SMGItems.SMG_GENERATOR_STONE, SMGItems.SMG_GENERATOR_OBSIDIAN_BROKEN,
+-                SMGItems.SMG_GENERATOR_OBSIDIAN_BROKEN, new ItemStack(Material.LAVA_BUCKET), SMGItems.SMG_GENERATOR_OBSIDIAN_BROKEN
+-            }, 128)
+-            .setItem(Material.OBSIDIAN)
 -            .register(plugin);
 -    }
 -}
-\ No newline at end of file
-diff --git a/src/main/java/me/waleks/simplematerialgenerators/SMGItems.java b/src/main/java/me/waleks/simplematerialgenerators/SMGItems.java
-deleted file mode 100644
-index 3fe879c..0000000
---- a/src/main/java/me/waleks/simplematerialgenerators/SMGItems.java
-+++ /dev/null
-@@ -1,147 +0,0 @@
--package me.waleks.simplematerialgenerators;
--
--import me.mrCookieSlime.Slimefun.Objects.Category;
--import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
--import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
--import org.bukkit.Material;
--import org.bukkit.NamespacedKey;
--
--public final class SMGItems {
--
--    private SMGItems() {}
--
--    public static final Category SMG_ITEM_CATEGORY = new Category(
--        new NamespacedKey(SimpleMaterialGenerators.getInstance(), "simplematerialgenerators"),
--        new CustomItem(Material.SMOOTH_STONE, "&9Simple Material Generators")
--    );
--
--    public static final SlimefunItemStack SMG_GENERATOR_MULTIBLOCK = new SlimefunItemStack(
--        "SMG_GENERATOR_MULTIBLOCK",
--        Material.BEDROCK,
--        "&9Generator multiblock",
--        "",
--        "&dBuild any of this addon's",
--        "&dgenerators like this.",
--        "&aThey will only output to a chest",
--        "&adirectly above it."
--    );
--	
--	/*	Template for adding more generator items
--	public static final SlimefunItemStack SMG_GENERATOR_ = new SlimefunItemStack(
--		"SMG_GENERATOR_",
--		Material.,
--		"& generator",
--		"&6Rate: &e ticks",
--		"",
--		"&9&oSimpleMaterialGenerators"
--	);
--	*/
--
--    public static final SlimefunItemStack SMG_GENERATOR_COBBLESTONE = new SlimefunItemStack(
--        "SMG_GENERATOR_COBBLESTONE",
--        Material.COBBLESTONE,
--        "&7Cobblestone generator",
--        "&6Rate: &e4 ticks",
--        "",
--        "&9&oSimpleMaterialGenerators"
--    );
--
--    public static final SlimefunItemStack SMG_GENERATOR_STONE_BROKEN = new SlimefunItemStack(
--        "SMG_GENERATOR_STONE_BROKEN",
--        Material.STONE,
--        "&7Stone generator &8(Broken)",
--        "&8Needs to be repaired",
--        "",
--        "&9&oSimpleMaterialGenerators"
--    );
--
--    public static final SlimefunItemStack SMG_GENERATOR_STONE = new SlimefunItemStack(
--        "SMG_GENERATOR_STONE",
--        Material.STONE,
--        "&7Stone generator",
--        "&6Rate: &e8 ticks",
--        "",
--        "&9&oSimpleMaterialGenerators"
--    );
--
--    public static final SlimefunItemStack SMG_GENERATOR_SMOOTH_STONE_BROKEN = new SlimefunItemStack(
--        "SMG_GENERATOR_SMOOTH_STONE_BROKEN",
--        Material.SMOOTH_STONE,
--        "&7Smooth stone generator &8(Broken)",
--        "&8Needs to be repaired",
--        "",
--        "&9&oSimpleMaterialGenerators"
--    );
--
--    public static final SlimefunItemStack SMG_GENERATOR_SMOOTH_STONE = new SlimefunItemStack(
--        "SMG_GENERATOR_SMOOTH_STONE",
--        Material.SMOOTH_STONE,
--        "&7Smooth stone generator",
--        "&6Rate: &e12 ticks",
--        "",
--        "&9&oSimpleMaterialGenerators"
--    );
--
--    public static final SlimefunItemStack SMG_GENERATOR_GRAVEL_BROKEN = new SlimefunItemStack(
--        "SMG_GENERATOR_GRAVEL_BROKEN",
--        Material.GRAVEL,
--        "&7Gravel generator &8(Broken)",
--        "&8Needs to be repaired",
--        "",
--        "&9&oSimpleMaterialGenerators"
--    );
--
--    public static final SlimefunItemStack SMG_GENERATOR_GRAVEL = new SlimefunItemStack(
--        "SMG_GENERATOR_GRAVEL",
--        Material.ANDESITE,
--        "&7Gravel generator",
--        "&6Rate: &e6 ticks",
--        "",
--        "&9&oSimpleMaterialGenerators"
--    );
--
--    public static final SlimefunItemStack SMG_GENERATOR_SAND_BROKEN = new SlimefunItemStack(
--        "SMG_GENERATOR_SAND_BROKEN",
--        Material.SAND,
--        "&eSand generator &8(Broken)",
--        "&8Needs to be repaired",
--        "",
--        "&9&oSimpleMaterialGenerators"
--    );
--
--    public static final SlimefunItemStack SMG_GENERATOR_SAND = new SlimefunItemStack(
--        "SMG_GENERATOR_SAND",
--        Material.SANDSTONE,
--        "&eSand generator",
--        "&6Rate: &e8 ticks",
--        "",
--        "&9&oSimpleMaterialGenerators"
--    );
--
--    public static final SlimefunItemStack SMG_GENERATOR_GLASS = new SlimefunItemStack(
--        "SMG_GENERATOR_GLASS",
--        Material.GLASS,
--        "&fGlass generator",
--        "&6Rate: &e12 ticks",
--        "",
--        "&9&oSimpleMaterialGenerators"
--    );
--
--    public static final SlimefunItemStack SMG_GENERATOR_NETHERRACK = new SlimefunItemStack(
--        "SMG_GENERATOR_NETHERRACK",
--        Material.NETHERRACK,
--        "&cNetherrack generator",
--        "&6Rate: &e6 ticks",
--        "",
--        "&9&oSimpleMaterialGenerators"
--    );
--
--    public static final SlimefunItemStack SMG_GENERATOR_SOUL_SAND = new SlimefunItemStack(
--        "SMG_GENERATOR_SOUL_SAND",
--        Material.SOUL_SAND,
--        "&8Soul sand generator",
--        "&6Rate: &e8 ticks",
--        "",
--        "&9&oSimpleMaterialGenerators"
--    );
--}
-\ No newline at end of file
 diff --git a/src/main/java/me/waleks/simplematerialgenerators/SimpleMaterialGenerators.java b/src/main/java/me/waleks/simplematerialgenerators/SimpleMaterialGenerators.java
 deleted file mode 100644
-index 83f49bc..0000000
+index 8dd8164..0000000
 --- a/src/main/java/me/waleks/simplematerialgenerators/SimpleMaterialGenerators.java
 +++ /dev/null
-@@ -1,55 +0,0 @@
+@@ -1,53 +0,0 @@
 -package me.waleks.simplematerialgenerators;
 -
 -import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
--import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
--import me.mrCookieSlime.Slimefun.cscorelib2.updater.GitHubBuildsUpdater;
--import me.mrCookieSlime.Slimefun.cscorelib2.updater.Updater;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.GitHubBuildsUpdater;
 -import org.bukkit.plugin.java.JavaPlugin;
 -
 -import javax.annotation.Nonnull;
@@ -947,8 +1017,7 @@ index 83f49bc..0000000
 -        Config cfg = new Config(this);
 -
 -        if (cfg.getBoolean("options.auto-update") && getDescription().getVersion().startsWith("DEV - ")) {
--            Updater updater = new GitHubBuildsUpdater(this, getFile(), "waleks647/SMG/master");
--            updater.start();
+-            new GitHubBuildsUpdater(this, getFile(), "Sefiraat/SMG/master").start();
 -        }
 -
 -        SMGItemSetup.setup(this);
@@ -962,7 +1031,7 @@ index 83f49bc..0000000
 -    @Nonnull
 -    @Override
 -    public String getBugTrackerURL() {
--        return "https://github.com/waleks647/SMG/issues";
+-        return "https://github.com/Sefiraat/SMG/issues";
 -    }
 -
 -    @Nonnull
@@ -1022,5 +1091,5 @@ index c464a0f..0000000
 -- Slimefun
 \ No newline at end of file
 -- 
-2.41.0.windows.3
+2.43.0.windows.1
 
