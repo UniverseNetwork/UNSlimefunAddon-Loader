@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class AddonsLoader {
     @Getter
-    private final static Set<Class<? extends AddonTemplate>> allAddonsClasses = new HashSet<>();
-    private final static Set<Class<? extends AddonTemplate>> addonsWithHooksClasses = new HashSet<>();
+    private final Set<Class<? extends AddonTemplate>> allAddonsClasses = new HashSet<>();
+    private final Set<Class<? extends AddonTemplate>> addonsWithHooksClasses = new HashSet<>();
     @Getter
-    private final static Set<AddonTemplate> loadedAddons = new HashSet<>();
+    private final Set<AddonTemplate> loadedAddons = new HashSet<>();
 
     public void loadEnabledAddons() {
         Reflections reflections = new Reflections("id.universenetwork.sfa_loader.addons");
@@ -52,7 +52,7 @@ public class AddonsLoader {
         LogUtils.info(str);
     }
 
-    public void loadAddon(Class<? extends AddonTemplate> addonClass, boolean scanHooks) {
+    private void loadAddon(Class<? extends AddonTemplate> addonClass, boolean scanHooks) {
         if (addonClass.isAnnotationPresent(AddonHooks.class) && scanHooks) {
             addonsWithHooksClasses.add(addonClass);
             return;

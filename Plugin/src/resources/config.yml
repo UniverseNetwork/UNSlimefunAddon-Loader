@@ -10,9 +10,11 @@ plugin-settings:
 # Loader Settings
 loader-settings:
   # If set to true, all addons are not loaded at startup
+  # !!! -> You must restart the server after change this settings
   disable-all-addons: false
 
 # The addons loaded at startup
+# !!! -> You must restart the server after changing the settings below
 addons:
   arvinmemories: false
   dynatech: true
