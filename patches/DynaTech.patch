@@ -1,10 +1,10 @@
-From 331c0c5ca8095644fa614f19bea2b07161b6281c Mon Sep 17 00:00:00 2001
+From 6cc96b207cfe0033b6b04dd9251fbbe84518078e Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 7 Jan 2024 06:28:12 +0700
+Date: Thu, 11 Jan 2024 08:37:16 +0700
 Subject: [PATCH] DynaTech
 
 ---
- pom.xml                                       |  93 +--
+ pom.xml                                       |  91 +--
  .../sfa_loader/addons/dynatech/DynaTech.java  | 112 +++
  .../addons}/dynatech/DynaTechItems.java       | 107 ++-
  .../dynatech/attributes/LiquidStorage.java    |  52 +-
@@ -73,7 +73,7 @@ Subject: [PATCH] DynaTech
  .../addons-config/DynaTech/config.yml         |   1 +
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  24 -
- 69 files changed, 2835 insertions(+), 3484 deletions(-)
+ 69 files changed, 2834 insertions(+), 3483 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/DynaTechItems.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/attributes/LiquidStorage.java (80%)
@@ -144,7 +144,7 @@ Subject: [PATCH] DynaTech
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 83f8b2d..6457b6c 100644
+index 6a536f7..6457b6c 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,18 +1,19 @@
@@ -297,11 +297,10 @@ index 83f8b2d..6457b6c 100644
          </dependency>
 +
          <dependency>
--            <groupId>com.github.baked-libs</groupId>
--            <artifactId>dough</artifactId>
--            <version>dd9b6b617f</version>
+-            <groupId>com.github.baked-libs.dough</groupId>
 +            <groupId>io.github.baked-libs</groupId>
-+            <artifactId>dough-api</artifactId>
+             <artifactId>dough-api</artifactId>
+-            <version>c4231a4d1a</version>
 +            <version>1.2.0</version>
 +            <scope>provided</scope>
          </dependency>
