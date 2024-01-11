@@ -18,6 +18,7 @@ addons:
   dynatech: true
   extratools: true
   fluffymachines: true
+  headlimiter: false
   infinityexpansion: true
   networks: true
   sfcalc: true

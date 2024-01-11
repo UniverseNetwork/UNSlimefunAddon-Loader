@@ -4,7 +4,7 @@ if (!$gpgsign) {$gpgsign = "false"}
 
 function enableCommitSigningIfNeeded {
     if ($gpgsign -eq "true") {
-        Write-Host "Re-enabling GPG Signing" -f blue
+        Write-Host "Re-enabling GPG Signing" -nonewline -f blue
         # Yes, this has to be global
         git config --global commit.gpgsign true
     }
@@ -86,7 +86,8 @@ if ($dir) {
         if ($method -eq "create") {
             Write-Host ""
             Write-Host "Before applying the patch, make sure to commit" -f yellow
-            Write-Host "the repository folder first." -nonewline -yellow
+            Write-Host "the repository folder first." -f yellow
+            git reset --soft origin/$branch
         }
         if ($method -eq "merge") {
             Write-Host ""

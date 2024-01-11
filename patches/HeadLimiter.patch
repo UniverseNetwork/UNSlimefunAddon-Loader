@@ -1,0 +1,1095 @@
+From ba5da9e90a874c4bd41876088602ab8e7444a294 Mon Sep 17 00:00:00 2001
+From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
+Date: Thu, 11 Jan 2024 08:16:20 +0700
+Subject: [PATCH] HeadLimiter
+
+---
+ pom.xml                                       |  73 ++-----------
+ .../dev/j3fftw/headlimiter/CountCommand.java  |  58 ----------
+ .../dev/j3fftw/headlimiter/HeadLimiter.java   | 103 ------------------
+ .../j3fftw/headlimiter/MetricsService.java    |  30 -----
+ .../addons/headlimiter/CountCommand.java      |  50 +++++++++
+ .../addons}/headlimiter/CountResult.java      |   5 +-
+ .../addons/headlimiter/HeadLimiter.java       |  88 +++++++++++++++
+ .../sfa_loader/addons}/headlimiter/Utils.java |  51 ++++-----
+ .../blocklimiter/BlockLimiter.java            |  86 ++++++---------
+ .../blocklimiter/BlockListener.java           |  46 +++-----
+ .../blocklimiter/ChunkContent.java            |  19 ++--
+ .../headlimiter/blocklimiter/Group.java       |  63 +++--------
+ .../HeadLimiter}/config.yml                   |   0
+ src/main/resources/plugin.yml                 |  15 ---
+ 14 files changed, 240 insertions(+), 447 deletions(-)
+ delete mode 100644 src/main/java/dev/j3fftw/headlimiter/CountCommand.java
+ delete mode 100644 src/main/java/dev/j3fftw/headlimiter/HeadLimiter.java
+ delete mode 100644 src/main/java/dev/j3fftw/headlimiter/MetricsService.java
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/CountCommand.java
+ rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/CountResult.java (90%)
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java
+ rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/Utils.java (76%)
+ rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/blocklimiter/BlockLimiter.java (58%)
+ rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/blocklimiter/BlockListener.java (73%)
+ rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/blocklimiter/ChunkContent.java (88%)
+ rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/blocklimiter/Group.java (63%)
+ rename src/main/resources/{ => addons-config/HeadLimiter}/config.yml (100%)
+ delete mode 100644 src/main/resources/plugin.yml
+
+diff --git a/pom.xml b/pom.xml
+index 6a9c156..eb393c7 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -1,9 +1,14 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+ <project xmlns="http://maven.apache.org/POM/4.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+ 
++    <parent>
++        <groupId>id.universenetwork.sfa_loader</groupId>
++        <artifactId>Addons</artifactId>
++        <version>1.2.0</version>
++    </parent>
++
+     <groupId>dev.j3fftw.headlimiter</groupId>
+     <artifactId>HeadLimiter</artifactId>
+     <version>UNOFFICIAL</version>
+@@ -11,45 +16,10 @@
+ 
+     <name>HeadLimiter</name>
+ 
+-    <properties>
+-        <java.version>16</java.version>
+-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+-    </properties>
+-
+     <build>
+-        <defaultGoal>clean package</defaultGoal>
+         <finalName>${project.artifactId}</finalName>
+-        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+-
+-        <resources>
+-            <resource>
+-                <targetPath>.</targetPath>
+-                <filtering>true</filtering>
+-                <directory>${basedir}/src/main/resources/</directory>
+-                <includes>
+-                    <include>*</include>
+-                </includes>
+-            </resource>
+-            <resource>
+-                <directory>${basedir}</directory>
+-
+-                <includes>
+-                    <include>LICENSE</include>
+-                </includes>
+-            </resource>
+-        </resources>
+ 
+         <plugins>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-compiler-plugin</artifactId>
+-                <version>3.5.1</version>
+-                <configuration>
+-                    <source>16</source>
+-                    <target>16</target>
+-                </configuration>
+-            </plugin>
+-
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-shade-plugin</artifactId>
+@@ -64,13 +34,9 @@
+ 
+                 <configuration>
+                     <relocations>
+-                        <relocation>
+-                            <pattern>org.bstats</pattern>
+-                            <shadedPattern>dev.j3fftw.headlimiter.bstats</shadedPattern>
+-                        </relocation>
+                         <relocation>
+                             <pattern>dev.j3fftw.extrautils</pattern>
+-                            <shadedPattern>dev.j3fftw.headlimiter.extrautils</shadedPattern>
++                            <shadedPattern>id.universenetwork.sfa_loader.libraries.extrautils</shadedPattern>
+                         </relocation>
+                     </relocations>
+                 </configuration>
+@@ -79,10 +45,6 @@
+     </build>
+ 
+     <repositories>
+-        <repository>
+-            <id>jitpack.io</id>
+-            <url>https://jitpack.io</url>
+-        </repository>
+         <repository>
+             <id>paper-repo</id>
+             <url>https://repo.papermc.io/repository/maven-public/</url>
+@@ -91,10 +53,6 @@
+             <id>sonatype</id>
+             <url>https://oss.sonatype.org/content/groups/public/</url>
+         </repository>
+-        <repository>
+-            <id>bstats-repo</id>
+-            <url>https://repo.codemc.org/repository/maven-public</url>
+-        </repository>
+     </repositories>
+ 
+     <dependencies>
+@@ -105,24 +63,11 @@
+             <scope>provided</scope>
+         </dependency>
+ 
+-        <dependency>
+-            <groupId>com.github.Slimefun</groupId>
+-            <artifactId>Slimefun4</artifactId>
+-            <version>1aeb0e8</version>
+-            <scope>provided</scope>
+-        </dependency>
+-
+         <dependency>
+             <groupId>com.github.Slimefun-Addon-Community</groupId>
+             <artifactId>extrautils</artifactId>
+-            <version>cea1be6550</version>
+-        </dependency>
+-
+-        <dependency>
+-            <groupId>org.bstats</groupId>
+-            <artifactId>bstats-bukkit</artifactId>
+-            <version>3.0.0</version>
+-            <scope>compile</scope>
++            <version>73e76ac</version>
++            <scope>provided</scope>
+         </dependency>
+ 
+         <dependency>
+diff --git a/src/main/java/dev/j3fftw/headlimiter/CountCommand.java b/src/main/java/dev/j3fftw/headlimiter/CountCommand.java
+deleted file mode 100644
+index ad40f52..0000000
+--- a/src/main/java/dev/j3fftw/headlimiter/CountCommand.java
++++ /dev/null
+@@ -1,58 +0,0 @@
+-package dev.j3fftw.headlimiter;
+-
+-import org.bukkit.ChatColor;
+-import org.bukkit.command.Command;
+-import org.bukkit.command.CommandExecutor;
+-import org.bukkit.command.CommandSender;
+-import org.bukkit.entity.Player;
+-
+-import javax.annotation.ParametersAreNonnullByDefault;
+-import java.util.Map;
+-
+-public class CountCommand implements CommandExecutor {
+-
+-    @Override
+-    @ParametersAreNonnullByDefault
+-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+-        if (args.length == 1 && sender instanceof Player) {
+-            Player player = (Player) sender;
+-
+-            Utils.count(player.getChunk(), result -> {
+-                StringBuilder message = new StringBuilder();
+-
+-                if (Utils.canBypass(player)) {
+-                    message.append(result.getTotal() >= Utils.getMaxHeads(player) ? ChatColor.RED : ChatColor.GREEN)
+-                        .append("You can bypass the limits")
+-                        .append('\n');
+-                }
+-
+-                message.append(ChatColor.GOLD)
+-                    .append("Current count: ")
+-                    .append(result.getTotal())
+-                    .append("/")
+-                    .append(Utils.getMaxHeads(player))
+-                    .append('\n');
+-
+-                for (Map.Entry<String, Integer> entry : result.getCounts().entrySet()) {
+-                    if (entry.getValue() > 0) {
+-                        message.append("  ")
+-                            .append(ChatColor.GRAY)
+-                            .append(entry.getKey())
+-                            .append(": ")
+-                            .append(ChatColor.YELLOW)
+-                            .append(entry.getValue())
+-                            .append('\n');
+-                    }
+-                }
+-                player.sendMessage(message.toString());
+-            });
+-        } else {
+-            sender.sendMessage(ChatColor.GOLD + "/hl count"
+-                + ChatColor.GRAY + " - Counts how many heads are in this chunk"
+-            );
+-        }
+-
+-        return true;
+-    }
+-
+-}
+diff --git a/src/main/java/dev/j3fftw/headlimiter/HeadLimiter.java b/src/main/java/dev/j3fftw/headlimiter/HeadLimiter.java
+deleted file mode 100644
+index ba9f793..0000000
+--- a/src/main/java/dev/j3fftw/headlimiter/HeadLimiter.java
++++ /dev/null
+@@ -1,103 +0,0 @@
+-package dev.j3fftw.headlimiter;
+-
+-import java.io.File;
+-
+-import dev.j3fftw.headlimiter.blocklimiter.Group;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.BlobBuildUpdater;
+-import org.bukkit.Material;
+-import org.bukkit.block.Block;
+-import org.bukkit.configuration.ConfigurationSection;
+-import org.bukkit.entity.Player;
+-import org.bukkit.event.EventHandler;
+-import org.bukkit.event.EventPriority;
+-import org.bukkit.event.Listener;
+-import org.bukkit.event.block.BlockPlaceEvent;
+-import org.bukkit.plugin.java.JavaPlugin;
+-
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+-
+-import dev.j3fftw.headlimiter.blocklimiter.BlockLimiter;
+-
+-public final class HeadLimiter extends JavaPlugin implements Listener {
+-
+-    private static HeadLimiter instance;
+-    private BlockLimiter blockLimiter;
+-
+-
+-    @Override
+-    public void onEnable() {
+-        instance = this;
+-        if (!new File(getDataFolder(), "config.yml").exists()) {
+-            saveDefaultConfig();
+-        }
+-
+-        Utils.loadPermissions();
+-
+-        getServer().getPluginManager().registerEvents(this, this);
+-
+-        getCommand("headlimiter").setExecutor(new CountCommand());
+-
+-        new MetricsService(this).start();
+-
+-        if (getConfig().getBoolean("auto-update", true) && getDescription().getVersion().startsWith("DEV - ")) {
+-            new BlobBuildUpdater(this, getFile(), "HeadLimiter", "Dev").start();
+-        }
+-
+-        this.blockLimiter = new BlockLimiter(this);
+-        loadConfig();
+-    }
+-
+-    @Override
+-    public void onDisable() {
+-        instance = null;
+-    }
+-
+-    public boolean isCargo(SlimefunItem sfItem) {
+-        return sfItem.isItem(SlimefunItems.CARGO_INPUT_NODE)
+-            || sfItem.isItem(SlimefunItems.CARGO_OUTPUT_NODE)
+-            || sfItem.isItem(SlimefunItems.CARGO_OUTPUT_NODE_2)
+-            || sfItem.isItem(SlimefunItems.CARGO_CONNECTOR_NODE)
+-            || sfItem.isItem(SlimefunItems.CARGO_MANAGER);
+-    }
+-
+-    @EventHandler(priority = EventPriority.MONITOR)
+-    public void onPlace(BlockPlaceEvent e) {
+-        final Player player = e.getPlayer();
+-        final Block block = e.getBlock();
+-
+-        if (!e.isCancelled()
+-            && (block.getType() == Material.PLAYER_HEAD || block.getType() == Material.PLAYER_WALL_HEAD)
+-            && !Utils.canBypass(player)
+-        ) {
+-            final SlimefunItem sfItem = SlimefunItem.getByItem(e.getItemInHand());
+-            if (sfItem != null
+-                && isCargo(sfItem)
+-            ) {
+-                final int maxAmount = Utils.getMaxHeads(player);
+-                Utils.count(
+-                    block.getChunk(),
+-                    result -> Utils.onCheck(player, block, maxAmount, result.getTotal(), sfItem)
+-                );
+-            }
+-        }
+-    }
+-
+-    public BlockLimiter getBlockLimiter() {
+-        return blockLimiter;
+-    }
+-
+-    public static HeadLimiter getInstance() {
+-        return instance;
+-    }
+-
+-    public void loadConfig() {
+-        ConfigurationSection configurationSection = instance.getConfig().getConfigurationSection("block-limits");
+-        if (configurationSection == null) {
+-            throw new IllegalStateException("No configuration for groups is available.");
+-        }
+-        for (String key : configurationSection.getKeys(false)) {
+-            BlockLimiter.getInstance().getGroups().add(new Group(configurationSection.getConfigurationSection(key)));
+-        }
+-    }
+-}
+diff --git a/src/main/java/dev/j3fftw/headlimiter/MetricsService.java b/src/main/java/dev/j3fftw/headlimiter/MetricsService.java
+deleted file mode 100644
+index 18cb23e..0000000
+--- a/src/main/java/dev/j3fftw/headlimiter/MetricsService.java
++++ /dev/null
+@@ -1,30 +0,0 @@
+-package dev.j3fftw.headlimiter;
+-
+-import org.bstats.bukkit.Metrics;
+-import org.bstats.charts.SimplePie;
+-
+-import java.text.DecimalFormat;
+-
+-public class MetricsService {
+-
+-    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.00");
+-
+-    // Jeff, do not fucking change this you dumbass!
+-    private static final int METRICS_ID = 9978;
+-
+-    private final HeadLimiter plugin;
+-
+-    protected MetricsService(final HeadLimiter plugin) {
+-        this.plugin = plugin;
+-    }
+-
+-    protected void start() {
+-        final Metrics metrics = new Metrics(plugin, METRICS_ID);
+-
+-        metrics.addCustomChart(new SimplePie("max_process_memory", () -> {
+-            final Runtime runtime = Runtime.getRuntime();
+-            final long maxMemory = runtime.maxMemory();
+-            return DECIMAL_FORMAT.format((maxMemory / Math.pow(1024, 3))) + " GB";
+-        }));
+-    }
+-}
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/CountCommand.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/CountCommand.java
+new file mode 100644
+index 0000000..a0f2e92
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/CountCommand.java
+@@ -0,0 +1,50 @@
++package id.universenetwork.sfa_loader.addons.headlimiter;
++
++import cloud.commandframework.annotations.CommandMethod;
++import org.bukkit.ChatColor;
++import org.bukkit.command.CommandSender;
++import org.bukkit.entity.Player;
++
++import java.util.Map;
++
++public class CountCommand {
++    @CommandMethod("headlimiter|hl count")
++    public void cmdCount(final CommandSender sender) {
++        if (sender instanceof Player) {
++            Player player = (Player) sender;
++
++            Utils.count(player.getChunk(), result -> {
++                StringBuilder message = new StringBuilder();
++
++                if (Utils.canBypass(player))
++                    message.append(result.getTotal() >= Utils.getMaxHeads(player) ? ChatColor.RED : ChatColor.GREEN)
++                            .append("You can bypass the limits")
++                            .append('\n');
++
++                message.append(ChatColor.GOLD)
++                        .append("Current count: ")
++                        .append(result.getTotal())
++                        .append("/")
++                        .append(Utils.getMaxHeads(player))
++                        .append('\n');
++
++                for (Map.Entry<String, Integer> entry : result.getCounts().entrySet())
++                    if (entry.getValue() > 0)
++                        message.append("  ")
++                                .append(ChatColor.GRAY)
++                                .append(entry.getKey())
++                                .append(": ")
++                                .append(ChatColor.YELLOW)
++                                .append(entry.getValue())
++                                .append('\n');
++                player.sendMessage(message.toString());
++            });
++        }
++    }
++
++    @CommandMethod("headlimiter|hl")
++    public void cmdMain(final CommandSender sender) {
++        sender.sendMessage(ChatColor.GOLD + "/hl count"
++                + ChatColor.GRAY + " - Counts how many heads are in this chunk");
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/dev/j3fftw/headlimiter/CountResult.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/CountResult.java
+similarity index 90%
+rename from src/main/java/dev/j3fftw/headlimiter/CountResult.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/CountResult.java
+index 23ab396..c5acda0 100644
+--- a/src/main/java/dev/j3fftw/headlimiter/CountResult.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/CountResult.java
+@@ -1,10 +1,9 @@
+-package dev.j3fftw.headlimiter;
++package id.universenetwork.sfa_loader.addons.headlimiter;
+ 
+ import javax.annotation.Nonnull;
+ import java.util.Map;
+ 
+ public class CountResult {
+-
+     private final int total;
+     private final Map<String, Integer> counts;
+ 
+@@ -25,4 +24,4 @@ public class CountResult {
+     public Map<String, Integer> getCounts() {
+         return counts;
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java
+new file mode 100644
+index 0000000..cba3c83
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java
+@@ -0,0 +1,88 @@
++package id.universenetwork.sfa_loader.addons.headlimiter;
++
++import id.universenetwork.sfa_loader.addons.headlimiter.blocklimiter.BlockLimiter;
++import id.universenetwork.sfa_loader.addons.headlimiter.blocklimiter.Group;
++import id.universenetwork.sfa_loader.annotations.AddonLibrary;
++import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
++import id.universenetwork.sfa_loader.managers.CommandManager;
++import id.universenetwork.sfa_loader.template.AddonTemplate;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
++import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
++import lombok.Getter;
++import org.bukkit.Material;
++import org.bukkit.block.Block;
++import org.bukkit.configuration.ConfigurationSection;
++import org.bukkit.entity.Player;
++import org.bukkit.event.EventHandler;
++import org.bukkit.event.EventPriority;
++import org.bukkit.event.Listener;
++import org.bukkit.event.block.BlockPlaceEvent;
++
++@AddonLibrary(
++        groupId = "com{}github{}Slimefun-Addon-Community",
++        artifactId = "extrautils",
++        version = "73e76ac",
++        packageRelocation = "dev{}j3fftw{}extrautils"
++)
++public final class HeadLimiter extends AddonTemplate implements Listener {
++    @Getter
++    private static HeadLimiter instance;
++    @Getter
++    private BlockLimiter blockLimiter;
++
++    @Override
++    public void onLoad() {
++        instance = this;
++
++        Utils.loadPermissions();
++
++        Events.registerListener(this);
++
++        CommandManager.register(new CountCommand());
++
++        this.blockLimiter = new BlockLimiter();
++        loadConfig();
++    }
++
++    @Override
++    public void onUnload() {
++        instance = null;
++    }
++
++    public boolean isCargo(SlimefunItem sfItem) {
++        return sfItem.isItem(SlimefunItems.CARGO_INPUT_NODE)
++                || sfItem.isItem(SlimefunItems.CARGO_OUTPUT_NODE)
++                || sfItem.isItem(SlimefunItems.CARGO_OUTPUT_NODE_2)
++                || sfItem.isItem(SlimefunItems.CARGO_CONNECTOR_NODE)
++                || sfItem.isItem(SlimefunItems.CARGO_MANAGER);
++    }
++
++    @EventHandler(priority = EventPriority.MONITOR)
++    public void onPlace(BlockPlaceEvent e) {
++        final Player player = e.getPlayer();
++        final Block block = e.getBlock();
++
++        if (!e.isCancelled()
++                && (block.getType() == Material.PLAYER_HEAD || block.getType() == Material.PLAYER_WALL_HEAD)
++                && !Utils.canBypass(player)
++        ) {
++            final SlimefunItem sfItem = SlimefunItem.getByItem(e.getItemInHand());
++            if (sfItem != null
++                    && isCargo(sfItem)
++            ) {
++                final int maxAmount = Utils.getMaxHeads(player);
++                Utils.count(
++                        block.getChunk(),
++                        result -> Utils.onCheck(player, block, maxAmount, result.getTotal(), sfItem)
++                );
++            }
++        }
++    }
++
++    public void loadConfig() {
++        ConfigurationSection configurationSection = getConfig().getConfigurationSection("block-limits");
++        if (configurationSection == null) throw new IllegalStateException("No configuration for groups is available.");
++        for (String key : configurationSection.getKeys(false))
++            BlockLimiter.getInstance().getGroups().add(new Group(configurationSection.getConfigurationSection(key)));
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/dev/j3fftw/headlimiter/Utils.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/Utils.java
+similarity index 76%
+rename from src/main/java/dev/j3fftw/headlimiter/Utils.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/Utils.java
+index 764723e..7485551 100644
+--- a/src/main/java/dev/j3fftw/headlimiter/Utils.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/Utils.java
+@@ -1,14 +1,11 @@
+-package dev.j3fftw.headlimiter;
++package id.universenetwork.sfa_loader.addons.headlimiter;
+ 
+ import com.google.common.util.concurrent.ThreadFactoryBuilder;
+ import com.palmergames.bukkit.towny.TownyAPI;
++import id.universenetwork.sfa_loader.libraries.infinitylib.common.Scheduler;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import me.mrCookieSlime.Slimefun.api.BlockStorage;
+-import org.bukkit.Bukkit;
+-import org.bukkit.ChatColor;
+-import org.bukkit.Chunk;
+-import org.bukkit.GameMode;
+-import org.bukkit.Material;
++import org.bukkit.*;
+ import org.bukkit.block.Block;
+ import org.bukkit.block.BlockState;
+ import org.bukkit.configuration.ConfigurationSection;
+@@ -25,34 +22,28 @@ import java.util.concurrent.Executors;
+ import java.util.function.Consumer;
+ 
+ public final class Utils {
+-
+     private static final ExecutorService SERVICE = Executors.newFixedThreadPool(
+-        HeadLimiter.getInstance().getConfig().getInt("thread-pool-size", 4),
+-        new ThreadFactoryBuilder().setNameFormat("HeadLimiter-pool-%d").build()
++            HeadLimiter.getInstance().getConfig().getInt("thread-pool-size", 4),
++            new ThreadFactoryBuilder().setNameFormat("HeadLimiter-pool-%d").build()
+     );
+ 
+     private static final Set<String> permissionNodes = new LinkedHashSet<>();
+     private static final String PERMISSION_PREFIX = "headlimiter.permission.";
+     private static final String BYPASS_PERMISSION = "headlimiter.bypass";
+ 
+-    private Utils() {}
++    private Utils() {
++    }
+ 
+     protected static void loadPermissions() {
+         final ConfigurationSection permissionSection = HeadLimiter.getInstance().getConfig()
+-            .getConfigurationSection("permission");
+-        if (permissionSection != null) {
+-            permissionNodes.addAll(permissionSection.getKeys(false));
+-        }
++                .getConfigurationSection("permission");
++        if (permissionSection != null) permissionNodes.addAll(permissionSection.getKeys(false));
+     }
+ 
+     public static int getMaxHeads(@Nonnull Player player) {
+-        if (permissionsEnabled() && !permissionNodes.isEmpty()) {
+-            for (String permissionNode : permissionNodes) {
+-                if (player.hasPermission(PERMISSION_PREFIX + permissionNode)) {
+-                    return HeadLimiter.getInstance().getConfig().getInt("permission." + permissionNode);
+-                }
+-            }
+-        }
++        if (permissionsEnabled() && !permissionNodes.isEmpty()) for (String permissionNode : permissionNodes)
++            if (player.hasPermission(PERMISSION_PREFIX + permissionNode))
++                return HeadLimiter.getInstance().getConfig().getInt("permission." + permissionNode);
+         return getDefaultMax();
+     }
+ 
+@@ -76,7 +67,7 @@ public final class Utils {
+             int total = 0;
+             for (BlockState state : tileEntities) {
+                 final SlimefunItem slimefunItem = BlockStorage.check(state.getLocation());
+-                //TODO remove is cargo check
++                // TODO remove is cargo check
+                 if (slimefunItem != null && HeadLimiter.getInstance().isCargo(slimefunItem)) {
+                     counts.merge(slimefunItem.getId(), 1, Integer::sum);
+                     total++;
+@@ -91,26 +82,24 @@ public final class Utils {
+     public static void onCheck(Player player, Block block, int maxAmount, int count, SlimefunItem sfItem) {
+         boolean isPlacingRestricted = isPlacingRestricted(block);
+         if (count > maxAmount || isPlacingRestricted) {
+-            Bukkit.getScheduler().runTask(HeadLimiter.getInstance(), () -> {
++            Scheduler.run(() -> {
+                 if (block.getType() != Material.AIR) {
+                     block.setType(Material.AIR);
+-                    if (player.getGameMode() != GameMode.CREATIVE) {
++                    if (player.getGameMode() != GameMode.CREATIVE)
+                         block.getWorld().dropItemNaturally(block.getLocation(), sfItem.getItem());
+-                    }
+                 }
+             });
+ 
+             BlockStorage.clearBlockInfo(block.getLocation());
+-            if (isPlacingRestricted) {
++            if (isPlacingRestricted)
+                 player.sendMessage(ChatColor.RED + "You can't place Cargo nodes in unclaimed areas!");
+-            } else {
+-                player.sendMessage(ChatColor.RED + "You hit the limit of Cargo nodes in this chunk");
+-            }
++            else player.sendMessage(ChatColor.RED + "You hit the limit of Cargo nodes in this chunk");
+         }
+     }
+ 
+     /**
+      * Whether the block placement outside claimed areas is prohibited or not by protection plugins
++     *
+      * @param block The block to be checked
+      * @return Whether the placement is prohibited or not
+      */
+@@ -121,8 +110,6 @@ public final class Utils {
+ 
+             // This is intentionally redundant to allow for expandability by adding more booleans and returning their || chain
+             return isTownyWilderness;
+-        } else {
+-            return false;
+-        }
++        } else return false;
+     }
+ }
+diff --git a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockLimiter.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockLimiter.java
+similarity index 58%
+rename from src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockLimiter.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockLimiter.java
+index 09b5c96..7b2be50 100644
+--- a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockLimiter.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockLimiter.java
+@@ -1,62 +1,52 @@
+-package dev.j3fftw.headlimiter.blocklimiter;
+-
+-import java.util.HashMap;
+-import java.util.HashSet;
+-import java.util.Map;
+-import java.util.Set;
+-
+-import javax.annotation.Nonnull;
+-import javax.annotation.Nullable;
+-
+-import org.bukkit.Bukkit;
+-import org.bukkit.Location;
+-import org.bukkit.World;
+-import org.bukkit.entity.Player;
++package id.universenetwork.sfa_loader.addons.headlimiter.blocklimiter;
+ 
+ import com.google.common.base.Preconditions;
+-
++import id.universenetwork.sfa_loader.libraries.infinitylib.common.Scheduler;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.ChunkPosition;
+-
++import lombok.Getter;
+ import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
+ import me.mrCookieSlime.Slimefun.api.BlockStorage;
++import org.bukkit.Bukkit;
++import org.bukkit.Location;
++import org.bukkit.World;
++import org.bukkit.entity.Player;
+ 
+-import dev.j3fftw.headlimiter.HeadLimiter;
++import javax.annotation.Nonnull;
++import javax.annotation.Nullable;
++import java.util.HashMap;
++import java.util.HashSet;
++import java.util.Map;
++import java.util.Set;
+ 
+ public final class BlockLimiter {
+-
++    @Getter
+     private static BlockLimiter instance;
+     private final HashSet<Group> groups = new HashSet<>();
+     private final Map<ChunkPosition, ChunkContent> contentMap = new HashMap<>();
+ 
+-    public BlockLimiter(@Nonnull HeadLimiter headLimiter) {
++    public BlockLimiter() {
+         Preconditions.checkArgument(instance == null, "Cannot create a new instance of the BlockLimiter");
+         instance = this;
+-        new BlockListener(headLimiter);
+-        headLimiter.getServer().getScheduler().runTaskLater(headLimiter, this::loadBlockStorage, 1);
++        new BlockListener();
++        Scheduler.run(1, this::loadBlockStorage);
+     }
+ 
+     private void loadBlockStorage() {
+         for (World world : Bukkit.getWorlds()) {
+             BlockStorage worldStorage = BlockStorage.getStorage(world);
+-            if (worldStorage == null) {
+-                return;
+-            } else {
+-                for (Map.Entry<Location, Config> entry : worldStorage.getRawStorage().entrySet()) {
+-                    Location location = entry.getKey();
+-                    String id = entry.getValue().getString("id");
+-                    ChunkPosition chunkPosition = new ChunkPosition(location.getChunk());
+-                    ChunkContent content = contentMap.get(chunkPosition);
+-                    if (content == null) {
+-                        content = new ChunkContent();
+-                        content.incrementAmount(id);
+-                        contentMap.put(chunkPosition, content);
+-                    } else {
+-                        content.incrementAmount(id);
+-                    }
+-                }
++            if (worldStorage == null) return;
++            else for (Map.Entry<Location, Config> entry : worldStorage.getRawStorage().entrySet()) {
++                Location location = entry.getKey();
++                String id = entry.getValue().getString("id");
++                ChunkPosition chunkPosition = new ChunkPosition(location.getChunk());
++                ChunkContent content = contentMap.get(chunkPosition);
++                if (content == null) {
++                    content = new ChunkContent();
++                    content.incrementAmount(id);
++                    contentMap.put(chunkPosition, content);
++                } else content.incrementAmount(id);
+             }
+-
+         }
+     }
+ 
+@@ -71,11 +61,7 @@ public final class BlockLimiter {
+ 
+     @Nullable
+     public Group getGroupByItem(@Nonnull String itemId) {
+-        for (Group group : this.groups) {
+-            if (group.contains(itemId)) {
+-                return group;
+-            }
+-        }
++        for (Group group : this.groups) if (group.contains(itemId)) return group;
+         return null;
+     }
+ 
+@@ -85,11 +71,8 @@ public final class BlockLimiter {
+ 
+     public int getPlayerLimitByItem(@Nonnull Player player, @Nonnull String itemId) {
+         Group group = getGroupByItem(itemId);
+-        if (group == null) {
+-            return -1;
+-        } else {
+-            return group.getPermissibleAmount(player);
+-        }
++        if (group == null) return -1;
++        else return group.getPermissibleAmount(player);
+     }
+ 
+     public Set<Group> getGroups() {
+@@ -99,9 +82,4 @@ public final class BlockLimiter {
+     public void setChunkContent(@Nonnull ChunkPosition chunkPosition, @Nonnull ChunkContent content) {
+         contentMap.put(chunkPosition, content);
+     }
+-
+-    @Nonnull
+-    public static BlockLimiter getInstance() {
+-        return instance;
+-    }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockListener.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockListener.java
+similarity index 73%
+rename from src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockListener.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockListener.java
+index 698220f..e04d88e 100644
+--- a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockListener.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockListener.java
+@@ -1,22 +1,19 @@
+-package dev.j3fftw.headlimiter.blocklimiter;
+-
+-import javax.annotation.Nonnull;
+-
+-import org.bukkit.ChatColor;
+-import org.bukkit.event.EventHandler;
+-import org.bukkit.event.Listener;
++package id.universenetwork.sfa_loader.addons.headlimiter.blocklimiter;
+ 
++import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
+ import io.github.thebusybiscuit.slimefun4.api.events.SlimefunBlockBreakEvent;
+ import io.github.thebusybiscuit.slimefun4.api.events.SlimefunBlockPlaceEvent;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.ChunkPosition;
++import org.bukkit.ChatColor;
++import org.bukkit.event.EventHandler;
++import org.bukkit.event.Listener;
+ 
+-import dev.j3fftw.headlimiter.HeadLimiter;
++import javax.annotation.Nonnull;
+ 
+ public class BlockListener implements Listener {
+-
+-    public BlockListener(@Nonnull HeadLimiter headLimiter) {
+-        headLimiter.getServer().getPluginManager().registerEvents(this, headLimiter);
++    public BlockListener() {
++        Events.registerListener(this);
+     }
+ 
+     @EventHandler
+@@ -25,10 +22,7 @@ public class BlockListener implements Listener {
+         String slimefunItemId = slimefunItem.getId();
+         int definedLimit = BlockLimiter.getInstance().getPlayerLimitByItem(event.getPlayer(), slimefunItem);
+ 
+-        if (definedLimit == -1) {
+-            // No limit has been set, nothing required for HeadLimiter
+-            return;
+-        }
++        if (definedLimit == -1) return; // No limit has been set, nothing required for HeadLimiter
+ 
+         ChunkPosition chunkPosition = new ChunkPosition(event.getBlockPlaced().getChunk());
+         ChunkContent content = BlockLimiter.getInstance().getChunkContent(chunkPosition);
+@@ -38,10 +32,9 @@ public class BlockListener implements Listener {
+             content = new ChunkContent();
+             content.incrementAmount(slimefunItemId);
+             BlockLimiter.getInstance().setChunkContent(chunkPosition, content);
+-        } else if (content.getGroupTotal(slimefunItemId) < definedLimit) {
+-            // This chunk can take more of the specified item type
+-            content.incrementAmount(slimefunItemId);
+-        } else {
++        } else if (content.getGroupTotal(slimefunItemId) < definedLimit)
++            content.incrementAmount(slimefunItemId); // This chunk can take more of the specified item type
++        else {
+             // Chunk has hit its limit for this type, time to deny the placement
+             event.setCancelled(true);
+             event.getPlayer().sendMessage(ChatColor.RED + "You cannot place any more of this item within this chunk.");
+@@ -53,22 +46,15 @@ public class BlockListener implements Listener {
+         SlimefunItem slimefunItem = event.getSlimefunItem();
+         String slimefunItemId = slimefunItem.getId();
+         int definedLimit = BlockLimiter.getInstance().getPlayerLimitByItem(event.getPlayer(), slimefunItem);
+-        if (definedLimit == -1) {
+-            // No limit has been set, nothing required for HeadLimiter
+-            return;
+-        }
++        if (definedLimit == -1) return; // No limit has been set, nothing required for HeadLimiter
+ 
+         ChunkPosition chunkPosition = new ChunkPosition(event.getBlockBroken().getChunk());
+         ChunkContent content = BlockLimiter.getInstance().getChunkContent(chunkPosition);
+ 
+-        if (content == null) {
+-            // Content is null so no blocks are currently in this chunk, shouldn't be possible, but never mind
+-            return;
+-        }
++        // Content is null so no blocks are currently in this chunk, shouldn't be possible, but never mind
++        if (content == null) return;
+ 
+         // This chunk can take more of the specified item type
+         content.decrementAmount(slimefunItemId);
+-
+     }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/ChunkContent.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/ChunkContent.java
+similarity index 88%
+rename from src/main/java/dev/j3fftw/headlimiter/blocklimiter/ChunkContent.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/ChunkContent.java
+index 6dec65d..b6be140 100644
+--- a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/ChunkContent.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/ChunkContent.java
+@@ -1,15 +1,13 @@
+-package dev.j3fftw.headlimiter.blocklimiter;
++package id.universenetwork.sfa_loader.addons.headlimiter.blocklimiter;
+ 
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
++
++import javax.annotation.Nonnull;
+ import java.util.HashMap;
+ import java.util.Map;
+ import java.util.Set;
+ 
+-import javax.annotation.Nonnull;
+-
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+-
+ public class ChunkContent {
+-
+     private final Map<String, Integer> contentMap = new HashMap<>();
+ 
+     public int getCurrentAmount(@Nonnull SlimefunItem slimefunItem) {
+@@ -27,15 +25,12 @@ public class ChunkContent {
+     public int getGroupTotal(@Nonnull String itemId) {
+         Set<Group> groupSet = BlockLimiter.getInstance().getGroups();
+ 
+-        for (Group group : groupSet) {
++        for (Group group : groupSet)
+             if (group.contains(itemId)) {
+                 int amount = 0;
+-                for (String item : group.getItems()) {
+-                    amount += getCurrentAmount(item);
+-                }
++                for (String item : group.getItems()) amount += getCurrentAmount(item);
+                 return amount;
+             }
+-        }
+ 
+         return -1;
+     }
+@@ -65,4 +60,4 @@ public class ChunkContent {
+     public void setAmount(@Nonnull String itemId, int amount) {
+         contentMap.put(itemId, amount);
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/Group.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/Group.java
+similarity index 63%
+rename from src/main/java/dev/j3fftw/headlimiter/blocklimiter/Group.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/Group.java
+index fb12500..42e0002 100644
+--- a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/Group.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/Group.java
+@@ -1,21 +1,18 @@
+-package dev.j3fftw.headlimiter.blocklimiter;
++package id.universenetwork.sfa_loader.addons.headlimiter.blocklimiter;
+ 
++import com.google.common.base.Objects;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
++import lombok.Getter;
+ import org.bukkit.configuration.ConfigurationSection;
+ import org.bukkit.entity.Player;
+ 
++import javax.annotation.Nonnull;
+ import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.Map;
+-import java.util.Set;
+-
+-import javax.annotation.Nonnull;
+-
+-import com.google.common.base.Objects;
+-
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ 
++@Getter
+ public class Group {
+-
+     private final String groupName;
+     private final int defaultAmount;
+     private final HashSet<String> items;
+@@ -29,27 +26,8 @@ public class Group {
+ 
+         ConfigurationSection permissionSection = configurationSection.getConfigurationSection("permission-amount");
+ 
+-        if (permissionSection != null) {
+-            for (String key : permissionSection.getKeys(false)) {
+-                permissionAmounts.put(key, permissionSection.getInt(key, 0));
+-            }
+-        }
+-    }
+-
+-    public String getGroupName() {
+-        return groupName;
+-    }
+-
+-    public int getDefaultAmount() {
+-        return defaultAmount;
+-    }
+-
+-    public Set<String> getItems() {
+-        return items;
+-    }
+-
+-    public Map<String, Integer> getPermissionAmounts() {
+-        return permissionAmounts;
++        if (permissionSection != null) for (String key : permissionSection.getKeys(false))
++            permissionAmounts.put(key, permissionSection.getInt(key, 0));
+     }
+ 
+     public boolean contains(@Nonnull SlimefunItem slimefunItem) {
+@@ -62,32 +40,25 @@ public class Group {
+ 
+     public int getPermissibleAmount(@Nonnull Player player) {
+         int allowable = defaultAmount;
+-        if (!this.permissionAmounts.isEmpty()) {
++        if (!this.permissionAmounts.isEmpty())
+             for (Map.Entry<String, Integer> entry : this.permissionAmounts.entrySet()) {
+                 String permission = entry.getKey();
+-                if (player.hasPermission(permission)) {
+-                    allowable = Math.max(entry.getValue(), allowable);
+-                }
++                if (player.hasPermission(permission)) allowable = Math.max(entry.getValue(), allowable);
+             }
+-        }
+         return allowable;
+     }
+ 
+     @Override
+     public boolean equals(Object o) {
+-        if (this == o) {
+-            return true;
+-        }
+-        if (o == null || getClass() != o.getClass()) {
+-            return false;
+-        }
++        if (this == o) return true;
++        if (o == null || getClass() != o.getClass()) return false;
+         Group group = (Group) o;
+         return defaultAmount == group.defaultAmount && Objects.equal(
+-            groupName,
+-            group.groupName
++                groupName,
++                group.groupName
+         ) && Objects.equal(items, group.items) && Objects.equal(
+-            permissionAmounts,
+-            group.permissionAmounts
++                permissionAmounts,
++                group.permissionAmounts
+         );
+     }
+ 
+@@ -95,4 +66,4 @@ public class Group {
+     public int hashCode() {
+         return Objects.hashCode(groupName, defaultAmount, items, permissionAmounts);
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/resources/config.yml b/src/main/resources/addons-config/HeadLimiter/config.yml
+similarity index 100%
+rename from src/main/resources/config.yml
+rename to src/main/resources/addons-config/HeadLimiter/config.yml
+diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
+deleted file mode 100644
+index ecc4aef..0000000
+--- a/src/main/resources/plugin.yml
++++ /dev/null
+@@ -1,15 +0,0 @@
+-name: HeadLimiter
+-version: ${project.version}
+-main: dev.j3fftw.headlimiter.HeadLimiter
+-depend: [Slimefun]
+-api-version: 1.16
+-
+-commands:
+-  headlimiter:
+-    description: Basic HeadLimiter command
+-    aliases: hl
+-
+-permissions:
+-  headlimiter.bypass:
+-    description: Allows players to bypass the head limit
+-    default: false
+\ No newline at end of file
+-- 
+2.43.0.windows.1
+
