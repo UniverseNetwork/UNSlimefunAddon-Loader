@@ -36,6 +36,7 @@ if ($args[0]) {
         checkUpstream Addons/DynaTech
         checkUpstream Addons/ExtraTools
         checkUpstream Addons/FluffyMachines
+        checkUpstream Addons/HeadLimiter
         checkUpstream Addons/InfinityExpansion
         checkUpstream Addons/Networks
         checkUpstream Addons/SFCalc

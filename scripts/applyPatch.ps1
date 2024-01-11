@@ -57,6 +57,7 @@ if ($args[0]) {
         applyPatch Addons/DynaTech
         applyPatch Addons/ExtraTools
         applyPatch Addons/FluffyMachines
+        applyPatch Addons/HeadLimiter
         applyPatch Addons/InfinityExpansion
         applyPatch Addons/Networks
         applyPatch Addons/SFCalc
