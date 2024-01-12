@@ -1,6 +1,6 @@
-From d4cdb51ff34180165320894682d805acc0812d2d Mon Sep 17 00:00:00 2001
+From d707a677655986197d4572e2ef8c2b48de88b334 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Fri, 12 Jan 2024 19:11:21 +0700
+Date: Sat, 13 Jan 2024 05:49:26 +0700
 Subject: [PATCH] ColoredEnderChests
 
 ---
@@ -44,7 +44,7 @@ index 0000000..a589521
 +</module>
 \ No newline at end of file
 diff --git a/pom.xml b/pom.xml
-index 0f3dac3..ec7e5d6 100644
+index 0f3dac3..cebae44 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,97 +1,28 @@
@@ -59,7 +59,7 @@ index 0f3dac3..ec7e5d6 100644
 +    <parent>
 +        <groupId>id.universenetwork.sfa_loader</groupId>
 +        <artifactId>Addons</artifactId>
-+        <version>1.2.0</version>
++        <version>UNOFFICIAL</version>
 +    </parent>
 +
      <groupId>io.github.thebusybiscuit</groupId>

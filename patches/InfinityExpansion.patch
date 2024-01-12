@@ -1,6 +1,6 @@
-From fb76fd21f2d0b7b112a04732534300df88c839b7 Mon Sep 17 00:00:00 2001
+From e80345074df88e818a3ff57eea4ba8e031bfef59 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 15 Jul 2023 19:01:28 +0700
+Date: Sat, 13 Jan 2024 05:50:58 +0700
 Subject: [PATCH] InfinityExpansion
 
 ---
@@ -124,7 +124,7 @@ Subject: [PATCH] InfinityExpansion
  delete mode 100644 src/test/java/io/github/mooy1/infinityexpansion/TestInfinityExpansion.java
 
 diff --git a/pom.xml b/pom.xml
-index 4e75192..26255e2 100644
+index 4e75192..246fcd4 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,32 +1,24 @@
@@ -140,7 +140,7 @@ index 4e75192..26255e2 100644
 +    <parent>
 +        <groupId>id.universenetwork.sfa_loader</groupId>
 +        <artifactId>Addons</artifactId>
-+        <version>1.2.0</version>
++        <version>UNOFFICIAL</version>
 +    </parent>
 +
      <groupId>io.github.mooy1</groupId>
@@ -7532,5 +7532,5 @@ index 1ece34e..0000000
 -
 -}
 -- 
-2.41.0.windows.3
+2.43.0.windows.1
 

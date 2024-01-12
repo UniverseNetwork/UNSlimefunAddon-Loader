@@ -1,6 +1,6 @@
-From 6cc96b207cfe0033b6b04dd9251fbbe84518078e Mon Sep 17 00:00:00 2001
+From c2e66ab093150a1bc7ba6d998a0ded845f683b4b Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Thu, 11 Jan 2024 08:37:16 +0700
+Date: Sat, 13 Jan 2024 05:49:49 +0700
 Subject: [PATCH] DynaTech
 
 ---
@@ -144,7 +144,7 @@ Subject: [PATCH] DynaTech
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 6a536f7..6457b6c 100644
+index 6a536f7..3bd330a 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,18 +1,19 @@
@@ -159,7 +159,7 @@ index 6a536f7..6457b6c 100644
 +    <parent>
 +        <groupId>id.universenetwork.sfa_loader</groupId>
 +        <artifactId>Addons</artifactId>
-+        <version>1.2.0</version>
++        <version>UNOFFICIAL</version>
 +    </parent>
 +
      <groupId>me.profelements</groupId>

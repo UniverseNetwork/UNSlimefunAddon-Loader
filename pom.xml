@@ -6,7 +6,7 @@
 
     <groupId>id.universenetwork.sfa_loader</groupId>
     <artifactId>SlimefunAddon-Loader</artifactId>
-    <version>1.2.0</version>
+    <version>UNOFFICIAL</version>
     <packaging>pom</packaging>
     <description>SlimefunAddon features separated from UNUtilities, with a new system loader.</description>
     <url>https://github.com/UniverseNetwork/SlimefunAddon-Loader</url>
@@ -23,8 +23,9 @@
     </issueManagement>
 
     <properties>
+        <plugin.version>1.3.0</plugin.version>
         <java.version>1.8</java.version>
-        <cloud.version>1.8.3</cloud.version>
+        <cloud.version>1.8.4</cloud.version>
         <encoding>UTF-8</encoding>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>

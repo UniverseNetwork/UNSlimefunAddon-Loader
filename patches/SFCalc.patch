@@ -1,6 +1,6 @@
-From b4b5a21fb06629b5c1782d76d054f013221a6450 Mon Sep 17 00:00:00 2001
+From 66becf622397fd37e73251ab92afa13636847dcf Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 6 Jan 2024 11:17:00 +0700
+Date: Sat, 13 Jan 2024 05:51:31 +0700
 Subject: [PATCH] SFCalc
 
 ---
@@ -58,7 +58,7 @@ index b738bfd..4825e14 100644
 +Slimefun version: RC-20 or newer
 \ No newline at end of file
 diff --git a/pom.xml b/pom.xml
-index 7ce30c7..88ebffd 100644
+index 7ce30c7..7699c3c 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -4,12 +4,17 @@
@@ -68,7 +68,7 @@ index 7ce30c7..88ebffd 100644
 +    <parent>
 +        <groupId>id.universenetwork.sfa_loader</groupId>
 +        <artifactId>Addons</artifactId>
-+        <version>1.2.0</version>
++        <version>UNOFFICIAL</version>
 +    </parent>
 +
      <groupId>io.github.seggan.sfcalc</groupId>

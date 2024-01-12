@@ -1,6 +1,6 @@
-From 53192b0733e08bd13b7ead3ccc85fb3cfe3d2dfd Mon Sep 17 00:00:00 2001
+From 4722c8893daed2a97873fcaa7633a7773db366d7 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 6 Jan 2024 20:13:02 +0700
+Date: Sat, 13 Jan 2024 05:51:39 +0700
 Subject: [PATCH] SMG
 
 ---
@@ -53,7 +53,7 @@ index 536c546..bcefb14 100644
 -Namely generators for Water, Lava and dusts.<br>
 +Namely generators for Dirt, Water, Lava, Obsidian and dusts.<br>
 diff --git a/pom.xml b/pom.xml
-index 4391eb0..1baf5ac 100644
+index 4391eb0..80b062f 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,24 +1,19 @@
@@ -66,7 +66,7 @@ index 4391eb0..1baf5ac 100644
 +    <parent>
 +        <groupId>id.universenetwork.sfa_loader</groupId>
 +        <artifactId>Addons</artifactId>
-+        <version>1.2.0</version>
++        <version>UNOFFICIAL</version>
 +    </parent>
 +
      <groupId>me.waleks</groupId>

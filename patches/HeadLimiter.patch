@@ -1,6 +1,6 @@
-From ba5da9e90a874c4bd41876088602ab8e7444a294 Mon Sep 17 00:00:00 2001
+From b8c481f09b80de060dd65cbdda13976aeedd8270 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Thu, 11 Jan 2024 08:16:20 +0700
+Date: Sat, 13 Jan 2024 05:50:35 +0700
 Subject: [PATCH] HeadLimiter
 
 ---
@@ -34,7 +34,7 @@ Subject: [PATCH] HeadLimiter
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 6a9c156..eb393c7 100644
+index 6a9c156..47ed52c 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,9 +1,14 @@
@@ -47,7 +47,7 @@ index 6a9c156..eb393c7 100644
 +    <parent>
 +        <groupId>id.universenetwork.sfa_loader</groupId>
 +        <artifactId>Addons</artifactId>
-+        <version>1.2.0</version>
++        <version>UNOFFICIAL</version>
 +    </parent>
 +
      <groupId>dev.j3fftw.headlimiter</groupId>
