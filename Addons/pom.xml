@@ -15,6 +15,7 @@
 
     <modules>
         <module>ArvinMemories</module>
+        <module>ColoredEnderChests</module>
         <module>DynaTech</module>
         <module>ExtraTools</module>
         <module>FluffyMachines</module>

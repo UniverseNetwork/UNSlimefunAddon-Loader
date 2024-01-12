@@ -17,6 +17,7 @@ loader-settings:
 # !!! -> You must restart the server after changing the settings below
 addons:
   arvinmemories: false
+  coloredenderchests: true
   dynatech: true
   extratools: true
   fluffymachines: true

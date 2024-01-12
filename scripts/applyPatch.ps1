@@ -54,6 +54,7 @@ if ($args[0]) {
 
         applyPatch InfinityLib-Standalone
 
+        applyPatch Addons/ColoredEnderChests
         applyPatch Addons/DynaTech
         applyPatch Addons/ExtraTools
         applyPatch Addons/FluffyMachines

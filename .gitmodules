@@ -5,6 +5,9 @@
 [submodule "DynaTech"]
     path = Addons/DynaTech
     url = https://github.com/ProfElements/DynaTech
+[submodule "ColoredEnderChests"]
+    path = Addons/ColoredEnderChests
+    url = https://github.com/TheBusyBiscuit/ColoredEnderChests
 [submodule "ExtraTools"]
     path = Addons/ExtraTools
     url = https://github.com/Sfiguz7/ExtraTools

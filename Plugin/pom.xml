@@ -90,6 +90,11 @@
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.github.thebusybiscuit</groupId>
+            <artifactId>ColoredEnderChests</artifactId>
+            <version>UNOFFICIAL</version>
+        </dependency>
+        <dependency>
             <groupId>me.profelements</groupId>
             <artifactId>DynaTech</artifactId>
             <version>1.0.0</version>

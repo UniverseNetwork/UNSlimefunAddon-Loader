@@ -1,0 +1,586 @@
+From 1bdb0f162ea2ec3869852d324d4e03b339bdff9e Mon Sep 17 00:00:00 2001
+From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
+Date: Fri, 12 Jan 2024 18:05:57 +0700
+Subject: [PATCH] ColoredEnderChests
+
+---
+ ColoredEnderChests.iml                        | 13 +++
+ pom.xml                                       | 96 ++-----------------
+ .../coloredenderchests/ColorIndicator.java    | 39 +++-----
+ .../coloredenderchests/ColoredEnderChest.java | 44 ++++-----
+ .../ColoredEnderChests.java                   | 64 +++++++++++++
+ .../ColoredEnderChests.java                   | 94 ------------------
+ .../ColoredEnderChests/config.yml             |  2 +
+ src/main/resources/config.yml                 |  5 -
+ src/main/resources/plugin.yml                 | 10 --
+ 9 files changed, 118 insertions(+), 249 deletions(-)
+ create mode 100644 ColoredEnderChests.iml
+ rename src/main/java/{io/github/thebusybiscuit => id/universenetwork/sfa_loader/addons}/coloredenderchests/ColorIndicator.java (70%)
+ rename src/main/java/{io/github/thebusybiscuit => id/universenetwork/sfa_loader/addons}/coloredenderchests/ColoredEnderChest.java (84%)
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/coloredenderchests/ColoredEnderChests.java
+ delete mode 100644 src/main/java/io/github/thebusybiscuit/coloredenderchests/ColoredEnderChests.java
+ create mode 100644 src/main/resources/addons-config/ColoredEnderChests/config.yml
+ delete mode 100644 src/main/resources/config.yml
+ delete mode 100644 src/main/resources/plugin.yml
+
+diff --git a/ColoredEnderChests.iml b/ColoredEnderChests.iml
+new file mode 100644
+index 0000000..a589521
+--- /dev/null
++++ b/ColoredEnderChests.iml
+@@ -0,0 +1,13 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module version="4">
++  <component name="FacetManager">
++    <facet type="minecraft" name="Minecraft">
++      <configuration>
++        <autoDetectTypes>
++          <platformType>SPIGOT</platformType>
++        </autoDetectTypes>
++        <projectReimportVersion>1</projectReimportVersion>
++      </configuration>
++    </facet>
++  </component>
++</module>
+\ No newline at end of file
+diff --git a/pom.xml b/pom.xml
+index 0f3dac3..b6e1afa 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -1,40 +1,27 @@
+ <project xmlns="http://maven.apache.org/POM/4.0.0"
+-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+-
++         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
++
++    <parent>
++        <groupId>id.universenetwork.sfa_loader</groupId>
++        <artifactId>Addons</artifactId>
++        <version>1.2.0</version>
++    </parent>
++
+     <groupId>io.github.thebusybiscuit</groupId>
+     <artifactId>ColoredEnderChests</artifactId>
+     <version>UNOFFICIAL</version>
+ 
+-    <properties>
+-        <maven.compiler.source>1.8</maven.compiler.source>
+-        <maven.compiler.target>1.8</maven.compiler.target>
+-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+-    </properties>
+-
+     <repositories>
+-        <repository>
+-            <id>paper-repo</id>
+-            <url>https://repo.destroystokyo.com/repository/maven-public/</url>
+-        </repository>
+         <repository>
+             <id>spigot-repo</id>
+             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+         </repository>
+-        <repository>
+-            <id>jitpack.io</id>
+-            <url>https://jitpack.io</url>
+-        </repository>
+-        <repository>
+-            <id>codemc-repo</id>
+-            <url>https://repo.codemc.org/repository/maven-public</url>
+-        </repository>
+     </repositories>
+ 
+     <build>
+         <finalName>${project.name} v${project.version}</finalName>
+-        <defaultGoal>clean package</defaultGoal>
+         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+ 
+         <resources>
+@@ -46,52 +33,7 @@
+                     <include>*</include>
+                 </includes>
+             </resource>
+-            <resource>
+-                <directory>${basedir}</directory>
+-
+-                <includes>
+-                    <include>LICENSE</include>
+-                </includes>
+-            </resource>
+         </resources>
+-
+-        <plugins>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-shade-plugin</artifactId>
+-                <version>3.2.4</version>
+-
+-                <configuration>
+-
+-                    <!-- Shade dependencies into the output jar -->
+-                    <relocations>
+-                        <relocation>
+-                            <pattern>org.bstats</pattern>
+-                            <shadedPattern>io.github.thebusybiscuit.coloredenderchests.bstats</shadedPattern>
+-                        </relocation>
+-                    </relocations>
+-
+-                    <!-- Exclude unneeded metadata files from shaded dependencies -->
+-                    <filters>
+-                        <filter>
+-                            <artifact>*:*</artifact>
+-                            <excludes>
+-                                <exclude>META-INF/*</exclude>
+-                            </excludes>
+-                        </filter>
+-                    </filters>
+-                </configuration>
+-
+-                <executions>
+-                    <execution>
+-                        <phase>package</phase>
+-                        <goals>
+-                            <goal>shade</goal>
+-                        </goals>
+-                    </execution>
+-                </executions>
+-            </plugin>
+-        </plugins>
+     </build>
+ 
+     <dependencies>
+@@ -101,25 +43,5 @@
+             <version>1.16.5-R0.1-SNAPSHOT</version>
+             <scope>provided</scope>
+         </dependency>
+-
+-        <dependency>
+-            <groupId>com.github.thebusybiscuit</groupId>
+-            <artifactId>Slimefun4</artifactId>
+-            <version>RC-27</version>
+-            <scope>provided</scope>
+-            <exclusions>
+-                <exclusion>
+-                    <groupId>io.github.baked-libs</groupId>
+-                    <artifactId>dough-api</artifactId>
+-                </exclusion>
+-            </exclusions>
+-        </dependency>
+-
+-        <dependency>
+-            <groupId>org.bstats</groupId>
+-            <artifactId>bstats-bukkit</artifactId>
+-            <version>2.2.1</version>
+-            <scope>compile</scope>
+-        </dependency>
+     </dependencies>
+ </project>
+\ No newline at end of file
+diff --git a/src/main/java/io/github/thebusybiscuit/coloredenderchests/ColorIndicator.java b/src/main/java/id/universenetwork/sfa_loader/addons/coloredenderchests/ColorIndicator.java
+similarity index 70%
+rename from src/main/java/io/github/thebusybiscuit/coloredenderchests/ColorIndicator.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/coloredenderchests/ColorIndicator.java
+index b39b1e1..00e5a68 100644
+--- a/src/main/java/io/github/thebusybiscuit/coloredenderchests/ColorIndicator.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/coloredenderchests/ColorIndicator.java
+@@ -1,5 +1,6 @@
+-package io.github.thebusybiscuit.coloredenderchests;
++package id.universenetwork.sfa_loader.addons.coloredenderchests;
+ 
++import io.github.thebusybiscuit.slimefun4.utils.ColoredMaterial;
+ import org.bukkit.Location;
+ import org.bukkit.Material;
+ import org.bukkit.block.Block;
+@@ -9,14 +10,12 @@ import org.bukkit.entity.EntityType;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.util.EulerAngle;
+ 
+-import io.github.thebusybiscuit.slimefun4.utils.ColoredMaterial;
+-
+ final class ColorIndicator {
++    private static final double angle = Math.toRadians(345);
++    private static final double offset = -0.08;
+ 
+-    private static double angle = Math.toRadians(345);
+-    private static double offset = -0.08;
+-
+-    private ColorIndicator() {}
++    private ColorIndicator() {
++    }
+ 
+     static void updateIndicator(Block b, int c1, int c2, int c3, int yaw) {
+         removeIndicator(b);
+@@ -29,14 +28,12 @@ final class ColorIndicator {
+     }
+ 
+     static void removeIndicator(Block b) {
+-        for (Entity n : b.getChunk().getEntities()) {
+-            if (n instanceof ArmorStand && b.getLocation().add(0.5D, 0.5D, 0.5D).distanceSquared(n.getLocation()) < 0.75D && n.getCustomName() == null) {
++        for (Entity n : b.getChunk().getEntities())
++            if (n instanceof ArmorStand && b.getLocation().add(0.5D, 0.5D, 0.5D).distanceSquared(n.getLocation()) < 0.75D && n.getCustomName() == null)
+                 n.remove();
+-            }
+-        }
+     }
+ 
+-    public static ArmorStand createArmorStand(Location l, ItemStack item, EulerAngle arm, float yaw) {
++    public static void createArmorStand(Location l, ItemStack item, EulerAngle arm, float yaw) {
+         l.setYaw(yaw);
+         ArmorStand armorStand = (ArmorStand) l.getWorld().spawnEntity(l, EntityType.ARMOR_STAND);
+         armorStand.getEquipment().setItemInMainHand(item);
+@@ -49,8 +46,6 @@ final class ColorIndicator {
+         armorStand.setRightArmPose(arm);
+         armorStand.setBasePlate(false);
+         armorStand.setRemoveWhenFarAway(false);
+-
+-        return armorStand;
+     }
+ 
+     private static Material getWool(int index) {
+@@ -58,15 +53,9 @@ final class ColorIndicator {
+     }
+ 
+     private static Location translocate(Location l, int direction, int yaw) {
+-        if (yaw == 45) { // 0
+-            return l.add(0.275 * direction, 0, 0);
+-        } else if (yaw == 225) { // 180
+-            return l.add(-0.275 * direction, 0, 0);
+-        } else if (yaw == -45) { // -90
+-            return l.add(0, 0, -0.275 * direction);
+-        } else { // 90
+-            return l.add(0, 0, 0.275 * direction);
+-        }
++        if (yaw == 45) return l.add(0.275 * direction, 0, 0); // 0
++        else if (yaw == 225) return l.add(-0.275 * direction, 0, 0); // 180
++        else if (yaw == -45) return l.add(0, 0, -0.275 * direction); // -90
++        else return l.add(0, 0, 0.275 * direction); // 90
+     }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/github/thebusybiscuit/coloredenderchests/ColoredEnderChest.java b/src/main/java/id/universenetwork/sfa_loader/addons/coloredenderchests/ColoredEnderChest.java
+similarity index 84%
+rename from src/main/java/io/github/thebusybiscuit/coloredenderchests/ColoredEnderChest.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/coloredenderchests/ColoredEnderChest.java
+index 87cb981..50e323c 100644
+--- a/src/main/java/io/github/thebusybiscuit/coloredenderchests/ColoredEnderChest.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/coloredenderchests/ColoredEnderChest.java
+@@ -1,14 +1,4 @@
+-package io.github.thebusybiscuit.coloredenderchests;
+-
+-import java.util.stream.IntStream;
+-
+-import org.bukkit.Material;
+-import org.bukkit.Sound;
+-import org.bukkit.block.Block;
+-import org.bukkit.block.data.type.EnderChest;
+-import org.bukkit.entity.Player;
+-import org.bukkit.event.block.BlockPlaceEvent;
+-import org.bukkit.inventory.ItemStack;
++package id.universenetwork.sfa_loader.addons.coloredenderchests;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+@@ -21,13 +11,22 @@ import io.github.thebusybiscuit.slimefun4.utils.ColoredMaterial;
+ import me.mrCookieSlime.Slimefun.api.BlockStorage;
+ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+ import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
++import org.bukkit.Material;
++import org.bukkit.Sound;
++import org.bukkit.block.Block;
++import org.bukkit.block.data.type.EnderChest;
++import org.bukkit.entity.Player;
++import org.bukkit.event.block.BlockPlaceEvent;
++import org.bukkit.inventory.ItemStack;
++
++import java.util.stream.IntStream;
+ 
+ public class ColoredEnderChest extends SlimefunItem {
+ 
+-    public ColoredEnderChest(ColoredEnderChests plugin, int size, int c1, int c2, int c3) {
++    public ColoredEnderChest(ColoredEnderChests main, int size, int c1, int c2, int c3) {
+         // @formatter:off
+-        super(plugin.itemGroup, new SlimefunItemStack("COLORED_ENDER_CHEST_" + (size == 27 ? "SMALL" : "BIG") + "_" + c1 + "_" + c2 + "_" + c3, Material.ENDER_CHEST, "&eColored Ender Chest &7(" + (size == 27 ? "Small" : "Big") + ")", "", "&7Size: &e" + size, "", "&7- " + plugin.colors.get(c1), "&7- " + plugin.colors.get(c2), "&7- "
+-                + plugin.colors.get(c3)), RecipeType.ANCIENT_ALTAR,
++        super(main.itemGroup, new SlimefunItemStack("COLORED_ENDER_CHEST_" + (size == 27 ? "SMALL" : "BIG") + "_" + c1 + "_" + c2 + "_" + c3, Material.ENDER_CHEST, "&eColored Ender Chest &7(" + (size == 27 ? "Small" : "Big") + ")", "", "&7Size: &e" + size, "", "&7- " + main.colors.get(c1), "&7- " + main.colors.get(c2), "&7- "
++                + main.colors.get(c3)), RecipeType.ANCIENT_ALTAR,
+                 (size == 27) ? new ItemStack[] { 
+                         new ItemStack(ColoredMaterial.WOOL.get(c1)), new ItemStack(ColoredMaterial.WOOL.get(c2)), new ItemStack(ColoredMaterial.WOOL.get(c3)), 
+                         new ItemStack(Material.OBSIDIAN), new ItemStack(Material.CHEST), new ItemStack(Material.OBSIDIAN), 
+@@ -46,7 +45,6 @@ public class ColoredEnderChest extends SlimefunItem {
+         addItemHandler(onBlockPlace(c1, c2, c3));
+ 
+         new BlockMenuPreset(getId(), "&eEnder Chest", true) {
+-
+             @Override
+             public void init() {
+                 setSize(size);
+@@ -65,18 +63,14 @@ public class ColoredEnderChest extends SlimefunItem {
+                 String data = BlockStorage.getLocationInfo(b.getLocation(), "yaw");
+                 int yaw = 0;
+ 
+-                if (data != null) {
+-                    yaw = Integer.parseInt(data);
+-                } else if (b.getType() == Material.ENDER_CHEST) {
++                if (data != null) yaw = Integer.parseInt(data);
++                else if (b.getType() == Material.ENDER_CHEST) {
+                     EnderChest chest = (EnderChest) b.getBlockData();
+ 
+                     switch (chest.getFacing()) {
+                         case NORTH:
+                             yaw = 180;
+                             break;
+-                        case SOUTH:
+-                            yaw = 0;
+-                            break;
+                         case WEST:
+                             yaw = 90;
+                             break;
+@@ -98,7 +92,6 @@ public class ColoredEnderChest extends SlimefunItem {
+ 
+     private BlockBreakHandler onBlockBreak() {
+         return new SimpleBlockBreakHandler() {
+-
+             @Override
+             public void onBlockBreak(Block b) {
+                 ColorIndicator.removeIndicator(b);
+@@ -108,7 +101,6 @@ public class ColoredEnderChest extends SlimefunItem {
+ 
+     private BlockPlaceHandler onBlockPlace(int c1, int c2, int c3) {
+         return new BlockPlaceHandler(false) {
+-
+             @Override
+             public void onPlayerPlace(BlockPlaceEvent e) {
+                 int yaw = 0;
+@@ -119,9 +111,6 @@ public class ColoredEnderChest extends SlimefunItem {
+                     case NORTH:
+                         yaw = 180;
+                         break;
+-                    case SOUTH:
+-                        yaw = 0;
+-                        break;
+                     case WEST:
+                         yaw = 90;
+                         break;
+@@ -142,5 +131,4 @@ public class ColoredEnderChest extends SlimefunItem {
+         SlimefunItem enderChest = SlimefunItem.getById("COLORED_ENDER_CHEST_SMALL_" + c1 + "_" + c2 + "_" + c3);
+         return enderChest != null ? enderChest.getItem() : null;
+     }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/coloredenderchests/ColoredEnderChests.java b/src/main/java/id/universenetwork/sfa_loader/addons/coloredenderchests/ColoredEnderChests.java
+new file mode 100644
+index 0000000..8f4b0d1
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/coloredenderchests/ColoredEnderChests.java
+@@ -0,0 +1,64 @@
++package id.universenetwork.sfa_loader.addons.coloredenderchests;
++
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.template.AddonTemplate;
++import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
++import io.github.thebusybiscuit.slimefun4.api.researches.Research;
++import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
++import org.bukkit.Material;
++
++import java.util.HashMap;
++import java.util.Map;
++
++public class ColoredEnderChests extends AddonTemplate {
++    protected Map<Integer, String> colors = new HashMap<>();
++    protected ItemGroup itemGroup;
++
++    @Override
++    public void onLoad() {
++        Research enderChestsResearch = new Research(AbstractAddon.createKey("colored_enderchests"), 2610, "Colored Ender Chests", 20);
++        Research bigEnderChestsResearch = new Research(AbstractAddon.createKey("big_colored_enderchests"), 2611, "Big Colored Ender Chests", 30);
++
++        enderChestsResearch.register();
++        bigEnderChestsResearch.register();
++
++        colors.put(0, "&rWhite");
++        colors.put(1, "&6Orange");
++        colors.put(2, "&dMagenta");
++        colors.put(3, "&bLight Blue");
++        colors.put(4, "&eYellow");
++        colors.put(5, "&aLime");
++        colors.put(6, "&dPink");
++        colors.put(7, "&8Dark Gray");
++        colors.put(8, "&7Light Gray");
++        colors.put(9, "&3Cyan");
++        colors.put(10, "&5Purple");
++        colors.put(11, "&9Blue");
++        colors.put(12, "&6Brown");
++        colors.put(13, "&2Green");
++        colors.put(14, "&4Red");
++        colors.put(15, "&8Black");
++
++        itemGroup = new ItemGroup(AbstractAddon.createKey("colored_enderchests"), new CustomItemStack(Material.ENDER_CHEST, "&5Colored Ender Chests"), 2);
++
++        for (int c1 = 0; c1 < 16; c1++)
++            for (int c2 = 0; c2 < 16; c2++)
++                for (int c3 = 0; c3 < 16; c3++)
++                    registerEnderChest(enderChestsResearch, bigEnderChestsResearch, c1, c2, c3);
++    }
++
++    private void registerEnderChest(Research smallResearch, Research bigResearch, final int c1, final int c2, final int c3) {
++        if (getConfig().getBoolean("small_chests")) {
++            ColoredEnderChest item = new ColoredEnderChest(this, 27, c1, c2, c3);
++            item.register(SlimefunAddonInstance.getSFAInstance());
++            smallResearch.addItems(item);
++        }
++
++        if (getConfig().getBoolean("big_chests")) {
++            ColoredEnderChest item = new ColoredEnderChest(this, 54, c1, c2, c3);
++            item.register(SlimefunAddonInstance.getSFAInstance());
++            bigResearch.addItems(item);
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/github/thebusybiscuit/coloredenderchests/ColoredEnderChests.java b/src/main/java/io/github/thebusybiscuit/coloredenderchests/ColoredEnderChests.java
+deleted file mode 100644
+index 6bb5bd4..0000000
+--- a/src/main/java/io/github/thebusybiscuit/coloredenderchests/ColoredEnderChests.java
++++ /dev/null
+@@ -1,94 +0,0 @@
+-package io.github.thebusybiscuit.coloredenderchests;
+-
+-import java.util.HashMap;
+-import java.util.Map;
+-
+-import org.bstats.bukkit.Metrics;
+-import org.bukkit.Material;
+-import org.bukkit.NamespacedKey;
+-import org.bukkit.plugin.java.JavaPlugin;
+-
+-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+-import io.github.thebusybiscuit.slimefun4.api.researches.Research;
+-import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.GitHubBuildsUpdater;
+-
+-public class ColoredEnderChests extends JavaPlugin implements SlimefunAddon {
+-
+-    protected Config cfg;
+-    protected Map<Integer, String> colors = new HashMap<>();
+-    protected ItemGroup itemGroup;
+-
+-    @Override
+-    public void onEnable() {
+-        cfg = new Config(this);
+-
+-        // Setting up bStats
+-        new Metrics(this, 4907);
+-
+-        // Setting up the Auto-Updater
+-        if (cfg.getBoolean("options.auto-update") && getDescription().getVersion().startsWith("DEV - ")) {
+-            new GitHubBuildsUpdater(this, getFile(), "TheBusyBiscuit/ColoredEnderChests/master").start();
+-        }
+-
+-        Research enderChestsResearch = new Research(new NamespacedKey(this, "colored_enderchests"), 2610, "Colored Ender Chests", 20);
+-        Research bigEnderChestsResearch = new Research(new NamespacedKey(this, "big_colored_enderchests"), 2611, "Big Colored Ender Chests", 30);
+-
+-        enderChestsResearch.register();
+-        bigEnderChestsResearch.register();
+-
+-        colors.put(0, "&rWhite");
+-        colors.put(1, "&6Orange");
+-        colors.put(2, "&dMagenta");
+-        colors.put(3, "&bLight Blue");
+-        colors.put(4, "&eYellow");
+-        colors.put(5, "&aLime");
+-        colors.put(6, "&dPink");
+-        colors.put(7, "&8Dark Gray");
+-        colors.put(8, "&7Light Gray");
+-        colors.put(9, "&3Cyan");
+-        colors.put(10, "&5Purple");
+-        colors.put(11, "&9Blue");
+-        colors.put(12, "&6Brown");
+-        colors.put(13, "&2Green");
+-        colors.put(14, "&4Red");
+-        colors.put(15, "&8Black");
+-
+-        itemGroup = new ItemGroup(new NamespacedKey(this, "colored_enderchests"), new CustomItemStack(Material.ENDER_CHEST, "&5Colored Ender Chests"), 2);
+-
+-        for (int c1 = 0; c1 < 16; c1++) {
+-            for (int c2 = 0; c2 < 16; c2++) {
+-                for (int c3 = 0; c3 < 16; c3++) {
+-                    registerEnderChest(enderChestsResearch, bigEnderChestsResearch, c1, c2, c3);
+-                }
+-            }
+-        }
+-
+-    }
+-
+-    private void registerEnderChest(Research smallResearch, Research bigResearch, final int c1, final int c2, final int c3) {
+-        if (cfg.getBoolean("small_chests")) {
+-            ColoredEnderChest item = new ColoredEnderChest(this, 27, c1, c2, c3);
+-            item.register(this);
+-            smallResearch.addItems(item);
+-        }
+-
+-        if (cfg.getBoolean("big_chests")) {
+-            ColoredEnderChest item = new ColoredEnderChest(this, 54, c1, c2, c3);
+-            item.register(this);
+-            bigResearch.addItems(item);
+-        }
+-    }
+-
+-    @Override
+-    public JavaPlugin getJavaPlugin() {
+-        return this;
+-    }
+-
+-    @Override
+-    public String getBugTrackerURL() {
+-        return "https://github.com/TheBusyBiscuit/ColoredEnderChests/issues";
+-    }
+-}
+diff --git a/src/main/resources/addons-config/ColoredEnderChests/config.yml b/src/main/resources/addons-config/ColoredEnderChests/config.yml
+new file mode 100644
+index 0000000..fee596c
+--- /dev/null
++++ b/src/main/resources/addons-config/ColoredEnderChests/config.yml
+@@ -0,0 +1,2 @@
++small_chests: true
++big_chests: true
+\ No newline at end of file
+diff --git a/src/main/resources/config.yml b/src/main/resources/config.yml
+deleted file mode 100644
+index ebf500a..0000000
+--- a/src/main/resources/config.yml
++++ /dev/null
+@@ -1,5 +0,0 @@
+-small_chests: true
+-big_chests: true
+-
+-options:
+-  auto-update: true
+\ No newline at end of file
+diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
+deleted file mode 100644
+index 77091e3..0000000
+--- a/src/main/resources/plugin.yml
++++ /dev/null
+@@ -1,10 +0,0 @@
+-name: ColoredEnderChests
+-version: ${project.version}
+-author: TheBusyBiscuit
+-website: https://github.com/TheBusyBiscuit/ColoredEnderChests
+-
+-main: io.github.thebusybiscuit.coloredenderchests.ColoredEnderChests
+-api-version: 1.13
+-
+-depend: 
+-- Slimefun
+\ No newline at end of file
+-- 
+2.43.0.windows.1
+
