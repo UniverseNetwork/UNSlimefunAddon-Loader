@@ -7,10 +7,14 @@ import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @UtilityClass
 public class LibraryManager {
     private boolean initialized = false;
     private BukkitLibraryManager manager;
+    private final List<String> loadedLib = new ArrayList<>();
 
     public void init() {
         if (initialized) throw new IllegalStateException("External Library Manager is already initialized!");
@@ -63,7 +67,9 @@ public class LibraryManager {
 
     public void loadLibraries(Library... libs) {
         for (Library lib : libs) {
+            if (loadedLib.contains(lib.getPath())) continue;
             manager.loadLibrary(lib);
+            loadedLib.add(lib.getPath());
             LogUtils.info("&bLoaded library &e" + lib.getPath());
         }
     }
