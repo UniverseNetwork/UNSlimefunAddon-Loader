@@ -42,6 +42,7 @@ if ($args[0]) {
         checkUpstream Addons/InfinityExpansion
         checkUpstream Addons/Networks
         checkUpstream Addons/SFCalc
+        checkUpstream Addons/SfChunkInfo
         checkUpstream Addons/SMG
     } else {checkUpstream $args[0]}
 } else {

@@ -24,6 +24,7 @@
         <module>InfinityExpansion</module>
         <module>Networks</module>
         <module>SFCalc</module>
+        <module>SfChunkInfo</module>
         <module>SMG</module>
     </modules>
 

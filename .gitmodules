@@ -29,6 +29,9 @@
 [submodule "SFCalc"]
     path = Addons/SFCalc
     url = https://github.com/Seggan/SFCalc
+[submodule "SfChunkInfo"]
+    path = Addons/SfChunkInfo
+    url = https://github.com/FN-FAL113/SfChunkInfo
 [submodule "SMG"]
     path = Addons/SMG
     url = https://github.com/Sefiraat/SMG

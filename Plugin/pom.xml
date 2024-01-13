@@ -135,6 +135,11 @@
             <version>UNOFFICIAL</version>
         </dependency>
         <dependency>
+            <groupId>me.fnfal113</groupId>
+            <artifactId>SfChunkInfo</artifactId>
+            <version>Unoffical-1.6.0</version>
+        </dependency>
+        <dependency>
             <groupId>me.waleks</groupId>
             <artifactId>SimpleMaterialGenerators</artifactId>
             <version>1.0.0</version>

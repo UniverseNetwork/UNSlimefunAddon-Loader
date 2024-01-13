@@ -26,4 +26,5 @@ addons:
   infinityexpansion: true
   networks: true
   sfcalc: true
+  sfchunkinfo: true
   simplematerialgenerators: true

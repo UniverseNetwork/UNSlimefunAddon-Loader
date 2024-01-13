@@ -63,6 +63,7 @@ if ($args[0]) {
         applyPatch Addons/InfinityExpansion
         applyPatch Addons/Networks
         applyPatch Addons/SFCalc
+        applyPatch Addons/SfChunkInfo
         applyPatch Addons/SMG
         enableCommitSigningIfNeeded
     } else {
