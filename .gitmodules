@@ -2,12 +2,15 @@
     path = InfinityLib-Standalone
     url = https://github.com/ARVIN3108/InfinityLib-Standalone
 
-[submodule "DynaTech"]
-    path = Addons/DynaTech
-    url = https://github.com/ProfElements/DynaTech
 [submodule "ColoredEnderChests"]
     path = Addons/ColoredEnderChests
     url = https://github.com/TheBusyBiscuit/ColoredEnderChests
+[submodule "DyedBackpacks"]
+    path = Addons/DyedBackpacks
+    url = https://github.com/TheBusyBiscuit/DyedBackpacks
+[submodule "DynaTech"]
+    path = Addons/DynaTech
+    url = https://github.com/ProfElements/DynaTech
 [submodule "ExtraTools"]
     path = Addons/ExtraTools
     url = https://github.com/Sfiguz7/ExtraTools

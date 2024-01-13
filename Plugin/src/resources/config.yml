@@ -18,6 +18,7 @@ loader-settings:
 addons:
   arvinmemories: false
   coloredenderchests: true
+  dyedbackpacks: true
   dynatech: true
   extratools: true
   fluffymachines: true

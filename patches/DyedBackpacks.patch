@@ -1,0 +1,422 @@
+From 46f291128e5f70d312067a4bcc487696fb12213d Mon Sep 17 00:00:00 2001
+From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
+Date: Sat, 13 Jan 2024 08:10:57 +0700
+Subject: [PATCH] DyedBackpacks
+
+---
+ pom.xml                                       | 98 ++-----------------
+ .../addons}/dyedbackpacks/BackpackColor.java  | 20 ++--
+ .../addons}/dyedbackpacks/DyedBackpack.java   | 24 ++---
+ .../addons}/dyedbackpacks/DyedBackpacks.java  | 68 ++++---------
+ .../DyedBackpacks}/config.yml                 |  3 -
+ src/main/resources/plugin.yml                 | 11 ---
+ 6 files changed, 47 insertions(+), 177 deletions(-)
+ rename src/main/java/{io/github/thebusybiscuit => id/universenetwork/sfa_loader/addons}/dyedbackpacks/BackpackColor.java (88%)
+ rename src/main/java/{io/github/thebusybiscuit => id/universenetwork/sfa_loader/addons}/dyedbackpacks/DyedBackpack.java (96%)
+ rename src/main/java/{io/github/thebusybiscuit => id/universenetwork/sfa_loader/addons}/dyedbackpacks/DyedBackpacks.java (55%)
+ rename src/main/resources/{ => addons-config/DyedBackpacks}/config.yml (64%)
+ delete mode 100644 src/main/resources/plugin.yml
+
+diff --git a/pom.xml b/pom.xml
+index 01f032a..8717b89 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -1,93 +1,34 @@
+ <project xmlns="http://maven.apache.org/POM/4.0.0"
+-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+-
++         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
++
++    <parent>
++        <groupId>id.universenetwork.sfa_loader</groupId>
++        <artifactId>Addons</artifactId>
++        <version>UNOFFICIAL</version>
++    </parent>
++
+     <groupId>io.github.thebusybiscuit</groupId>
+     <artifactId>DyedBackpacks</artifactId>
+     <version>1.0.0</version>
+ 
+-    <properties>
+-        <maven.compiler.source>1.8</maven.compiler.source>
+-        <maven.compiler.target>1.8</maven.compiler.target>
+-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+-    </properties>
+-
+     <repositories>
+-        <repository>
+-            <id>paper-repo</id>
+-            <url>https://repo.destroystokyo.com/repository/maven-public/</url>
+-        </repository>
+         <repository>
+             <id>spigot-repo</id>
+             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+         </repository>
+-        <repository>
+-            <id>jitpack.io</id>
+-            <url>https://jitpack.io</url>
+-        </repository>
+     </repositories>
+ 
+     <build>
+         <finalName>${project.name} v${project.version}</finalName>
+-        <defaultGoal>clean package</defaultGoal>
+         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+ 
+         <resources>
+             <resource>
+                 <directory>${basedir}/src/main/resources</directory>
+-                <filtering>true</filtering>
+-
+-                <includes>
+-                    <include>*</include>
+-                </includes>
+-            </resource>
+-            <resource>
+-                <directory>${basedir}</directory>
+-
+-                <includes>
+-                    <include>LICENSE</include>
+-                </includes>
+             </resource>
+         </resources>
+-
+-        <plugins>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-shade-plugin</artifactId>
+-                <version>3.2.4</version>
+-
+-                <configuration>
+-
+-                    <!-- Shade dependencies into the output jar -->
+-                    <relocations>
+-                        <relocation>
+-                            <pattern>org.bstats</pattern>
+-                            <shadedPattern>io.github.thebusybiscuit.dyedbackpacks.bstats</shadedPattern>
+-                        </relocation>
+-                    </relocations>
+-
+-                    <!-- Exclude unneeded metadata files from shaded dependencies -->
+-                    <filters>
+-                        <filter>
+-                            <artifact>*:*</artifact>
+-                            <excludes>
+-                                <exclude>META-INF/*</exclude>
+-                            </excludes>
+-                        </filter>
+-                    </filters>
+-                </configuration>
+-
+-                <executions>
+-                    <execution>
+-                        <phase>package</phase>
+-                        <goals>
+-                            <goal>shade</goal>
+-                        </goals>
+-                    </execution>
+-                </executions>
+-            </plugin>
+-        </plugins>
+     </build>
+ 
+     <dependencies>
+@@ -97,32 +38,11 @@
+             <version>1.16.5-R0.1-SNAPSHOT</version>
+             <scope>provided</scope>
+         </dependency>
+-
+         <dependency>
+             <groupId>com.google.code.findbugs</groupId>
+             <artifactId>jsr305</artifactId>
+             <version>3.0.2</version>
+             <scope>provided</scope>
+         </dependency>
+-
+-        <dependency>
+-            <groupId>com.github.TheBusyBiscuit</groupId>
+-            <artifactId>Slimefun4</artifactId>
+-            <version>RC-27</version>
+-            <scope>provided</scope>
+-            <exclusions>
+-                <exclusion>
+-                    <groupId>io.github.baked-libs</groupId>
+-                    <artifactId>dough-api</artifactId>
+-                </exclusion>
+-            </exclusions>
+-        </dependency>
+-
+-        <dependency>
+-            <groupId>org.bstats</groupId>
+-            <artifactId>bstats-bukkit</artifactId>
+-            <version>2.2.1</version>
+-            <scope>compile</scope>
+-        </dependency>
+     </dependencies>
+ </project>
+\ No newline at end of file
+diff --git a/src/main/java/io/github/thebusybiscuit/dyedbackpacks/BackpackColor.java b/src/main/java/id/universenetwork/sfa_loader/addons/dyedbackpacks/BackpackColor.java
+similarity index 88%
+rename from src/main/java/io/github/thebusybiscuit/dyedbackpacks/BackpackColor.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/dyedbackpacks/BackpackColor.java
+index 33da422..957fefb 100644
+--- a/src/main/java/io/github/thebusybiscuit/dyedbackpacks/BackpackColor.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/dyedbackpacks/BackpackColor.java
+@@ -1,25 +1,22 @@
+-package io.github.thebusybiscuit.dyedbackpacks;
+-
+-import javax.annotation.Nonnull;
+-import javax.annotation.ParametersAreNonnullByDefault;
++package id.universenetwork.sfa_loader.addons.dyedbackpacks;
+ 
+ import org.bukkit.ChatColor;
+ import org.bukkit.DyeColor;
+ import org.bukkit.Material;
+ 
++import javax.annotation.Nonnull;
++import javax.annotation.ParametersAreNonnullByDefault;
++
+ /**
+  * This enum holds the different colors of a {@link DyedBackpack}.
+  * It is similar to the {@link DyeColor} enum, as this is based off of the different colors
+  * of wool.
+- * 
++ *
+  * @author TheBusyBiscuit
+- * 
+  * @see DyedBackpack
+  * @see DyeColor
+- *
+  */
+ public enum BackpackColor {
+-
+     WHITE(ChatColor.WHITE + "White", Material.WHITE_WOOL, "ebdf8d53bdb932c223c627bbb8c1e0c5e351a616cd8056929c66e6dce44433db"),
+     ORANGE(ChatColor.GOLD + "Orange", Material.ORANGE_WOOL, "a37a35522f67b2af92345592846b702b9afb9d7c8dbad5ea150673c9e44de3"),
+     MAGENTA(ChatColor.LIGHT_PURPLE + "Magenta", Material.MAGENTA_WOOL, "36575fcccadae87c0842f53de5e0ffa75851696866d81e1b72828348db5256"),
+@@ -35,7 +32,9 @@ public enum BackpackColor {
+     BROWN(ChatColor.GOLD + "Brown", Material.BROWN_WOOL, "efb6a3d7dba97bb6e7f79a15627aec6369791233f833fa749ef21bed79e59e98"),
+     GREEN(ChatColor.DARK_GREEN + "Green", Material.GREEN_WOOL, "28a127f1cfd79986e7bd95d92de4f4f68040e4f899f81b1f8f3ca15b64f50f3"),
+     RED(ChatColor.DARK_RED + "Red", Material.RED_WOOL, "85e4f9da68c81fa481eecdca48a138cecde2cddffeeae84ab1afd24a363e028"),
+-    BLACK(ChatColor.DARK_GRAY + "Black", Material.BLACK_WOOL, "a9ab1fdcbe878d1e55bdd43cebc5e43836a6da69541f4a233fe88f1305668");
++    BLACK(ChatColor.DARK_GRAY + "Black", Material.BLACK_WOOL, "a9ab1fdcbe878d1e55bdd43cebc5e43836a6da69541f4a233fe88f1305668"),
++    CAMOUFLAGE(ChatColor.DARK_GREEN + "Camouflage", Material.ACACIA_LEAVES, "f8c15aa792ec91fc2daf57dbf27f37a886538541a180af88b1415ee37d12a7"),
++    MODERN(ChatColor.LIGHT_PURPLE + "Modern", Material.REDSTONE, "d087c65d7bde665b6e195e8dcfc21f4addcf92a907140c37d474c12accf7ab");
+ 
+     private final String name;
+     private final Material wool;
+@@ -62,5 +61,4 @@ public enum BackpackColor {
+     public Material getWoolMaterial() {
+         return wool;
+     }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/github/thebusybiscuit/dyedbackpacks/DyedBackpack.java b/src/main/java/id/universenetwork/sfa_loader/addons/dyedbackpacks/DyedBackpack.java
+similarity index 96%
+rename from src/main/java/io/github/thebusybiscuit/dyedbackpacks/DyedBackpack.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/dyedbackpacks/DyedBackpack.java
+index 005f0e7..74053fb 100644
+--- a/src/main/java/io/github/thebusybiscuit/dyedbackpacks/DyedBackpack.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/dyedbackpacks/DyedBackpack.java
+@@ -1,28 +1,25 @@
+-package io.github.thebusybiscuit.dyedbackpacks;
+-
+-import javax.annotation.Nonnull;
+-import javax.annotation.ParametersAreNonnullByDefault;
+-
+-import org.apache.commons.lang.Validate;
+-import org.bukkit.Material;
+-import org.bukkit.inventory.ItemStack;
++package id.universenetwork.sfa_loader.addons.dyedbackpacks;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import io.github.thebusybiscuit.slimefun4.implementation.items.backpacks.SlimefunBackpack;
++import org.apache.commons.lang.Validate;
++import org.bukkit.Material;
++import org.bukkit.inventory.ItemStack;
++
++import javax.annotation.Nonnull;
++import javax.annotation.ParametersAreNonnullByDefault;
+ 
+ /**
+  * This is our {@link SlimefunItem} implementation for the {@link DyedBackpack}.
+  * It extends {@link SlimefunBackpack} but also carries an additional {@link BackpackColor}
+  * attribute.
+- * 
+- * @author TheBusyBiscuit
+  *
++ * @author TheBusyBiscuit
+  */
+ public class DyedBackpack extends SlimefunBackpack {
+-
+     private final BackpackColor color;
+ 
+     @ParametersAreNonnullByDefault
+@@ -35,7 +32,7 @@ public class DyedBackpack extends SlimefunBackpack {
+ 
+     /**
+      * This returns the {@link BackpackColor} of this {@link DyedBackpack}.
+-     * 
++     *
+      * @return The {@link BackpackColor}
+      */
+     @Nonnull
+@@ -57,5 +54,4 @@ public class DyedBackpack extends SlimefunBackpack {
+         };
+         // @formatter:on
+     }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/github/thebusybiscuit/dyedbackpacks/DyedBackpacks.java b/src/main/java/id/universenetwork/sfa_loader/addons/dyedbackpacks/DyedBackpacks.java
+similarity index 55%
+rename from src/main/java/io/github/thebusybiscuit/dyedbackpacks/DyedBackpacks.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/dyedbackpacks/DyedBackpacks.java
+index 2669b69..36b751c 100644
+--- a/src/main/java/io/github/thebusybiscuit/dyedbackpacks/DyedBackpacks.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/dyedbackpacks/DyedBackpacks.java
+@@ -1,63 +1,43 @@
+-package io.github.thebusybiscuit.dyedbackpacks;
++package id.universenetwork.sfa_loader.addons.dyedbackpacks;
+ 
+-import javax.annotation.ParametersAreNonnullByDefault;
+-
+-import org.bstats.bukkit.Metrics;
+-import org.bukkit.NamespacedKey;
+-import org.bukkit.plugin.java.JavaPlugin;
+-
+-import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.template.AddonTemplate;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+ import io.github.thebusybiscuit.slimefun4.api.researches.Research;
+ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.GitHubBuildsUpdater;
++
++import javax.annotation.ParametersAreNonnullByDefault;
+ 
+ /**
+  * This is the main class of the {@link DyedBackpacks} addon.
+  * Here we initialize the different instances of {@link DyedBackpack}.
+- * 
++ *
+  * @author TheBusyBiscuit
+- * 
+  * @see DyedBackpack
+- *
+  */
+-public class DyedBackpacks extends JavaPlugin implements SlimefunAddon {
+-
++public class DyedBackpacks extends AddonTemplate {
+     @Override
+-    public void onEnable() {
+-        Config cfg = new Config(this);
+-        new Metrics(this, 5778);
+-
+-        if (cfg.getBoolean("options.auto-update") && getDescription().getVersion().startsWith("DEV - ")) {
+-            new GitHubBuildsUpdater(this, getFile(), "TheBusyBiscuit/DyedBackpacks/master").start();
+-        }
+-
+-        Research research = new Research(new NamespacedKey(this, "dyed_backpacks"), 17200, "Dyed Backpacks", 24);
+-        ItemGroup itemGroup = new ItemGroup(new NamespacedKey(this, "dyed_backpacks"), new CustomItemStack(PlayerHead.getItemStack(PlayerSkin.fromHashCode(BackpackColor.RED.getTexture())), "&4Dyed Backpacks"), 2);
++    public void onLoad() {
++        Research research = new Research(AbstractAddon.createKey("dyed_backpacks"), 17200, "Dyed Backpacks", 24);
++        ItemGroup itemGroup = new ItemGroup(AbstractAddon.createKey("dyed_backpacks"), new CustomItemStack(PlayerHead.getItemStack(PlayerSkin.fromHashCode(BackpackColor.RED.getTexture())), "&4Dyed Backpacks"), 2);
+ 
+-        if (cfg.getBoolean("backpacks.small")) {
++        if (getConfig().getBoolean("backpacks.small"))
+             createBackpacks(itemGroup, research, SlimefunItems.BACKPACK_SMALL, 9);
+-        }
+-        if (cfg.getBoolean("backpacks.normal")) {
++        if (getConfig().getBoolean("backpacks.normal"))
+             createBackpacks(itemGroup, research, SlimefunItems.BACKPACK_MEDIUM, 18);
+-        }
+-        if (cfg.getBoolean("backpacks.large")) {
++        if (getConfig().getBoolean("backpacks.large"))
+             createBackpacks(itemGroup, research, SlimefunItems.BACKPACK_LARGE, 27);
+-        }
+-        if (cfg.getBoolean("backpacks.woven")) {
++        if (getConfig().getBoolean("backpacks.woven"))
+             createBackpacks(itemGroup, research, SlimefunItems.WOVEN_BACKPACK, 36);
+-        }
+-        if (cfg.getBoolean("backpacks.gilded")) {
++        if (getConfig().getBoolean("backpacks.gilded"))
+             createBackpacks(itemGroup, research, SlimefunItems.GILDED_BACKPACK, 45);
+-        }
+-        if (cfg.getBoolean("backpacks.radiant")) {
++        if (getConfig().getBoolean("backpacks.radiant"))
+             createBackpacks(itemGroup, research, SlimefunItems.RADIANT_BACKPACK, 54);
+-        }
+ 
+         research.register();
+     }
+@@ -68,17 +48,7 @@ public class DyedBackpacks extends JavaPlugin implements SlimefunAddon {
+             SlimefunItemStack item = new SlimefunItemStack("DYED_" + backpack.getItemId() + "_" + color.name(), color.getTexture(), backpack.getItemMeta().getDisplayName() + " &7(" + color.getName() + "&7)", backpack.getItemMeta().getLore().toArray(new String[0]));
+             DyedBackpack dyed = new DyedBackpack(size, itemGroup, item, backpack, color);
+             research.addItems(dyed);
+-            dyed.register(this);
++            dyed.register(SlimefunAddonInstance.getSFAInstance());
+         }
+     }
+-
+-    @Override
+-    public String getBugTrackerURL() {
+-        return "https://github.com/TheBusyBiscuit/DyedBackpacks/issues";
+-    }
+-
+-    @Override
+-    public JavaPlugin getJavaPlugin() {
+-        return this;
+-    }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/resources/config.yml b/src/main/resources/addons-config/DyedBackpacks/config.yml
+similarity index 64%
+rename from src/main/resources/config.yml
+rename to src/main/resources/addons-config/DyedBackpacks/config.yml
+index a04bba3..ab94b3a 100644
+--- a/src/main/resources/config.yml
++++ b/src/main/resources/addons-config/DyedBackpacks/config.yml
+@@ -1,6 +1,3 @@
+-options:
+-  auto-update: true
+-
+ backpacks:
+   small: true
+   normal: true
+diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
+deleted file mode 100644
+index cdd8793..0000000
+--- a/src/main/resources/plugin.yml
++++ /dev/null
+@@ -1,11 +0,0 @@
+-name: DyedBackpacks
+-version: ${project.version}
+-author: TheBusyBiscuit
+-
+-description: A Slimefun Addon that adds dyed backpacks
+-website: https://github.com/TheBusyBiscuit/DyedBackpacks
+-
+-main: io.github.thebusybiscuit.dyedbackpacks.DyedBackpacks
+-depend: [Slimefun]
+-
+-api-version: 1.14
+\ No newline at end of file
+-- 
+2.43.0.windows.1
+
