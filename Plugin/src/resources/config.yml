@@ -25,6 +25,7 @@ addons:
   headlimiter: false
   infinityexpansion: true
   networks: true
+  privatestorage: true
   sfcalc: true
   sfchunkinfo: true
   simplematerialgenerators: true

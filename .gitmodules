@@ -26,6 +26,9 @@
 [submodule "Networks"]
     path = Addons/Networks
     url = https://github.com/Sefiraat/Networks
+[submodule "PrivateStorage"]
+    path = Addons/PrivateStorage
+    url = https://github.com/TheBusyBiscuit/PrivateStorage
 [submodule "SFCalc"]
     path = Addons/SFCalc
     url = https://github.com/Seggan/SFCalc

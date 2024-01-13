@@ -41,6 +41,7 @@ if ($args[0]) {
         checkUpstream Addons/HeadLimiter
         checkUpstream Addons/InfinityExpansion
         checkUpstream Addons/Networks
+        checkUpstream Addons/PrivateStorage
         checkUpstream Addons/SFCalc
         checkUpstream Addons/SfChunkInfo
         checkUpstream Addons/SMG

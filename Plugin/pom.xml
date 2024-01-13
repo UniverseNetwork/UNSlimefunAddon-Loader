@@ -130,6 +130,11 @@
             <version>MODIFIED_1.2.0</version>
         </dependency>
         <dependency>
+            <groupId>io.github.thebusybiscuit</groupId>
+            <artifactId>PrivateStorage</artifactId>
+            <version>UNOFFICIAL</version>
+        </dependency>
+        <dependency>
             <groupId>io.github.seggan.sfcalc</groupId>
             <artifactId>SFCalc</artifactId>
             <version>UNOFFICIAL</version>

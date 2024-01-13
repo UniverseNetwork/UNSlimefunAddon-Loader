@@ -23,6 +23,7 @@
         <module>HeadLimiter</module>
         <module>InfinityExpansion</module>
         <module>Networks</module>
+        <module>PrivateStorage</module>
         <module>SFCalc</module>
         <module>SfChunkInfo</module>
         <module>SMG</module>

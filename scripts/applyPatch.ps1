@@ -62,6 +62,7 @@ if ($args[0]) {
         applyPatch Addons/HeadLimiter
         applyPatch Addons/InfinityExpansion
         applyPatch Addons/Networks
+        applyPatch Addons/PrivateStorage
         applyPatch Addons/SFCalc
         applyPatch Addons/SfChunkInfo
         applyPatch Addons/SMG
