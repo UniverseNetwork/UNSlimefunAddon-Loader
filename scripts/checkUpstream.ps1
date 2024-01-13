@@ -36,6 +36,7 @@ if ($args[0]) {
         checkUpstream Addons/ColoredEnderChests
         checkUpstream Addons/DyedBackpacks
         checkUpstream Addons/DynaTech
+        checkUpstream Addons/ExtraGear
         checkUpstream Addons/ExtraTools
         checkUpstream Addons/FluffyMachines
         checkUpstream Addons/HeadLimiter

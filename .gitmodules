@@ -11,6 +11,9 @@
 [submodule "DynaTech"]
     path = Addons/DynaTech
     url = https://github.com/ProfElements/DynaTech
+[submodule "ExtraGear"]
+    path = Addons/ExtraGear
+    url = https://github.com/TheBusyBiscuit/ExtraGear
 [submodule "ExtraTools"]
     path = Addons/ExtraTools
     url = https://github.com/Sfiguz7/ExtraTools

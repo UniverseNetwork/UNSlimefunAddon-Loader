@@ -105,6 +105,11 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
+            <groupId>io.github.thebusybiscuit</groupId>
+            <artifactId>ExtraGear</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>me.sfiguz7</groupId>
             <artifactId>ExtraTools</artifactId>
             <version>1.2</version>
