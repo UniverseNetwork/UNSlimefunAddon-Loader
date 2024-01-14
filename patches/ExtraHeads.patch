@@ -1,0 +1,1132 @@
+From fdbfdf52bccc391fa2f57d2660eba3cd1b317ea8 Mon Sep 17 00:00:00 2001
+From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
+Date: Sun, 14 Jan 2024 19:37:33 +0700
+Subject: [PATCH] ExtraHeads
+
+---
+ pom.xml                                       | 101 +-------
+ .../addons}/extraheads/ExtraHeads.java        | 241 ++++++++++--------
+ .../addons}/extraheads/HeadListener.java      |  30 +--
+ .../sfa_loader/addons/extraheads/MobHead.java |  55 ++++
+ .../extraheads/special/BeeHeadHandler.java    |  64 +++++
+ .../extraheads/special/FrogHeadHandler.java   |  66 +++++
+ .../extraheads/special/MobHeadHandler.java    |  17 ++
+ .../extraheads/special/MobHeadProvider.java   |  19 ++
+ .../extraheads/special/SheepHeadHandler.java  | 119 +++++++++
+ .../special/ShulkerHeadHandler.java           | 121 +++++++++
+ .../thebusybiscuit/extraheads/MobHead.java    |  32 ---
+ .../addons-config/ExtraHeads/config.yml       |   7 +
+ src/main/resources/config.yml                 |   3 -
+ src/main/resources/plugin.yml                 |   7 -
+ 14 files changed, 625 insertions(+), 257 deletions(-)
+ rename src/main/java/{io/github/thebusybiscuit => id/universenetwork/sfa_loader/addons}/extraheads/ExtraHeads.java (56%)
+ rename src/main/java/{io/github/thebusybiscuit => id/universenetwork/sfa_loader/addons}/extraheads/HeadListener.java (52%)
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/extraheads/MobHead.java
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/BeeHeadHandler.java
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/FrogHeadHandler.java
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/MobHeadHandler.java
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/MobHeadProvider.java
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/SheepHeadHandler.java
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/ShulkerHeadHandler.java
+ delete mode 100644 src/main/java/io/github/thebusybiscuit/extraheads/MobHead.java
+ create mode 100644 src/main/resources/addons-config/ExtraHeads/config.yml
+ delete mode 100644 src/main/resources/config.yml
+ delete mode 100644 src/main/resources/plugin.yml
+
+diff --git a/pom.xml b/pom.xml
+index 89d0601..ae03e97 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -1,97 +1,34 @@
+ <project xmlns="http://maven.apache.org/POM/4.0.0"
+-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+-
++         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
++
++    <parent>
++        <groupId>id.universenetwork.sfa_loader</groupId>
++        <artifactId>Addons</artifactId>
++        <version>UNOFFICIAL</version>
++    </parent>
++
+     <groupId>io.github.thebusybiscuit</groupId>
+     <artifactId>ExtraHeads</artifactId>
+     <version>UNOFFICIAL</version>
+ 
+-    <properties>
+-        <maven.compiler.source>16</maven.compiler.source>
+-        <maven.compiler.target>16</maven.compiler.target>
+-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+-    </properties>
+-
+     <repositories>
+-        <repository>
+-            <id>paper-repo</id>
+-            <url>https://repo.destroystokyo.com/repository/maven-public/</url>
+-        </repository>
+         <repository>
+             <id>spigot-repo</id>
+             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+         </repository>
+-        <repository>
+-            <id>jitpack.io</id>
+-            <url>https://jitpack.io</url>
+-        </repository>
+-        <repository>
+-            <id>bstats-repo</id>
+-            <url>https://repo.codemc.org/repository/maven-public</url>
+-        </repository>
+     </repositories>
+ 
+     <build>
+         <finalName>${project.name} v${project.version}</finalName>
+-        <defaultGoal>clean package</defaultGoal>
+         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+ 
+         <resources>
+             <resource>
+                 <directory>${basedir}/src/main/resources</directory>
+-                <filtering>true</filtering>
+-                <includes>
+-                    <include>*</include>
+-                </includes>
+-            </resource>
+-            <resource>
+-                <directory>${basedir}</directory>
+-
+-                <includes>
+-                    <include>LICENSE</include>
+-                </includes>
+             </resource>
+         </resources>
+-
+-        <plugins>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-shade-plugin</artifactId>
+-                <version>3.5.0</version>
+-
+-                <configuration>
+-                    <minimizeJar>true</minimizeJar>
+-
+-                    <!-- Shade dependencies into the output jar -->
+-                    <relocations>
+-                        <relocation>
+-                            <pattern>org.bstats</pattern>
+-                            <shadedPattern>io.github.thebusybiscuit.extraheads.bstats</shadedPattern>
+-                        </relocation>
+-                    </relocations>
+-
+-                    <!-- Exclude unneeded metadata files from shaded dependencies -->
+-                    <filters>
+-                        <filter>
+-                            <artifact>*:*</artifact>
+-                            <excludes>
+-                                <exclude>META-INF/*</exclude>
+-                            </excludes>
+-                        </filter>
+-                    </filters>
+-                </configuration>
+-
+-                <executions>
+-                    <execution>
+-                        <phase>package</phase>
+-                        <goals>
+-                            <goal>shade</goal>
+-                        </goals>
+-                    </execution>
+-                </executions>
+-            </plugin>
+-        </plugins>
+     </build>
+ 
+     <dependencies>
+@@ -101,25 +38,5 @@
+             <version>1.20.1-R0.1-SNAPSHOT</version>
+             <scope>provided</scope>
+         </dependency>
+-
+-        <dependency>
+-            <groupId>com.github.slimefun</groupId>
+-            <artifactId>Slimefun4</artifactId>
+-            <version>RC-35</version>
+-            <scope>provided</scope>
+-            <exclusions>
+-                <exclusion>
+-                    <groupId>io.github.baked-libs</groupId>
+-                    <artifactId>dough-api</artifactId>
+-                </exclusion>
+-            </exclusions>
+-        </dependency>
+-
+-        <dependency>
+-            <groupId>org.bstats</groupId>
+-            <artifactId>bstats-bukkit</artifactId>
+-            <version>3.0.2</version>
+-            <scope>compile</scope>
+-        </dependency>
+     </dependencies>
+ </project>
+diff --git a/src/main/java/io/github/thebusybiscuit/extraheads/ExtraHeads.java b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/ExtraHeads.java
+similarity index 56%
+rename from src/main/java/io/github/thebusybiscuit/extraheads/ExtraHeads.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/extraheads/ExtraHeads.java
+index c3f8e30..6300938 100644
+--- a/src/main/java/io/github/thebusybiscuit/extraheads/ExtraHeads.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/ExtraHeads.java
+@@ -1,178 +1,207 @@
+-package io.github.thebusybiscuit.extraheads;
++package id.universenetwork.sfa_loader.addons.extraheads;
+ 
+ import java.util.EnumMap;
+ import java.util.Map;
+ import java.util.logging.Level;
+-import java.util.logging.Logger;
+ 
+-import org.bstats.bukkit.Metrics;
+ import org.bukkit.Material;
+-import org.bukkit.NamespacedKey;
+ import org.bukkit.entity.EntityType;
++import org.bukkit.entity.LivingEntity;
+ import org.bukkit.inventory.ItemStack;
+-import org.bukkit.plugin.java.JavaPlugin;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
+-import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.GitHubBuildsUpdater;
+ import io.github.thebusybiscuit.slimefun4.utils.ChatUtils;
+ import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+ 
+-public class ExtraHeads extends JavaPlugin implements SlimefunAddon {
++import id.universenetwork.sfa_loader.addons.extraheads.special.BeeHeadHandler;
++import id.universenetwork.sfa_loader.addons.extraheads.special.FrogHeadHandler;
++import id.universenetwork.sfa_loader.addons.extraheads.special.MobHeadHandler;
++import id.universenetwork.sfa_loader.addons.extraheads.special.MobHeadProvider;
++import id.universenetwork.sfa_loader.addons.extraheads.special.SheepHeadHandler;
++import id.universenetwork.sfa_loader.addons.extraheads.special.ShulkerHeadHandler;
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.template.AddonTemplate;
++import id.universenetwork.sfa_loader.utils.LogUtils;
+ 
+-    private final Map<EntityType, ItemStack> mobs = new EnumMap<>(EntityType.class);
+-
+-    private Config cfg;
+-    private Logger logger;
++public class ExtraHeads extends AddonTemplate {
++    private final Map<EntityType, MobHeadProvider> mobs = new EnumMap<>(EntityType.class);
+ 
+     private ItemGroup itemGroup;
+     private RecipeType recipeType;
+ 
+     @Override
+-    public void onEnable() {
+-        cfg = new Config(this);
+-        logger = getLogger();
+-
+-        // Setting up bStats
+-        new Metrics(this, 5650);
+-
+-        if (cfg.getBoolean("options.auto-update") && getDescription().getVersion().startsWith("DEV - ")) {
+-            new GitHubBuildsUpdater(this, getFile(), "TheBusyBiscuit/ExtraHeads/master").start();
+-        }
+-
++    public void onLoad() {
+         itemGroup = new ItemGroup(
+-            new NamespacedKey(this, "heads"),
++            AbstractAddon.createKey("heads"),
+             new CustomItemStack(
+                 SlimefunUtils.getCustomHead("5f1379a82290d7abe1efaabbc70710ff2ec02dd34ade386bc00c930c461cf932"),
+-                "&7Extra Heads"
+-            ),
+-            1
+-        );
++                "&7Extra Heads"), 1);
+         recipeType = new RecipeType(
+-            new NamespacedKey(this, "decapitation"),
++            AbstractAddon.createKey("decapitation"),
+             new CustomItemStack(
+                 Material.IRON_SWORD,
+-                "&6Kill the specified Mob"
+-            )
+-        );
++                "&6Kill the specified Mob"));
+ 
+-        registerHead(EntityType.BAT, "2796aa6d18edc5b724bd89e983bc3215a41bf775d112635e9b5835d1b8ad20cb");
+-        registerHead(EntityType.BLAZE, "b78ef2e4cf2c41a2d14bfde9caff10219f5b1bf5b35a49eb51c6467882cb5f0");
+-        registerHead(EntityType.CAVE_SPIDER, "41645dfd77d09923107b3496e94eeb5c30329f97efc96ed76e226e98224");
+-        registerHead(EntityType.CHICKEN, "1638469a599ceef7207537603248a9ab11ff591fd378bea4735b346a7fae893");
++        // Animals
+         registerHead(EntityType.COW, "5d6c6eda942f7f5f71c3161c7306f4aed307d82895f9d2b07ab4525718edc5");
++        registerHead(EntityType.CHICKEN, "1638469a599ceef7207537603248a9ab11ff591fd378bea4735b346a7fae893");
++        registerHead(EntityType.PIG, "621668ef7cb79dd9c22ce3d1f3f4cb6e2559893b6df4a469514e667c16aa4");
++        registerHead(EntityType.RABBIT, "ff1559194a175935b8b4fea6614bec60bf81cf524af6f564333c555e657bc");
++        registerHeads(EntityType.SHEEP, new SheepHeadHandler(getConfig()));
++        registerHead(EntityType.TURTLE, "0a4050e7aacc4539202658fdc339dd182d7e322f9fbcc4d5f99b5718a");
++        registerHead(EntityType.POLAR_BEAR, "442123ac15effa1ba46462472871b88f1b09c1db467621376e2f71656d3fbc");
++        registerHead(EntityType.FOX, "46cff7a19e683a08e4587ea1457880313d5f341f346ceb5b0551195d810e3");
++        registerHeads(EntityType.BEE, new BeeHeadHandler(getConfig()));
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_20))
++            // https://minecraft-heads.com/custom-heads/animals/64113-sniffer
++            registerHead(EntityType.SNIFFER, "fe5a8341c478a134302981e6a7758ea4ecfd8d62a0df4067897e75502f9b25de");
++        registerHead(EntityType.OCELOT, "5657cd5c2989ff97570fec4ddcdc6926a68a3393250c1be1f0b114a1db1");
++
++        // Animals (Special)
++        registerHead(EntityType.PARROT, "a4ba8d66fecb1992e94b8687d6ab4a5320ab7594ac194a2615ed4df818edbc3");
++        registerHead(EntityType.CAT, "2f6ec090ed3ed2dddbb511ee2a12551131019939c062a7761371df85549f9fad");
++        registerHead(EntityType.PANDA, "7818b681cace1c641919f53edadecb142330d089a826b56219138c33b7a5e0db");
++        registerHead(EntityType.MUSHROOM_COW, "Red Mooshroom", "d0bc61b9757a7b83e03cd2507a2157913c2cf016e7c096a4d6cf1fe1b8db");
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerHead(EntityType.AXOLOTL, "5c138f401c67fc2e1e387d9c90a9691772ee486e8ddbf2ed375fc8348746f936");
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_19)) {
++            registerHeads(EntityType.FROG, new FrogHeadHandler(getConfig()));
++            // https://minecraft-heads.com/custom-heads/animals/51348-tadpole
++            registerHead(EntityType.TADPOLE, "987035f5352334c2cba6ac4c65c2b9059739d6d0e839c1dd98d75d2e77957847");
++        }
++
++        // Neutral Mobs
++        registerHead(EntityType.BAT, "2796aa6d18edc5b724bd89e983bc3215a41bf775d112635e9b5835d1b8ad20cb");
+         registerHead(EntityType.DOLPHIN, "cefe7d803a45aa2af1993df2544a28df849a762663719bfefc58bf389ab7f5");
++        registerHead(EntityType.IRON_GOLEM, "89091d79ea0f59ef7ef94d7bba6e5f17f2f7d4572c44f90f76c4819a714");
++        registerHead(EntityType.SQUID, "01433be242366af126da434b8735df1eb5b3cb2cede39145974e9c483607bac");
++        registerHead(EntityType.STRIDER, "18a9adf780ec7dd4625c9c0779052e6a15a451866623511e4c82e9655714b3c1");
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17)) {
++            registerHead(EntityType.GLOW_SQUID, "57327ee11812b764c7ade70b282cce4c58e635b2015244081d1490543da7280e");
++            registerHead(EntityType.GOAT, "457a0d538fa08a7affe312903468861720f9fa34e86d44b89dcec5639265f03");
++        }
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_19))
++            // https://minecraft-heads.com/custom-heads/animals/51267-allay
++            registerHead(EntityType.ALLAY, "e1c59dccde4b8535500dcf6794ca450663f607290e2510f6d8eb1e5eb71da5af");
++
++        // Horse Mobs
++        registerHead(EntityType.HORSE, "61902898308730c4747299cb5a5da9c25838b1d059fe46fc36896fee662729");
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_20))
++            // https://minecraft-heads.com/custom-heads/animals/58939-camel
++            registerHead(EntityType.CAMEL, "74b8a333dfa92e7e5a95ad4ae2d84b1bafa33dc28c054925277f60e79dafc8c4");
++        registerHead(EntityType.LLAMA, "2a5f10e6e6232f182fe966f501f1c3799d45ae19031a1e4941b5dee0feff059b");
++        registerHead(EntityType.TRADER_LLAMA, "15ad6b69cc6b4769d3516a0ce98b99b2a5d406fea4912dec570ea4a4f2bcc0ff");
++
++        // Villager Mobs
++        registerHead(EntityType.VILLAGER, "822d8e751c8f2fd4c8942c44bdb2f5ca4d8ae8e575ed3eb34c18a86e93b");
++        registerHead(EntityType.WANDERING_TRADER, "5f1379a82290d7abe1efaabbc70710ff2ec02dd34ade386bc00c930c461cf932");
++
++        // Illager Mobs
++        registerHead(EntityType.EVOKER, "d954135dc82213978db478778ae1213591b93d228d36dd54f1ea1da48e7cba6");
++        registerHead(EntityType.ILLUSIONER, "2f2882dd09723e47c0ab9663eab083d6a5969273706110c82910e61bf8a8f07e");
++        registerHead(EntityType.PILLAGER, "4aee6bb37cbfc92b0d86db5ada4790c64ff4468d68b84942fde04405e8ef5333");
++        registerHead(EntityType.RAVAGER, "1cb9f139f9489d86e410a06d8cbc670c8028137508e3e4bef612fe32edd60193");
++        registerHead(EntityType.VEX, "c2ec5a516617ff1573cd2f9d5f3969f56d5575c4ff4efefabd2a18dc7ab98cd");
++        registerHead(EntityType.VINDICATOR, "6deaec344ab095b48cead7527f7dee61b063ff791f76a8fa76642c8676e2173");
++        registerHead(EntityType.ZOMBIE_VILLAGER, "a6224941314bca2ebbb66b10ffd94680cc98c3435eeb71a228a08fd42c24db");
++
++        // Hostile Mobs
++        registerHead(EntityType.BLAZE, "b78ef2e4cf2c41a2d14bfde9caff10219f5b1bf5b35a49eb51c6467882cb5f0");
+         registerHead(EntityType.DROWNED, "c84df79c49104b198cdad6d99fd0d0bcf1531c92d4ab6269e40b7d3cbbb8e98c");
+-        registerHead(EntityType.ELDER_GUARDIAN, "4adc4a6f53afa116027b51d6f2e433ee7afa5d59b2ffa04780be464fa5d61a");
+         registerHead(EntityType.ENDERMAN, "7a59bb0a7a32965b3d90d8eafa899d1835f424509eadd4e6b709ada50b9cf");
+-        registerHead(EntityType.EVOKER, "d954135dc82213978db478778ae1213591b93d228d36dd54f1ea1da48e7cba6");
+         registerHead(EntityType.GHAST, "8b6a72138d69fbbd2fea3fa251cabd87152e4f1c97e5f986bf685571db3cc0");
+         registerHead(EntityType.GUARDIAN, "932c24524c82ab3b3e57c2052c533f13dd8c0beb8bdd06369bb2554da86c123");
+-        registerHead(EntityType.HORSE, "61902898308730c4747299cb5a5da9c25838b1d059fe46fc36896fee662729");
+         registerHead(EntityType.HUSK, "d674c63c8db5f4ca628d69a3b1f8a36e29d8fd775e1a6bdb6cabb4be4db121");
+-        registerHead(EntityType.ILLUSIONER, "2f2882dd09723e47c0ab9663eab083d6a5969273706110c82910e61bf8a8f07e");
+-        registerHead(EntityType.IRON_GOLEM, "89091d79ea0f59ef7ef94d7bba6e5f17f2f7d4572c44f90f76c4819a714");
+-        registerHead(EntityType.LLAMA, "2a5f10e6e6232f182fe966f501f1c3799d45ae19031a1e4941b5dee0feff059b");
+         registerHead(EntityType.MAGMA_CUBE, "38957d5023c937c4c41aa2412d43410bda23cf79a9f6ab36b76fef2d7c429");
+-        registerHead(EntityType.MUSHROOM_COW, "d0bc61b9757a7b83e03cd2507a2157913c2cf016e7c096a4d6cf1fe1b8db");
+-        registerHead(EntityType.OCELOT, "5657cd5c2989ff97570fec4ddcdc6926a68a3393250c1be1f0b114a1db1");
+-        registerHead(EntityType.PARROT, "a4ba8d66fecb1992e94b8687d6ab4a5320ab7594ac194a2615ed4df818edbc3");
+-        registerHead(EntityType.PIG, "621668ef7cb79dd9c22ce3d1f3f4cb6e2559893b6df4a469514e667c16aa4");
+-        registerHead(EntityType.POLAR_BEAR, "442123ac15effa1ba46462472871b88f1b09c1db467621376e2f71656d3fbc");
+-        registerHead(EntityType.RABBIT, "ff1559194a175935b8b4fea6614bec60bf81cf524af6f564333c555e657bc");
+-        registerHead(EntityType.SHEEP, "f31f9ccc6b3e32ecf13b8a11ac29cd33d18c95fc73db8a66c5d657ccb8be70");
+-        registerHead(EntityType.SHULKER, "b1d3534d21fe8499262de87affbeac4d25ffde35c8bdca069e61e1787ff2f");
++        registerHeads(EntityType.SHULKER, new ShulkerHeadHandler(getConfig()));
+         registerHead(EntityType.SLIME, "16ad20fc2d579be250d3db659c832da2b478a73a698b7ea10d18c9162e4d9b5");
+         registerHead(EntityType.SPIDER, "cd541541daaff50896cd258bdbdd4cf80c3ba816735726078bfe393927e57f1");
+-        registerHead(EntityType.SQUID, "01433be242366af126da434b8735df1eb5b3cb2cede39145974e9c483607bac");
++        registerHead(EntityType.CAVE_SPIDER, "41645dfd77d09923107b3496e94eeb5c30329f97efc96ed76e226e98224");
+         registerHead(EntityType.STRAY, "78ddf76e555dd5c4aa8a0a5fc584520cd63d489c253de969f7f22f85a9a2d56");
+-        registerHead(EntityType.TURTLE, "0a4050e7aacc4539202658fdc339dd182d7e322f9fbcc4d5f99b5718a");
+-        registerHead(EntityType.VEX, "c2ec5a516617ff1573cd2f9d5f3969f56d5575c4ff4efefabd2a18dc7ab98cd");
+-        registerHead(EntityType.VILLAGER, "822d8e751c8f2fd4c8942c44bdb2f5ca4d8ae8e575ed3eb34c18a86e93b");
+-        registerHead(EntityType.VINDICATOR, "6deaec344ab095b48cead7527f7dee61b063ff791f76a8fa76642c8676e2173");
+         registerHead(EntityType.WITCH, "ddedbee42be472e3eb791e7dbdfaf18c8fe593c638ba1396c9ef68f555cbce");
+-        registerHead(EntityType.WITHER, "cdf74e323ed41436965f5c57ddf2815d5332fe999e68fbb9d6cf5c8bd4139f");
+-        registerHead(EntityType.ZOMBIE_VILLAGER, "a6224941314bca2ebbb66b10ffd94680cc98c3435eeb71a228a08fd42c24db");
+-        registerHead(EntityType.RAVAGER, "1cb9f139f9489d86e410a06d8cbc670c8028137508e3e4bef612fe32edd60193");
+-        registerHead(EntityType.PILLAGER, "4aee6bb37cbfc92b0d86db5ada4790c64ff4468d68b84942fde04405e8ef5333");
+-        registerHead(EntityType.FOX, "46cff7a19e683a08e4587ea1457880313d5f341f346ceb5b0551195d810e3");
+-        registerHead(EntityType.PANDA, "7818b681cace1c641919f53edadecb142330d089a826b56219138c33b7a5e0db");
+-        registerHead(EntityType.WANDERING_TRADER, "5f1379a82290d7abe1efaabbc70710ff2ec02dd34ade386bc00c930c461cf932");
+-        registerHead(EntityType.PIGLIN, "11d18bbd0d795b9ac8efaad655e3d0c59fcbb9b964c2a9948ef537f4a3fbbf87");
+-        registerHead(EntityType.ZOMBIFIED_PIGLIN, "e935842af769380f78e8b8a88d1ea6ca2807c1e5693c2cf797456620833e936f");
+-        registerHead(EntityType.STRIDER, "18a9adf780ec7dd4625c9c0779052e6a15a451866623511e4c82e9655714b3c1");
+ 
+-        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17)) {
+-            registerHead(EntityType.AXOLOTL, "5c138f401c67fc2e1e387d9c90a9691772ee486e8ddbf2ed375fc8348746f936");
+-            registerHead(EntityType.GLOW_SQUID, "57327ee11812b764c7ade70b282cce4c58e635b2015244081d1490543da7280e");
+-            registerHead(EntityType.GOAT, "457a0d538fa08a7affe312903468861720f9fa34e86d44b89dcec5639265f03");
+-        }
+-
+-        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_19)) {
+-            // https://minecraft-heads.com/custom-heads/animals/61373-allay
+-            registerHead(EntityType.ALLAY, "df5de940bfe499c59ee8dac9f9c3919e7535eff3a9acb16f4842bf290f4c679f");
+-            // https://minecraft-heads.com/custom-heads/animals/63169-cold-frog
+-            registerHead(EntityType.FROG, "45852a95928897746012988fbd5dbaa1b70b7a5fb65157016f4ff3f245374c08");
+-            // https://minecraft-heads.com/custom-heads/animals/51348-tadpole
+-            registerHead(EntityType.TADPOLE, "987035f5352334c2cba6ac4c65c2b9059739d6d0e839c1dd98d75d2e77957847");
+-        }
++        // Piglin Mobs
++        if (Slimefun.getMinecraftVersion().isBefore(MinecraftVersion.MINECRAFT_1_20))
++            // After 1.20, Piglins now have their own head.
++            registerHead(EntityType.PIGLIN, "11d18bbd0d795b9ac8efaad655e3d0c59fcbb9b964c2a9948ef537f4a3fbbf87");
++        registerHead(EntityType.ZOMBIFIED_PIGLIN, "e935842af769380f78e8b8a88d1ea6ca2807c1e5693c2cf797456620833e936f");
++        registerHead(EntityType.PIGLIN_BRUTE, "3e300e9027349c4907497438bac29e3a4c87a848c50b34c21242727b57f4e1cf");
++        registerHead(EntityType.HOGLIN, "9bb9bc0f01dbd762a08d9e77c08069ed7c95364aa30ca1072208561b730e8d75");
++        registerHead(EntityType.ZOGLIN, "e67e18602e03035ad68967ce090235d8996663fb9ea47578d3a7ebbc42a5ccf9");
+ 
+-        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_20)) {
+-            // https://minecraft-heads.com/custom-heads/animals/62878-camel
+-            registerHead(EntityType.CAMEL, "3642c9f71131b5df4a8c21c8c6f10684f22abafb8cd68a1d55ac4bf263a53a31");
+-            // https://minecraft-heads.com/custom-heads/animals/64113-sniffer
+-            registerHead(EntityType.SNIFFER, "fe5a8341c478a134302981e6a7758ea4ecfd8d62a0df4067897e75502f9b25de");
+-        }
++        // Boss Mobs
++        registerHead(EntityType.ELDER_GUARDIAN, "4adc4a6f53afa116027b51d6f2e433ee7afa5d59b2ffa04780be464fa5d61a");
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_19))
++            registerHead(EntityType.WARDEN, "Warden Head", "c6f74361fb00490a0a98eeb814544ecdd775cb55633dbb114e60d27004cb1020");
++        registerHead(EntityType.WITHER, "cdf74e323ed41436965f5c57ddf2815d5332fe999e68fbb9d6cf5c8bd4139f");
+ 
+-        cfg.save();
++        getConfig().save();
+ 
+         new HeadListener(this);
+     }
+ 
+-    private void registerHead(EntityType type, String texture) {
++    /**
++     * Register a custom mob head using a standard handler.
++     */
++    private void registerHead(EntityType type, String name, String texture) {
+         try {
+-            double chance = cfg.getOrSetDefault("chances." + type.toString(), 5.0);
++            double chance = getConfig().getOrSetDefault("chances." + type.toString().toLowerCase(), 5.0);
+             SlimefunItemStack item = new SlimefunItemStack(
+                 type + "_HEAD",
+                 texture,
+-                "&f" + ChatUtils.humanize(type.toString()) + " Head"
+-            );
+-            new MobHead(
++                "&f" + name + " Head");
++            MobHead baseItem = new MobHead(
+                 itemGroup,
+                 item,
+                 recipeType,
+                 new CustomItemStack(
+                     item,
+-                    "&rKill 1 " + ChatUtils.humanize(type.name()),
++                    "&rKill 1 " + name,
+                     "&7Chance: &e" + chance + "%"
+-                )
+-            ).register(this, () -> mobs.put(type, item));
++                ));
++            baseItem.register(SlimefunAddonInstance.getSFAInstance(), () -> mobs.put(type, e -> baseItem.getCleanItem()));
+         } catch (Exception x) {
+-            logger.log(Level.WARNING, x, () -> "Could not load Mob Head for Entity: " + type);
++            LogUtils.log(Level.WARNING, "Could not load Mob Head for Entity: " + type, x);
+         }
+     }
+ 
+-    public Map<EntityType, ItemStack> getMobDrops() {
+-        return mobs;
++    private void registerHead(EntityType type, String texture) {
++        registerHead(type, ChatUtils.humanize(type.toString()), texture);
+     }
+ 
+-    public Config getCfg() {
+-        return cfg;
++    /**
++     * Register a custom mob head using a custom handler.
++     */
++    private void registerHeads(EntityType type, MobHeadHandler provider) {
++        try {
++            SlimefunItemStack item = provider.getHead(null);
++            String[] itemDescription = item.getItemMeta().getLore().toArray(new String[0]);
++            MobHead baseItem = new MobHead(itemGroup, item, recipeType, new CustomItemStack(item, "&rKill 1 " + ChatUtils.humanize(type.name()), itemDescription));
++            baseItem.register(SlimefunAddonInstance.getSFAInstance(), () -> mobs.put(type, provider));
++
++            // Register variants, but keep them hidden.
++            for (SlimefunItemStack variantItemStack : provider.getVariantItemStacks()) {
++                MobHead variantItem = new MobHead(itemGroup, variantItemStack, recipeType, variantItemStack);
++                variantItem.register(SlimefunAddonInstance.getSFAInstance(), () -> {
++                });
++                variantItem.setHidden(true);
++            }
++        } catch (Exception x) {
++            LogUtils.log(Level.WARNING, "Could not load Mob Head for Entity: " + type, x);
++        }
+     }
+ 
+-    @Override
+-    public JavaPlugin getJavaPlugin() {
+-        return this;
++    public boolean hasHead(LivingEntity entity) {
++        return mobs.containsKey(entity.getType());
+     }
+ 
+-    @Override
+-    public String getBugTrackerURL() {
+-        return "https://github.com/Slimefun-Addon-Community/ExtraHeads/issues";
++    public ItemStack getHead(LivingEntity entity) {
++        return mobs.get(entity.getType()).getHead(entity);
+     }
+ }
+diff --git a/src/main/java/io/github/thebusybiscuit/extraheads/HeadListener.java b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/HeadListener.java
+similarity index 52%
+rename from src/main/java/io/github/thebusybiscuit/extraheads/HeadListener.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/extraheads/HeadListener.java
+index da0777c..b8f98f5 100644
+--- a/src/main/java/io/github/thebusybiscuit/extraheads/HeadListener.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/HeadListener.java
+@@ -1,4 +1,4 @@
+-package io.github.thebusybiscuit.extraheads;
++package id.universenetwork.sfa_loader.addons.extraheads;
+ 
+ import java.util.concurrent.ThreadLocalRandom;
+ 
+@@ -10,32 +10,28 @@ import org.bukkit.event.entity.EntityDeathEvent;
+ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+ import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+ 
+-public class HeadListener implements Listener {
++import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
+ 
+-    private final ExtraHeads plugin;
++public class HeadListener implements Listener {
++    private final ExtraHeads main;
+ 
+-    public HeadListener(ExtraHeads plugin) {
+-        this.plugin = plugin;
++    public HeadListener(ExtraHeads main) {
++        this.main = main;
+ 
+-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
++        Events.registerListener(this);
+     }
+ 
+     @EventHandler(ignoreCancelled = true)
+     public void onKill(EntityDeathEvent e) {
+-        if (!plugin.getMobDrops().containsKey(e.getEntityType())) {
+-            return;
+-        }
++        if (!main.hasHead(e.getEntity())) return;
+ 
+-        double chance = plugin.getCfg().getDouble("chances." + e.getEntityType());
++        double chance = main.getConfig().getDouble("chances." + e.getEntityType().toString().toLowerCase());
+         Player killer = e.getEntity().getKiller();
+ 
+-        if (killer != null && SlimefunUtils.isItemSimilar(killer.getInventory().getItemInMainHand(), SlimefunItems.SWORD_OF_BEHEADING, true)) {
+-            chance *= plugin.getCfg().getDouble("options.sword-of-beheading-multiplier");
+-        }
++        if (killer != null && SlimefunUtils.isItemSimilar(killer.getInventory().getItemInMainHand(), SlimefunItems.SWORD_OF_BEHEADING, true))
++            chance *= main.getConfig().getDouble("options.sword-of-beheading-multiplier");
+ 
+-        if (ThreadLocalRandom.current().nextInt(100) < chance) {
+-            e.getEntity().getWorld().dropItemNaturally(e.getEntity().getLocation(), plugin.getMobDrops().get(e.getEntityType()));
+-        }
++        if (ThreadLocalRandom.current().nextInt(100) < chance)
++            e.getEntity().getWorld().dropItemNaturally(e.getEntity().getLocation(), main.getHead(e.getEntity()));
+     }
+-
+ }
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/MobHead.java b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/MobHead.java
+new file mode 100644
+index 0000000..bbc87fe
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/MobHead.java
+@@ -0,0 +1,55 @@
++package id.universenetwork.sfa_loader.addons.extraheads;
++
++import java.util.Collection;
++import java.util.Collections;
++
++import org.bukkit.entity.Player;
++import org.bukkit.inventory.ItemStack;
++import org.bukkit.inventory.meta.ItemMeta;
++
++import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
++import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++
++public class MobHead extends SlimefunItem {
++    private Runnable runnable;
++
++    private final SlimefunItemStack dropItem;
++
++    public MobHead(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack recipe) {
++        super(itemGroup, item, recipeType, new ItemStack[]{null, null, null, null, recipe, null, null, null, null});
++
++        dropItem = (SlimefunItemStack) item.clone();
++        ItemMeta cleanMeta = dropItem.getItemMeta();
++        cleanMeta.setLore(null);
++        dropItem.setItemMeta(cleanMeta);
++    }
++
++    public void register(SlimefunAddon addon, Runnable runnable) {
++        this.runnable = runnable;
++        register(addon);
++    }
++
++    @Override
++    public void postRegister() {
++        super.postRegister();
++
++        if (!isDisabled()) runnable.run();
++    }
++
++    public SlimefunItemStack getCleanItem() {
++        return (SlimefunItemStack) dropItem.clone();
++    }
++
++    @Override
++    public Collection<ItemStack> getDrops() {
++        return Collections.singletonList(getCleanItem());
++    }
++
++    @Override
++    public Collection<ItemStack> getDrops(Player p) {
++        return Collections.singletonList(getCleanItem());
++    }
++}
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/BeeHeadHandler.java b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/BeeHeadHandler.java
+new file mode 100644
+index 0000000..24f8b66
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/BeeHeadHandler.java
+@@ -0,0 +1,64 @@
++package id.universenetwork.sfa_loader.addons.extraheads.special;
++
++import java.util.concurrent.ThreadLocalRandom;
++
++import org.bukkit.entity.Bee;
++import org.bukkit.entity.LivingEntity;
++
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
++
++public class BeeHeadHandler extends MobHeadHandler {
++    final AddonConfig cfg;
++
++    static final String DEFAULT = "259001a851bb1b9e9c05de5d5c68b1ea0dc8bd86babf188e0aded8f912c07d0d";
++
++    static final String TRANS = "142111ad76f92c584ce1fabdd993dc73939b336d681dbf740d0f13365845c671";
++
++    public BeeHeadHandler(AddonConfig cfg) {
++        this.cfg = cfg;
++    }
++
++    public String getDescription() {
++        if (cfg.getOrSetDefault("options.special.bee-variant-chance", 0.1) > 0.0)
++            return "&6Has a &bS&dE&fC&fR&dE&bT rare variant!";
++        return null;
++    }
++
++    @Override
++    public SlimefunItemStack getHead(LivingEntity target) {
++        if (target instanceof Bee) return getHeadByVariant((Bee) target);
++        return MobHeadHandler.buildHead("BEE_HEAD", "Bee Head", DEFAULT, getGuideLore());
++    }
++
++    @Override
++    public SlimefunItemStack[] getVariantItemStacks() {
++        return new SlimefunItemStack[]{
++            MobHeadHandler.buildHead("BEE_HEAD_TRANS", "Bee Head (Trans)", TRANS)
++        };
++    }
++
++    String[] getGuideLore() {
++        double dropChance = cfg.getOrSetDefault("chances.bee", 5.0);
++        double variantChance = cfg.getOrSetDefault("options.special.bee-variant-chance", 10.0f);
++
++        if (variantChance > 0.0) return new String[]{
++            "&7Drop Chance: &e" + dropChance + "%",
++            "&6Has a &bS&dE&fC&fR&dE&bT &6rare variant!"
++        };
++        return new String[]{
++            "&7Drop Chance: &e" + dropChance + "%"
++        };
++    }
++
++    SlimefunItemStack getHeadByVariant(Bee target) {
++        double variantChance = cfg.getOrSetDefault("options.special.bee-variant-chance", 10.0) / 100.0;
++        if (variantChance <= 0.0) return MobHeadHandler.buildHead("BEE_HEAD", "Bee Head", DEFAULT);
++
++        // 10% odds by default
++        if (ThreadLocalRandom.current().nextFloat() <= variantChance)
++            return MobHeadHandler.buildHead("BEE_HEAD_TRANS", "Bee Head (Trans)", TRANS);
++        return MobHeadHandler.buildHead("BEE_HEAD", "Bee Head", DEFAULT);
++    }
++}
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/FrogHeadHandler.java b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/FrogHeadHandler.java
+new file mode 100644
+index 0000000..0814e6f
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/FrogHeadHandler.java
+@@ -0,0 +1,66 @@
++package id.universenetwork.sfa_loader.addons.extraheads.special;
++
++import org.bukkit.entity.Frog;
++import org.bukkit.entity.LivingEntity;
++
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
++
++public class FrogHeadHandler extends MobHeadHandler {
++    final AddonConfig cfg;
++
++    // https://minecraft-heads.com/custom-heads/animals/63169-cold-frog
++    static final String COLD = "45852a95928897746012988fbd5dbaa1b70b7a5fb65157016f4ff3f245374c08";
++    static final String TEMPERATE = "1f3e29dd947a177895f6121d2331b65ac3f896fda4bdd1151491e40b804952a7";
++    static final String WARM = "1e9312b5b2bab9ad51ea4b6a407d6d390bb5043408757b976a7556898ac43de0";
++
++    public FrogHeadHandler(AddonConfig cfg) {
++        this.cfg = cfg;
++    }
++
++    @Override
++    public SlimefunItemStack getHead(LivingEntity target) {
++        if (target instanceof Frog) return getHeadByVariant((Frog) target);
++        return MobHeadHandler.buildHead("FROG_HEAD", "Frog Head", COLD, getGuideLore());
++    }
++
++    @Override
++    public SlimefunItemStack[] getVariantItemStacks() {
++        return new SlimefunItemStack[]{
++            MobHeadHandler.buildHead("FROG_HEAD_COLD", "Frog Head (Cold)", COLD),
++            MobHeadHandler.buildHead("FROG_HEAD_TEMPERATE", "Frog Head (Temperate)", TEMPERATE),
++            MobHeadHandler.buildHead("FROG_HEAD_WARM", "Frog Head (Warm)", WARM),
++        };
++    }
++
++    String[] getGuideLore() {
++        double dropChance = cfg.getOrSetDefault("chances.frog", 5.0);
++        boolean variantsEnabled = cfg.getOrSetDefault("options.special.frog-variants", true);
++
++        if (variantsEnabled) return new String[]{
++            "&7Drop Chance: &e" + dropChance + "%",
++            "&6Comes in 3 variants!"
++        };
++        return new String[]{
++            "&7Drop Chance: &e" + dropChance + "%"
++        };
++    }
++
++    SlimefunItemStack getHeadByVariant(Frog target) {
++        if (!cfg.getOrSetDefault("options.special.frog-variants", true) || target == null)
++            return MobHeadHandler.buildHead("FROG_HEAD", "Frog Head", COLD);
++        else target.getVariant();
++
++        switch (target.getVariant()) {
++            case COLD:
++                return MobHeadHandler.buildHead("FROG_HEAD_COLD", "Frog Head (Cold)", COLD);
++            case TEMPERATE:
++                return MobHeadHandler.buildHead("FROG_HEAD_TEMPERATE", "Frog Head (Temperate)", TEMPERATE);
++            case WARM:
++                return MobHeadHandler.buildHead("FROG_HEAD_WARM", "Frog Head (Warm)", WARM);
++            default:
++                return MobHeadHandler.buildHead("FROG_HEAD", "Frog Head", COLD);
++        }
++    }
++}
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/MobHeadHandler.java b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/MobHeadHandler.java
+new file mode 100644
+index 0000000..e9d1b3f
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/MobHeadHandler.java
+@@ -0,0 +1,17 @@
++package id.universenetwork.sfa_loader.addons.extraheads.special;
++
++import javax.annotation.Nullable;
++
++import org.bukkit.entity.LivingEntity;
++
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++
++public abstract class MobHeadHandler implements MobHeadProvider {
++    public abstract SlimefunItemStack getHead(@Nullable LivingEntity target);
++
++    public abstract SlimefunItemStack[] getVariantItemStacks();
++
++    public static SlimefunItemStack buildHead(String type, String name, String texture, String... lore) {
++        return new SlimefunItemStack(type, texture, "&r" + name, lore);
++    }
++}
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/MobHeadProvider.java b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/MobHeadProvider.java
+new file mode 100644
+index 0000000..b604024
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/MobHeadProvider.java
+@@ -0,0 +1,19 @@
++package id.universenetwork.sfa_loader.addons.extraheads.special;
++
++import javax.annotation.Nullable;
++
++import org.bukkit.entity.LivingEntity;
++
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++
++@FunctionalInterface
++public interface MobHeadProvider {
++    /**
++     * Given a living entity, this method should return the ItemStack to drop.
++     *
++     * @param target The living entity that was killed
++     *               If null, return the itemstack to display in the Slimefun guide.
++     * @return The entity's head.
++     */
++    SlimefunItemStack getHead(@Nullable LivingEntity target);
++}
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/SheepHeadHandler.java b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/SheepHeadHandler.java
+new file mode 100644
+index 0000000..ace60b0
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/SheepHeadHandler.java
+@@ -0,0 +1,119 @@
++package id.universenetwork.sfa_loader.addons.extraheads.special;
++
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.entity.Sheep;
++
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
++
++public class SheepHeadHandler extends MobHeadHandler {
++    final AddonConfig cfg;
++
++    static final String LEGACY = "f31f9ccc6b3e32ecf13b8a11ac29cd33d18c95fc73db8a66c5d657ccb8be70";
++    static final String DEFAULT = "292df216ecd27624ac771bacfbfe006e1ed84a79e9270be0f88e9c8791d1ece4";
++
++    static final String BLACK = "634ac5b398cf7c86e3f6f188a5127d8b283d772bf5885c70e0c130805f069950";
++    static final String BLUE = "e39efc4b4eadec48576a5700ec812395510327e5d1e7c108fd8abc7796685aa3";
++    static final String BROWN = "e5813715c2f34f05649f8fa3eaaa67f1eda5e6f9cf930fa9c2e0412d1f9728e1";
++    static final String CYAN = "60558387b6658f5e9dcffc719214b603f603c4b04e708b7aabe75bcae91e804c";
++    static final String GRAY = "e6c2a2755b20ddff551a6903f2dc7e61f13ebe39b1d5ca929c87bd8583ec801f";
++    static final String GREEN = "5753a8ec32be9c550d1c560acb941edd9e3b73ddbf1586923fb37b220b4553dd";
++    static final String LIGHT_BLUE = "c8eb0d17479870b3973e8e001b82dcde22efc9d10c90412c6733a0b136564d1f";
++    static final String LIGHT_GRAY = "74a59be620ae8b3ee0dd0fa22c80affed4a0f729295cb8c41e78ee783f4633ad";
++    static final String LIME = "1ce4090e1bccf992b36def74a6d7d3972c17db1b75554e2c509271680b8e7974";
++    static final String MAGENTA = "fe228b04e9b979a10b70b8db6f3fb199deeb581594a5aa4a7febe948db17228b";
++    static final String ORANGE = "4271442d8a37db49f02a94c29352694962b5d0bd6bea05f1d93fe19eb4e7060e";
++    static final String PINK = "2e7cf1c58dbb7c3255b94c6043fa8f0d776c134f4d98b81ca31410965f47a25a";
++    static final String PURPLE = "343cbdae1f20a79281d3a71adf242a35c8cc58562b415f1120bca9d94b76f254";
++    static final String RED = "e0ce5b5ca9165ac77a9c3e3f64df0d3170d5afcf9d5a5575e3f0c0f21e43b83";
++    static final String WHITE = "292df216ecd27624ac771bacfbfe006e1ed84a79e9270be0f88e9c8791d1ece4";
++    static final String YELLOW = "12a5354c230e861aac72734a4582d1317026454b807ac353fc3a0bd0d8c422ba";
++
++    public SheepHeadHandler(AddonConfig cfg) {
++        this.cfg = cfg;
++    }
++
++    @Override
++    public SlimefunItemStack getHead(LivingEntity target) {
++        if (target instanceof Sheep) return getHeadByColor((Sheep) target);
++        return MobHeadHandler.buildHead("SHEEP_HEAD", "Sheep Head", DEFAULT, getGuideLore());
++    }
++
++    @Override
++    public SlimefunItemStack[] getVariantItemStacks() {
++        return new SlimefunItemStack[]{
++            MobHeadHandler.buildHead("SHEEP_HEAD_BLACK", "Sheep Head (Black)", BLACK),
++            MobHeadHandler.buildHead("SHEEP_HEAD_BLUE", "Sheep Head (Blue)", BLUE),
++            MobHeadHandler.buildHead("SHEEP_HEAD_BROWN", "Sheep Head (Brown)", BROWN),
++            MobHeadHandler.buildHead("SHEEP_HEAD_CYAN", "Sheep Head (Cyan)", CYAN),
++            MobHeadHandler.buildHead("SHEEP_HEAD_GRAY", "Sheep Head (Gray)", GRAY),
++            MobHeadHandler.buildHead("SHEEP_HEAD_GREEN", "Sheep Head (Green)", GREEN),
++            MobHeadHandler.buildHead("SHEEP_HEAD_LIGHT_BLUE", "Sheep Head (Light Blue)", LIGHT_BLUE),
++            MobHeadHandler.buildHead("SHEEP_HEAD_LIGHT_GRAY", "Sheep Head (Light Gray)", LIGHT_GRAY),
++            MobHeadHandler.buildHead("SHEEP_HEAD_LIME", "Sheep Head (Lime)", LIME),
++            MobHeadHandler.buildHead("SHEEP_HEAD_MAGENTA", "Sheep Head (Magenta)", MAGENTA),
++            MobHeadHandler.buildHead("SHEEP_HEAD_ORANGE", "Sheep Head (Orange)", ORANGE),
++            MobHeadHandler.buildHead("SHEEP_HEAD_PINK", "Sheep Head (Pink)", PINK),
++            MobHeadHandler.buildHead("SHEEP_HEAD_PURPLE", "Sheep Head (Purple)", PURPLE),
++            MobHeadHandler.buildHead("SHEEP_HEAD_RED", "Sheep Head (Red)", RED),
++            MobHeadHandler.buildHead("SHEEP_HEAD_WHITE", "Sheep Head (White)", WHITE),
++            MobHeadHandler.buildHead("SHEEP_HEAD_YELLOW", "Sheep Head (Yellow)", YELLOW)
++        };
++    }
++
++    String[] getGuideLore() {
++        double dropChance = cfg.getOrSetDefault("chances.sheep", 5.0);
++        boolean variantsEnabled = cfg.getOrSetDefault("options.special.sheep-variants", true);
++
++        if (variantsEnabled) return new String[]{
++            "&7Drop Chance: &e" + dropChance + "%",
++            "&6Comes in 16 colors!"
++        };
++        return new String[]{
++            "&7Drop Chance: &e" + dropChance + "%"
++        };
++    }
++
++    SlimefunItemStack getHeadByColor(Sheep target) {
++        if (!cfg.getOrSetDefault("options.special.sheep-colors", true) || target == null || target.getColor() == null)
++            return MobHeadHandler.buildHead("SHEEP_HEAD", "Sheep Head", DEFAULT);
++
++        switch (target.getColor()) {
++            case BLACK:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_BLACK", "Sheep Head (Black)", BLACK);
++            case BLUE:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_BLUE", "Sheep Head (Blue)", BLUE);
++            case BROWN:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_BROWN", "Sheep Head (Brown)", BROWN);
++            case CYAN:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_CYAN", "Sheep Head (Cyan)", CYAN);
++            case GRAY:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_GRAY", "Sheep Head (Gray)", GRAY);
++            case GREEN:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_GREEN", "Sheep Head (Green)", GREEN);
++            case LIGHT_BLUE:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_LIGHT_BLUE", "Sheep Head (Light Blue)", LIGHT_BLUE);
++            case LIGHT_GRAY:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_LIGHT_GRAY", "Sheep Head (Light Gray)", LIGHT_GRAY);
++            case LIME:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_LIME", "Sheep Head (Lime)", LIME);
++            case MAGENTA:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_MAGENTA", "Sheep Head (Magenta)", MAGENTA);
++            case ORANGE:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_ORANGE", "Sheep Head (Orange)", ORANGE);
++            case PINK:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_PINK", "Sheep Head (Pink)", PINK);
++            case PURPLE:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_PURPLE", "Sheep Head (Purple)", PURPLE);
++            case RED:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_RED", "Sheep Head (Red)", RED);
++            case WHITE:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_WHITE", "Sheep Head (White)", WHITE);
++            case YELLOW:
++                return MobHeadHandler.buildHead("SHEEP_HEAD_YELLOW", "Sheep Head (Yellow)", YELLOW);
++            default:
++                return MobHeadHandler.buildHead("SHEEP_HEAD", "Sheep Head", WHITE);
++        }
++    }
++}
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/ShulkerHeadHandler.java b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/ShulkerHeadHandler.java
+new file mode 100644
+index 0000000..837fc92
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/ShulkerHeadHandler.java
+@@ -0,0 +1,121 @@
++package id.universenetwork.sfa_loader.addons.extraheads.special;
++
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.entity.Shulker;
++
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
++
++public class ShulkerHeadHandler extends MobHeadHandler {
++    final AddonConfig cfg;
++
++    public static final String DESCRIPTION = "&6Comes in 16 additional colors!";
++
++    static final String LEGACY = "b1d3534d21fe8499262de87affbeac4d25ffde35c8bdca069e61e1787ff2f";
++    static final String DEFAULT = "537a294f6b7b4ba437e5cb35fb20f46792e7ac0a490a66132a557124ec5f997a";
++
++    static final String BLACK = "c5455aaadb2317b5f29e98981aa57f5795705069d8f415c0d68a92a791413b3a";
++    static final String BLUE = "9430966d5cebbd787147699a29743751b3ce4bb814e2db564fe92142d119cd1";
++    static final String BROWN = "c96d7fb87447ffc054fb109b84d6225d41029b1e6710c7de57f661aefa6f";
++    static final String CYAN = "26f173d4e3e8bd6f9be0bf9b745bd1cc7a29ff836ed2d486c5b99292c85cc";
++    static final String GRAY = "a798432fbeb2bc2d757b1d3c3b3558e6990392dd091ea4ef381b2e019c9462";
++    static final String GREEN = "331abe2bb2b9141f1018eb1539d2cfec13d9231b53a46caf8dc21aa2705049";
++    static final String LIGHT_BLUE = "c21cdec2cf4ebeef35d58b184b832598bc890a0ae5c2d54ee9be586d0";
++    static final String LIGHT_GRAY = "bfa17d41ea183bee53d546c7bec4ccf6a54d4f508fde6ebf3e5d388d4cbeacb9";
++    static final String LIME = "17144957c2c5bbfe447f4b2d36a246ea1b023da4cbd1aa2dbbb15e94981248";
++    static final String MAGENTA = "69fe291676c7b3f96f3cdf63c47b53fb45d73bd6fe2ce22de10749eb1426a";
++    static final String ORANGE = "f5711d954bd56236d1a9f99be880c5d38990df6bef72e73f745b04995dbf6";
++    static final String PINK = "3f847c12d57fe6555e8f9b47e562ecf1683fb6c35f92ce2ced2ae68de628750";
++    static final String PURPLE = "1e73832e272f8844c476846bc424a3432fb698c58e6ef2a9871c7d29aeea7";
++    static final String RED = "59994040433af0f015be4d6968c3d55e044c98dac2c4c6a6ea0efac7a6ddb";
++    static final String WHITE = "6b94b0acb3177b4cdb017fe31cd5c247262def53bf83381c6c82d72c56ac";
++    static final String YELLOW = "8cbf5586836b7b342932e1d23efc2490cf59c69accf1e05e9ed576caed8b7877";
++
++    public ShulkerHeadHandler(AddonConfig cfg) {
++        this.cfg = cfg;
++    }
++
++    @Override
++    public SlimefunItemStack getHead(LivingEntity target) {
++        if (target instanceof Shulker) return getHeadByColor((Shulker) target);
++        return MobHeadHandler.buildHead("SHULKER_HEAD", "Shulker Head", DEFAULT, getGuideLore());
++    }
++
++    @Override
++    public SlimefunItemStack[] getVariantItemStacks() {
++        return new SlimefunItemStack[]{
++            MobHeadHandler.buildHead("SHULKER_HEAD_BLACK", "Shulker Head (Black)", BLACK),
++            MobHeadHandler.buildHead("SHULKER_HEAD_BLUE", "Shulker Head (Blue)", BLUE),
++            MobHeadHandler.buildHead("SHULKER_HEAD_BROWN", "Shulker Head (Brown)", BROWN),
++            MobHeadHandler.buildHead("SHULKER_HEAD_CYAN", "Shulker Head (Cyan)", CYAN),
++            MobHeadHandler.buildHead("SHULKER_HEAD_GRAY", "Shulker Head (Gray)", GRAY),
++            MobHeadHandler.buildHead("SHULKER_HEAD_GREEN", "Shulker Head (Green)", GREEN),
++            MobHeadHandler.buildHead("SHULKER_HEAD_LIGHT_BLUE", "Shulker Head (Light Blue)", LIGHT_BLUE),
++            MobHeadHandler.buildHead("SHULKER_HEAD_LIGHT_GRAY", "Shulker Head (Light Gray)", LIGHT_GRAY),
++            MobHeadHandler.buildHead("SHULKER_HEAD_LIME", "Shulker Head (Lime)", LIME),
++            MobHeadHandler.buildHead("SHULKER_HEAD_MAGENTA", "Shulker Head (Magenta)", MAGENTA),
++            MobHeadHandler.buildHead("SHULKER_HEAD_ORANGE", "Shulker Head (Orange)", ORANGE),
++            MobHeadHandler.buildHead("SHULKER_HEAD_PINK", "Shulker Head (Pink)", PINK),
++            MobHeadHandler.buildHead("SHULKER_HEAD_PURPLE", "Shulker Head (Purple)", PURPLE),
++            MobHeadHandler.buildHead("SHULKER_HEAD_RED", "Shulker Head (Red)", RED),
++            MobHeadHandler.buildHead("SHULKER_HEAD_WHITE", "Shulker Head (White)", WHITE),
++            MobHeadHandler.buildHead("SHULKER_HEAD_YELLOW", "Shulker Head (Yellow)", YELLOW)
++        };
++    }
++
++    String[] getGuideLore() {
++        double dropChance = cfg.getOrSetDefault("chances.shulker", 5.0);
++        boolean variantsEnabled = cfg.getOrSetDefault("options.special.shulker-variants", true);
++
++        if (variantsEnabled) return new String[]{
++            "&7Drop Chance: &e" + dropChance + "%",
++            "&6Comes in 16 additional colors!"
++        };
++        return new String[]{
++            "&7Drop Chance: &e" + dropChance + "%"
++        };
++    }
++
++    SlimefunItemStack getHeadByColor(Shulker target) {
++        if (!cfg.getOrSetDefault("options.special.shulker-colors", true) || target == null || target.getColor() == null)
++            return MobHeadHandler.buildHead("SHULKER_HEAD", "Shulker Head", DEFAULT);
++
++        switch (target.getColor()) {
++            case BLACK:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_BLACK", "Shulker Head (Black)", BLACK);
++            case BLUE:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_BLUE", "Shulker Head (Blue)", BLUE);
++            case BROWN:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_BROWN", "Shulker Head (Brown)", BROWN);
++            case CYAN:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_CYAN", "Shulker Head (Cyan)", CYAN);
++            case GRAY:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_GRAY", "Shulker Head (Gray)", GRAY);
++            case GREEN:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_GREEN", "Shulker Head (Green)", GREEN);
++            case LIGHT_BLUE:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_LIGHT_BLUE", "Shulker Head (Light Blue)", LIGHT_BLUE);
++            case LIGHT_GRAY:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_LIGHT_GRAY", "Shulker Head (Light Gray)", LIGHT_GRAY);
++            case LIME:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_LIME", "Shulker Head (Lime)", LIME);
++            case MAGENTA:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_MAGENTA", "Shulker Head (Magenta)", MAGENTA);
++            case ORANGE:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_ORANGE", "Shulker Head (Orange)", ORANGE);
++            case PINK:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_PINK", "Shulker Head (Pink)", PINK);
++            case PURPLE:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_PURPLE", "Shulker Head (Purple)", PURPLE);
++            case RED:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_RED", "Shulker Head (Red)", RED);
++            case WHITE:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_WHITE", "Shulker Head (White)", WHITE);
++            case YELLOW:
++                return MobHeadHandler.buildHead("SHULKER_HEAD_YELLOW", "Shulker Head (Yellow)", YELLOW);
++            default:
++                return MobHeadHandler.buildHead("SHULKER_HEAD", "Shulker Head", DEFAULT);
++        }
++    }
++}
+diff --git a/src/main/java/io/github/thebusybiscuit/extraheads/MobHead.java b/src/main/java/io/github/thebusybiscuit/extraheads/MobHead.java
+deleted file mode 100644
+index d97c5fe..0000000
+--- a/src/main/java/io/github/thebusybiscuit/extraheads/MobHead.java
++++ /dev/null
+@@ -1,32 +0,0 @@
+-package io.github.thebusybiscuit.extraheads;
+-
+-import org.bukkit.inventory.ItemStack;
+-
+-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+-
+-public class MobHead extends SlimefunItem {
+-
+-    private Runnable runnable;
+-
+-    public MobHead(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack recipe) {
+-        super(itemGroup, item, recipeType, new ItemStack[] { null, null, null, null, recipe, null, null, null, null });
+-    }
+-
+-    public void register(ExtraHeads plugin, Runnable runnable) {
+-        this.runnable = runnable;
+-        register(plugin);
+-    }
+-
+-    @Override
+-    public void postRegister() {
+-        super.postRegister();
+-
+-        if (!isDisabled()) {
+-            runnable.run();
+-        }
+-    }
+-
+-}
+diff --git a/src/main/resources/addons-config/ExtraHeads/config.yml b/src/main/resources/addons-config/ExtraHeads/config.yml
+new file mode 100644
+index 0000000..548579e
+--- /dev/null
++++ b/src/main/resources/addons-config/ExtraHeads/config.yml
+@@ -0,0 +1,7 @@
++options:
++  sword-of-beheading-multiplier: 1.8
++  special:
++    bee-variant-chance: 0.1
++    shulker-colors: true
++    sheep-colors: true
++    frog-variants: true
+diff --git a/src/main/resources/config.yml b/src/main/resources/config.yml
+deleted file mode 100644
+index 473937c..0000000
+--- a/src/main/resources/config.yml
++++ /dev/null
+@@ -1,3 +0,0 @@
+-options:
+-  auto-update: true
+-  sword-of-beheading-multiplier: 1.8
+\ No newline at end of file
+diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
+deleted file mode 100644
+index 0c82c97..0000000
+--- a/src/main/resources/plugin.yml
++++ /dev/null
+@@ -1,7 +0,0 @@
+-name: ExtraHeads
+-version: ${project.version}
+-author: TheBusyBiscuit
+-depend: [Slimefun]
+-
+-main: io.github.thebusybiscuit.extraheads.ExtraHeads
+-api-version: 1.16
+\ No newline at end of file
+-- 
+2.43.0.windows.1
+

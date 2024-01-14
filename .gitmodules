@@ -14,6 +14,9 @@
 [submodule "ExtraGear"]
     path = Addons/ExtraGear
     url = https://github.com/TheBusyBiscuit/ExtraGear
+[submodule "ExtraHeads"]
+    path = Addons/ExtraHeads
+    url = https://github.com/TheBusyBiscuit/ExtraHeads
 [submodule "ExtraTools"]
     path = Addons/ExtraTools
     url = https://github.com/Sfiguz7/ExtraTools

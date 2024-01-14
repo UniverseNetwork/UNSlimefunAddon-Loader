@@ -37,6 +37,7 @@ if ($args[0]) {
         checkUpstream Addons/DyedBackpacks
         checkUpstream Addons/DynaTech
         checkUpstream Addons/ExtraGear
+        checkUpstream Addons/ExtraHeads
         checkUpstream Addons/ExtraTools
         checkUpstream Addons/FluffyMachines
         checkUpstream Addons/HeadLimiter

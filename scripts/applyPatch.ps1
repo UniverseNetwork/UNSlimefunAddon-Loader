@@ -58,6 +58,7 @@ if ($args[0]) {
         applyPatch Addons/DyedBackpacks
         applyPatch Addons/DynaTech
         applyPatch Addons/ExtraGear
+        applyPatch Addons/ExtraHeads
         applyPatch Addons/ExtraTools
         applyPatch Addons/FluffyMachines
         applyPatch Addons/HeadLimiter
