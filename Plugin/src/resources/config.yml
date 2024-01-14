@@ -21,6 +21,7 @@ addons:
   dyedbackpacks: true
   dynatech: true
   extragear: true
+  extraheads: true
   extratools: true
   fluffymachines: true
   headlimiter: false
