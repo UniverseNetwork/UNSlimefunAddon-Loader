@@ -18,6 +18,7 @@ loader-settings:
 addons:
   arvinmemories: false
   coloredenderchests: true
+  dyebench: true
   dyedbackpacks: true
   dynatech: true
   extragear: true

@@ -1,0 +1,1800 @@
+From 37e21b83a20b2a011afcaabcece8f63dd379c949 Mon Sep 17 00:00:00 2001
+From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
+Date: Mon, 15 Jan 2024 18:23:36 +0700
+Subject: [PATCH] DyeBench
+
+---
+ pom.xml                                       | 102 +--
+ .../sfa_loader/addons/dyebench/DyeBench.java  | 127 ++++
+ .../addons}/dyebench/DyeBenchItems.java       |  25 +-
+ .../items/machines/TheDyeBench.java           | 564 +++++++++++++++++
+ .../items/pigments/DyePigments.java           |   5 +-
+ .../me/jasperchasetoq/dyebench/DyeBench.java  |  59 --
+ .../items/machines/TheDyeBench.java           | 596 ------------------
+ .../dyebench/setup/DyeBenchItemSetup.java     | 127 ----
+ src/main/resources/config.yml                 |   2 -
+ src/main/resources/plugin.yml                 |  25 -
+ 10 files changed, 713 insertions(+), 919 deletions(-)
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dyebench/DyeBench.java
+ rename src/main/java/{me/jasperchasetoq => id/universenetwork/sfa_loader/addons}/dyebench/DyeBenchItems.java (84%)
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dyebench/implemention/items/machines/TheDyeBench.java
+ rename src/main/java/{me/jasperchasetoq => id/universenetwork/sfa_loader/addons}/dyebench/implemention/items/pigments/DyePigments.java (88%)
+ delete mode 100644 src/main/java/me/jasperchasetoq/dyebench/DyeBench.java
+ delete mode 100644 src/main/java/me/jasperchasetoq/dyebench/implemention/items/machines/TheDyeBench.java
+ delete mode 100644 src/main/java/me/jasperchasetoq/dyebench/setup/DyeBenchItemSetup.java
+ delete mode 100644 src/main/resources/config.yml
+ delete mode 100644 src/main/resources/plugin.yml
+
+diff --git a/pom.xml b/pom.xml
+index 2cf77a5..79f140f 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -2,93 +2,28 @@
+ <project xmlns="http://maven.apache.org/POM/4.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+-
+     <modelVersion>4.0.0</modelVersion>
++
++    <parent>
++        <groupId>id.universenetwork.sfa_loader</groupId>
++        <artifactId>Addons</artifactId>
++        <version>UNOFFICIAL</version>
++    </parent>
++
+     <groupId>me.jasperchasetoq</groupId>
+     <artifactId>DyeBench</artifactId>
+-
+     <version>UNOFFICIAL</version>
+ 
+-
+-    <properties>
+-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+-        <maven.compiler.source>16</maven.compiler.source>
+-        <maven.compiler.target>16</maven.compiler.target>
+-    </properties>
+-
+     <repositories>
+-        <repository>
+-            <id>paper-repo</id>
+-            <url>https://repo.destroystokyo.com/repository/maven-public/</url>
+-        </repository>
+-
+         <repository>
+             <id>spigot-repo</id>
+             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+         </repository>
+-
+-        <repository>
+-            <id>jitpack.io</id>
+-            <url>https://jitpack.io</url>
+-        </repository>
+     </repositories>
+ 
+     <build>
+         <finalName>${project.name} v${project.version}</finalName>
+-        <defaultGoal>clean package</defaultGoal>
+         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+-
+-        <resources>
+-            <resource>
+-                <directory>${basedir}/src/main/resources</directory>
+-                <filtering>true</filtering>
+-                <includes>
+-                    <include>*</include>
+-                </includes>
+-            </resource>
+-        </resources>
+-        <plugins>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-compiler-plugin</artifactId>
+-                <version>3.5.1</version>
+-                <configuration>
+-                    <source>16</source>
+-                    <target>16</target>
+-                </configuration>
+-            </plugin>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-shade-plugin</artifactId>
+-                <version>3.3.0</version>
+-                <configuration>
+-                    <relocations>
+-                        <relocation>
+-                            <pattern>org.bstats</pattern>
+-                            <shadedPattern>me.jasperchasetoq.dyebench.bstats</shadedPattern>
+-                        </relocation>
+-                    </relocations>
+-
+-                    <filters>
+-                        <filter>
+-                            <artifact>*:*</artifact>
+-                            <excludes>
+-                                <exclude>META-INF/*</exclude>
+-                            </excludes>
+-                        </filter>
+-                    </filters>
+-
+-                </configuration>
+-                <executions>
+-                    <execution>
+-                        <phase>package</phase>
+-                        <goals>
+-                            <goal>shade</goal>
+-                        </goals>
+-                    </execution>
+-                </executions>
+-            </plugin>
+-        </plugins>
+     </build>
+ 
+     <dependencies>
+@@ -98,34 +33,17 @@
+             <version>1.19-R0.1-SNAPSHOT</version>
+             <scope>provided</scope>
+         </dependency>
+-
+-        <dependency>
+-            <groupId>com.github.Slimefun</groupId>
+-            <artifactId>Slimefun4</artifactId>
+-            <version>RC-32</version>
+-            <scope>provided</scope>
+-            <exclusions>
+-                <exclusion>
+-                    <groupId>io.github.baked-libs</groupId>
+-                    <artifactId>dough-api</artifactId>
+-                </exclusion>
+-            </exclusions>
+-        </dependency>
+         <dependency>
+             <groupId>com.google.code.findbugs</groupId>
+             <artifactId>jsr305</artifactId>
+             <version>3.0.2</version>
+-        </dependency>
+-        <dependency>
+-            <groupId>org.bstats</groupId>
+-            <artifactId>bstats-bukkit</artifactId>
+-            <version>3.0.0</version>
+-            <scope>compile</scope>
++            <scope>provided</scope>
+         </dependency>
+         <dependency>
+             <groupId>com.github.JasperChaseTOQ</groupId>
+             <artifactId>WolfyLibrary</artifactId>
+-            <version>v1.1.7</version>
++            <version>v1.2.3</version>
++            <scope>provided</scope>
+         </dependency>
+     </dependencies>
+ </project>
+\ No newline at end of file
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/DyeBench.java b/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/DyeBench.java
+new file mode 100644
+index 0000000..e02ddff
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/DyeBench.java
+@@ -0,0 +1,127 @@
++package id.universenetwork.sfa_loader.addons.dyebench;
++
++import id.universenetwork.sfa_loader.addons.dyebench.implemention.items.machines.TheDyeBench;
++import id.universenetwork.sfa_loader.addons.dyebench.implemention.items.pigments.DyePigments;
++import id.universenetwork.sfa_loader.annotations.AddonLibrary;
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.template.AddonTemplate;
++import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
++import org.bukkit.Material;
++import org.bukkit.inventory.ItemStack;
++
++@AddonLibrary(
++        groupId = "com{}github{}JasperChaseTOQ",
++        artifactId = "WolfyLibrary",
++        version = "v1.2.3"
++)
++public class DyeBench extends AddonTemplate {
++    @Override
++    public void onLoad() {
++        // Machines
++        new TheDyeBench(DyeBenchItems.DyeBenchMachines, DyeBenchItems.JC_DYEBENCH, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        SlimefunItems.RAINBOW_WOOL, SlimefunItems.RAINBOW_WOOL, SlimefunItems.RAINBOW_WOOL,
++                        SlimefunItems.RAINBOW_WOOL, new ItemStack(Material.LOOM), SlimefunItems.RAINBOW_WOOL,
++                        SlimefunItems.RAINBOW_WOOL, SlimefunItems.RAINBOW_WOOL, SlimefunItems.RAINBOW_WOOL,
++                }).register(SlimefunAddonInstance.getSFAInstance());
++
++        // Pigments
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_WHITE_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.WHITE_DYE), new ItemStack(Material.WHITE_DYE), new ItemStack(Material.WHITE_DYE),
++                        new ItemStack(Material.WHITE_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.WHITE_DYE),
++                        new ItemStack(Material.WHITE_DYE), new ItemStack(Material.WHITE_DYE), new ItemStack(Material.WHITE_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_ORANGE_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.ORANGE_DYE), new ItemStack(Material.ORANGE_DYE), new ItemStack(Material.ORANGE_DYE),
++                        new ItemStack(Material.ORANGE_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.ORANGE_DYE),
++                        new ItemStack(Material.ORANGE_DYE), new ItemStack(Material.ORANGE_DYE), new ItemStack(Material.ORANGE_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_MAGENTA_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.MAGENTA_DYE), new ItemStack(Material.MAGENTA_DYE), new ItemStack(Material.MAGENTA_DYE),
++                        new ItemStack(Material.MAGENTA_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.MAGENTA_DYE),
++                        new ItemStack(Material.MAGENTA_DYE), new ItemStack(Material.MAGENTA_DYE), new ItemStack(Material.MAGENTA_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.LIGHT_BLUE_DYE), new ItemStack(Material.LIGHT_BLUE_DYE), new ItemStack(Material.LIGHT_BLUE_DYE),
++                        new ItemStack(Material.LIGHT_BLUE_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.LIGHT_BLUE_DYE),
++                        new ItemStack(Material.LIGHT_BLUE_DYE), new ItemStack(Material.LIGHT_BLUE_DYE), new ItemStack(Material.LIGHT_BLUE_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_YELLOW_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.YELLOW_DYE), new ItemStack(Material.YELLOW_DYE), new ItemStack(Material.YELLOW_DYE),
++                        new ItemStack(Material.YELLOW_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.YELLOW_DYE),
++                        new ItemStack(Material.YELLOW_DYE), new ItemStack(Material.YELLOW_DYE), new ItemStack(Material.YELLOW_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_LIME_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.LIME_DYE), new ItemStack(Material.LIME_DYE), new ItemStack(Material.LIME_DYE),
++                        new ItemStack(Material.LIME_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.LIME_DYE),
++                        new ItemStack(Material.LIME_DYE), new ItemStack(Material.LIME_DYE), new ItemStack(Material.LIME_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_PINK_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.PINK_DYE), new ItemStack(Material.PINK_DYE), new ItemStack(Material.PINK_DYE),
++                        new ItemStack(Material.PINK_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.PINK_DYE),
++                        new ItemStack(Material.PINK_DYE), new ItemStack(Material.PINK_DYE), new ItemStack(Material.PINK_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_GRAY_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.GRAY_DYE), new ItemStack(Material.GRAY_DYE), new ItemStack(Material.GRAY_DYE),
++                        new ItemStack(Material.GRAY_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.GRAY_DYE),
++                        new ItemStack(Material.GRAY_DYE), new ItemStack(Material.GRAY_DYE), new ItemStack(Material.GRAY_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.LIGHT_GRAY_DYE), new ItemStack(Material.LIGHT_GRAY_DYE), new ItemStack(Material.LIGHT_GRAY_DYE),
++                        new ItemStack(Material.LIGHT_GRAY_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.LIGHT_GRAY_DYE),
++                        new ItemStack(Material.LIGHT_GRAY_DYE), new ItemStack(Material.LIGHT_GRAY_DYE), new ItemStack(Material.LIGHT_GRAY_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_CYAN_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.CYAN_DYE), new ItemStack(Material.CYAN_DYE), new ItemStack(Material.CYAN_DYE),
++                        new ItemStack(Material.CYAN_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.CYAN_DYE),
++                        new ItemStack(Material.CYAN_DYE), new ItemStack(Material.CYAN_DYE), new ItemStack(Material.CYAN_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_PURPLE_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.PURPLE_DYE), new ItemStack(Material.PURPLE_DYE), new ItemStack(Material.PURPLE_DYE),
++                        new ItemStack(Material.PURPLE_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.PURPLE_DYE),
++                        new ItemStack(Material.PURPLE_DYE), new ItemStack(Material.PURPLE_DYE), new ItemStack(Material.PURPLE_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_BLUE_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.BLUE_DYE), new ItemStack(Material.BLUE_DYE), new ItemStack(Material.BLUE_DYE),
++                        new ItemStack(Material.BLUE_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.BLUE_DYE),
++                        new ItemStack(Material.BLUE_DYE), new ItemStack(Material.BLUE_DYE), new ItemStack(Material.BLUE_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_BROWN_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.BROWN_DYE), new ItemStack(Material.BROWN_DYE), new ItemStack(Material.BROWN_DYE),
++                        new ItemStack(Material.BROWN_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.BROWN_DYE),
++                        new ItemStack(Material.BROWN_DYE), new ItemStack(Material.BROWN_DYE), new ItemStack(Material.BROWN_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_GREEN_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.GREEN_DYE), new ItemStack(Material.GREEN_DYE), new ItemStack(Material.GREEN_DYE),
++                        new ItemStack(Material.GREEN_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.GREEN_DYE),
++                        new ItemStack(Material.GREEN_DYE), new ItemStack(Material.GREEN_DYE), new ItemStack(Material.GREEN_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_RED_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.RED_DYE), new ItemStack(Material.RED_DYE), new ItemStack(Material.RED_DYE),
++                        new ItemStack(Material.RED_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.RED_DYE),
++                        new ItemStack(Material.RED_DYE), new ItemStack(Material.RED_DYE), new ItemStack(Material.RED_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++        new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_BLACK_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.BLACK_DYE), new ItemStack(Material.BLACK_DYE), new ItemStack(Material.BLACK_DYE),
++                        new ItemStack(Material.BLACK_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.BLACK_DYE),
++                        new ItemStack(Material.BLACK_DYE), new ItemStack(Material.BLACK_DYE), new ItemStack(Material.BLACK_DYE),
++                }).register(SlimefunAddonInstance.getSFAInstance());
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/me/jasperchasetoq/dyebench/DyeBenchItems.java b/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/DyeBenchItems.java
+similarity index 84%
+rename from src/main/java/me/jasperchasetoq/dyebench/DyeBenchItems.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/dyebench/DyeBenchItems.java
+index ce0a514..d36076d 100644
+--- a/src/main/java/me/jasperchasetoq/dyebench/DyeBenchItems.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/DyeBenchItems.java
+@@ -1,28 +1,25 @@
+-package me.jasperchasetoq.dyebench;
++package id.universenetwork.sfa_loader.addons.dyebench;
+ 
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+ import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.groups.SubItemGroup;
+-import io.github.thebusybiscuit.slimefun4.core.attributes.MachineTier;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+-import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
+ import me.jasperchasetoq.wolfylibrary.slimefun.items.api.MachineLevel;
+ import me.jasperchasetoq.wolfylibrary.slimefun.items.api.MachineType;
+ import me.jasperchasetoq.wolfylibrary.slimefun.utils.ItemLore;
+ import org.bukkit.Material;
+-import org.bukkit.NamespacedKey;
+ 
+ public class DyeBenchItems {
+-    private DyeBenchItems() {}
++    // Groups
++    public static final NestedItemGroup DyeBenchNestedGeneral = new NestedItemGroup(AbstractAddon.createKey("JC_DB_GENERAL"), new CustomItemStack(Material.LOOM, "&bDyeBench"));
++    public static final SubItemGroup DyeBenchMachines = new SubItemGroup(AbstractAddon.createKey("JC_DB_MACHINES"), DyeBenchNestedGeneral, new CustomItemStack(Material.LOOM, "&bMachines"));
++    public static final SubItemGroup DyeBenchPigments = new SubItemGroup(AbstractAddon.createKey("JC_DB_PIGMENTS"), DyeBenchNestedGeneral, new CustomItemStack(Material.WHITE_DYE, "&bPigments"));
+ 
+-    //groups
+-    public static final NestedItemGroup DyeBenchNestedGeneral = new NestedItemGroup(new NamespacedKey(DyeBench.getInstance(), "JC_DB_GENERAL"), new CustomItemStack(Material.LOOM, "&bDyeBench"));
+-    public static final SubItemGroup DyeBenchMachines = new SubItemGroup(new NamespacedKey(DyeBench.getInstance(), "JC_DB_MACHINES"), DyeBenchNestedGeneral, new CustomItemStack(Material.LOOM, "&bMachines"));
+-    public static final SubItemGroup DyeBenchPigments = new SubItemGroup(new NamespacedKey(DyeBench.getInstance(), "JC_DB_PIGMENTS"), DyeBenchNestedGeneral, new CustomItemStack(Material.WHITE_DYE, "&bPigments"));
+-
+-    //machines
++    // Machines
+     public static final SlimefunItemStack JC_DYEBENCH = new SlimefunItemStack("JC_DYEBENCH", Material.LOOM, "&eDye Bench", "&fDyes items using pigments", ItemLore.machine(MachineLevel.BASIC, MachineType.MACHINE), ItemLore.EnergyPerSlimefunTick(25));
+-    //Pigments
++
++    // Pigments
+     public static final SlimefunItemStack JC_WHITE_PIGMENT = new SlimefunItemStack("JC_WHITE_PIGMENT", Material.WHITE_DYE, "&fWhite Pigment", "", "&fA reusable Pigment", "");
+     public static final SlimefunItemStack JC_ORANGE_PIGMENT = new SlimefunItemStack("JC_ORANGE_PIGMENT", Material.ORANGE_DYE, "&6Orange Pigment", "", "&6A reusable Pigment", "");
+     public static final SlimefunItemStack JC_MAGENTA_PIGMENT = new SlimefunItemStack("JC_MAGENTA_PIGMENT", Material.MAGENTA_DYE, "&fMagenta Pigment", "", "&fA reusable Pigment", "");
+@@ -39,6 +36,4 @@ public class DyeBenchItems {
+     public static final SlimefunItemStack JC_GREEN_PIGMENT = new SlimefunItemStack("JC_GREEN_PIGMENT", Material.GREEN_DYE, "&fGreen Pigment", "", "&fA reusable Pigment", "");
+     public static final SlimefunItemStack JC_RED_PIGMENT = new SlimefunItemStack("JC_RED_PIGMENT", Material.RED_DYE, "&fRed Pigment", "", "&fA reusable Pigment", "");
+     public static final SlimefunItemStack JC_BLACK_PIGMENT = new SlimefunItemStack("JC_BLACK_PIGMENT", Material.BLACK_DYE, "&0Black Pigment", "", "&0A reusable Pigment", "");
+-
+-}
+-
++}
+\ No newline at end of file
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/implemention/items/machines/TheDyeBench.java b/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/implemention/items/machines/TheDyeBench.java
+new file mode 100644
+index 0000000..0b79ff6
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/implemention/items/machines/TheDyeBench.java
+@@ -0,0 +1,564 @@
++package id.universenetwork.sfa_loader.addons.dyebench.implemention.items.machines;
++
++import id.universenetwork.sfa_loader.addons.dyebench.DyeBenchItems;
++import id.universenetwork.sfa_loader.addons.dyebench.implemention.items.pigments.DyePigments;
++import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
++import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
++import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
++import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
++import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
++import me.jasperchasetoq.wolfylibrary.slimefun.items.electic.machines.MenuUtils;
++import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
++import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
++import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
++import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
++import me.mrCookieSlime.Slimefun.api.BlockStorage;
++import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
++import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
++import me.mrCookieSlime.Slimefun.api.inventory.DirtyChestMenu;
++import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
++import org.bukkit.Material;
++import org.bukkit.block.Block;
++import org.bukkit.entity.Player;
++import org.bukkit.event.block.BlockBreakEvent;
++import org.bukkit.event.inventory.InventoryClickEvent;
++import org.bukkit.inventory.ItemStack;
++
++import javax.annotation.Nonnull;
++import java.util.ArrayList;
++import java.util.List;
++
++@SuppressWarnings("deprecation")
++public class TheDyeBench extends AContainer implements RecipeDisplayItem {
++    // Inventory Menu Slots
++    private static final int[] FIRST_INPUT_BORDER = {0, 1, 2, 9, 11, 18, 19, 20};
++    private static final int[] SECOND_INPUT_BORDER = {7, 16, 17};
++    private static final int[] FIRST_OUTPUT_BORDER = {27, 28, 29, 36, 38, 45, 46, 47};
++    private static final int[] SECOND_OUTPUT_BORDER = {43, 44, 52};
++    private static final int[] BACKGROUND = {3, 4, 5, 6, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, 26, 30, 31, 32, 33, 34, 35, 39, 40, 41, 42, 47, 48, 49, 50, 51};
++
++
++    public TheDyeBench(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
++        super(category, item, recipeType, recipe);
++        addItemHandler(onBreak());
++
++        new BlockMenuPreset(getId(), "&fDye Bench") {
++            @Override
++            public void init() {
++                constructMenu(this);
++            }
++
++            @Override
++            public boolean canOpen(Block b, Player p) {
++                return p.hasPermission("slimefun.dyebench.inventory.bypass") || Slimefun.getProtectionManager().hasPermission(p, b.getLocation(), Interaction.INTERACT_BLOCK);
++            }
++
++            @Override
++            public int[] getSlotsAccessedByItemTransport(ItemTransportFlow flow) {
++                if (flow == ItemTransportFlow.INSERT) return getInputSlots();
++                else return getOutputSlots();
++            }
++
++            @Override
++            public int[] getSlotsAccessedByItemTransport(DirtyChestMenu menu, ItemTransportFlow flow, ItemStack item) {
++                if (flow == ItemTransportFlow.INSERT) {
++                    if (SlimefunItem.getByItem(item) instanceof DyePigments) return getSecondInputSlot();
++                    else return getFirstInputSlot();
++                } else return getOutputSlots();
++            }
++        };
++    }
++
++    @Override
++    protected void registerDefaultRecipes() {
++        // White
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.WHITE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.WHITE_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.WHITE_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.WHITE_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.WHITE_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)});
++
++        // Orange
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.ORANGE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.ORANGE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.ORANGE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.ORANGE_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.ORANGE_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.ORANGE_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.ORANGE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.ORANGE_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.ORANGE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.ORANGE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.ORANGE_BED), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
++
++        // Magenta
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.MAGENTA_WOOL), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.MAGENTA_CARPET), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.MAGENTA_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.MAGENTA_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.MAGENTA_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.MAGENTA_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.MAGENTA_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.MAGENTA_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.MAGENTA_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.MAGENTA_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.MAGENTA_BED), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
++
++        // Light Blue
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_BED), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
++
++        // Yellow
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.YELLOW_WOOL), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.YELLOW_CARPET), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.YELLOW_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.YELLOW_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.YELLOW_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.YELLOW_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.YELLOW_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.YELLOW_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.YELLOW_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.YELLOW_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.YELLOW_BED), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
++
++        // Lime
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIME_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIME_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIME_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIME_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIME_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIME_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIME_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIME_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIME_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIME_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIME_BED), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
++
++        // Pink
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PINK_WOOL), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PINK_CARPET), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PINK_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PINK_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PINK_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PINK_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PINK_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PINK_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PINK_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PINK_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PINK_BED), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
++
++        // Gray
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GRAY_WOOL), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GRAY_CARPET), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GRAY_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GRAY_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GRAY_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GRAY_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GRAY_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GRAY_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GRAY_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GRAY_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GRAY_BED), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
++
++        // Light Gray
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_BED), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
++
++        // Cyan
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.CYAN_WOOL), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.CYAN_CARPET), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.CYAN_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.CYAN_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.CYAN_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.CYAN_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.CYAN_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.CYAN_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.CYAN_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.CYAN_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.CYAN_BED), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
++
++        // Purple
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PURPLE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PURPLE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PURPLE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PURPLE_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PURPLE_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PURPLE_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PURPLE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PURPLE_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PURPLE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PURPLE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.PURPLE_BED), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
++
++        // Blue
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLUE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLUE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLUE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLUE_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLUE_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLUE_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLUE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLUE_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLUE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLUE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLUE_BED), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
++
++        // Brown
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BROWN_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BROWN_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BROWN_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BROWN_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BROWN_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BROWN_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BROWN_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BROWN_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BROWN_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BROWN_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BROWN_BED), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
++
++        // Green
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GREEN_WOOL), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GREEN_CARPET), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GREEN_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GREEN_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GREEN_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GREEN_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GREEN_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GREEN_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GREEN_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GREEN_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.GREEN_BED), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
++
++        // Red
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.RED_WOOL), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.RED_CARPET), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.RED_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.RED_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.RED_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.RED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.RED_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.RED_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.RED_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.RED_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.RED_BED), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
++
++        // Black
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLACK_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLACK_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLACK_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLACK_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLACK_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLACK_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLACK_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLACK_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLACK_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLACK_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
++        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
++                new ItemStack[]{new ItemStack(Material.BLACK_BED), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
++    }
++
++    @Override
++    public ItemStack getProgressBar() {
++        return new ItemStack(Material.LOOM);
++    }
++
++    @Override
++    public String getMachineIdentifier() {
++        return "DYEBENCH";
++    }
++
++    @Override
++    public int getCapacity() {
++        return 250;
++    }
++
++    @Override
++    public int getEnergyConsumption() {
++        return 25;
++    }
++
++    @Override
++    public int getSpeed() {
++        return 1;
++    }
++
++    @Nonnull
++    @Override
++    public List<ItemStack> getDisplayRecipes() {
++        List<ItemStack> displayRecipes = new ArrayList<>(recipes.size() * 2);
++
++        for (MachineRecipe recipe : recipes) {
++            displayRecipes.add(recipe.getOutput()[recipe.getOutput().length - 1]);
++            displayRecipes.add(recipe.getInput()[recipe.getInput().length - 1]);
++            displayRecipes.add(recipe.getInput()[recipe.getInput().length - 2]);
++            displayRecipes.add(recipe.getOutput()[recipe.getOutput().length - 2]);
++        }
++
++        return displayRecipes;
++    }
++
++    // Item Input and Output slots
++    public int[] getFirstInputSlot() {
++        return new int[]{10};
++    }
++
++    public int[] getSecondInputSlot() {
++        return new int[]{8};
++    }
++
++    public int[] getFirstOutputSlot() {
++        return new int[]{37};
++    }
++
++    public int[] getSecondOutputSlot() {
++        return new int[]{53};
++    }
++
++    public int[] getInputSlots() {
++        return new int[]{8, 10};
++    }
++
++    public int[] getOutputSlots() {
++        return new int[]{37, 53};
++    }
++
++    protected void constructMenu(@Nonnull BlockMenuPreset preset) {
++        for (int i : BACKGROUND)
++            preset.addItem(i, MenuUtils.getWolfyMachineMenuBackgroundBorder(), ChestMenuUtils.getEmptyClickHandler());
++
++        for (int i : FIRST_INPUT_BORDER)
++            preset.addItem(i, MenuUtils.getWolfyMachineMenuInputOneBorder(), ChestMenuUtils.getEmptyClickHandler());
++
++        for (int i : SECOND_INPUT_BORDER)
++            preset.addItem(i, MenuUtils.getWolfyMachineMenuInputTwoBorder(), ChestMenuUtils.getEmptyClickHandler());
++
++
++        for (int i : FIRST_OUTPUT_BORDER)
++            preset.addItem(i, MenuUtils.getWolfyMachineMenuOutputOneBorder(), ChestMenuUtils.getEmptyClickHandler());
++
++        for (int i : SECOND_OUTPUT_BORDER)
++            preset.addItem(i, MenuUtils.getWolfyMachineMenuOutputTwoBorder(), ChestMenuUtils.getEmptyClickHandler());
++
++        for (int i : getOutputSlots()) {
++            preset.addMenuClickHandler(i, new ChestMenu.AdvancedMenuClickHandler() {
++                @Override
++                public boolean onClick(Player p, int slot, ItemStack cursor, ClickAction action) {
++                    return false;
++                }
++
++                @Override
++                public boolean onClick(InventoryClickEvent e, Player p, int slot, ItemStack cursor, ClickAction action) {
++                    return cursor == null || cursor.getType() == Material.AIR;
++                }
++            });
++        }
++    }
++
++    public BlockBreakHandler onBreak() {
++        return new BlockBreakHandler(false, false) {
++            @Override
++            public void onPlayerBreak(BlockBreakEvent blockbreak, ItemStack item, List<ItemStack> drops) {
++                Block machineblock = blockbreak.getBlock();
++                BlockMenu inv = BlockStorage.getInventory(machineblock);
++
++                if (inv != null) {
++                    inv.dropItems(machineblock.getLocation(), getFirstInputSlot());
++                    inv.dropItems(machineblock.getLocation(), getSecondInputSlot());
++                    inv.dropItems(machineblock.getLocation(), getFirstOutputSlot());
++                    inv.dropItems(machineblock.getLocation(), getSecondOutputSlot());
++                }
++            }
++        };
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/me/jasperchasetoq/dyebench/implemention/items/pigments/DyePigments.java b/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/implemention/items/pigments/DyePigments.java
+similarity index 88%
+rename from src/main/java/me/jasperchasetoq/dyebench/implemention/items/pigments/DyePigments.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/dyebench/implemention/items/pigments/DyePigments.java
+index 063df5d..0b29ec7 100644
+--- a/src/main/java/me/jasperchasetoq/dyebench/implemention/items/pigments/DyePigments.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/implemention/items/pigments/DyePigments.java
+@@ -1,4 +1,4 @@
+-package me.jasperchasetoq.dyebench.implemention.items.pigments;
++package id.universenetwork.sfa_loader.addons.dyebench.implemention.items.pigments;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+@@ -9,9 +9,8 @@ import org.bukkit.inventory.ItemStack;
+ import javax.annotation.ParametersAreNonnullByDefault;
+ 
+ public class DyePigments extends SlimefunItem {
+-
+     @ParametersAreNonnullByDefault
+     public DyePigments(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+         super(itemGroup, item, recipeType, recipe);
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/me/jasperchasetoq/dyebench/DyeBench.java b/src/main/java/me/jasperchasetoq/dyebench/DyeBench.java
+deleted file mode 100644
+index 73242fe..0000000
+--- a/src/main/java/me/jasperchasetoq/dyebench/DyeBench.java
++++ /dev/null
+@@ -1,59 +0,0 @@
+-package me.jasperchasetoq.dyebench;
+-
+-import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.GitHubBuildsUpdater;
+-
+-import me.jasperchasetoq.dyebench.setup.DyeBenchItemSetup;
+-
+-import org.bstats.bukkit.Metrics;
+-
+-import org.bukkit.plugin.java.JavaPlugin;
+-
+-import javax.annotation.Nonnull;
+-import java.io.File;
+-
+-public class DyeBench extends JavaPlugin implements SlimefunAddon {
+-
+-
+-    @Override
+-    public void onEnable() {
+-
+-        Config cfg = new Config(this);
+-
+-        DyeBenchItemSetup.setup(this);
+-        if (!new File(getDataFolder(), "config.yml").exists()) {
+-            saveDefaultConfig();
+-        }
+-
+-        if (getConfig().getBoolean("options.auto-update") && getDescription().getVersion().startsWith("DEV - ")) {
+-            new GitHubBuildsUpdater(this, getFile(), "JasperChaseTOQ/DyeBench/master").start();
+-
+-            int pluginId = 15656;
+-            Metrics metrics = new Metrics(this, pluginId);
+-        }
+-    }
+-    @Override
+-    public void onDisable() {
+-    }
+-    @Override
+-    public String getBugTrackerURL() {
+-        return "https://github.com/JasperChaseTOQ/DyeBench/issues";
+-    }
+-
+-    @Nonnull
+-    @Override
+-    public JavaPlugin getJavaPlugin() {
+-        return this;
+-    }
+-
+-    private static DyeBench instance;
+-
+-    public DyeBench() {
+-        instance = this;
+-    }
+-
+-    public static DyeBench getInstance() {
+-        return instance;
+-    }
+-}
+\ No newline at end of file
+diff --git a/src/main/java/me/jasperchasetoq/dyebench/implemention/items/machines/TheDyeBench.java b/src/main/java/me/jasperchasetoq/dyebench/implemention/items/machines/TheDyeBench.java
+deleted file mode 100644
+index 78702e0..0000000
+--- a/src/main/java/me/jasperchasetoq/dyebench/implemention/items/machines/TheDyeBench.java
++++ /dev/null
+@@ -1,596 +0,0 @@
+-package me.jasperchasetoq.dyebench.implemention.items.machines;
+-
+-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+-import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
+-import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
+-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
+-import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+-import me.jasperchasetoq.dyebench.DyeBenchItems;
+-import me.jasperchasetoq.dyebench.implemention.items.pigments.DyePigments;
+-import me.jasperchasetoq.wolfylibrary.slimefun.items.electic.machines.MenuUtils;
+-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
+-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
+-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
+-import me.mrCookieSlime.Slimefun.api.BlockStorage;
+-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+-import me.mrCookieSlime.Slimefun.api.inventory.DirtyChestMenu;
+-import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
+-import org.bukkit.Material;
+-import org.bukkit.block.Block;
+-import org.bukkit.entity.Player;
+-import org.bukkit.event.block.BlockBreakEvent;
+-import org.bukkit.event.inventory.InventoryClickEvent;
+-import org.bukkit.inventory.ItemStack;
+-
+-import javax.annotation.Nonnull;
+-import java.util.ArrayList;
+-import java.util.List;
+-
+-@SuppressWarnings("deprecation")
+-public class TheDyeBench extends AContainer implements RecipeDisplayItem {
+-
+-    //Inventory Menu Slots
+-    private static final int[] FIRST_INPUT_BORDER = {0, 1, 2, 9, 11, 18, 19, 20};
+-    private static final int[] SECOND_INPUT_BORDER = {7, 16, 17};
+-    private static final int[] FIRST_OUTPUT_BORDER = {27, 28, 29, 36, 38, 45, 46, 47};
+-    private static final int[] SECOND_OUTPUT_BORDER = {43, 44, 52};
+-    private static final int[] BACKGROUND = {3, 4, 5, 6, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, 26, 30, 31, 32, 33, 34, 35, 39, 40, 41, 42, 47, 48, 49, 50, 51};
+-
+-
+-    public TheDyeBench(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+-        super(category, item, recipeType, recipe);
+-        addItemHandler(onBreak());
+-
+-        new BlockMenuPreset(getId(), "&fDye Bench") {
+-            @Override
+-            public void init() {
+-                constructMenu(this);
+-            }
+-
+-            @Override
+-            public boolean canOpen(Block b, Player p) {
+-                return p.hasPermission("slimefun.dyebench.inventory.bypass") || Slimefun.getProtectionManager().hasPermission(p, b.getLocation(), Interaction.INTERACT_BLOCK);
+-            }
+-
+-
+-            @Override
+-            public int[] getSlotsAccessedByItemTransport(ItemTransportFlow flow) {
+-                if (flow == ItemTransportFlow.INSERT) {
+-                    return getInputSlots();
+-                } else {
+-                    return getOutputSlots();
+-                }
+-            }
+-
+-            @Override
+-            public int[] getSlotsAccessedByItemTransport(DirtyChestMenu menu, ItemTransportFlow flow, ItemStack item) {
+-                if (flow == ItemTransportFlow.INSERT) {
+-                    if (SlimefunItem.getByItem(item) instanceof DyePigments) {
+-                        return getSecondInputSlot();
+-                    } else {
+-                        return getFirstInputSlot();
+-                    }
+-                } else {
+-                    return getOutputSlots();
+-                }
+-            }
+-        };
+-    }
+-    @Override
+-    protected void registerDefaultRecipes() {
+-
+-
+-
+-        //white
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.WHITE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.WHITE_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.WHITE_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.WHITE_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.WHITE_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)});
+-
+-        //orange
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.ORANGE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.ORANGE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.ORANGE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.ORANGE_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.ORANGE_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.ORANGE_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.ORANGE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.ORANGE_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.ORANGE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.ORANGE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.ORANGE_BED), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
+-
+-        //MAGENTA
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.MAGENTA_WOOL), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.MAGENTA_CARPET), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.MAGENTA_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.MAGENTA_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.MAGENTA_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.MAGENTA_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.MAGENTA_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.MAGENTA_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.MAGENTA_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.MAGENTA_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.MAGENTA_BED), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
+-
+-        //LIGHT_BLUE
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_BLUE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_BLUE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_BLUE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_BLUE_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_BLUE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_BLUE_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_BLUE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_BLUE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_BLUE_BED), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
+-
+-        //YELLOW
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.YELLOW_WOOL), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.YELLOW_CARPET), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.YELLOW_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.YELLOW_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.YELLOW_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.YELLOW_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.YELLOW_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.YELLOW_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.YELLOW_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.YELLOW_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.YELLOW_BED), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
+-
+-        //LIME
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIME_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIME_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIME_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIME_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIME_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIME_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIME_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIME_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIME_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIME_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIME_BED), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
+-
+-        //PINK
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PINK_WOOL), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PINK_CARPET), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PINK_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PINK_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PINK_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PINK_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PINK_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PINK_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PINK_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PINK_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PINK_BED), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
+-
+-        //GRAY
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GRAY_WOOL), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GRAY_CARPET), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GRAY_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GRAY_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GRAY_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GRAY_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GRAY_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GRAY_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GRAY_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GRAY_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GRAY_BED), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
+-
+-        //LIGHT_GRAY
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_GRAY_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_GRAY_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_GRAY_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_GRAY_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_GRAY_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_GRAY_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_GRAY_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_GRAY_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.LIGHT_GRAY_BED), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
+-
+-        //CYAN
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.CYAN_WOOL), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.CYAN_CARPET), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.CYAN_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.CYAN_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.CYAN_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.CYAN_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.CYAN_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.CYAN_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.CYAN_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.CYAN_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.CYAN_BED), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
+-
+-        //PURPLE
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PURPLE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PURPLE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PURPLE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PURPLE_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PURPLE_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PURPLE_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PURPLE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PURPLE_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PURPLE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PURPLE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.PURPLE_BED), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
+-
+-        //BLUE
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLUE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLUE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLUE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLUE_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLUE_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLUE_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLUE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLUE_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLUE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLUE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLUE_BED), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
+-
+-        //BROWN
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BROWN_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BROWN_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BROWN_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BROWN_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BROWN_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BROWN_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BROWN_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BROWN_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BROWN_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BROWN_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BROWN_BED), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
+-
+-        //GREEN
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GREEN_WOOL), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GREEN_CARPET), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GREEN_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GREEN_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GREEN_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GREEN_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GREEN_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GREEN_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GREEN_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GREEN_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.GREEN_BED), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
+-
+-        //RED
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.RED_WOOL), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.RED_CARPET), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.RED_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.RED_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.RED_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.RED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.RED_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.RED_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.RED_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.RED_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.RED_BED), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
+-
+-        //BLACK
+-
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLACK_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLACK_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLACK_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLACK_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLACK_STAINED_GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLACK_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLACK_GLAZED_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLACK_SHULKER_BOX), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLACK_CONCRETE_POWDER), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLACK_CONCRETE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
+-        registerRecipe(1, new ItemStack[] {new ItemStack(Material.WHITE_BED), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
+-                new ItemStack[] {new ItemStack(Material.BLACK_BED), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
+-    }
+-
+-
+-    @Override
+-    public ItemStack getProgressBar() {
+-        return new ItemStack(Material.LOOM);
+-    }
+-
+-    @Override
+-    public String getMachineIdentifier() {
+-        return "DYEBENCH";
+-    }
+-
+-    @Override
+-    public int getCapacity() {
+-        return 250;
+-    }
+-
+-    @Override
+-    public int getEnergyConsumption() {
+-        return 25;
+-    }
+-
+-    @Override
+-    public int getSpeed() {
+-        return 1;
+-    }
+-
+-    @Nonnull
+-    @Override
+-    public List<ItemStack> getDisplayRecipes() {
+-        List<ItemStack> displayRecipes = new ArrayList<>(recipes.size() * 2);
+-
+-        for (MachineRecipe recipe : recipes) {
+-            displayRecipes.add(recipe.getOutput()[recipe.getOutput().length - 1]);
+-            displayRecipes.add(recipe.getInput()[recipe.getInput().length - 1]);
+-            displayRecipes.add(recipe.getInput()[recipe.getInput().length - 2]);
+-            displayRecipes.add(recipe.getOutput()[recipe.getOutput().length - 2]);
+-        }
+-
+-        return displayRecipes;
+-    }
+-
+-    //Item Input and Output slots(
+-    public int[] getFirstInputSlot() {
+-        return new int[] {10};
+-    }
+-    public int[] getSecondInputSlot() {
+-        return new int[] {8};
+-    }
+-    public int[] getFirstOutputSlot() {
+-        return new int[] {37};
+-    }
+-    public int[] getSecondOutputSlot() {
+-        return new int[] {53};
+-    }
+-    public int[] getInputSlots() {
+-        return new int[] {8, 10};
+-    }
+-    public int[] getOutputSlots() {
+-        return new int[] {37, 53};
+-    }
+-
+-    protected void constructMenu(@Nonnull BlockMenuPreset preset) {
+-        for (int i : BACKGROUND) {
+-            preset.addItem(i, MenuUtils.getWolfyMachineMenuBackgroundTile(), ChestMenuUtils.getEmptyClickHandler());
+-        }
+-
+-        for (int i : FIRST_INPUT_BORDER) {
+-            preset.addItem(i, MenuUtils.getWolfyMachineMenuInputOneTile(), ChestMenuUtils.getEmptyClickHandler());
+-        }
+-
+-        for (int i : SECOND_INPUT_BORDER) {
+-            preset.addItem(i, MenuUtils.getWolfyMachineMenuInputTwoTile(), ChestMenuUtils.getEmptyClickHandler());
+-        }
+-
+-
+-        for (int i : FIRST_OUTPUT_BORDER) {
+-            preset.addItem(i, MenuUtils.getWolfyMachineMenuOutputOneTile(), ChestMenuUtils.getEmptyClickHandler());
+-        }
+-
+-        for (int i : SECOND_OUTPUT_BORDER) {
+-            preset.addItem(i, MenuUtils.getWolfyMachineMenuOutputTwoTile(), ChestMenuUtils.getEmptyClickHandler());
+-        }
+-
+-        for (int i : getOutputSlots()) {
+-
+-            preset.addMenuClickHandler(i, new ChestMenu.AdvancedMenuClickHandler() {
+-
+-                @Override
+-                public boolean onClick(Player p, int slot, ItemStack cursor, ClickAction action) {
+-                    return false;
+-                }
+-
+-                @Override
+-                public boolean onClick(InventoryClickEvent e, Player p, int slot, ItemStack cursor, ClickAction action) {
+-                    return cursor == null || cursor.getType() == Material.AIR;
+-                }
+-            });
+-
+-        }
+-    }
+-
+-    public BlockBreakHandler onBreak() {
+-        return new BlockBreakHandler(false, false) {
+-
+-            @Override
+-            public void onPlayerBreak(BlockBreakEvent blockbreak, ItemStack item, List<ItemStack> drops) {
+-                Block machineblock = blockbreak.getBlock();
+-                BlockMenu inv = BlockStorage.getInventory(machineblock);
+-
+-                if (inv != null) {
+-                    inv.dropItems(machineblock.getLocation(), getFirstInputSlot());
+-                    inv.dropItems(machineblock.getLocation(), getSecondInputSlot());
+-                    inv.dropItems(machineblock.getLocation(), getFirstOutputSlot());
+-                    inv.dropItems(machineblock.getLocation(), getSecondOutputSlot());
+-                }
+-            }
+-        };
+-    }
+-}
+diff --git a/src/main/java/me/jasperchasetoq/dyebench/setup/DyeBenchItemSetup.java b/src/main/java/me/jasperchasetoq/dyebench/setup/DyeBenchItemSetup.java
+deleted file mode 100644
+index f84c0a2..0000000
+--- a/src/main/java/me/jasperchasetoq/dyebench/setup/DyeBenchItemSetup.java
++++ /dev/null
+@@ -1,127 +0,0 @@
+-package me.jasperchasetoq.dyebench.setup;
+-
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+-import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+-import me.jasperchasetoq.dyebench.DyeBench;
+-import me.jasperchasetoq.dyebench.DyeBenchItems;
+-import me.jasperchasetoq.dyebench.implemention.items.machines.TheDyeBench;
+-import me.jasperchasetoq.dyebench.implemention.items.pigments.DyePigments;
+-import org.bukkit.Material;
+-import org.bukkit.inventory.ItemStack;
+-
+-import javax.annotation.Nonnull;
+-
+-    public class DyeBenchItemSetup {
+-        private DyeBenchItemSetup() {
+-        }
+-
+-        public static void setup(@Nonnull DyeBench plugin) {
+-
+-
+-            //machines
+-            new TheDyeBench(DyeBenchItems.DyeBenchMachines, DyeBenchItems.JC_DYEBENCH, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            SlimefunItems.RAINBOW_WOOL, SlimefunItems.RAINBOW_WOOL, SlimefunItems.RAINBOW_WOOL,
+-                            SlimefunItems.RAINBOW_WOOL, new ItemStack(Material.LOOM),SlimefunItems.RAINBOW_WOOL,
+-                            SlimefunItems.RAINBOW_WOOL, SlimefunItems.RAINBOW_WOOL, SlimefunItems.RAINBOW_WOOL,
+-                    }).register(plugin);
+-            //pigments
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_WHITE_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.WHITE_DYE), new ItemStack(Material.WHITE_DYE), new ItemStack(Material.WHITE_DYE),
+-                            new ItemStack(Material.WHITE_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.WHITE_DYE),
+-                            new ItemStack(Material.WHITE_DYE), new ItemStack(Material.WHITE_DYE), new ItemStack(Material.WHITE_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_ORANGE_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.ORANGE_DYE), new ItemStack(Material.ORANGE_DYE), new ItemStack(Material.ORANGE_DYE),
+-                            new ItemStack(Material.ORANGE_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.ORANGE_DYE),
+-                            new ItemStack(Material.ORANGE_DYE), new ItemStack(Material.ORANGE_DYE), new ItemStack(Material.ORANGE_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_MAGENTA_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.MAGENTA_DYE), new ItemStack(Material.MAGENTA_DYE), new ItemStack(Material.MAGENTA_DYE),
+-                            new ItemStack(Material.MAGENTA_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.MAGENTA_DYE),
+-                            new ItemStack(Material.MAGENTA_DYE), new ItemStack(Material.MAGENTA_DYE), new ItemStack(Material.MAGENTA_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.LIGHT_BLUE_DYE), new ItemStack(Material.LIGHT_BLUE_DYE), new ItemStack(Material.LIGHT_BLUE_DYE),
+-                            new ItemStack(Material.LIGHT_BLUE_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.LIGHT_BLUE_DYE),
+-                            new ItemStack(Material.LIGHT_BLUE_DYE), new ItemStack(Material.LIGHT_BLUE_DYE), new ItemStack(Material.LIGHT_BLUE_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_YELLOW_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.YELLOW_DYE), new ItemStack(Material.YELLOW_DYE), new ItemStack(Material.YELLOW_DYE),
+-                            new ItemStack(Material.YELLOW_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.YELLOW_DYE),
+-                            new ItemStack(Material.YELLOW_DYE), new ItemStack(Material.YELLOW_DYE), new ItemStack(Material.YELLOW_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_LIME_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.LIME_DYE), new ItemStack(Material.LIME_DYE), new ItemStack(Material.LIME_DYE),
+-                            new ItemStack(Material.LIME_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.LIME_DYE),
+-                            new ItemStack(Material.LIME_DYE), new ItemStack(Material.LIME_DYE), new ItemStack(Material.LIME_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_PINK_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.PINK_DYE), new ItemStack(Material.PINK_DYE), new ItemStack(Material.PINK_DYE),
+-                            new ItemStack(Material.PINK_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.PINK_DYE),
+-                            new ItemStack(Material.PINK_DYE), new ItemStack(Material.PINK_DYE), new ItemStack(Material.PINK_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_GRAY_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.GRAY_DYE), new ItemStack(Material.GRAY_DYE), new ItemStack(Material.GRAY_DYE),
+-                            new ItemStack(Material.GRAY_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.GRAY_DYE),
+-                            new ItemStack(Material.GRAY_DYE), new ItemStack(Material.GRAY_DYE), new ItemStack(Material.GRAY_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.LIGHT_GRAY_DYE), new ItemStack(Material.LIGHT_GRAY_DYE), new ItemStack(Material.LIGHT_GRAY_DYE),
+-                            new ItemStack(Material.LIGHT_GRAY_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.LIGHT_GRAY_DYE),
+-                            new ItemStack(Material.LIGHT_GRAY_DYE), new ItemStack(Material.LIGHT_GRAY_DYE), new ItemStack(Material.LIGHT_GRAY_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_CYAN_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.CYAN_DYE), new ItemStack(Material.CYAN_DYE), new ItemStack(Material.CYAN_DYE),
+-                            new ItemStack(Material.CYAN_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.CYAN_DYE),
+-                            new ItemStack(Material.CYAN_DYE), new ItemStack(Material.CYAN_DYE), new ItemStack(Material.CYAN_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_PURPLE_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.PURPLE_DYE), new ItemStack(Material.PURPLE_DYE), new ItemStack(Material.PURPLE_DYE),
+-                            new ItemStack(Material.PURPLE_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.PURPLE_DYE),
+-                            new ItemStack(Material.PURPLE_DYE), new ItemStack(Material.PURPLE_DYE), new ItemStack(Material.PURPLE_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_BLUE_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.BLUE_DYE), new ItemStack(Material.BLUE_DYE), new ItemStack(Material.BLUE_DYE),
+-                            new ItemStack(Material.BLUE_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.BLUE_DYE),
+-                            new ItemStack(Material.BLUE_DYE), new ItemStack(Material.BLUE_DYE), new ItemStack(Material.BLUE_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_BROWN_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.BROWN_DYE), new ItemStack(Material.BROWN_DYE), new ItemStack(Material.BROWN_DYE),
+-                            new ItemStack(Material.BROWN_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.BROWN_DYE),
+-                            new ItemStack(Material.BROWN_DYE), new ItemStack(Material.BROWN_DYE), new ItemStack(Material.BROWN_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_GREEN_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.GREEN_DYE), new ItemStack(Material.GREEN_DYE), new ItemStack(Material.GREEN_DYE),
+-                            new ItemStack(Material.GREEN_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.GREEN_DYE),
+-                            new ItemStack(Material.GREEN_DYE), new ItemStack(Material.GREEN_DYE), new ItemStack(Material.GREEN_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_RED_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.RED_DYE), new ItemStack(Material.RED_DYE), new ItemStack(Material.RED_DYE),
+-                            new ItemStack(Material.RED_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.RED_DYE),
+-                            new ItemStack(Material.RED_DYE), new ItemStack(Material.RED_DYE), new ItemStack(Material.RED_DYE),
+-                    }).register(plugin);
+-            new DyePigments(DyeBenchItems.DyeBenchPigments, DyeBenchItems.JC_BLACK_PIGMENT, RecipeType.ENHANCED_CRAFTING_TABLE,
+-                    new ItemStack[]{
+-                            new ItemStack(Material.BLACK_DYE), new ItemStack(Material.BLACK_DYE), new ItemStack(Material.BLACK_DYE),
+-                            new ItemStack(Material.BLACK_DYE), new ItemStack(Material.LOOM), new ItemStack(Material.BLACK_DYE),
+-                            new ItemStack(Material.BLACK_DYE), new ItemStack(Material.BLACK_DYE), new ItemStack(Material.BLACK_DYE),
+-                    }).register(plugin);
+-        }
+-    }
+-
+diff --git a/src/main/resources/config.yml b/src/main/resources/config.yml
+deleted file mode 100644
+index e9bcdf9..0000000
+--- a/src/main/resources/config.yml
++++ /dev/null
+@@ -1,2 +0,0 @@
+-options:
+-  auto-update: true
+\ No newline at end of file
+diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
+deleted file mode 100644
+index 9a0d509..0000000
+--- a/src/main/resources/plugin.yml
++++ /dev/null
+@@ -1,25 +0,0 @@
+-## CHANGE this to the name of your plugin.
+-name: DyeBench
+-
+-## CHANGE this to your username.
+-author: JasperChaseTOQ
+-
+-## CHANGE this to a meaninful but short description of your plugin.
+-description: A generic Slimefun4-Addon
+-
+-## CHANGE this to the path of the class that extends JavaPlugin.
+-main: me.jasperchasetoq.dyebench.DyeBench
+-
+-## You can change this to link to your website or repository. You can also remove this line if you want to.
+-website: https://github.com/Slimefun/Addon-Template
+-
+-## This value is automatically replaced by the version specified in your pom.xml file.
+-## Do not change this.
+-version: ${project.version}
+-
+-## This is the minimum minecraft version required to run your plugin.
+-api-version: 1.17
+-
+-## This is required and marks Slimefun as a plugin dependency.
+-depend:
+-- Slimefun
+\ No newline at end of file
+-- 
+2.43.0.windows.1
+

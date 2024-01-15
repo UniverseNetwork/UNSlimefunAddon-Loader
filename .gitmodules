@@ -5,6 +5,9 @@
 [submodule "ColoredEnderChests"]
     path = Addons/ColoredEnderChests
     url = https://github.com/TheBusyBiscuit/ColoredEnderChests
+[submodule "DyeBench"]
+	path = Addons/DyeBench
+	url = https://github.com/JasperChaseTOQ/DyeBench
 [submodule "DyedBackpacks"]
     path = Addons/DyedBackpacks
     url = https://github.com/TheBusyBiscuit/DyedBackpacks

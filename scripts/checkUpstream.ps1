@@ -34,6 +34,7 @@ if ($args[0]) {
         checkUpstream InfinityLib-Standalone
 
         checkUpstream Addons/ColoredEnderChests
+        checkUpstream Addons/DyeBench
         checkUpstream Addons/DyedBackpacks
         checkUpstream Addons/DynaTech
         checkUpstream Addons/ExtraGear

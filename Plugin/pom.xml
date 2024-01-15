@@ -95,6 +95,11 @@
             <version>UNOFFICIAL</version>
         </dependency>
         <dependency>
+            <groupId>me.jasperchasetoq</groupId>
+            <artifactId>DyeBench</artifactId>
+            <version>UNOFFICIAL</version>
+        </dependency>
+        <dependency>
             <groupId>io.github.thebusybiscuit</groupId>
             <artifactId>DyedBackpacks</artifactId>
             <version>1.0.0</version>

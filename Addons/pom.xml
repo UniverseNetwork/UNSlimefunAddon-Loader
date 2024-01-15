@@ -16,6 +16,7 @@
     <modules>
         <module>ArvinMemories</module>
         <module>ColoredEnderChests</module>
+        <module>DyeBench</module>
         <module>DyedBackpacks</module>
         <module>DynaTech</module>
         <module>ExtraGear</module>
