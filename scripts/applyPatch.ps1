@@ -28,8 +28,10 @@ function applyPatch($dir) {
     }
     Set-Location "$basedir/$dir"
 
+    $branch=(git remote show origin | Select-String -Pattern "HEAD branch:").ToString().Split(":")[1].Trim(" ")
+
     Write-Host "Resetting $name..." -f yellow
-    git reset --hard HEAD | Write-Host -f magenta
+    git reset --hard origin/$branch | Write-Host -f magenta
 
     Write-Host "  Applying a patch to $name..." -f green
     git am --abort >$null 2>&1
