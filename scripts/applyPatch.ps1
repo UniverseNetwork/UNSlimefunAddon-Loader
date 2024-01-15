@@ -24,7 +24,8 @@ function applyPatch($dir) {
     $name=Split-Path $dir -Leaf
     if (-not (Test-Path "$basedir/$dir")) {
         Write-Host "The directory is invalid or unavailable!" -f red
-        exit
+        enableCommitSigningIfNeeded
+        exit 1
     }
     Set-Location "$basedir/$dir"
 

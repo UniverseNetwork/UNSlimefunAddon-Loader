@@ -1,20 +1,20 @@
-From 37e21b83a20b2a011afcaabcece8f63dd379c949 Mon Sep 17 00:00:00 2001
+From e639d0e8d536c3c90c9d55f3cf80d827eb46fab1 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Mon, 15 Jan 2024 18:23:36 +0700
+Date: Mon, 15 Jan 2024 19:22:40 +0700
 Subject: [PATCH] DyeBench
 
 ---
  pom.xml                                       | 102 +--
  .../sfa_loader/addons/dyebench/DyeBench.java  | 127 ++++
  .../addons}/dyebench/DyeBenchItems.java       |  25 +-
- .../items/machines/TheDyeBench.java           | 564 +++++++++++++++++
+ .../items/machines/TheDyeBench.java           | 581 +++++++++++++++++
  .../items/pigments/DyePigments.java           |   5 +-
  .../me/jasperchasetoq/dyebench/DyeBench.java  |  59 --
  .../items/machines/TheDyeBench.java           | 596 ------------------
  .../dyebench/setup/DyeBenchItemSetup.java     | 127 ----
  src/main/resources/config.yml                 |   2 -
  src/main/resources/plugin.yml                 |  25 -
- 10 files changed, 713 insertions(+), 919 deletions(-)
+ 10 files changed, 730 insertions(+), 919 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dyebench/DyeBench.java
  rename src/main/java/{me/jasperchasetoq => id/universenetwork/sfa_loader/addons}/dyebench/DyeBenchItems.java (84%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dyebench/implemention/items/machines/TheDyeBench.java
@@ -359,14 +359,15 @@ index ce0a514..d36076d 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/implemention/items/machines/TheDyeBench.java b/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/implemention/items/machines/TheDyeBench.java
 new file mode 100644
-index 0000000..0b79ff6
+index 0000000..ee4934b
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/implemention/items/machines/TheDyeBench.java
-@@ -0,0 +1,564 @@
+@@ -0,0 +1,581 @@
 +package id.universenetwork.sfa_loader.addons.dyebench.implemention.items.machines;
 +
 +import id.universenetwork.sfa_loader.addons.dyebench.DyeBenchItems;
 +import id.universenetwork.sfa_loader.addons.dyebench.implemention.items.pigments.DyePigments;
++import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -441,8 +442,9 @@ index 0000000..0b79ff6
 +    @Override
 +    protected void registerDefaultRecipes() {
 +        // White
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.WHITE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.WHITE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.WHITE_TERRACOTTA), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_WHITE_PIGMENT, 1)},
@@ -457,8 +459,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.ORANGE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.ORANGE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.ORANGE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.ORANGE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.ORANGE_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_ORANGE_PIGMENT, 1)},
@@ -481,8 +484,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.MAGENTA_WOOL), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.MAGENTA_CARPET), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.MAGENTA_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.MAGENTA_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.MAGENTA_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_MAGENTA_PIGMENT, 1)},
@@ -505,8 +509,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_BLUE_PIGMENT, 1)},
@@ -529,8 +534,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.YELLOW_WOOL), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.YELLOW_CARPET), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.YELLOW_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.YELLOW_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.YELLOW_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_YELLOW_PIGMENT, 1)},
@@ -553,8 +559,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.LIME_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.LIME_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.LIME_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.LIME_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.LIME_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIME_PIGMENT, 1)},
@@ -577,8 +584,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.PINK_WOOL), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.PINK_CARPET), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.PINK_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.PINK_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.PINK_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_PINK_PIGMENT, 1)},
@@ -601,8 +609,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.GRAY_WOOL), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.GRAY_CARPET), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.GRAY_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.GRAY_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.GRAY_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_GRAY_PIGMENT, 1)},
@@ -625,8 +634,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_WOOL), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_CARPET), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_LIGHT_GRAY_PIGMENT, 1)},
@@ -649,8 +659,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.CYAN_WOOL), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.CYAN_CARPET), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.CYAN_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.CYAN_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.CYAN_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_CYAN_PIGMENT, 1)},
@@ -673,8 +684,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.PURPLE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.PURPLE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.PURPLE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.PURPLE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.PURPLE_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_PURPLE_PIGMENT, 1)},
@@ -697,8 +709,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.BLUE_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.BLUE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.BLUE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.BLUE_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.BLUE_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BLUE_PIGMENT, 1)},
@@ -721,8 +734,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.BROWN_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.BROWN_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.BROWN_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.BROWN_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.BROWN_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BROWN_PIGMENT, 1)},
@@ -745,8 +759,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.GREEN_WOOL), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.GREEN_CARPET), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.GREEN_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.GREEN_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.GREEN_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_GREEN_PIGMENT, 1)},
@@ -769,8 +784,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.RED_WOOL), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.RED_CARPET), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.RED_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.RED_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.RED_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_RED_PIGMENT, 1)},
@@ -793,8 +809,9 @@ index 0000000..0b79ff6
 +                new ItemStack[]{new ItemStack(Material.BLACK_WOOL), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.WHITE_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.BLACK_CARPET), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
-+        registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
-+                new ItemStack[]{new ItemStack(Material.BLACK_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerRecipe(1, new ItemStack[]{new ItemStack(Material.CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
++                    new ItemStack[]{new ItemStack(Material.BLACK_CANDLE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
 +                new ItemStack[]{new ItemStack(Material.BLACK_STAINED_GLASS), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)});
 +        registerRecipe(1, new ItemStack[]{new ItemStack(Material.GLASS_PANE), new SlimefunItemStack(DyeBenchItems.JC_BLACK_PIGMENT, 1)},
