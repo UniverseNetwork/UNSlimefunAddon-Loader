@@ -1,12 +1,12 @@
-From 612f04b0f83050d7d909155738c02ad0471f8187 Mon Sep 17 00:00:00 2001
+From bc5a0d57c0d8cdd01a50799292add17b30f01a2e Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 13 Jan 2024 05:50:25 +0700
+Date: Tue, 16 Jan 2024 15:15:59 +0700
 Subject: [PATCH] FluffyMachines
 
 ---
- pom.xml                                       |  92 ++------
+ pom.xml                                       | 109 +--------
  .../fluffymachines/FluffyItemSetup.java       | 184 ++++++---------
- .../addons/fluffymachines/FluffyMachines.java |  96 ++++++++
+ .../addons/fluffymachines/FluffyMachines.java |  95 ++++++++
  .../addons}/fluffymachines/items/Barrel.java  | 179 +++++----------
  .../items/EnderChestExtractionNode.java       |  62 ++---
  .../items/EnderChestInsertionNode.java        |  29 +--
@@ -63,7 +63,7 @@ Subject: [PATCH] FluffyMachines
  .../fluffymachines/utils/CancelPlace.java     |   4 -
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  31 ---
- 59 files changed, 1196 insertions(+), 2343 deletions(-)
+ 59 files changed, 1192 insertions(+), 2363 deletions(-)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/FluffyItemSetup.java (81%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/Barrel.java (84%)
@@ -124,7 +124,7 @@ Subject: [PATCH] FluffyMachines
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 0413fe6..99de3dc 100644
+index 0413fe6..d4ddf37 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,34 +1,24 @@
@@ -170,7 +170,7 @@ index 0413fe6..99de3dc 100644
          <repository>
              <id>CodeMC</id>
              <url>https://repo.codemc.org/repository/maven-public</url>
-@@ -37,52 +27,18 @@
+@@ -37,63 +27,6 @@
  
      <build>
          <finalName>${project.name} v${project.version}</finalName>
@@ -187,31 +187,28 @@ index 0413fe6..99de3dc 100644
 -            </resource>
 -        </resources>
 -
-         <plugins>
+-        <plugins>
 -            <plugin>
 -                <groupId>org.apache.maven.plugins</groupId>
 -                <artifactId>maven-compiler-plugin</artifactId>
 -                <version>3.9.0</version>
 -            </plugin>
 -
-             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-shade-plugin</artifactId>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-shade-plugin</artifactId>
 -                <version>3.5.1</version>
-+                <version>3.2.4</version>
-                 <configuration>
-                     <relocations>
-                         <relocation>
+-                <configuration>
+-                    <relocations>
+-                        <relocation>
 -                            <pattern>org.bstats</pattern>
 -                            <shadedPattern>io.ncbpfluffybear.shaded.bstats</shadedPattern>
 -                        </relocation>
 -                        <relocation>
 -                            <pattern>com.github.Slimefun-Addon-Community.extrautils</pattern>
 -                            <shadedPattern>io.ncbpfluffybear.shaded.extrautils</shadedPattern>
-+                            <pattern>dev.j3fftw.extrautils</pattern>
-+                            <shadedPattern>id.universenetwork.sfa_loader.libraries.extrautils</shadedPattern>
-                         </relocation>
-                     </relocations>
+-                        </relocation>
+-                    </relocations>
 -
 -                    <!-- Exclude manifest files -->
 -                    <filters>
@@ -223,10 +220,21 @@ index 0413fe6..99de3dc 100644
 -                        </filter>
 -                    </filters>
 -
-                 </configuration>
-                 <executions>
-                     <execution>
-@@ -104,13 +60,7 @@
+-                </configuration>
+-                <executions>
+-                    <execution>
+-                        <phase>package</phase>
+-                        <goals>
+-                            <goal>shade</goal>
+-                        </goals>
+-                    </execution>
+-                </executions>
+-            </plugin>
+-        </plugins>
+     </build>
+ 
+     <dependencies>
+@@ -104,13 +37,7 @@
              <scope>provided</scope>
          </dependency>
  
@@ -241,7 +249,7 @@ index 0413fe6..99de3dc 100644
          <dependency>
              <groupId>com.gmail.nossr50.mcMMO</groupId>
              <artifactId>mcMMO</artifactId>
-@@ -138,24 +88,12 @@
+@@ -138,24 +65,12 @@
              <version>3.0.2</version>
              <scope>provided</scope>
          </dependency>
@@ -808,10 +816,10 @@ index 42146e0..17306b4 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
 new file mode 100644
-index 0000000..6246a99
+index 0000000..1ca5295
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
-@@ -0,0 +1,96 @@
+@@ -0,0 +1,95 @@
 +package id.universenetwork.sfa_loader.addons.fluffymachines;
 +
 +import id.universenetwork.sfa_loader.addons.fluffymachines.listeners.KeyedCrafterListener;
@@ -833,8 +841,7 @@ index 0000000..6246a99
 +@AddonLibrary(
 +        groupId = "com{}github{}Slimefun-Addon-Community",
 +        artifactId = "extrautils",
-+        version = "73e76ac",
-+        packageRelocation = "dev{}j3fftw{}extrautils"
++        version = "73e76ac"
 +)
 +public class FluffyMachines extends AddonTemplate {
 +    public static final HashMap<ItemStack, List<Pair<ItemStack, List<RecipeChoice>>>> shapedVanillaRecipes =

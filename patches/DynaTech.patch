@@ -1,11 +1,11 @@
-From c2e66ab093150a1bc7ba6d998a0ded845f683b4b Mon Sep 17 00:00:00 2001
+From 0c598ccd2b994c88377d0728c0f51f7aea8fa2f1 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 13 Jan 2024 05:49:49 +0700
+Date: Tue, 16 Jan 2024 15:15:31 +0700
 Subject: [PATCH] DynaTech
 
 ---
- pom.xml                                       |  91 +--
- .../sfa_loader/addons/dynatech/DynaTech.java  | 112 +++
+ pom.xml                                       |  96 +--
+ .../sfa_loader/addons/dynatech/DynaTech.java  | 110 +++
  .../addons}/dynatech/DynaTechItems.java       | 107 ++-
  .../dynatech/attributes/LiquidStorage.java    |  52 +-
  .../events/PicnicBasketFeedPlayerEvent.java   |  24 +-
@@ -73,7 +73,7 @@ Subject: [PATCH] DynaTech
  .../addons-config/DynaTech/config.yml         |   1 +
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  24 -
- 69 files changed, 2834 insertions(+), 3483 deletions(-)
+ 69 files changed, 2828 insertions(+), 3492 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/DynaTechItems.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/attributes/LiquidStorage.java (80%)
@@ -144,10 +144,10 @@ Subject: [PATCH] DynaTech
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 6a536f7..3bd330a 100644
+index 6a536f7..307d09e 100644
 --- a/pom.xml
 +++ b/pom.xml
-@@ -1,18 +1,19 @@
+@@ -1,58 +1,27 @@
  <project xmlns="http://maven.apache.org/POM/4.0.0"
 -    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 -    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -168,14 +168,16 @@ index 6a536f7..3bd330a 100644
  
 -    <name>DynaTech</name>
 -
-     <properties>
+-    <properties>
 -      <maven.compiler.source>16</maven.compiler.source>
 -        <maven.compiler.target>16</maven.compiler.target>
 -        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-         <sonar.organization>profelements</sonar.organization>
-         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-     </properties>
-@@ -22,37 +23,10 @@
+-        <sonar.organization>profelements</sonar.organization>
+-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+-    </properties>
+-
+     <repositories>
+         <repository>
              <id>paper-repo</id>
              <url>https://repo.destroystokyo.com/repository/maven-public/</url>
          </repository>
@@ -214,31 +216,26 @@ index 6a536f7..3bd330a 100644
  
          <plugins>
              <plugin>
-@@ -61,17 +35,17 @@
-                 <version>3.4.1</version>
+@@ -62,16 +31,8 @@
                  <configuration>
                      <relocations>
--                        <relocation>
+                         <relocation>
 -                            <pattern>org.bstats</pattern>
 -                            <shadedPattern>me.profelements.dynatech.bstats</shadedPattern>
 -                        </relocation>
-                         <relocation>
-                             <pattern>dev.j3fftw.extrautils</pattern>
+-                        <relocation>
+-                            <pattern>dev.j3fftw.extrautils</pattern>
 -                            <shadedPattern>me.profelements.dynatech.extrautils</shadedPattern>
-+                            <shadedPattern>id.universenetwork.sfa_loader.libraries.extrautils</shadedPattern>
-                         </relocation>
-                         <relocation>
-                             <pattern>io.github.bakedlibs.dough</pattern>
+-                        </relocation>
+-                        <relocation>
+-                            <pattern>io.github.bakedlibs.dough</pattern>
 -                            <shadedPattern>me.profelements.dynatech.dough</shadedPattern>
-+                            <shadedPattern>id.universenetwork.sfa_loader.libraries.dough</shadedPattern>
-+                        </relocation>
-+                        <relocation>
 +                            <pattern>com.google.common</pattern>
 +                            <shadedPattern>id.universenetwork.sfa_loader.libraries.guava</shadedPattern>
                          </relocation>
                      </relocations>
                  </configuration>
-@@ -88,6 +62,7 @@
+@@ -88,6 +49,7 @@
      </build>
  
      <dependencies>
@@ -246,7 +243,7 @@ index 6a536f7..3bd330a 100644
          <dependency>
              <groupId>org.spigotmc</groupId>
              <artifactId>spigot-api</artifactId>
-@@ -96,19 +71,7 @@
+@@ -96,19 +58,7 @@
          </dependency>
  
          <dependency>
@@ -267,7 +264,7 @@ index 6a536f7..3bd330a 100644
              <artifactId>exoticgarden</artifactId>
              <version>7f9a5f6</version>
              <scope>provided</scope>
-@@ -116,32 +79,28 @@
+@@ -116,32 +66,28 @@
          <dependency>
              <groupId>io.github.mooy1</groupId>
              <artifactId>InfinityExpansion</artifactId>
@@ -309,10 +306,10 @@ index 6a536f7..3bd330a 100644
  </project>
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
 new file mode 100644
-index 0000000..a999282
+index 0000000..cd14644
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
-@@ -0,0 +1,112 @@
+@@ -0,0 +1,110 @@
 +package id.universenetwork.sfa_loader.addons.dynatech;
 +
 +import com.google.common.base.Preconditions;
@@ -355,14 +352,12 @@ index 0000000..a999282
 +@AddonLibrary(
 +    groupId = "com{}github{}Slimefun-Addon-Community",
 +    artifactId = "extrautils",
-+    version = "73e76ac",
-+    packageRelocation = "dev{}j3fftw{}extrautils"
++    version = "73e76ac"
 +)
 +@AddonLibrary(
 +    groupId = "io{}github{}baked-libs",
 +    artifactId = "dough-api",
-+    version = "1.2.0",
-+    packageRelocation = "io{}github{}bakedlibs{}dough"
++    version = "1.2.0"
 +)
 +public class DynaTech extends AddonTemplate {
 +    private static DynaTech instance;

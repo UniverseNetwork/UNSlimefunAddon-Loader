@@ -1,16 +1,16 @@
-From b8c481f09b80de060dd65cbdda13976aeedd8270 Mon Sep 17 00:00:00 2001
+From aeef397b3f0d5dd79f0316e043d7d667eca1f39a Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 13 Jan 2024 05:50:35 +0700
+Date: Tue, 16 Jan 2024 15:16:20 +0700
 Subject: [PATCH] HeadLimiter
 
 ---
- pom.xml                                       |  73 ++-----------
+ pom.xml                                       |  95 ++--------------
  .../dev/j3fftw/headlimiter/CountCommand.java  |  58 ----------
  .../dev/j3fftw/headlimiter/HeadLimiter.java   | 103 ------------------
  .../j3fftw/headlimiter/MetricsService.java    |  30 -----
  .../addons/headlimiter/CountCommand.java      |  50 +++++++++
  .../addons}/headlimiter/CountResult.java      |   5 +-
- .../addons/headlimiter/HeadLimiter.java       |  88 +++++++++++++++
+ .../addons/headlimiter/HeadLimiter.java       |  87 +++++++++++++++
  .../sfa_loader/addons}/headlimiter/Utils.java |  51 ++++-----
  .../blocklimiter/BlockLimiter.java            |  86 ++++++---------
  .../blocklimiter/BlockListener.java           |  46 +++-----
@@ -18,7 +18,7 @@ Subject: [PATCH] HeadLimiter
  .../headlimiter/blocklimiter/Group.java       |  63 +++--------
  .../HeadLimiter}/config.yml                   |   0
  src/main/resources/plugin.yml                 |  15 ---
- 14 files changed, 240 insertions(+), 447 deletions(-)
+ 14 files changed, 238 insertions(+), 470 deletions(-)
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/CountCommand.java
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/HeadLimiter.java
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/MetricsService.java
@@ -34,7 +34,7 @@ Subject: [PATCH] HeadLimiter
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 6a9c156..47ed52c 100644
+index 6a9c156..fe65d31 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,9 +1,14 @@
@@ -53,7 +53,7 @@ index 6a9c156..47ed52c 100644
      <groupId>dev.j3fftw.headlimiter</groupId>
      <artifactId>HeadLimiter</artifactId>
      <version>UNOFFICIAL</version>
-@@ -11,45 +16,10 @@
+@@ -11,78 +16,11 @@
  
      <name>HeadLimiter</name>
  
@@ -84,8 +84,8 @@ index 6a9c156..47ed52c 100644
 -                </includes>
 -            </resource>
 -        </resources>
- 
-         <plugins>
+-
+-        <plugins>
 -            <plugin>
 -                <groupId>org.apache.maven.plugins</groupId>
 -                <artifactId>maven-compiler-plugin</artifactId>
@@ -96,25 +96,32 @@ index 6a9c156..47ed52c 100644
 -                </configuration>
 -            </plugin>
 -
-             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-shade-plugin</artifactId>
-@@ -64,13 +34,9 @@
- 
-                 <configuration>
-                     <relocations>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-shade-plugin</artifactId>
+-                <version>3.3.0</version>
+-                <executions>
+-                    <execution>
+-                        <goals>
+-                            <goal>shade</goal>
+-                        </goals>
+-                    </execution>
+-                </executions>
+-
+-                <configuration>
+-                    <relocations>
 -                        <relocation>
 -                            <pattern>org.bstats</pattern>
 -                            <shadedPattern>dev.j3fftw.headlimiter.bstats</shadedPattern>
 -                        </relocation>
-                         <relocation>
-                             <pattern>dev.j3fftw.extrautils</pattern>
+-                        <relocation>
+-                            <pattern>dev.j3fftw.extrautils</pattern>
 -                            <shadedPattern>dev.j3fftw.headlimiter.extrautils</shadedPattern>
-+                            <shadedPattern>id.universenetwork.sfa_loader.libraries.extrautils</shadedPattern>
-                         </relocation>
-                     </relocations>
-                 </configuration>
-@@ -79,10 +45,6 @@
+-                        </relocation>
+-                    </relocations>
+-                </configuration>
+-            </plugin>
+-        </plugins>
      </build>
  
      <repositories>
@@ -125,7 +132,7 @@ index 6a9c156..47ed52c 100644
          <repository>
              <id>paper-repo</id>
              <url>https://repo.papermc.io/repository/maven-public/</url>
-@@ -91,10 +53,6 @@
+@@ -91,10 +29,6 @@
              <id>sonatype</id>
              <url>https://oss.sonatype.org/content/groups/public/</url>
          </repository>
@@ -136,7 +143,7 @@ index 6a9c156..47ed52c 100644
      </repositories>
  
      <dependencies>
-@@ -105,24 +63,11 @@
+@@ -105,24 +39,11 @@
              <scope>provided</scope>
          </dependency>
  
@@ -457,10 +464,10 @@ index 23ab396..c5acda0 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java
 new file mode 100644
-index 0000000..cba3c83
+index 0000000..4ae4c02
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java
-@@ -0,0 +1,88 @@
+@@ -0,0 +1,87 @@
 +package id.universenetwork.sfa_loader.addons.headlimiter;
 +
 +import id.universenetwork.sfa_loader.addons.headlimiter.blocklimiter.BlockLimiter;
@@ -484,8 +491,7 @@ index 0000000..cba3c83
 +@AddonLibrary(
 +        groupId = "com{}github{}Slimefun-Addon-Community",
 +        artifactId = "extrautils",
-+        version = "73e76ac",
-+        packageRelocation = "dev{}j3fftw{}extrautils"
++        version = "73e76ac"
 +)
 +public final class HeadLimiter extends AddonTemplate implements Listener {
 +    @Getter
