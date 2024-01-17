@@ -1,6 +1,6 @@
-From 4722c8893daed2a97873fcaa7633a7773db366d7 Mon Sep 17 00:00:00 2001
+From 81976d08b6d32d493600186a6e66219905d085b5 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 13 Jan 2024 05:51:39 +0700
+Date: Wed, 17 Jan 2024 14:02:53 +0700
 Subject: [PATCH] SMG
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] SMG
  README.md                                     |   4 +-
  pom.xml                                       |  66 +----
  .../simplematerialgenerators/SMGItems.java    | 185 ++++++-------
- .../SimpleMaterialGenerators.java             | 221 ++++++++++++++++
+ .../SimpleMaterialGenerators.java             | 223 ++++++++++++++++
  .../items/BrokenGenerator.java                |   7 +-
  .../items/GeneratorMultiblock.java            |  14 +-
  .../items/MaterialGenerator.java              |  12 +-
@@ -16,7 +16,7 @@ Subject: [PATCH] SMG
  .../SimpleMaterialGenerators.java             |  53 ----
  src/main/resources/config.yml                 |   2 -
  src/main/resources/plugin.yml                 |  25 --
- 12 files changed, 328 insertions(+), 506 deletions(-)
+ 12 files changed, 330 insertions(+), 506 deletions(-)
  delete mode 100644 .github/FUNDING.yml
  rename src/main/java/{me/waleks => id/universenetwork/sfa_loader/addons}/simplematerialgenerators/SMGItems.java (54%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SimpleMaterialGenerators.java
@@ -393,15 +393,16 @@ index ccf49a1..03013de 100644
              Material.REDSTONE_BLOCK,
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SimpleMaterialGenerators.java b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SimpleMaterialGenerators.java
 new file mode 100644
-index 0000000..39329fb
+index 0000000..5ef3e7c
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SimpleMaterialGenerators.java
-@@ -0,0 +1,221 @@
+@@ -0,0 +1,223 @@
 +package id.universenetwork.sfa_loader.addons.simplematerialgenerators;
 +
 +import id.universenetwork.sfa_loader.addons.simplematerialgenerators.items.BrokenGenerator;
 +import id.universenetwork.sfa_loader.addons.simplematerialgenerators.items.GeneratorMultiblock;
 +import id.universenetwork.sfa_loader.addons.simplematerialgenerators.items.MaterialGenerator;
++import id.universenetwork.sfa_loader.annotations.AddonInfo;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -409,6 +410,7 @@ index 0000000..39329fb
 +import org.bukkit.Material;
 +import org.bukkit.inventory.ItemStack;
 +
++@AddonInfo(name = "SMG")
 +public class SimpleMaterialGenerators extends AddonTemplate {
 +    @Override
 +    public void onLoad() {

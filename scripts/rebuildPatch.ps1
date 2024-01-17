@@ -30,7 +30,7 @@ if ($dir -eq "--merge") {
 if ($dir) {
     if (-not (Test-Path "$basedir/$dir")) {
         Write-Host "The directory is invalid or unavailable!" -f red
-        exit
+        exit 1
     }
 
     $name=Split-Path $dir -Leaf

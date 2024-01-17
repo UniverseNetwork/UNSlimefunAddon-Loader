@@ -21,6 +21,7 @@ addons:
   dyebench: true
   dyedbackpacks: true
   dynatech: true
+  ecopower: true
   extragear: true
   extraheads: true
   extratools: true
@@ -31,4 +32,4 @@ addons:
   privatestorage: true
   sfcalc: true
   sfchunkinfo: true
-  simplematerialgenerators: true
+  smg: true

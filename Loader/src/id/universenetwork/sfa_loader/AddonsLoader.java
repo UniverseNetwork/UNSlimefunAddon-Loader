@@ -1,9 +1,6 @@
 package id.universenetwork.sfa_loader;
 
-import id.universenetwork.sfa_loader.annotations.AddonDependencies;
-import id.universenetwork.sfa_loader.annotations.AddonHooks;
-import id.universenetwork.sfa_loader.annotations.AddonLibraries;
-import id.universenetwork.sfa_loader.annotations.AddonLibrary;
+import id.universenetwork.sfa_loader.annotations.*;
 import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
 import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
 import id.universenetwork.sfa_loader.managers.LibraryManager;
@@ -17,10 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.reflections.Reflections;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -31,6 +25,7 @@ public class AddonsLoader {
     private final Set<Class<? extends AddonTemplate>> addonsWithHooksClasses = new HashSet<>();
     @Getter
     private final Set<AddonTemplate> loadedAddons = new HashSet<>();
+    private final Map<Class<? extends AddonTemplate>, String> addonName = new HashMap<>();
 
     public void loadEnabledAddons() {
         Reflections reflections = new Reflections("id.universenetwork.sfa_loader.addons");
@@ -41,9 +36,15 @@ public class AddonsLoader {
         LogUtils.info("&eStart loading the enabled addons in the configuration file...");
         TookTimeUtils tookTime = new TookTimeUtils();
 
-        for (Class<? extends AddonTemplate> addon : allAddonsClasses)
-            if (AbstractAddon.config().getBoolean("addons." + addon.getSimpleName().toLowerCase()))
-                loadAddon(addon, true);
+        for (Class<? extends AddonTemplate> addon : allAddonsClasses) {
+            String name = addon.getSimpleName();
+            if (addon.isAnnotationPresent(AddonInfo.class)) {
+                String id = addon.getAnnotation(AddonInfo.class).name();
+                if (!id.isEmpty()) name = id;
+            }
+            if (AbstractAddon.config().getBoolean("addons." + name.toLowerCase()))
+                loadAddon(addon, name);
+        }
         if (!addonsWithHooksClasses.isEmpty())
             for (Iterator<Class<? extends AddonTemplate>> i = addonsWithHooksClasses.iterator(); i.hasNext(); )
                 loadAddonWithHooks(i);
@@ -52,9 +53,10 @@ public class AddonsLoader {
         LogUtils.info(str);
     }
 
-    private void loadAddon(Class<? extends AddonTemplate> addonClass, boolean scanHooks) {
-        if (addonClass.isAnnotationPresent(AddonHooks.class) && scanHooks) {
+    private void loadAddon(Class<? extends AddonTemplate> addonClass, String name) {
+        if (addonClass.isAnnotationPresent(AddonHooks.class)) {
             addonsWithHooksClasses.add(addonClass);
+            addonName.put(addonClass, name);
             return;
         }
 
@@ -62,7 +64,7 @@ public class AddonsLoader {
             final AddonTemplate addon = addonClass.getConstructor().newInstance();
 
             if (loadedAddons.contains(addon)) throw new IllegalStateException(
-                    addonClass.getSimpleName() + " addon is already loaded!");
+                    name + " addon is already loaded!");
 
             if (addonClass.isAnnotationPresent(AddonLibrary.class))
                 loadAddonLibraries(addonClass.getAnnotationsByType(AddonLibrary.class));
@@ -73,7 +75,7 @@ public class AddonsLoader {
             final AddonDependencies dependencies = addonClass.getAnnotation(AddonDependencies.class);
             boolean hasDependency = false;
 
-            String str = "&bSuccessfully loaded &d" + addonClass.getSimpleName() + " &baddon!";
+            String str = "&bSuccessfully loaded &d" + name + " &baddon!";
 
             if (dependencies != null) {
                 hasDependency = true;
@@ -82,7 +84,7 @@ public class AddonsLoader {
                         str = "&e" + TextUtils.convertArraysToString(dependencies.value()) +
                                 " not found. &cYou need &e" +
                                 TextUtils.convertArraysToString(dependencies.value()) + " to use &d"
-                                + addonClass.getSimpleName() + " &caddon!";
+                                + name + " &caddon!";
                         LogUtils.severe(str);
                         return;
                     }
@@ -96,7 +98,7 @@ public class AddonsLoader {
 
             LogUtils.info(str);
         } catch (Exception e) {
-            String str = "An error occurred while loading &d" + addonClass.getSimpleName() + " &caddon!";
+            String str = "An error occurred while loading &d" + name + " &caddon!";
             LogUtils.log(Level.SEVERE, str, e);
         }
     }
@@ -108,22 +110,21 @@ public class AddonsLoader {
         for (Iterator<String> iterator = hooks.iterator(); iterator.hasNext(); ) {
             String hook = iterator.next();
             if (AbstractAddon.config().getBoolean("addons." + hook.toLowerCase())) {
-                if (isAddonLoaded(hook)) {
-                    addonIterator.remove();
-                    continue;
-                }
                 addonIterator.remove();
+                if (isAddonLoaded(hook)) continue;
                 addonsWithHooksClasses.add(addonClass);
                 return;
             }
             iterator.remove();
         }
 
+        String name = addonName.get(addonClass);
+
         try {
             final AddonTemplate addon = addonClass.getConstructor().newInstance();
 
             if (loadedAddons.contains(addon)) throw new IllegalStateException(
-                    addonClass.getSimpleName() + " addon is already loaded!");
+                    name + " addon is already loaded!");
 
             if (addonClass.isAnnotationPresent(AddonLibrary.class))
                 loadAddonLibraries(addonClass.getAnnotationsByType(AddonLibrary.class));
@@ -134,7 +135,7 @@ public class AddonsLoader {
             final AddonDependencies dependencies = addonClass.getAnnotation(AddonDependencies.class);
             boolean hasDependency = false;
 
-            String str = "&bSuccessfully loaded &d" + addonClass.getSimpleName() + " &baddon!";
+            String str = "&bSuccessfully loaded &d" + name + " &baddon!";
 
             if (dependencies != null) {
                 hasDependency = true;
@@ -143,7 +144,7 @@ public class AddonsLoader {
                         str = "&e" + TextUtils.convertArraysToString(dependencies.value()) +
                                 " not found. &cYou need &e" +
                                 TextUtils.convertArraysToString(dependencies.value()) + " to use &d"
-                                + addonClass.getSimpleName() + " &caddon!";
+                                + name + " &caddon!";
                         LogUtils.severe(str);
                         return;
                     }
@@ -160,7 +161,7 @@ public class AddonsLoader {
 
             LogUtils.info(str);
         } catch (Exception e) {
-            String str = "An error occurred while loading &d" + addonClass.getSimpleName() + " &caddon!";
+            String str = "An error occurred while loading &d" + name + " &caddon!";
             LogUtils.log(Level.SEVERE, str, e);
         }
     }
