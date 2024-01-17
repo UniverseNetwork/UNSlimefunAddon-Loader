@@ -162,7 +162,7 @@
         <dependency>
             <groupId>me.fnfal113</groupId>
             <artifactId>SfChunkInfo</artifactId>
-            <version>Unoffical-1.6.0</version>
+            <version>Unoffical-1.6.1</version>
         </dependency>
         <dependency>
             <groupId>me.waleks</groupId>
