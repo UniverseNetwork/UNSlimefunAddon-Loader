@@ -1,6 +1,6 @@
-From 1f13b6636752be30e98c58ae58e20b98c38bbcac Mon Sep 17 00:00:00 2001
+From 74c755b9c1668a5560f2755ad36c36d689f03cd4 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Mon, 15 Jan 2024 09:38:19 +0700
+Date: Fri, 23 Feb 2024 14:45:04 +0700
 Subject: [PATCH] InfinityLib-Standalone
 
 ---
@@ -14,7 +14,7 @@ Subject: [PATCH] InfinityLib-Standalone
  .../infinitylib/common/StackUtils.java        |  47 +++--
  .../infinitylib/common/StringUtils.java       |   3 +-
  .../infinitylib/core/AbstractAddon.java       |  31 +--
- .../infinitylib/core/AddonConfig.java         |  78 +++++++-
+ .../infinitylib/core/AddonConfig.java         |  99 +++++++++-
  .../infinitylib/core/Environment.java         |   2 +-
  .../infinitylib/core/PathBuilder.java         |   2 +-
  .../core/SlimefunAddonInstance.java           |  73 +++++++
@@ -62,7 +62,7 @@ Subject: [PATCH] InfinityLib-Standalone
  src/test/resources/config.yml                 |   1 -
  src/test/resources/plugin.yml                 |  10 -
  src/test/resources/test.yml                   |  16 --
- 58 files changed, 226 insertions(+), 2241 deletions(-)
+ 58 files changed, 247 insertions(+), 2241 deletions(-)
  delete mode 100644 src/main/java-templates/io/github/mooy1/infinitylib/InfinityLib.java
  delete mode 100644 src/main/java/id/arvin3108/standalone/SlimefunAddonInstance.java
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/common/CoolDowns.java (91%)
@@ -72,7 +72,7 @@ Subject: [PATCH] InfinityLib-Standalone
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/common/StackUtils.java (80%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/common/StringUtils.java (89%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/AbstractAddon.java (82%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/AddonConfig.java (67%)
+ rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/AddonConfig.java (63%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/Environment.java (83%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/libraries}/infinitylib/core/PathBuilder.java (95%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/core/SlimefunAddonInstance.java
@@ -122,7 +122,7 @@ Subject: [PATCH] InfinityLib-Standalone
  delete mode 100644 src/test/resources/test.yml
 
 diff --git a/pom.xml b/pom.xml
-index 6f2d23e..3f75902 100644
+index 6f2d23e..6671eef 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -2,24 +2,19 @@
@@ -135,7 +135,7 @@ index 6f2d23e..3f75902 100644
 +    <parent>
 +        <groupId>id.universenetwork.sfa_loader</groupId>
 +        <artifactId>SlimefunAddon-Loader</artifactId>
-+        <version>1.2.0</version>
++        <version>UNOFFICIAL</version>
 +    </parent>
 +
      <groupId>io.github.mooy1</groupId>
@@ -771,10 +771,10 @@ index 967e693..20a2121 100644
      @Override
      public final AddonConfig getConfig() {
 diff --git a/src/main/java/io/github/mooy1/infinitylib/core/AddonConfig.java b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/core/AddonConfig.java
-similarity index 67%
+similarity index 63%
 rename from src/main/java/io/github/mooy1/infinitylib/core/AddonConfig.java
 rename to src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/core/AddonConfig.java
-index c2e14c9..c833f04 100644
+index c2e14c9..5e7bd81 100644
 --- a/src/main/java/io/github/mooy1/infinitylib/core/AddonConfig.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/libraries/infinitylib/core/AddonConfig.java
 @@ -1,4 +1,4 @@
@@ -783,7 +783,7 @@ index c2e14c9..c833f04 100644
  
  import java.io.BufferedReader;
  import java.io.File;
-@@ -6,17 +6,26 @@ import java.io.IOException;
+@@ -6,16 +6,24 @@ import java.io.IOException;
  import java.io.InputStream;
  import java.io.InputStreamReader;
  import java.nio.charset.StandardCharsets;
@@ -804,15 +804,13 @@ index c2e14c9..c833f04 100644
 +import org.bukkit.Sound;
 +import org.bukkit.World;
  import org.bukkit.configuration.file.YamlConfiguration;
- 
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.StringUtils;
-+
 +import org.bukkit.inventory.Inventory;
 +
++import id.universenetwork.sfa_loader.libraries.infinitylib.common.StringUtils;
+ 
  /**
   * A config which is able to save all of its comments and has some additional utility methods
-  *
-@@ -30,10 +39,16 @@ public final class AddonConfig extends YamlConfiguration {
+@@ -30,10 +38,16 @@ public final class AddonConfig extends YamlConfiguration {
      private final File file;
  
      public AddonConfig(String path) {
@@ -831,7 +829,7 @@ index c2e14c9..c833f04 100644
      }
  
      public int getInt(String path, int min, int max) {
-@@ -201,4 +216,57 @@ public final class AddonConfig extends YamlConfiguration {
+@@ -201,4 +215,79 @@ public final class AddonConfig extends YamlConfiguration {
          return yamlBuilder.toString();
      }
  
@@ -841,7 +839,8 @@ index c2e14c9..c833f04 100644
 +
 +        if (value.getClass().isInstance(val)) {
 +            return (T) val;
-+        } else {
++        }
++        else {
 +            setValue(path, value);
 +            return value;
 +        }
@@ -849,43 +848,64 @@ index c2e14c9..c833f04 100644
 +
 +    /**
 +     * Sets the Value for the specified path
++     * (If the path does not yet exist)
 +     *
-+     * @param path
-+     *            The path in the Config File
-+     * @param value
-+     *            The Value for that path
++     * @param path The path in the {@link AddonConfig} file
++     * @param value The Value for that path
++     */
++    public void setDefaultValue(@Nonnull String path, @Nullable Object value) {
++        if (!contains(path)) {
++            setValue(path, value);
++        }
++    }
++
++    /**
++     * Sets the Value for the specified path
++     *
++     * @param path The path in the Config File
++     * @param value The Value for that path
 +     */
 +    public void setValue(@Nonnull String path, Object value) {
 +        if (value instanceof Optional) {
 +            set(path, ((Optional<?>) value).orElse(null));
-+        } else if (value instanceof Inventory) {
++        }
++        else if (value instanceof Inventory) {
 +            set(path + ".size", ((Inventory) value).getSize());
 +            for (int i = 0; i < ((Inventory) value).getSize(); i++) {
 +                set(path + "." + i, ((Inventory) value).getItem(i));
 +            }
-+        } else if (value instanceof Date) {
++        }
++        else if (value instanceof Date) {
 +            set(path, String.valueOf(((Date) value).getTime()));
-+        } else if (value instanceof Long) {
++        }
++        else if (value instanceof Long) {
 +            set(path, String.valueOf(value));
-+        } else if (value instanceof UUID) {
++        }
++        else if (value instanceof UUID) {
 +            set(path, value.toString());
-+        } else if (value instanceof Sound) {
++        }
++        else if (value instanceof Sound) {
 +            set(path, String.valueOf(value));
-+        } else if (value instanceof Location) {
++        }
++        else if (value instanceof Location) {
 +            set(path + ".x", ((Location) value).getX());
 +            set(path + ".y", ((Location) value).getY());
 +            set(path + ".z", ((Location) value).getZ());
 +            set(path + ".pitch", ((Location) value).getPitch());
 +            set(path + ".yaw", ((Location) value).getYaw());
 +            set(path + ".world", ((Location) value).getWorld().getName());
-+        } else if (value instanceof Chunk) {
++        }
++        else if (value instanceof Chunk) {
 +            set(path + ".x", ((Chunk) value).getX());
 +            set(path + ".z", ((Chunk) value).getZ());
 +            set(path + ".world", ((Chunk) value).getWorld().getName());
-+        } else if (value instanceof World) {
++        }
++        else if (value instanceof World) {
 +            set(path, ((World) value).getName());
-+        } else
++        }
++        else {
 +            set(path, value);
++        }
 +    }
 +
  }

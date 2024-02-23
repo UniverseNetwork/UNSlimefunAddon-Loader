@@ -1,5 +1,6 @@
 package id.universenetwork.sfa_loader.template;
 
+import id.universenetwork.sfa_loader.AddonsLoader;
 import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
 import lombok.Getter;
 
@@ -9,7 +10,7 @@ public abstract class AddonTemplate {
 
     public AddonTemplate() {
         try {
-            config = new AddonConfig("addons-config/" + getClass().getSimpleName() + "/config.yml");
+            config = new AddonConfig("addons-config/" + AddonsLoader.getAddonName(getClass()) + "/config.yml");
         } catch (Exception ignore) {
         }
     }

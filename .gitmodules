@@ -17,6 +17,9 @@
 [submodule "EcoPower"]
 	path = Addons/EcoPower
 	url = https://github.com/TheBusyBiscuit/EcoPower
+[submodule "ExoticGarden"]
+	path = Addons/ExoticGarden
+	url = https://github.com/TheBusyBiscuit/ExoticGarden
 [submodule "ExtraGear"]
     path = Addons/ExtraGear
     url = https://github.com/TheBusyBiscuit/ExtraGear

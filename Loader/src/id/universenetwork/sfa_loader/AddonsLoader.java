@@ -1,6 +1,7 @@
 package id.universenetwork.sfa_loader;
 
 import id.universenetwork.sfa_loader.annotations.*;
+import id.universenetwork.sfa_loader.enums.PaperRequirementLevel;
 import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
 import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
 import id.universenetwork.sfa_loader.managers.LibraryManager;
@@ -8,6 +9,7 @@ import id.universenetwork.sfa_loader.template.AddonTemplate;
 import id.universenetwork.sfa_loader.utils.LogUtils;
 import id.universenetwork.sfa_loader.utils.TextUtils;
 import id.universenetwork.sfa_loader.utils.TookTimeUtils;
+import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
@@ -37,11 +39,7 @@ public class AddonsLoader {
         TookTimeUtils tookTime = new TookTimeUtils();
 
         for (Class<? extends AddonTemplate> addon : allAddonsClasses) {
-            String name = addon.getSimpleName();
-            if (addon.isAnnotationPresent(AddonInfo.class)) {
-                String id = addon.getAnnotation(AddonInfo.class).name();
-                if (!id.isEmpty()) name = id;
-            }
+            String name = getAddonName(addon);
             if (AbstractAddon.config().getBoolean("addons." + name.toLowerCase()))
                 loadAddon(addon, name);
         }
@@ -150,6 +148,8 @@ public class AddonsLoader {
                     }
             }
 
+            if (!PaperLib.isPaper()) if (!passPaperRequirements(addonClass, name)) return;
+
             addon.onLoad();
             loadedAddons.add(addon);
 
@@ -196,5 +196,47 @@ public class AddonsLoader {
                     )
             );
         }
+    }
+
+    private boolean passPaperRequirements(Class<? extends AddonTemplate> addon, String name) {
+        if (addon.isAnnotationPresent(AddonInfo.class)) {
+            PaperRequirementLevel lvl = addon.getAnnotation(AddonInfo.class).requirePaper();
+            List<String> txt = new ArrayList<>();
+            txt.add("====================================================");
+            if (lvl.equals(PaperRequirementLevel.MUST)) txt.add(" " + name + " only works if you use Paper");
+            if (lvl.equals(PaperRequirementLevel.RECOMMENDED)) {
+                txt.add(" " + name + " works better if you use Paper");
+                txt.add(" as your server software.");
+            }
+            if (System.getProperty("paperlib.shown-benefits") == null) {
+                System.setProperty("paperlib.shown-benefits", "1");
+                txt.add("");
+                txt.add(" Paper offers significant performance improvements,");
+                txt.add(" bug fixes, security enhancements and optional");
+                txt.add(" features for server owners to enhance their server.");
+                txt.add("");
+                txt.add(" Paper includes Timings v2, which is significantly");
+                txt.add(" better at diagnosing lag problems over v1.");
+                txt.add("");
+                txt.add(" All of your plugins should still work, and the");
+                txt.add(" Paper community will gladly help you fix any issues.");
+                txt.add("");
+                txt.add(" Join the Paper Community @ https://papermc.io");
+            }
+            txt.add("====================================================");
+            if (lvl.equals(PaperRequirementLevel.MUST)) {
+                for (String s : txt) LogUtils.severe(s);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public String getAddonName(Class<? extends AddonTemplate> addon) {
+        if (addon.isAnnotationPresent(AddonInfo.class)) {
+            String id = addon.getAnnotation(AddonInfo.class).name();
+            if (!id.isEmpty()) return id;
+        }
+        return addon.getSimpleName();
     }
 }

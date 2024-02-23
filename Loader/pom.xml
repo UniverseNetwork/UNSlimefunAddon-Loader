@@ -31,6 +31,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>io.github.Slimefun</groupId>
+            <artifactId>Slimefun4</artifactId>
+            <version>RC-36</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>io.github.mooy1</groupId>
             <artifactId>InfinityLib</artifactId>
             <version>1.3.10</version>
