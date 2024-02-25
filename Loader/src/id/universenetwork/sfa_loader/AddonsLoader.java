@@ -88,6 +88,8 @@ public class AddonsLoader {
                     }
             }
 
+            if (!PaperLib.isPaper()) if (!passPaperRequirements(addonClass, name)) return;
+
             addon.onLoad();
             loadedAddons.add(addon);
 
@@ -108,8 +110,8 @@ public class AddonsLoader {
         for (Iterator<String> iterator = hooks.iterator(); iterator.hasNext(); ) {
             String hook = iterator.next();
             if (AbstractAddon.config().getBoolean("addons." + hook.toLowerCase())) {
-                addonIterator.remove();
                 if (isAddonLoaded(hook)) continue;
+                addonIterator.remove();
                 addonsWithHooksClasses.add(addonClass);
                 return;
             }

@@ -1,6 +1,6 @@
-From 402942af6eaa9e6938f09c89ac338e467dee4adc Mon Sep 17 00:00:00 2001
+From af0018af756c7b23a1659ac6f22245869026b189 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 24 Feb 2024 21:46:58 +0700
+Date: Sun, 25 Feb 2024 10:19:38 +0700
 Subject: [PATCH] DynaTech
 
 ---
@@ -16,33 +16,33 @@ Subject: [PATCH] DynaTech
  .../items/abstracts/AbstractMachine.java      |  60 +-
  .../items/abstracts/AbstractTicker.java       |  50 +-
  .../abstracts/AbstractTickingContainer.java   |  23 +-
- .../items/backpacks/PicnicBasket.java         |  19 +-
+ .../items/backpacks/PicnicBasket.java         |  24 +-
  .../backpacks/SoulboundPicnicBacket.java      |  17 +-
  .../items/electric/AntigravityBubble.java     |  51 +-
  .../items/electric/BandaidManager.java        |  93 +--
  .../dynatech/items/electric/BarbedWire.java   |  41 +-
  .../items/electric/FurnaceController.java     |  53 +-
- .../items/electric/KitchenAutoCrafter.java    |  16 +-
+ .../items/electric/KitchenAutoCrafter.java    |  18 +-
  .../dynatech/items/electric/MaterialHive.java | 456 ++++++-----
- .../items/electric/PotionSprinkler.java       |  66 +-
+ .../items/electric/PotionSprinkler.java       |  77 +-
  .../dynatech/items/electric/SeedPlucker.java  | 108 ++-
- .../items/electric/WeatherController.java     |  57 +-
+ .../items/electric/WeatherController.java     |  58 +-
  .../items/electric/WirelessCharger.java       |  23 +-
  .../generators/ChippingGenerator.java         |  90 +--
  .../generators/CulinaryGenerator.java         |  80 +-
  .../generators/DragonEggGenerator.java        |  71 +-
  .../electric/generators/HydroGenerator.java   |  27 +-
  .../electric/generators/StardustReactor.java  |  59 +-
- .../growthchambers/GrowthChamber.java         | 136 ++--
+ .../growthchambers/GrowthChamber.java         | 137 ++--
  .../growthchambers/GrowthChamberEnd.java      |  92 +--
  .../growthchambers/GrowthChamberEndMK2.java   |  85 +-
- .../growthchambers/GrowthChamberMK2.java      |  99 ++-
+ .../growthchambers/GrowthChamberMK2.java      | 101 ++-
  .../growthchambers/GrowthChamberNether.java   |  89 +--
  .../GrowthChamberNetherMK2.java               |  70 +-
  .../growthchambers/GrowthChamberOcean.java    |  89 +--
  .../growthchambers/GrowthChamberOceanMK2.java |  73 +-
  .../electric/machines/MineralizedApiary.java  | 147 ++--
- .../items/electric/machines/Orechid.java      |  70 +-
+ .../items/electric/machines/Orechid.java      |  71 +-
  .../items/electric/transfer/Tesseract.java    | 139 ++--
  .../electric/transfer/WirelessEnergyBank.java |  70 +-
  .../transfer/WirelessEnergyPoint.java         | 115 ++-
@@ -59,22 +59,22 @@ Subject: [PATCH] DynaTech
  .../dynatech/items/tools/DimensionalHome.java |  59 +-
  .../items/tools/ElectricalStimulator.java     |   5 +-
  .../dynatech/items/tools/InventoryFilter.java |   4 +-
- .../dynatech/items/tools/LiquidTank.java      |  99 +--
+ .../dynatech/items/tools/LiquidTank.java      | 100 +--
  .../addons}/dynatech/items/tools/Scoop.java   |  19 +-
- .../dynatech/items/tools/TesseractBinder.java |  18 +-
+ .../dynatech/items/tools/TesseractBinder.java |  27 +-
  .../ElectricalStimulatorListener.java         |  41 +-
- .../ExoticGardenIntegrationListener.java      |  62 +-
+ .../ExoticGardenIntegrationListener.java      |  63 +-
  .../GastronomiconIntegrationListener.java     |  50 +-
  .../listeners/InventoryFilterListener.java    |  38 +-
  .../listeners/PicnicBasketListener.java       |  80 +-
- .../dynatech/setup/DynaTechItemsSetup.java    | 741 +++++++++---------
- .../addons}/dynatech/tasks/ItemBandTask.java  | 133 ++--
+ .../dynatech/setup/DynaTechItemsSetup.java    | 743 +++++++++---------
+ .../addons}/dynatech/tasks/ItemBandTask.java  | 134 ++--
  .../me/profelements/dynatech/DynaTech.java    | 147 ----
  .../dynatech/items/misc/WitherGolem.java      |  33 -
  .../addons-config/DynaTech/config.yml         |   1 +
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  24 -
- 70 files changed, 2578 insertions(+), 3267 deletions(-)
+ 70 files changed, 2609 insertions(+), 3273 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/DynaTechItems.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/attributes/LiquidStorage.java (77%)
@@ -86,15 +86,15 @@ Subject: [PATCH] DynaTech
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/abstracts/AbstractMachine.java (78%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/abstracts/AbstractTicker.java (77%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/abstracts/AbstractTickingContainer.java (77%)
- rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/backpacks/PicnicBasket.java (94%)
+ rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/backpacks/PicnicBasket.java (90%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/backpacks/SoulboundPicnicBacket.java (77%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/AntigravityBubble.java (70%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/BandaidManager.java (69%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/BarbedWire.java (86%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/FurnaceController.java (79%)
- rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/KitchenAutoCrafter.java (66%)
+ rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/KitchenAutoCrafter.java (57%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/MaterialHive.java (73%)
- rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/PotionSprinkler.java (75%)
+ rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/PotionSprinkler.java (71%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/SeedPlucker.java (53%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/WeatherController.java (79%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/WirelessCharger.java (72%)
@@ -106,7 +106,7 @@ Subject: [PATCH] DynaTech
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/growthchambers/GrowthChamber.java (52%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/growthchambers/GrowthChamberEnd.java (56%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/growthchambers/GrowthChamberEndMK2.java (59%)
- rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/growthchambers/GrowthChamberMK2.java (54%)
+ rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/growthchambers/GrowthChamberMK2.java (53%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/growthchambers/GrowthChamberNether.java (61%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/growthchambers/GrowthChamberNetherMK2.java (63%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/growthchambers/GrowthChamberOcean.java (80%)
@@ -131,7 +131,7 @@ Subject: [PATCH] DynaTech
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/InventoryFilter.java (89%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/LiquidTank.java (79%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/Scoop.java (87%)
- rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/TesseractBinder.java (80%)
+ rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/TesseractBinder.java (68%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/listeners/ElectricalStimulatorListener.java (63%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/listeners/ExoticGardenIntegrationListener.java (59%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/listeners/GastronomiconIntegrationListener.java (72%)
@@ -1960,19 +1960,28 @@ index c6677ad..18c904a 100644
 -
  }
 diff --git a/src/main/java/me/profelements/dynatech/items/backpacks/PicnicBasket.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/backpacks/PicnicBasket.java
-similarity index 94%
+similarity index 90%
 rename from src/main/java/me/profelements/dynatech/items/backpacks/PicnicBasket.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/backpacks/PicnicBasket.java
-index 741ad4f..8421789 100644
+index 741ad4f..fa1a62b 100644
 --- a/src/main/java/me/profelements/dynatech/items/backpacks/PicnicBasket.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/backpacks/PicnicBasket.java
-@@ -1,4 +1,4 @@
+@@ -1,11 +1,13 @@
 -package me.profelements.dynatech.items.backpacks;
 +package id.universenetwork.sfa_loader.addons.dynatech.items.backpacks;
  
  import io.github.bakedlibs.dough.collections.Pair;
++import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-@@ -19,7 +19,6 @@ import java.util.List;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+ import io.github.thebusybiscuit.slimefun4.implementation.items.backpacks.SlimefunBackpack;
+ import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+ import org.bukkit.Material;
+@@ -19,7 +21,6 @@ import java.util.List;
  import java.util.Map;
  
  public class PicnicBasket extends SlimefunBackpack {
@@ -1980,7 +1989,7 @@ index 741ad4f..8421789 100644
      protected static Map<ItemStack, Pair<Integer, Float>> foods = new HashMap<>();
  
      private final List<Material> defaultBlacklist = new ArrayList<>();
-@@ -43,11 +42,8 @@ public class PicnicBasket extends SlimefunBackpack {
+@@ -43,11 +44,8 @@ public class PicnicBasket extends SlimefunBackpack {
  
      @Override
      public boolean isItemAllowed(@Nonnull ItemStack item, @Nullable SlimefunItem itemAsSlimefunItem) {
@@ -1994,7 +2003,7 @@ index 741ad4f..8421789 100644
          return false;
      }
  
-@@ -84,9 +80,9 @@ public class PicnicBasket extends SlimefunBackpack {
+@@ -84,12 +82,13 @@ public class PicnicBasket extends SlimefunBackpack {
      public static Map<ItemStack, Pair<Integer, Float>> getFoods() {
          return foods;
      }
@@ -2005,8 +2014,13 @@ index 741ad4f..8421789 100644
 +        registerFood(new ItemStack(Material.APPLE), new Pair<>(4, 3F));
          registerFood(new ItemStack(Material.MELON_SLICE), new Pair<>(2, 1F));
          registerFood(new ItemStack(Material.SWEET_BERRIES), new Pair<>(2, 1F));
-         registerFood(new ItemStack(Material.GLOW_BERRIES), new Pair<>(2, 1F));
-@@ -116,12 +112,9 @@ public class PicnicBasket extends SlimefunBackpack {
+-        registerFood(new ItemStack(Material.GLOW_BERRIES), new Pair<>(2, 1F));
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17))
++            registerFood(new ItemStack(Material.GLOW_BERRIES), new Pair<>(2, 1F));
+         registerFood(new ItemStack(Material.CARROT), new Pair<>(3, 3F));
+         registerFood(new ItemStack(Material.GOLDEN_CARROT), new Pair<>(6, 15F));
+         registerFood(new ItemStack(Material.POTATO), new Pair<>(1, 1F));
+@@ -116,12 +115,9 @@ public class PicnicBasket extends SlimefunBackpack {
          registerFood(new ItemStack(Material.CAKE), new Pair<>(14, 14F));
          registerFood(new ItemStack(Material.PUMPKIN_PIE), new Pair<>(8, 5F));
      }
@@ -2544,21 +2558,22 @@ index 925732e..b38011e 100644
  }
 -
 diff --git a/src/main/java/me/profelements/dynatech/items/electric/KitchenAutoCrafter.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/KitchenAutoCrafter.java
-similarity index 66%
+similarity index 57%
 rename from src/main/java/me/profelements/dynatech/items/electric/KitchenAutoCrafter.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/KitchenAutoCrafter.java
-index 3e14270..302c0de 100644
+index 3e14270..8d50f3c 100644
 --- a/src/main/java/me/profelements/dynatech/items/electric/KitchenAutoCrafter.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/KitchenAutoCrafter.java
 @@ -1,19 +1,17 @@
 -package me.profelements.dynatech.items.electric;
--
++package id.universenetwork.sfa_loader.addons.dynatech.items.electric;
+ 
 -import javax.annotation.ParametersAreNonnullByDefault;
 -
 -import org.bukkit.inventory.ItemStack;
-+package id.universenetwork.sfa_loader.addons.dynatech.items.electric;
- 
- import io.github.thebusybiscuit.exoticgarden.ExoticGardenRecipeTypes;
+-
+-import io.github.thebusybiscuit.exoticgarden.ExoticGardenRecipeTypes;
++import id.universenetwork.sfa_loader.addons.exoticgarden.ExoticGardenRecipeTypes;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
  import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -3042,21 +3057,22 @@ index 8333363..3e287f0 100644
 +    }
 +}
 diff --git a/src/main/java/me/profelements/dynatech/items/electric/PotionSprinkler.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/PotionSprinkler.java
-similarity index 75%
+similarity index 71%
 rename from src/main/java/me/profelements/dynatech/items/electric/PotionSprinkler.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/PotionSprinkler.java
-index 2d6f8af..9a9ca3f 100644
+index 2d6f8af..bac90d8 100644
 --- a/src/main/java/me/profelements/dynatech/items/electric/PotionSprinkler.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/PotionSprinkler.java
-@@ -1,5 +1,6 @@
+@@ -1,5 +1,7 @@
 -package me.profelements.dynatech.items.electric;
 +package id.universenetwork.sfa_loader.addons.dynatech.items.electric;
  
 +import id.universenetwork.sfa_loader.addons.dynatech.items.abstracts.AbstractElectricTicker;
++import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
-@@ -11,7 +12,6 @@ import me.mrCookieSlime.Slimefun.api.BlockStorage;
+@@ -11,7 +13,6 @@ import me.mrCookieSlime.Slimefun.api.BlockStorage;
  import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
  import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
  import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
@@ -3064,7 +3080,7 @@ index 2d6f8af..9a9ca3f 100644
  import org.bukkit.Bukkit;
  import org.bukkit.Location;
  import org.bukkit.Material;
-@@ -23,29 +23,21 @@ import org.bukkit.event.block.BlockBreakEvent;
+@@ -23,29 +24,21 @@ import org.bukkit.event.block.BlockBreakEvent;
  import org.bukkit.event.block.BlockPlaceEvent;
  import org.bukkit.inventory.ItemStack;
  import org.bukkit.inventory.meta.PotionMeta;
@@ -3098,7 +3114,7 @@ index 2d6f8af..9a9ca3f 100644
  
      public PotionSprinkler(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
          super(itemGroup, item, recipeType, recipe);
-@@ -53,65 +45,53 @@ public class PotionSprinkler extends AbstractElectricTicker {
+@@ -53,79 +46,73 @@ public class PotionSprinkler extends AbstractElectricTicker {
          new BlockMenuPreset(getId(), getItemName()) {
              @Override
              public void init() {
@@ -3172,12 +3188,26 @@ index 2d6f8af..9a9ca3f 100644
          ItemStack item = menu.getItemInSlot(13);
  
 -        if (item != null && item.getType() == Material.POTION && item.hasItemMeta() && item.getItemMeta() instanceof PotionMeta potionMeta) {
+-            PotionType pt = potionMeta.getBasePotionType();
 +        if (item != null && item.getType() == Material.POTION && item.hasItemMeta() && item.getItemMeta() instanceof PotionMeta) {
 +            PotionMeta potionMeta = (PotionMeta) item.getItemMeta();
-             PotionType pt = potionMeta.getBasePotionType();
++            PotionType pt;
++            if (Slimefun.getMinecraftVersion().isBefore(MinecraftVersion.MINECRAFT_1_20))
++                pt = potionMeta.getBasePotionData().getType();
++            else pt = potionMeta.getBasePotionType();
              for (Entity ent : b.getWorld().getNearbyEntities(b.getLocation(), 10, 10, 10, LivingEntity.class::isInstance)) {
                  LivingEntity p = (LivingEntity) ent;
-@@ -125,7 +105,7 @@ public class PotionSprinkler extends AbstractElectricTicker {
+                 if (!enabledEntities.get(b.getLocation()).contains(p.getUniqueId())) {
+                     int amplifier = (!pt.isUpgradeable()) ? 1 : 0;
+                     int duration = (!pt.isExtendable()) ? 9600 : 3600;
+-                    PotionEffectType pet = pt.getPotionEffects().get(0).getType();
++                    PotionEffectType pet;
++                    if (Slimefun.getMinecraftVersion().isBefore(MinecraftVersion.MINECRAFT_1_20))
++                        pet = pt.getPotionEffects().get(0).getType();
++                    else pet = pt.getEffectType();
+ 
+                     if (pet != null) {
+                         PotionEffect pe = new PotionEffect(pet, duration, amplifier);
                          applyPotionEffect(pe, p);
                          enabledEntities.get(b.getLocation()).add(p.getUniqueId());
                      }
@@ -3186,7 +3216,7 @@ index 2d6f8af..9a9ca3f 100644
                  }
              }
              if (plyrsApplied > 8) {
-@@ -134,9 +114,9 @@ public class PotionSprinkler extends AbstractElectricTicker {
+@@ -134,9 +121,9 @@ public class PotionSprinkler extends AbstractElectricTicker {
              }
          }
  
@@ -3370,18 +3400,19 @@ diff --git a/src/main/java/me/profelements/dynatech/items/electric/WeatherContro
 similarity index 79%
 rename from src/main/java/me/profelements/dynatech/items/electric/WeatherController.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/WeatherController.java
-index 6922a76..ccbbfec 100644
+index 6922a76..985a77a 100644
 --- a/src/main/java/me/profelements/dynatech/items/electric/WeatherController.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/WeatherController.java
-@@ -1,5 +1,6 @@
+@@ -1,5 +1,7 @@
 -package me.profelements.dynatech.items.electric;
 +package id.universenetwork.sfa_loader.addons.dynatech.items.electric;
  
++import id.universenetwork.sfa_loader.addons.dynatech.DynaTech;
 +import id.universenetwork.sfa_loader.addons.dynatech.items.abstracts.AbstractElectricTicker;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
-@@ -13,9 +14,6 @@ import me.mrCookieSlime.Slimefun.api.BlockStorage;
+@@ -13,9 +15,6 @@ import me.mrCookieSlime.Slimefun.api.BlockStorage;
  import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
  import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
  import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
@@ -3391,7 +3422,7 @@ index 6922a76..ccbbfec 100644
  import org.bukkit.Location;
  import org.bukkit.Material;
  import org.bukkit.block.Block;
-@@ -28,73 +26,60 @@ import java.util.ArrayList;
+@@ -28,73 +27,60 @@ import java.util.ArrayList;
  import java.util.List;
  
  public class WeatherController extends AbstractElectricTicker implements RecipeDisplayItem {
@@ -3481,7 +3512,7 @@ index 6922a76..ccbbfec 100644
                  DynaTech.runSync(() -> {
                      b.getWorld().setStorm(true);
                      b.getWorld().setWeatherDuration(1200);
-@@ -103,10 +88,8 @@ public class WeatherController extends AbstractElectricTicker implements RecipeD
+@@ -103,10 +89,8 @@ public class WeatherController extends AbstractElectricTicker implements RecipeD
              }
  
              if (item.getType() == Material.CREEPER_HEAD) {
@@ -4146,13 +4177,14 @@ diff --git a/src/main/java/me/profelements/dynatech/items/electric/growthchamber
 similarity index 52%
 rename from src/main/java/me/profelements/dynatech/items/electric/growthchambers/GrowthChamber.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/growthchambers/GrowthChamber.java
-index e0f57a6..b1b11a0 100644
+index e0f57a6..0dbe497 100644
 --- a/src/main/java/me/profelements/dynatech/items/electric/growthchambers/GrowthChamber.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/growthchambers/GrowthChamber.java
-@@ -1,37 +1,38 @@
+@@ -1,37 +1,39 @@
 -package me.profelements.dynatech.items.electric.growthchambers;
 +package id.universenetwork.sfa_loader.addons.dynatech.items.electric.growthchambers;
  
++import id.universenetwork.sfa_loader.AddonsLoader;
 +import id.universenetwork.sfa_loader.addons.dynatech.items.abstracts.AbstractElectricMachine;
 +import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
@@ -4201,7 +4233,7 @@ index e0f57a6..b1b11a0 100644
  
      public GrowthChamber(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
          super(itemGroup, item, recipeType, recipe);
-@@ -42,27 +43,28 @@ public class GrowthChamber extends AbstractElectricMachine {
+@@ -42,27 +44,28 @@ public class GrowthChamber extends AbstractElectricMachine {
      @Override
      public void postRegister() {
          registerDefaultRecipes();
@@ -4239,7 +4271,7 @@ index e0f57a6..b1b11a0 100644
          registerRecipe(9, new ItemStack(Material.DANDELION), new ItemStack(Material.DANDELION, 3));
          registerRecipe(9, new ItemStack(Material.POPPY), new ItemStack(Material.POPPY, 3));
          registerRecipe(9, new ItemStack(Material.BLUE_ORCHID), new ItemStack(Material.BLUE_ORCHID, 3));
-@@ -88,49 +90,53 @@ public class GrowthChamber extends AbstractElectricMachine {
+@@ -88,49 +91,53 @@ public class GrowthChamber extends AbstractElectricMachine {
          registerRecipe(12, new ItemStack(Material.BAMBOO), new ItemStack(Material.BAMBOO, 3));
          registerRecipe(12, new ItemStack(Material.CACTUS), new ItemStack(Material.CACTUS, 3));
  
@@ -4258,7 +4290,7 @@ index e0f57a6..b1b11a0 100644
 +        registerRecipe(30, new ItemStack[]{new ItemStack(Material.JUNGLE_SAPLING)}, new ItemStack[]{new ItemStack(Material.JUNGLE_SAPLING, 3), new ItemStack(Material.JUNGLE_LOG, 6)});
 +        registerRecipe(30, new ItemStack[]{new ItemStack(Material.ACACIA_SAPLING)}, new ItemStack[]{new ItemStack(Material.ACACIA_SAPLING, 3), new ItemStack(Material.ACACIA_LOG, 6)});
 +
-+        if (DynaTech.isExoticGardenInstalled() && exoticGardenIntegration.getValue())
++        if (AddonsLoader.isAddonLoaded("ExoticGarden") && exoticGardenIntegration.getValue())
 +            for (SlimefunItem item : Slimefun.getRegistry().getEnabledSlimefunItems())
 +                if (item.getId().contains("_BUSH") || item.getId().contains("_PLANT") || item.getId().contains("_SAPLING")) {
 +                    SlimefunItem fruit = SlimefunItem.getById(item.getId().split("_")[0]);
@@ -4322,7 +4354,7 @@ index e0f57a6..b1b11a0 100644
                  @Override
                  public boolean onClick(InventoryClickEvent e, Player p, int slot, ItemStack cursor, ClickAction action) {
                      return cursor.getType().isAir();
-@@ -141,22 +147,20 @@ public class GrowthChamber extends AbstractElectricMachine {
+@@ -141,22 +148,20 @@ public class GrowthChamber extends AbstractElectricMachine {
                      return false;
                  }
              });
@@ -4652,10 +4684,10 @@ index 3f71d4c..5212b44 100644
 +    }
  }
 diff --git a/src/main/java/me/profelements/dynatech/items/electric/growthchambers/GrowthChamberMK2.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/growthchambers/GrowthChamberMK2.java
-similarity index 54%
+similarity index 53%
 rename from src/main/java/me/profelements/dynatech/items/electric/growthchambers/GrowthChamberMK2.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/growthchambers/GrowthChamberMK2.java
-index 9b830b6..11cef19 100644
+index 9b830b6..90499ab 100644
 --- a/src/main/java/me/profelements/dynatech/items/electric/growthchambers/GrowthChamberMK2.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/growthchambers/GrowthChamberMK2.java
 @@ -1,16 +1,18 @@
@@ -4734,7 +4766,7 @@ index 9b830b6..11cef19 100644
          registerRecipe(12, new ItemStack(Material.TALL_GRASS), new ItemStack(Material.TALL_GRASS, 9));
          registerRecipe(9, new ItemStack(Material.FERN), new ItemStack(Material.FERN, 9));
          registerRecipe(12, new ItemStack(Material.LARGE_FERN), new ItemStack(Material.LARGE_FERN, 9));
-@@ -88,68 +90,62 @@ public class GrowthChamberMK2 extends AbstractElectricMachine {
+@@ -88,68 +90,64 @@ public class GrowthChamberMK2 extends AbstractElectricMachine {
          registerRecipe(12, new ItemStack(Material.BAMBOO), new ItemStack(Material.BAMBOO, 9));
          registerRecipe(12, new ItemStack(Material.CACTUS), new ItemStack(Material.CACTUS, 9));
  
@@ -4752,8 +4784,10 @@ index 9b830b6..11cef19 100644
 +        registerRecipe(30, new ItemStack[]{new ItemStack(Material.DARK_OAK_SAPLING)}, new ItemStack[]{new ItemStack(Material.DARK_OAK_SAPLING, 9), new ItemStack(Material.DARK_OAK_LOG, 18), new ItemStack(Material.APPLE, 6), new ItemStack(Material.DARK_OAK_LEAVES, 9), new ItemStack(Material.STICK, 6)});
 +        registerRecipe(30, new ItemStack[]{new ItemStack(Material.JUNGLE_SAPLING)}, new ItemStack[]{new ItemStack(Material.JUNGLE_SAPLING, 9), new ItemStack(Material.JUNGLE_LOG, 18), new ItemStack(Material.APPLE, 6), new ItemStack(Material.JUNGLE_LEAVES, 9), new ItemStack(Material.STICK, 6)});
 +        registerRecipe(30, new ItemStack[]{new ItemStack(Material.ACACIA_SAPLING)}, new ItemStack[]{new ItemStack(Material.ACACIA_SAPLING, 9), new ItemStack(Material.ACACIA_LOG, 18), new ItemStack(Material.APPLE, 6), new ItemStack(Material.ACACIA_LEAVES, 9), new ItemStack(Material.STICK, 6)});
-+        registerRecipe(30, new ItemStack[]{new ItemStack(Material.MANGROVE_PROPAGULE)}, new ItemStack[]{new ItemStack(Material.MANGROVE_PROPAGULE, 9), new ItemStack(Material.MANGROVE_LOG, 18), new ItemStack(Material.MANGROVE_LEAVES, 9)});
-+        registerRecipe(30, new ItemStack[]{new ItemStack(Material.CHERRY_SAPLING)}, new ItemStack[]{new ItemStack(Material.CHERRY_SAPLING, 9), new ItemStack(Material.CHERRY_LOG, 18), new ItemStack(Material.CHERRY_LEAVES, 9)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_19))
++            registerRecipe(30, new ItemStack[]{new ItemStack(Material.MANGROVE_PROPAGULE)}, new ItemStack[]{new ItemStack(Material.MANGROVE_PROPAGULE, 9), new ItemStack(Material.MANGROVE_LOG, 18), new ItemStack(Material.MANGROVE_LEAVES, 9)});
++        if (Slimefun.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_20))
++            registerRecipe(30, new ItemStack[]{new ItemStack(Material.CHERRY_SAPLING)}, new ItemStack[]{new ItemStack(Material.CHERRY_SAPLING, 9), new ItemStack(Material.CHERRY_LOG, 18), new ItemStack(Material.CHERRY_LEAVES, 9)});
      }
  
      @Override
@@ -4829,7 +4863,7 @@ index 9b830b6..11cef19 100644
                  @Override
                  public boolean onClick(InventoryClickEvent e, Player p, int slot, ItemStack cursor, ClickAction action) {
                      return cursor.getType().isAir();
-@@ -160,8 +156,5 @@ public class GrowthChamberMK2 extends AbstractElectricMachine {
+@@ -160,8 +158,5 @@ public class GrowthChamberMK2 extends AbstractElectricMachine {
                      return false;
                  }
              });
@@ -5704,13 +5738,14 @@ diff --git a/src/main/java/me/profelements/dynatech/items/electric/machines/Orec
 similarity index 77%
 rename from src/main/java/me/profelements/dynatech/items/electric/machines/Orechid.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/machines/Orechid.java
-index 588f01f..ce05a8b 100644
+index 588f01f..721d3b2 100644
 --- a/src/main/java/me/profelements/dynatech/items/electric/machines/Orechid.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/machines/Orechid.java
-@@ -1,41 +1,34 @@
+@@ -1,41 +1,35 @@
 -package me.profelements.dynatech.items.electric.machines;
 +package id.universenetwork.sfa_loader.addons.dynatech.items.electric.machines;
  
++import id.universenetwork.sfa_loader.addons.dynatech.DynaTech;
 +import id.universenetwork.sfa_loader.addons.dynatech.items.abstracts.AbstractElectricTicker;
 +import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
@@ -5758,7 +5793,7 @@ index 588f01f..ce05a8b 100644
          ignoredFaces.add(BlockFace.UP);
          ignoredFaces.add(BlockFace.DOWN);
          ignoredFaces.add(BlockFace.NORTH_NORTH_EAST);
-@@ -49,7 +42,7 @@ public class Orechid extends AbstractElectricTicker implements RecipeDisplayItem
+@@ -49,7 +43,7 @@ public class Orechid extends AbstractElectricTicker implements RecipeDisplayItem
  
          registerDefaultOres();
      }
@@ -5767,7 +5802,7 @@ index 588f01f..ce05a8b 100644
      @Override
      protected boolean checkTickPreconditions(Block b) {
          return true;
-@@ -59,36 +52,28 @@ public class Orechid extends AbstractElectricTicker implements RecipeDisplayItem
+@@ -59,36 +53,28 @@ public class Orechid extends AbstractElectricTicker implements RecipeDisplayItem
      public void tick(Block b, SlimefunItem sfItem) {
          if (DynaTech.getInstance().getTickInterval() % 10 == 0) {
              for (BlockFace relative : BlockFace.values()) {
@@ -5813,7 +5848,7 @@ index 588f01f..ce05a8b 100644
          }
      }
  
-@@ -111,13 +96,16 @@ public class Orechid extends AbstractElectricTicker implements RecipeDisplayItem
+@@ -111,13 +97,16 @@ public class Orechid extends AbstractElectricTicker implements RecipeDisplayItem
          registerOre(Material.STONE, Material.EMERALD_ORE, 1);
          registerOre(Material.STONE, Material.REDSTONE_ORE, 3);
          registerOre(Material.STONE, Material.LAPIS_ORE, 3);
@@ -5834,7 +5869,7 @@ index 588f01f..ce05a8b 100644
      }
  
      @Nonnull
-@@ -125,14 +113,12 @@ public class Orechid extends AbstractElectricTicker implements RecipeDisplayItem
+@@ -125,14 +114,12 @@ public class Orechid extends AbstractElectricTicker implements RecipeDisplayItem
      public List<ItemStack> getDisplayRecipes() {
          List<ItemStack> displayList = new ArrayList<>();
  
@@ -7850,21 +7885,22 @@ diff --git a/src/main/java/me/profelements/dynatech/items/tools/LiquidTank.java 
 similarity index 79%
 rename from src/main/java/me/profelements/dynatech/items/tools/LiquidTank.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/LiquidTank.java
-index 6806878..6fd9e97 100644
+index 6806878..d725d03 100644
 --- a/src/main/java/me/profelements/dynatech/items/tools/LiquidTank.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/LiquidTank.java
-@@ -1,6 +1,9 @@
+@@ -1,6 +1,10 @@
 -package me.profelements.dynatech.items.tools;
 +package id.universenetwork.sfa_loader.addons.dynatech.items.tools;
  
  
++import id.universenetwork.sfa_loader.addons.dynatech.DynaTech;
 +import id.universenetwork.sfa_loader.addons.dynatech.DynaTechItems;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
-@@ -13,11 +16,7 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+@@ -13,11 +17,7 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
  import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
@@ -7876,7 +7912,7 @@ index 6806878..6fd9e97 100644
  import org.bukkit.Material;
  import org.bukkit.NamespacedKey;
  import org.bukkit.block.Block;
-@@ -25,8 +24,8 @@ import org.bukkit.entity.EntityType;
+@@ -25,8 +25,8 @@ import org.bukkit.entity.EntityType;
  import org.bukkit.entity.Player;
  import org.bukkit.event.EventHandler;
  import org.bukkit.event.Listener;
@@ -7886,7 +7922,7 @@ index 6806878..6fd9e97 100644
  import org.bukkit.inventory.ItemStack;
  import org.bukkit.inventory.meta.ItemMeta;
  
-@@ -34,9 +33,8 @@ import java.util.ArrayList;
+@@ -34,9 +34,8 @@ import java.util.ArrayList;
  import java.util.List;
  
  public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
@@ -7898,7 +7934,7 @@ index 6806878..6fd9e97 100644
  
      private final int maxLiquidAmount;
  
-@@ -45,33 +43,34 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
+@@ -45,33 +44,34 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
  
          this.maxLiquidAmount = maxLiquidAmount;
  
@@ -7941,7 +7977,7 @@ index 6806878..6fd9e97 100644
                  List<String> lore = new ArrayList<>();
                  lore.add(ChatColor.GRAY + "A Liquid tank holding up to 16 buckets of some liquids");
                  lore.add("");
-@@ -81,25 +80,25 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
+@@ -81,25 +81,25 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
                  lore.add(ChatColor.WHITE + "Fluid Held: " + PersistentDataAPI.getString(meta, FLUID_NAME));
                  lore.add(ChatColor.WHITE + "Fluid Amount: " + PersistentDataAPI.getInt(meta, FLUID_AMOUNT));
                  meta.setLore(lore);
@@ -7974,7 +8010,7 @@ index 6806878..6fd9e97 100644
                  ItemStack item = e.getItem();
                  String fluidName = PersistentDataAPI.getString(item.getItemMeta(), FLUID_NAME, "NO_LIQUID");
                  int fluidAmount = PersistentDataAPI.getInt(item.getItemMeta(), FLUID_AMOUNT, 0);
-@@ -109,14 +108,11 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
+@@ -109,14 +109,11 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
                      if (mat != null && e.getClickedBlock().isPresent()) {
                          Block block = e.getClickedBlock().get().getRelative(e.getClickedFace());
                          if ((block.isLiquid() || block.getType().isAir()) && !block.getWorld().isUltraWarm() && Slimefun.getProtectionManager().hasPermission(e.getPlayer(), block.getLocation(), Interaction.PLACE_BLOCK)) {
@@ -7994,7 +8030,7 @@ index 6806878..6fd9e97 100644
                              List<String> lore = new ArrayList<>();
                              lore.add(ChatColor.GRAY + "A Liquid tank holding up to 16 buckets of some liquids");
                              lore.add("");
-@@ -126,13 +122,12 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
+@@ -126,13 +123,12 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
                              lore.add(ChatColor.WHITE + "Fluid Held: " + PersistentDataAPI.getString(meta, FLUID_NAME));
                              lore.add(ChatColor.WHITE + "Fluid Amount: " + PersistentDataAPI.getInt(meta, FLUID_AMOUNT));
                              meta.setLore(lore);
@@ -8009,7 +8045,7 @@ index 6806878..6fd9e97 100644
          };
      }
  
-@@ -140,7 +135,7 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
+@@ -140,7 +136,7 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
          return maxLiquidAmount;
      }
  
@@ -8018,7 +8054,7 @@ index 6806878..6fd9e97 100644
          List<String> placeableFluids = new ArrayList<>();
          placeableFluids.add("WATER");
          placeableFluids.add("LAVA");
-@@ -155,14 +150,10 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
+@@ -155,14 +151,10 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
          int itemFluidAmount = PersistentDataAPI.getInt(im, FLUID_AMOUNT);
  
          int resultFluidAmount = itemFluidAmount + fluidAmount;
@@ -8036,7 +8072,7 @@ index 6806878..6fd9e97 100644
      }
  
      public void removeLiquid(ItemStack item, String fluidName, int fluidAmount) {
-@@ -172,11 +163,9 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
+@@ -172,11 +164,9 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
          int itemFluidAmount = PersistentDataAPI.getInt(im, FLUID_AMOUNT);
  
          int resultFluidAmount = itemFluidAmount - fluidAmount;
@@ -8050,7 +8086,7 @@ index 6806878..6fd9e97 100644
      }
  
      public void setLiquid(ItemStack item, String fluidName, int fluidAmount) {
-@@ -191,9 +180,7 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
+@@ -191,9 +181,7 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
      public Pair<String, Integer> getLiquid(ItemStack item) {
          String fluidName = PersistentDataAPI.getString(item.getItemMeta(), FLUID_NAME);
          int fluidAmount = PersistentDataAPI.getInt(item.getItemMeta(), FLUID_AMOUNT);
@@ -8061,7 +8097,7 @@ index 6806878..6fd9e97 100644
          return new Pair<>("NO_FLUID", 0);
      }
  
-@@ -204,24 +191,16 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
+@@ -204,24 +192,16 @@ public class LiquidTank extends SlimefunItem implements NotPlaceable, Listener {
          ItemMeta im = item.getItemMeta();
          List<String> lore = im.getLore();
  
@@ -8160,22 +8196,23 @@ index cdd40d4..3b3585c 100644
 -        
  }
 diff --git a/src/main/java/me/profelements/dynatech/items/tools/TesseractBinder.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/TesseractBinder.java
-similarity index 80%
+similarity index 68%
 rename from src/main/java/me/profelements/dynatech/items/tools/TesseractBinder.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/TesseractBinder.java
-index 0013dd9..d7985cc 100644
+index 0013dd9..6fa85a2 100644
 --- a/src/main/java/me/profelements/dynatech/items/tools/TesseractBinder.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/TesseractBinder.java
-@@ -1,5 +1,7 @@
+@@ -1,5 +1,8 @@
 -package me.profelements.dynatech.items.tools;
 +package id.universenetwork.sfa_loader.addons.dynatech.items.tools;
  
 +import id.universenetwork.sfa_loader.addons.dynatech.DynaTechItems;
 +import id.universenetwork.sfa_loader.addons.dynatech.items.electric.transfer.Tesseract;
++import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
-@@ -9,12 +11,9 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+@@ -9,12 +12,10 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
  import me.mrCookieSlime.Slimefun.api.BlockStorage;
@@ -8183,12 +8220,13 @@ index 0013dd9..d7985cc 100644
 -import me.profelements.dynatech.items.electric.transfer.Tesseract;
  import net.md_5.bungee.api.ChatColor;
  import net.md_5.bungee.api.ChatMessageType;
++import net.md_5.bungee.api.chat.BaseComponent;
  import net.md_5.bungee.api.chat.TextComponent;
 -
  import org.bukkit.Location;
  import org.bukkit.block.Block;
  import org.bukkit.inventory.ItemStack;
-@@ -39,24 +38,23 @@ public class TesseractBinder extends SlimefunItem {
+@@ -39,24 +40,28 @@ public class TesseractBinder extends SlimefunItem {
                  Location blockLocation = block.get().getLocation();
                  SlimefunItem sfItem = sfBlock.get();
                  ItemStack item = e.getItem();
@@ -8199,8 +8237,14 @@ index 0013dd9..d7985cc 100644
                      String locString = PersistentDataAPI.getString(item.getItemMeta(), Tesseract.WIRELESS_LOCATION_KEY);
 -                    if (item != null  && hasPermision && BlockStorage.checkID(blockLocation).equals(DynaTechItems.TESSERACT.getItemId()) && item.hasItemMeta() && locString != null) {
 +                    if (item != null && hasPermision && BlockStorage.checkID(blockLocation).equals(DynaTechItems.TESSERACT.getItemId()) && item.hasItemMeta() && locString != null) {
++                        BaseComponent[] bc;
++                        if (Slimefun.getMinecraftVersion().isBefore(MinecraftVersion.MINECRAFT_1_20))
++                            bc = TextComponent.fromLegacyText(ChatColor.WHITE + "Tesseract Connected!");
++                        else
++                            bc = new BaseComponent[]{TextComponent.fromLegacy(ChatColor.WHITE + "Tesseract Connected!")};
                          BlockStorage.addBlockInfo(blockLocation, "tesseract-pair-location", locString);
-                         e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacy(ChatColor.WHITE + "Tesseract Connected!"));
+-                        e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacy(ChatColor.WHITE + "Tesseract Connected!"));
++                        e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, bc);
                      }
 -                } else if (Boolean.TRUE.equals(hasPermision) && sfItem.getId().equals(DynaTechItems.TESSERACT.getItemId()) && blockLocation != null) {
 +                } else if (hasPermision && sfItem.getId().equals(DynaTechItems.TESSERACT.getItemId()) && blockLocation != null) {
@@ -8303,10 +8347,10 @@ diff --git a/src/main/java/me/profelements/dynatech/listeners/ExoticGardenIntegr
 similarity index 59%
 rename from src/main/java/me/profelements/dynatech/listeners/ExoticGardenIntegrationListener.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/listeners/ExoticGardenIntegrationListener.java
-index c0a9eb7..1137d7d 100644
+index c0a9eb7..357b590 100644
 --- a/src/main/java/me/profelements/dynatech/listeners/ExoticGardenIntegrationListener.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/listeners/ExoticGardenIntegrationListener.java
-@@ -1,37 +1,28 @@
+@@ -1,37 +1,29 @@
 -package me.profelements.dynatech.listeners;
 -
 -import org.bukkit.Bukkit;
@@ -8328,8 +8372,9 @@ index c0a9eb7..1137d7d 100644
  import io.github.bakedlibs.dough.collections.Pair;
 -import io.github.thebusybiscuit.exoticgarden.ExoticGardenRecipeTypes;
 -import io.github.thebusybiscuit.exoticgarden.items.CustomFood;
- import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
--import io.github.thebusybiscuit.slimefun4.api.events.SlimefunItemRegistryFinalizedEvent;
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.api.events.SlimefunItemRegistryFinalizedEvent;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
  import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 -import me.profelements.dynatech.DynaTechItems;
@@ -8359,7 +8404,7 @@ index c0a9eb7..1137d7d 100644
          SlimefunItem item3 = SlimefunItem.getByItem(DynaTechItems.GROWTH_CHAMBER);
          SlimefunItem item4 = SlimefunItem.getByItem(DynaTechItems.GROWTH_CHAMBER_MK2);
      /*
-@@ -48,24 +39,29 @@ public class ExoticGardenIntegrationListener implements Listener {
+@@ -48,24 +40,29 @@ public class ExoticGardenIntegrationListener implements Listener {
              }
          }
      */
@@ -8701,7 +8746,7 @@ diff --git a/src/main/java/me/profelements/dynatech/setup/DynaTechItemsSetup.jav
 similarity index 55%
 rename from src/main/java/me/profelements/dynatech/setup/DynaTechItemsSetup.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/setup/DynaTechItemsSetup.java
-index 9395122..cc043c8 100644
+index 9395122..582787b 100644
 --- a/src/main/java/me/profelements/dynatech/setup/DynaTechItemsSetup.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/setup/DynaTechItemsSetup.java
 @@ -1,8 +1,23 @@
@@ -9087,10 +9132,11 @@ index 9395122..cc043c8 100644
 -        new WitherGolem(DynaTechItems.DT_TOOLS, DynaTechItems.WITHER_GOLEM).register(plugin);
  
 -        //Machines
+-        if (DynaTech.isExoticGardenInstalled()) {
 +        new WitherGolem(DynaTechItems.DT_TOOLS, DynaTechItems.WITHER_GOLEM).register(SlimefunAddonInstance.getSFAInstance());
 +
 +        // Machines
-         if (DynaTech.isExoticGardenInstalled()) {
++        if (AddonsLoader.isAddonLoaded("ExoticGarden")) {
              new KitchenAutoCrafter(DynaTechItems.DT_MACHINES, DynaTechItems.KITCHEN_AUTO_CRAFTER, RecipeType.ENHANCED_CRAFTING_TABLE,
 -                new ItemStack[] {
 -                new ItemStack(Material.BRICK), SlimefunItems.ELECTRIC_FURNACE, new ItemStack(Material.BRICK),
@@ -9703,10 +9749,10 @@ diff --git a/src/main/java/me/profelements/dynatech/tasks/ItemBandTask.java b/sr
 similarity index 76%
 rename from src/main/java/me/profelements/dynatech/tasks/ItemBandTask.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/tasks/ItemBandTask.java
-index db69aee..fd03655 100644
+index db69aee..a420e84 100644
 --- a/src/main/java/me/profelements/dynatech/tasks/ItemBandTask.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/tasks/ItemBandTask.java
-@@ -1,69 +1,64 @@
+@@ -1,69 +1,65 @@
 -package me.profelements.dynatech.tasks;
 -
 -import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -9778,6 +9824,7 @@ index db69aee..fd03655 100644
 -}
 +package id.universenetwork.sfa_loader.addons.dynatech.tasks;
 +
++import id.universenetwork.sfa_loader.addons.dynatech.DynaTech;
 +import id.universenetwork.sfa_loader.addons.dynatech.items.misc.ItemBand;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 +import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
