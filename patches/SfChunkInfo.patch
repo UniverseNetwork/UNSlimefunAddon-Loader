@@ -1,6 +1,6 @@
-From 7371062ca0fd7bbd3d40e71ef58f9d42926dcc5a Mon Sep 17 00:00:00 2001
+From 52926a7b6873d7bb62a2296ee142b65a8bcca9f3 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Wed, 17 Jan 2024 17:53:05 +0700
+Date: Sun, 25 Feb 2024 08:40:58 +0700
 Subject: [PATCH] SfChunkInfo
 
 ---
@@ -18,7 +18,7 @@ Subject: [PATCH] SfChunkInfo
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 5cb7da3..18e9bf2 100644
+index 5cb7da3..92c829c 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -4,133 +4,33 @@
@@ -735,5 +735,5 @@ index bbdd1c5..0000000
 -      default: op
 \ No newline at end of file
 -- 
-2.43.0.windows.1
+2.44.0.windows.1
 

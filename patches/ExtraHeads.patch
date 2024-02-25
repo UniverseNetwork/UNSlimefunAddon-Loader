@@ -1,6 +1,6 @@
-From fdbfdf52bccc391fa2f57d2660eba3cd1b317ea8 Mon Sep 17 00:00:00 2001
+From 6f0493c50acc0ead128a5d747c60c5476f8ef039 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 14 Jan 2024 19:37:33 +0700
+Date: Sun, 25 Feb 2024 08:37:31 +0700
 Subject: [PATCH] ExtraHeads
 
 ---
@@ -34,7 +34,7 @@ Subject: [PATCH] ExtraHeads
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 89d0601..ae03e97 100644
+index 7d16db0..ae03e97 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,97 +1,34 @@
@@ -152,7 +152,7 @@ index 89d0601..ae03e97 100644
 -        <dependency>
 -            <groupId>com.github.slimefun</groupId>
 -            <artifactId>Slimefun4</artifactId>
--            <version>RC-35</version>
+-            <version>RC-36</version>
 -            <scope>provided</scope>
 -            <exclusions>
 -                <exclusion>
@@ -174,7 +174,7 @@ diff --git a/src/main/java/io/github/thebusybiscuit/extraheads/ExtraHeads.java b
 similarity index 56%
 rename from src/main/java/io/github/thebusybiscuit/extraheads/ExtraHeads.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/extraheads/ExtraHeads.java
-index c3f8e30..6300938 100644
+index 66e4160..6300938 100644
 --- a/src/main/java/io/github/thebusybiscuit/extraheads/ExtraHeads.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/ExtraHeads.java
 @@ -1,178 +1,207 @@
@@ -202,7 +202,7 @@ index c3f8e30..6300938 100644
  import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 -import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
--import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.GitHubBuildsUpdater;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.BlobBuildUpdater;
  import io.github.thebusybiscuit.slimefun4.utils.ChatUtils;
  import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
  
@@ -236,8 +236,8 @@ index c3f8e30..6300938 100644
 -        // Setting up bStats
 -        new Metrics(this, 5650);
 -
--        if (cfg.getBoolean("options.auto-update") && getDescription().getVersion().startsWith("DEV - ")) {
--            new GitHubBuildsUpdater(this, getFile(), "TheBusyBiscuit/ExtraHeads/master").start();
+-        if (cfg.getBoolean("options.auto-update") && getDescription().getVersion().startsWith("Dev")) {
+-            new BlobBuildUpdater(this, getFile(), "ExtraHeads").start();
 -        }
 -
 +    public void onLoad() {
@@ -495,7 +495,7 @@ diff --git a/src/main/java/io/github/thebusybiscuit/extraheads/HeadListener.java
 similarity index 52%
 rename from src/main/java/io/github/thebusybiscuit/extraheads/HeadListener.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/extraheads/HeadListener.java
-index da0777c..b8f98f5 100644
+index da0777c..469640c 100644
 --- a/src/main/java/io/github/thebusybiscuit/extraheads/HeadListener.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/HeadListener.java
 @@ -1,4 +1,4 @@
@@ -521,7 +521,7 @@ index da0777c..b8f98f5 100644
 +        this.main = main;
  
 -        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-+        Events.registerListener(this);
++        Events.registerListeners(this);
      }
  
      @EventHandler(ignoreCancelled = true)
@@ -1128,5 +1128,5 @@ index 0c82c97..0000000
 -api-version: 1.16
 \ No newline at end of file
 -- 
-2.43.0.windows.1
+2.44.0.windows.1
 
