@@ -1,6 +1,6 @@
-From aeef397b3f0d5dd79f0316e043d7d667eca1f39a Mon Sep 17 00:00:00 2001
+From 54085593880d7eec1a765571635135dfffd58be9 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Tue, 16 Jan 2024 15:16:20 +0700
+Date: Sun, 25 Feb 2024 08:10:51 +0700
 Subject: [PATCH] HeadLimiter
 
 ---
@@ -10,7 +10,7 @@ Subject: [PATCH] HeadLimiter
  .../j3fftw/headlimiter/MetricsService.java    |  30 -----
  .../addons/headlimiter/CountCommand.java      |  50 +++++++++
  .../addons}/headlimiter/CountResult.java      |   5 +-
- .../addons/headlimiter/HeadLimiter.java       |  87 +++++++++++++++
+ .../addons/headlimiter/HeadLimiter.java       |  90 +++++++++++++++
  .../sfa_loader/addons}/headlimiter/Utils.java |  51 ++++-----
  .../blocklimiter/BlockLimiter.java            |  86 ++++++---------
  .../blocklimiter/BlockListener.java           |  46 +++-----
@@ -18,7 +18,7 @@ Subject: [PATCH] HeadLimiter
  .../headlimiter/blocklimiter/Group.java       |  63 +++--------
  .../HeadLimiter}/config.yml                   |   0
  src/main/resources/plugin.yml                 |  15 ---
- 14 files changed, 238 insertions(+), 470 deletions(-)
+ 14 files changed, 241 insertions(+), 470 deletions(-)
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/CountCommand.java
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/HeadLimiter.java
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/MetricsService.java
@@ -464,15 +464,17 @@ index 23ab396..c5acda0 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java
 new file mode 100644
-index 0000000..4ae4c02
+index 0000000..4e78783
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java
-@@ -0,0 +1,87 @@
+@@ -0,0 +1,90 @@
 +package id.universenetwork.sfa_loader.addons.headlimiter;
 +
 +import id.universenetwork.sfa_loader.addons.headlimiter.blocklimiter.BlockLimiter;
 +import id.universenetwork.sfa_loader.addons.headlimiter.blocklimiter.Group;
++import id.universenetwork.sfa_loader.annotations.AddonInfo;
 +import id.universenetwork.sfa_loader.annotations.AddonLibrary;
++import id.universenetwork.sfa_loader.enums.PaperRequirementLevel;
 +import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
 +import id.universenetwork.sfa_loader.managers.CommandManager;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
@@ -493,6 +495,7 @@ index 0000000..4ae4c02
 +        artifactId = "extrautils",
 +        version = "73e76ac"
 +)
++@AddonInfo(requirePaper = PaperRequirementLevel.MUST)
 +public final class HeadLimiter extends AddonTemplate implements Listener {
 +    @Getter
 +    private static HeadLimiter instance;
@@ -505,7 +508,7 @@ index 0000000..4ae4c02
 +
 +        Utils.loadPermissions();
 +
-+        Events.registerListener(this);
++        Events.registerListeners(this);
 +
 +        CommandManager.register(new CountCommand());
 +
@@ -817,7 +820,7 @@ diff --git a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockListener.jav
 similarity index 73%
 rename from src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockListener.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockListener.java
-index 698220f..e04d88e 100644
+index 698220f..268ecbe 100644
 --- a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockListener.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockListener.java
 @@ -1,22 +1,19 @@
@@ -847,7 +850,7 @@ index 698220f..e04d88e 100644
 -    public BlockListener(@Nonnull HeadLimiter headLimiter) {
 -        headLimiter.getServer().getPluginManager().registerEvents(this, headLimiter);
 +    public BlockListener() {
-+        Events.registerListener(this);
++        Events.registerListeners(this);
      }
  
      @EventHandler
@@ -1097,5 +1100,5 @@ index ecc4aef..0000000
 -    default: false
 \ No newline at end of file
 -- 
-2.43.0.windows.1
+2.44.0.windows.1
 

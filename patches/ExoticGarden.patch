@@ -1,6 +1,6 @@
-From 261eab9f6f4307c401df4df6f6acc157429c12ac Mon Sep 17 00:00:00 2001
+From 6b39d4688eb1621483598312d8ee0a8d22933117 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Fri, 23 Feb 2024 14:51:03 +0700
+Date: Sun, 25 Feb 2024 08:11:52 +0700
 Subject: [PATCH] ExoticGarden
 
 ---
@@ -369,7 +369,7 @@ diff --git a/src/main/java/io/github/thebusybiscuit/exoticgarden/ExoticGarden.ja
 similarity index 77%
 rename from src/main/java/io/github/thebusybiscuit/exoticgarden/ExoticGarden.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/ExoticGarden.java
-index cb9fd4a..59194b6 100644
+index cb9fd4a..29d6179 100644
 --- a/src/main/java/io/github/thebusybiscuit/exoticgarden/ExoticGarden.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/ExoticGarden.java
 @@ -1,17 +1,16 @@
@@ -497,7 +497,7 @@ index cb9fd4a..59194b6 100644
  
 -        new AndroidListener(this);
 -        new PlantsListener(this);
-+        Events.registerListener(new AndroidListener(), new PlantsListener(this));
++        Events.registerListeners(new AndroidListener(), new PlantsListener(this));
      }
  
      private void registerItems() {
@@ -4988,5 +4988,5 @@ index 44598ce..0000000
 -- Slimefun
 \ No newline at end of file
 -- 
-2.43.0.windows.1
+2.44.0.windows.1
 

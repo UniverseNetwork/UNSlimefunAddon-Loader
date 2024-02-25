@@ -1,6 +1,6 @@
-From bc5a0d57c0d8cdd01a50799292add17b30f01a2e Mon Sep 17 00:00:00 2001
+From 33efe8db7e134bf77f154bf2ae8083ab0e223222 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Tue, 16 Jan 2024 15:15:59 +0700
+Date: Sun, 25 Feb 2024 08:11:09 +0700
 Subject: [PATCH] FluffyMachines
 
 ---
@@ -816,7 +816,7 @@ index 42146e0..17306b4 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
 new file mode 100644
-index 0000000..1ca5295
+index 0000000..67a6c91
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
 @@ -0,0 +1,95 @@
@@ -885,7 +885,7 @@ index 0000000..1ca5295
 +        // Register McMMO Events
 +        if (Bukkit.getPluginManager().isPluginEnabled("McMMO")) {
 +            LogUtils.info("McMMO found!");
-+            Events.registerListener(new McMMOEvents());
++            Events.registerListeners(new McMMOEvents());
 +        }
 +
 +        // Registering Items
@@ -893,7 +893,7 @@ index 0000000..1ca5295
 +        FluffyItemSetup.setupBarrels();
 +
 +        // Register Events Class
-+        Events.registerListener(new EventUtils(), new KeyedCrafterListener());
++        Events.registerListeners(new EventUtils(), new KeyedCrafterListener());
 +
 +        LogUtils.info(ChatColor.GREEN + "Hi there! Want to share your server with the " +
 +                "Slimefun community?");
@@ -1882,7 +1882,7 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/CargoMan
 similarity index 85%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/CargoManipulator.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/CargoManipulator.java
-index 538b231..d772246 100644
+index 538b231..a1ac02f 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/CargoManipulator.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/CargoManipulator.java
 @@ -1,5 +1,7 @@
@@ -1933,7 +1933,7 @@ index 538b231..d772246 100644
 +        super(itemGroup, item, recipeType, recipe);
  
 -        Bukkit.getPluginManager().registerEvents(this, FluffyMachines.getInstance());
-+        Events.registerListener(this);
++        Events.registerListeners(this);
      }
  
      @Nonnull
@@ -2306,7 +2306,7 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/FluffyWr
 similarity index 75%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/FluffyWrench.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/FluffyWrench.java
-index 30c1403..71eed6a 100644
+index 30c1403..85fc03f 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/FluffyWrench.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/FluffyWrench.java
 @@ -1,22 +1,21 @@
@@ -2351,7 +2351,7 @@ index 30c1403..71eed6a 100644
          this.type = type;
  
 -        Bukkit.getPluginManager().registerEvents(this, FluffyMachines.getInstance());
-+        Events.registerListener(this);
++        Events.registerListeners(this);
      }
  
      @Nonnull
@@ -2425,7 +2425,7 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/Paxel.ja
 similarity index 73%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/Paxel.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/Paxel.java
-index d0c5334..c9c90c6 100644
+index d0c5334..57af5e3 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/Paxel.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/Paxel.java
 @@ -1,19 +1,13 @@
@@ -2476,7 +2476,7 @@ index d0c5334..c9c90c6 100644
 +        super(itemGroup, item, recipeType, recipe);
  
 -        Bukkit.getPluginManager().registerEvents(this, FluffyMachines.getInstance());
-+        Events.registerListener(this);
++        Events.registerListeners(this);
      }
  
      @EventHandler(ignoreCancelled = true)
@@ -2551,7 +2551,7 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/Portable
 similarity index 79%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/PortableCharger.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/PortableCharger.java
-index 4fec639..7255cdd 100644
+index 4fec639..59cfed8 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/PortableCharger.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/PortableCharger.java
 @@ -1,19 +1,20 @@
@@ -2613,7 +2613,7 @@ index 4fec639..7255cdd 100644
          this.CHARGE_SPEED = chargeSpeed;
  
 -        Bukkit.getPluginManager().registerEvents(this, FluffyMachines.getInstance());
-+        Events.registerListener(this);
++        Events.registerListeners(this);
      }
  
      @Nonnull
@@ -3222,7 +3222,7 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/WarpPadC
 similarity index 71%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/WarpPadConfigurator.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/WarpPadConfigurator.java
-index 3ffd6c2..8ae72a1 100644
+index 3ffd6c2..2e4453c 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/WarpPadConfigurator.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/WarpPadConfigurator.java
 @@ -1,5 +1,9 @@
@@ -3271,7 +3271,7 @@ index 3ffd6c2..8ae72a1 100644
 +        super(itemGroup, item, recipeType, recipe);
  
 -        Bukkit.getPluginManager().registerEvents(this, FluffyMachines.getInstance());
-+        Events.registerListener(this);
++        Events.registerListeners(this);
  
          addItemSetting(MAX_DISTANCE);
 -
@@ -8108,5 +8108,5 @@ index f1301b3..0000000
 -    description: Allows you to use FluffyMachines admin commands
 \ No newline at end of file
 -- 
-2.43.0.windows.1
+2.44.0.windows.1
 
