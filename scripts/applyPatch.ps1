@@ -2,6 +2,15 @@ $basedir=pwd
 $gpgsign=git config commit.gpgsign
 if (!$gpgsign) {$gpgsign = "false"}
 
+$setup=git config sfaloader.setup
+if (!$setup) {$setup = "false"}
+
+if ($setup -eq "false") {
+    Write-Host "Rebuilding Forked projects..."
+    git submodule update --recursive --init | Write-Host -f darkgray
+    git config sfaloader.setup true
+}
+
 function disableCommitSigning {
     # Disable GPG signing before AM, slows things down and doesn't play nicely.
     # There is also zero rational or logical reason to do so for these sub-repo AMs.
@@ -50,9 +59,6 @@ function applyPatch($dir) {
 
 if ($args[0]) {
     if ($args[0] -eq "--all") {
-        Write-Host "Rebuilding Forked projects..."
-        git submodule update --recursive --init | Write-Host -f darkgray
-
         disableCommitSigning
 
         applyPatch InfinityLib-Standalone

@@ -2,6 +2,15 @@ $basedir=pwd
 $gpgsign=git config commit.gpgsign
 if (!$gpgsign) {$gpgsign = "false"}
 
+$setup=git config sfaloader.setup
+if (!$setup) {$setup = "false"}
+
+if ($setup -eq "false") {
+    Write-Host "Rebuilding Forked projects..."
+    git submodule update --recursive --init | Write-Host -f darkgray
+    git config sfaloader.setup true
+}
+
 function enableCommitSigningIfNeeded {
     if ($gpgsign -eq "true") {
         Write-Host "Re-enabling GPG Signing" -nonewline -f blue

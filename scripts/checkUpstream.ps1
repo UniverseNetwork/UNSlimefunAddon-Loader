@@ -1,5 +1,14 @@
 $basedir=pwd
 
+$setup=git config sfaloader.setup
+if (!$setup) {$setup = "false"}
+
+if ($setup -eq "false") {
+    Write-Host "Rebuilding Forked projects..."
+    git submodule update --recursive --init | Write-Host -f darkgray
+    git config sfaloader.setup true
+}
+
 function checkUpstream($dir) {
     $name=Split-Path $dir -Leaf
     if (-not (Test-Path "$basedir/$dir")) {
