@@ -1,6 +1,6 @@
-From af0018af756c7b23a1659ac6f22245869026b189 Mon Sep 17 00:00:00 2001
+From c6d1941babcd0629cf98b5f2173900b7cfb65cf8 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 25 Feb 2024 10:19:38 +0700
+Date: Tue, 27 Feb 2024 14:10:51 +0700
 Subject: [PATCH] DynaTech
 
 ---
@@ -18,7 +18,7 @@ Subject: [PATCH] DynaTech
  .../abstracts/AbstractTickingContainer.java   |  23 +-
  .../items/backpacks/PicnicBasket.java         |  24 +-
  .../backpacks/SoulboundPicnicBacket.java      |  17 +-
- .../items/electric/AntigravityBubble.java     |  51 +-
+ .../items/electric/AntigravityBubble.java     |  59 +-
  .../items/electric/BandaidManager.java        |  93 +--
  .../dynatech/items/electric/BarbedWire.java   |  41 +-
  .../items/electric/FurnaceController.java     |  53 +-
@@ -74,7 +74,7 @@ Subject: [PATCH] DynaTech
  .../addons-config/DynaTech/config.yml         |   1 +
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  24 -
- 70 files changed, 2609 insertions(+), 3273 deletions(-)
+ 70 files changed, 2613 insertions(+), 3277 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/DynaTechItems.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/attributes/LiquidStorage.java (77%)
@@ -88,7 +88,7 @@ Subject: [PATCH] DynaTech
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/abstracts/AbstractTickingContainer.java (77%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/backpacks/PicnicBasket.java (90%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/backpacks/SoulboundPicnicBacket.java (77%)
- rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/AntigravityBubble.java (70%)
+ rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/AntigravityBubble.java (74%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/BandaidManager.java (69%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/BarbedWire.java (86%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/electric/FurnaceController.java (79%)
@@ -2069,10 +2069,10 @@ index 89ef0d4..c708ef0 100644
 +    }
  }
 diff --git a/src/main/java/me/profelements/dynatech/items/electric/AntigravityBubble.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/AntigravityBubble.java
-similarity index 70%
+similarity index 74%
 rename from src/main/java/me/profelements/dynatech/items/electric/AntigravityBubble.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/AntigravityBubble.java
-index f64965f..02ba406 100644
+index 29bfb76..d159f88 100644
 --- a/src/main/java/me/profelements/dynatech/items/electric/AntigravityBubble.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/AntigravityBubble.java
 @@ -1,12 +1,11 @@
@@ -2091,8 +2091,8 @@ index f64965f..02ba406 100644
  import org.bukkit.Bukkit;
  import org.bukkit.GameMode;
  import org.bukkit.Location;
-@@ -20,27 +19,20 @@ import org.bukkit.event.block.BlockPlaceEvent;
- import org.bukkit.event.player.PlayerTeleportEvent;
+@@ -21,27 +20,20 @@ import org.bukkit.event.player.PlayerTeleportEvent;
+ import org.bukkit.event.world.ChunkUnloadEvent;
  import org.bukkit.inventory.ItemStack;
  
 -import java.util.Collection;
@@ -2126,7 +2126,7 @@ index f64965f..02ba406 100644
      }
  
      @Override
-@@ -54,32 +46,31 @@ public class AntigravityBubble extends AbstractElectricTicker implements Listene
+@@ -55,14 +47,11 @@ public class AntigravityBubble extends AbstractElectricTicker implements Listene
          }
  
          enabledPlayers.remove(l);
@@ -2138,7 +2138,33 @@ index f64965f..02ba406 100644
 -        if (e.getPlayer() != null) {
 -            teleportedPlayers.add(e.getPlayer().getUniqueId()); 
 -        }
-+        teleportedPlayers.add(e.getPlayer().getUniqueId());
++        if (e.getPlayer() != null) teleportedPlayers.add(e.getPlayer().getUniqueId());
+     }
+ 
+     @EventHandler
+@@ -70,16 +59,16 @@ public class AntigravityBubble extends AbstractElectricTicker implements Listene
+         for (Map.Entry<Location, Set<UUID>> entry : enabledPlayers.entrySet()) {
+             if (entry.getKey().getChunk() == e.getChunk()) {
+                 Set<UUID> players = enabledPlayers.getOrDefault(entry.getKey(), new HashSet<>());
+-                for (Iterator<UUID> iterator = players.iterator(); iterator.hasNext();) {
+-                    Player p = Bukkit.getPlayer(iterator.next()); 
++                for (Iterator<UUID> iterator = players.iterator(); iterator.hasNext(); ) {
++                    Player p = Bukkit.getPlayer(iterator.next());
+ 
+-                     if (p != null) {
++                    if (p != null) {
+                         p.setAllowFlight(false);
+                         p.setFlying(false);
+                         p.setFallDistance(0.f);
+ 
+                         iterator.remove();
+-                    }      
++                    }
+                 }
+                 break;
+             }
+@@ -87,22 +76,24 @@ public class AntigravityBubble extends AbstractElectricTicker implements Listene
+         enabledPlayers.entrySet().removeIf(entry -> entry.getKey().getChunk().equals(e.getChunk()));
      }
  
 -	@Override
@@ -2169,7 +2195,7 @@ index f64965f..02ba406 100644
  
              if (p != null && !bubbledEntities.contains(p) || (p != null && teleportedPlayers.contains(id))) {
                  p.setAllowFlight(false);
-@@ -91,7 +82,7 @@ public class AntigravityBubble extends AbstractElectricTicker implements Listene
+@@ -114,7 +105,7 @@ public class AntigravityBubble extends AbstractElectricTicker implements Listene
          }
  
          teleportedPlayers.clear();
