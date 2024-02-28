@@ -32,6 +32,9 @@
 [submodule "FluffyMachines"]
 	path = Addons/FluffyMachines
 	url = https://github.com/NCBPFluffyBear/FluffyMachines
+[submodule "Gastronomicon"]
+	path = Addons/Gastronomicon
+	url = https://github.com/SchnTgaiSpock/Gastronomicon
 [submodule "HeadLimiter"]
     path = Addons/HeadLimiter
     url = https://github.com/J3fftw1/HeadLimiter
@@ -50,6 +53,12 @@
 [submodule "SfChunkInfo"]
     path = Addons/SfChunkInfo
     url = https://github.com/FN-FAL113/SfChunkInfo
+[submodule "SlimefunTranslation"]
+	path = Addons/SlimefunTranslation
+	url = https://github.com/GuizhanCraft/SlimefunTranslation
+[submodule "SlimeHUD"]
+	path = Addons/SlimeHUD
+	url = https://github.com/SchnTgaiSpock/SlimeHUD
 [submodule "SMG"]
     path = Addons/SMG
     url = https://github.com/Sefiraat/SMG
