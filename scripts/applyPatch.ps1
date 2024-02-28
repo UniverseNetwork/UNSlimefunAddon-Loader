@@ -68,6 +68,7 @@ if ($args[0]) {
         applyPatch Addons/DyedBackpacks
         applyPatch Addons/DynaTech
         applyPatch Addons/EcoPower
+        applyPatch Addons/ExoticGarden
         applyPatch Addons/ExtraGear
         applyPatch Addons/ExtraHeads
         applyPatch Addons/ExtraTools
