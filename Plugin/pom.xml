@@ -174,5 +174,10 @@
             <artifactId>SimpleMaterialGenerators</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>dev.j3fftw</groupId>
+            <artifactId>SoundMuffler</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

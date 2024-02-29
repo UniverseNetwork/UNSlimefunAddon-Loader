@@ -1,0 +1,484 @@
+From 9896758430fbe2d2c6f6ca3f22916c10cfc758f6 Mon Sep 17 00:00:00 2001
+From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
+Date: Thu, 29 Feb 2024 09:38:34 +0700
+Subject: [PATCH] SoundMuffler
+
+---
+ pom.xml                                       | 73 ++-----------------
+ .../dev/j3fftw/soundmuffler/SoundMuffler.java | 56 --------------
+ .../addons/soundmuffler/SoundMuffler.java     | 31 ++++++++
+ .../soundmuffler/SoundMufflerListener.java    | 44 +++++------
+ .../soundmuffler/SoundMufflerMachine.java     | 53 ++++++--------
+ src/main/resources/config.yml                 |  2 -
+ src/main/resources/plugin.yml                 |  6 --
+ 7 files changed, 80 insertions(+), 185 deletions(-)
+ delete mode 100644 src/main/java/dev/j3fftw/soundmuffler/SoundMuffler.java
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMuffler.java
+ rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/soundmuffler/SoundMufflerListener.java (73%)
+ rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/soundmuffler/SoundMufflerMachine.java (80%)
+ delete mode 100644 src/main/resources/config.yml
+ delete mode 100644 src/main/resources/plugin.yml
+
+diff --git a/pom.xml b/pom.xml
+index 7d7349c..8229f46 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -1,9 +1,15 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project xmlns="http://maven.apache.org/POM/4.0.0"
+-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
++         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+ 
++    <parent>
++        <groupId>id.universenetwork.sfa_loader</groupId>
++        <artifactId>Addons</artifactId>
++        <version>UNOFFICIAL</version>
++    </parent>
++
+     <groupId>dev.j3fftw</groupId>
+     <artifactId>SoundMuffler</artifactId>
+     <version>1.0-SNAPSHOT</version>
+@@ -13,10 +19,6 @@
+             <id>spigot-repo</id>
+             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+         </repository>
+-        <repository>
+-            <id>jitpack.io</id>
+-            <url>https://jitpack.io/</url>
+-        </repository>
+         <repository>
+             <id>dmulloy2-repo</id>
+             <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
+@@ -31,74 +33,15 @@
+             <scope>provided</scope>
+         </dependency>
+ 
+-        <dependency>
+-            <groupId>com.github.Slimefun</groupId>
+-            <artifactId>Slimefun4</artifactId>
+-            <version>6bc1b1f474</version>
+-            <scope>provided</scope>
+-        </dependency>
+-
+         <dependency>
+             <groupId>com.github.dmulloy2</groupId>
+             <artifactId>ProtocolLib</artifactId>
+             <version>80aa420099</version>
+             <scope>provided</scope>
+         </dependency>
+-
+-        <dependency>
+-            <groupId>org.bstats</groupId>
+-            <artifactId>bstats-bukkit</artifactId>
+-            <version>3.0.0</version>
+-            <scope>compile</scope>
+-        </dependency>
+     </dependencies>
+ 
+     <build>
+-        <defaultGoal>clean package</defaultGoal>
+         <finalName>${project.artifactId}</finalName>
+-        <sourceDirectory>src/main/java</sourceDirectory>
+-        <resources>
+-            <resource>
+-                <targetPath>.</targetPath>
+-                <filtering>true</filtering>
+-                <directory>${basedir}/src/main/resources/</directory>
+-                <includes>
+-                    <include>*</include>
+-                </includes>
+-            </resource>
+-        </resources>
+-        <plugins>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-compiler-plugin</artifactId>
+-                <version>3.5.1</version>
+-                <configuration>
+-                    <source>16</source>
+-                    <target>16</target>
+-                </configuration>
+-            </plugin>
+-
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-shade-plugin</artifactId>
+-                <version>3.3.0</version>
+-                <executions>
+-                    <execution>
+-                        <goals>
+-                            <goal>shade</goal>
+-                        </goals>
+-                    </execution>
+-                </executions>
+-
+-                <configuration>
+-                    <relocations>
+-                        <relocation>
+-                            <pattern>org.bstats</pattern>
+-                            <shadedPattern>dev.j3fftw.soundmuffler.bstats</shadedPattern>
+-                        </relocation>
+-                    </relocations>
+-                </configuration>
+-            </plugin>
+-        </plugins>
+     </build>
+ </project>
+diff --git a/src/main/java/dev/j3fftw/soundmuffler/SoundMuffler.java b/src/main/java/dev/j3fftw/soundmuffler/SoundMuffler.java
+deleted file mode 100644
+index a55cab4..0000000
+--- a/src/main/java/dev/j3fftw/soundmuffler/SoundMuffler.java
++++ /dev/null
+@@ -1,56 +0,0 @@
+-package dev.j3fftw.soundmuffler;
+-
+-import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+-import io.github.thebusybiscuit.slimefun4.api.researches.Research;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.BlobBuildUpdater;
+-import java.io.File;
+-import org.bstats.bukkit.Metrics;
+-import org.bukkit.Material;
+-import org.bukkit.NamespacedKey;
+-import org.bukkit.plugin.java.JavaPlugin;
+-
+-import javax.annotation.Nonnull;
+-
+-public class SoundMuffler extends JavaPlugin implements SlimefunAddon {
+-
+-    public static ItemGroup SOUND_MUFFLER;
+-
+-    @Override
+-    public void onEnable() {
+-        if (!new File(getDataFolder(), "config.yml").exists())
+-            saveDefaultConfig();
+-
+-        new Metrics(this, 7415);
+-
+-        if (getConfig().getBoolean("options.auto-update") && getDescription().getVersion().startsWith("DEV - ")) {
+-            new BlobBuildUpdater(this, getFile(), "SoundMuffler", "Dev").start();
+-        }
+-
+-        SOUND_MUFFLER = new ItemGroup(new NamespacedKey(this, "sound_muffler"),
+-            new CustomItemStack(Material.BEACON, "&7SoundMuffler", "", "&a> Click to open"));
+-
+-        new SoundMufflerListener(this).start();
+-
+-        SoundMufflerMachine soundMufflerMachine = new SoundMufflerMachine();
+-        soundMufflerMachine.register(this);
+-
+-        new Research(new NamespacedKey(this, "sound_muffler"),
+-            6912, "Sound Muffler", 11)
+-            .addItems(soundMufflerMachine.getItem())
+-            .register();
+-    }
+-
+-
+-    @Nonnull
+-    @Override
+-    public JavaPlugin getJavaPlugin() {
+-        return this;
+-    }
+-
+-    @Override
+-    public String getBugTrackerURL() {
+-        return "https://github.com/J3fftw1/SoundMuffler/issues";
+-    }
+-}
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMuffler.java b/src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMuffler.java
+new file mode 100644
+index 0000000..0c16cb5
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMuffler.java
+@@ -0,0 +1,31 @@
++package id.universenetwork.sfa_loader.addons.soundmuffler;
++
++import id.universenetwork.sfa_loader.annotations.AddonDependencies;
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.template.AddonTemplate;
++import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
++import io.github.thebusybiscuit.slimefun4.api.researches.Research;
++import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
++import org.bukkit.Material;
++
++@AddonDependencies("ProtocolLib")
++public class SoundMuffler extends AddonTemplate {
++    public static ItemGroup SOUND_MUFFLER;
++
++    @Override
++    public void onLoad() {
++        SOUND_MUFFLER = new ItemGroup(AbstractAddon.createKey("sound_muffler"),
++                new CustomItemStack(Material.BEACON, "&7SoundMuffler", "", "&a> Click to open"));
++
++        new SoundMufflerListener().start();
++
++        SoundMufflerMachine soundMufflerMachine = new SoundMufflerMachine();
++        soundMufflerMachine.register(SlimefunAddonInstance.getSFAInstance());
++
++        new Research(AbstractAddon.createKey("sound_muffler"),
++                6912, "Sound Muffler", 11)
++                .addItems(soundMufflerMachine.getItem())
++                .register();
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/dev/j3fftw/soundmuffler/SoundMufflerListener.java b/src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMufflerListener.java
+similarity index 73%
+rename from src/main/java/dev/j3fftw/soundmuffler/SoundMufflerListener.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMufflerListener.java
+index e3c4675..378f147 100644
+--- a/src/main/java/dev/j3fftw/soundmuffler/SoundMufflerListener.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMufflerListener.java
+@@ -1,10 +1,11 @@
+-package dev.j3fftw.soundmuffler;
++package id.universenetwork.sfa_loader.addons.soundmuffler;
+ 
+ import com.comphenix.protocol.PacketType;
+ import com.comphenix.protocol.ProtocolLibrary;
+ import com.comphenix.protocol.events.ListenerPriority;
+ import com.comphenix.protocol.events.PacketAdapter;
+ import com.comphenix.protocol.events.PacketEvent;
++import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
+ import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
+@@ -14,22 +15,20 @@ import org.bukkit.Material;
+ import org.bukkit.block.Block;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.event.Listener;
+-import org.bukkit.plugin.Plugin;
+ 
+ import javax.annotation.Nonnull;
+ 
+ public class SoundMufflerListener extends PacketAdapter implements Listener, EnergyNetComponent {
+-
+-    public SoundMufflerListener(Plugin plugin) {
+-        super(plugin, ListenerPriority.NORMAL,
+-            PacketType.Play.Server.NAMED_SOUND_EFFECT, PacketType.Play.Server.ENTITY_SOUND
++    public SoundMufflerListener() {
++        super(AbstractAddon.instance(), ListenerPriority.NORMAL,
++                PacketType.Play.Server.NAMED_SOUND_EFFECT, PacketType.Play.Server.ENTITY_SOUND
+         );
+     }
+ 
+     @Override
+     public void onPacketSending(PacketEvent event) {
+         if (event.getPacketType() == PacketType.Play.Server.NAMED_SOUND_EFFECT
+-            || event.getPacketType() == PacketType.Play.Server.ENTITY_SOUND
++                || event.getPacketType() == PacketType.Play.Server.ENTITY_SOUND
+         ) {
+             Location loc;
+             if (event.getPacketType() == PacketType.Play.Server.NAMED_SOUND_EFFECT) {
+@@ -39,9 +38,9 @@ public class SoundMufflerListener extends PacketAdapter implements Listener, Ene
+                 loc = new Location(event.getPlayer().getWorld(), x, y, z);
+             } else if (event.getPacketType() == PacketType.Play.Server.ENTITY_SOUND) {
+                 loc = event.getPlayer().getWorld().getEntities().stream()
+-                    .filter(e -> e.getEntityId() == event.getPacket().getIntegers().read(1))
+-                    .map(Entity::getLocation)
+-                    .findAny().orElse(null);
++                        .filter(e -> e.getEntityId() == event.getPacket().getIntegers().read(1))
++                        .map(Entity::getLocation)
++                        .findAny().orElse(null);
+             } else return;
+ 
+             if (loc == null)
+@@ -49,37 +48,30 @@ public class SoundMufflerListener extends PacketAdapter implements Listener, Ene
+ 
+             final Block soundMuff = findSoundMuffler(loc);
+             if (soundMuff != null
+-                && BlockStorage.getLocationInfo(soundMuff.getLocation(), "enabled") != null
+-                && BlockStorage.getLocationInfo(soundMuff.getLocation(), "enabled").equals("true")
+-                && getCharge(soundMuff.getLocation()) > 8
++                    && BlockStorage.getLocationInfo(soundMuff.getLocation(), "enabled") != null
++                    && BlockStorage.getLocationInfo(soundMuff.getLocation(), "enabled").equals("true")
++                    && getCharge(soundMuff.getLocation()) > 8
+             ) {
+                 int volume = Integer.parseInt(BlockStorage.getLocationInfo(soundMuff.getLocation(), "volume"));
+-                if (volume == 0) {
+-                    event.setCancelled(true);
+-                } else {
+-                    event.getPacket().getFloat().write(0, (float) volume / 100.0f);
+-                }
++                if (volume == 0) event.setCancelled(true);
++                else event.getPacket().getFloat().write(0, (float) volume / 100.0f);
+             }
+         }
+     }
+ 
+     private Block findSoundMuffler(Location loc) {
+         final int dis = SoundMufflerMachine.DISTANCE;
+-        for (int x = loc.getBlockX() - dis; x < loc.getBlockX() + dis; x++) {
+-            for (int y = loc.getBlockY() - dis; y < loc.getBlockY() + dis; y++) {
++        for (int x = loc.getBlockX() - dis; x < loc.getBlockX() + dis; x++)
++            for (int y = loc.getBlockY() - dis; y < loc.getBlockY() + dis; y++)
+                 for (int z = loc.getBlockZ() - dis; z < loc.getBlockZ() + dis; z++) {
+                     if (!loc.getWorld().isChunkLoaded(x >> 4, z >> 4))
+                         continue;
+                     Block b = loc.getWorld().getBlockAt(x, y, z);
+                     if (b.getType() == Material.WHITE_CONCRETE && BlockStorage.hasBlockInfo(b)) {
+                         SlimefunItem item = BlockStorage.check(b);
+-                        if (item.getId().equals("SOUND_MUFFLER")) {
+-                            return b;
+-                        }
++                        if (item.getId().equals("SOUND_MUFFLER")) return b;
+                     }
+                 }
+-            }
+-        }
+         return null;
+     }
+ 
+@@ -103,4 +95,4 @@ public class SoundMufflerListener extends PacketAdapter implements Listener, Ene
+     public String getId() {
+         return "SOUND_MUFFLER";
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/dev/j3fftw/soundmuffler/SoundMufflerMachine.java b/src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMufflerMachine.java
+similarity index 80%
+rename from src/main/java/dev/j3fftw/soundmuffler/SoundMufflerMachine.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMufflerMachine.java
+index 4d5dc86..360da6b 100644
+--- a/src/main/java/dev/j3fftw/soundmuffler/SoundMufflerMachine.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMufflerMachine.java
+@@ -1,4 +1,4 @@
+-package dev.j3fftw.soundmuffler;
++package id.universenetwork.sfa_loader.addons.soundmuffler;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemHandler;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+@@ -26,7 +26,6 @@ import org.bukkit.inventory.ItemStack;
+ import javax.annotation.Nonnull;
+ 
+ public class SoundMufflerMachine extends SlimefunItem implements EnergyNetComponent {
+-
+     private static final String ITEM_NAME = "&3Sound Muffler";
+     private static final String ITEM_ID = "SOUND_MUFFLER";
+ 
+@@ -35,22 +34,21 @@ public class SoundMufflerMachine extends SlimefunItem implements EnergyNetCompon
+ 
+     public SoundMufflerMachine() {
+         super(SoundMuffler.SOUND_MUFFLER,
+-            new SlimefunItemStack(ITEM_ID, Material.WHITE_CONCRETE, ITEM_NAME,
+-                "", "&7Muffles all sound in a", "&78 block radius", "", "&e\u26A1 Requires power to use"
+-            ),
+-            ITEM_ID,
+-            RecipeType.ENHANCED_CRAFTING_TABLE,
+-            new ItemStack[] {
+-                new ItemStack(Material.WHITE_WOOL), SlimefunItems.STEEL_PLATE, new ItemStack(Material.WHITE_WOOL),
+-                SlimefunItems.STEEL_PLATE, SlimefunItems.ELECTRIC_MOTOR, SlimefunItems.STEEL_PLATE,
+-                new ItemStack(Material.WHITE_WOOL), SlimefunItems.STEEL_PLATE, new ItemStack(Material.WHITE_WOOL)
+-            }
++                new SlimefunItemStack(ITEM_ID, Material.WHITE_CONCRETE, ITEM_NAME,
++                        "", "&7Muffles all sound in a", "&78 block radius", "", "&e\u26A1 Requires power to use"
++                ),
++                ITEM_ID,
++                RecipeType.ENHANCED_CRAFTING_TABLE,
++                new ItemStack[]{
++                        new ItemStack(Material.WHITE_WOOL), SlimefunItems.STEEL_PLATE, new ItemStack(Material.WHITE_WOOL),
++                        SlimefunItems.STEEL_PLATE, SlimefunItems.ELECTRIC_MOTOR, SlimefunItems.STEEL_PLATE,
++                        new ItemStack(Material.WHITE_WOOL), SlimefunItems.STEEL_PLATE, new ItemStack(Material.WHITE_WOOL)
++                }
+ 
+         );
+         addItemHandler(onPlace());
+ 
+         new BlockMenuPreset(ITEM_ID, ITEM_NAME) {
+-
+             @Override
+             public void init() {
+                 constructMenu(this);
+@@ -70,13 +68,13 @@ public class SoundMufflerMachine extends SlimefunItem implements EnergyNetCompon
+                 }
+ 
+                 menu.replaceExistingItem(8, new CustomItemStack((enabled ? Material.REDSTONE : Material.GUNPOWDER),
+-                    "&7Enabled: " + (enabled ? "&a✔" : "&4✘"), "", "&e> Click to enable this Machine"));
++                        "&7Enabled: " + (enabled ? "&a✔" : "&4✘"), "", "&e> Click to enable this Machine"));
+                 menu.replaceExistingItem(0, new CustomItemStack(Material.PAPER,
+-                    "&eVolume: &b" + volume,
+-                    "&7Valid value range: 0-100",
+-                    "&7L-click: -10",
+-                    "&7R-click: +10",
+-                    "&7With shift held: +/-1"));
++                        "&eVolume: &b" + volume,
++                        "&7Valid value range: 0-100",
++                        "&7L-click: -10",
++                        "&7R-click: +10",
++                        "&7With shift held: +/-1"));
+ 
+                 final int finalVolume = volume;
+                 menu.addMenuClickHandler(0, (p, arg1, arg2, arg3) -> {
+@@ -112,8 +110,8 @@ public class SoundMufflerMachine extends SlimefunItem implements EnergyNetCompon
+             @Override
+             public boolean canOpen(Block b, Player p) {
+                 return p.hasPermission("slimefun.inventory.bypass")
+-                    || Slimefun.getProtectionManager()
+-                    .hasPermission(p, b, Interaction.INTERACT_BLOCK);
++                        || Slimefun.getProtectionManager()
++                        .hasPermission(p, b, Interaction.INTERACT_BLOCK);
+             }
+ 
+             @Override
+@@ -124,10 +122,9 @@ public class SoundMufflerMachine extends SlimefunItem implements EnergyNetCompon
+     }
+ 
+     protected void constructMenu(BlockMenuPreset preset) {
+-        for (int i : border) {
++        for (int i : border)
+             preset.addItem(i, new CustomItemStack(Material.GRAY_STAINED_GLASS_PANE, " "),
+-                (player, i1, itemStack, clickAction) -> false);
+-        }
++                    (player, i1, itemStack, clickAction) -> false);
+     }
+ 
+ 
+@@ -159,7 +156,6 @@ public class SoundMufflerMachine extends SlimefunItem implements EnergyNetCompon
+     @Override
+     public void preRegister() {
+         addItemHandler(new BlockTicker() {
+-
+             @Override
+             public void tick(Block b, SlimefunItem sf, Config data) {
+                 try {
+@@ -183,9 +179,6 @@ public class SoundMufflerMachine extends SlimefunItem implements EnergyNetCompon
+ 
+     private void tick(Block b) {
+         if ((BlockStorage.getLocationInfo(b.getLocation(), "enabled").equals("true"))
+-            && (getCharge(b.getLocation()) > 8)) {
+-            removeCharge(b.getLocation(), getEnergyConsumption());
+-        }
++                && (getCharge(b.getLocation()) > 8)) removeCharge(b.getLocation(), getEnergyConsumption());
+     }
+-}
+-
++}
+\ No newline at end of file
+diff --git a/src/main/resources/config.yml b/src/main/resources/config.yml
+deleted file mode 100644
+index ed2d12a..0000000
+--- a/src/main/resources/config.yml
++++ /dev/null
+@@ -1,2 +0,0 @@
+-options:
+-  auto-update: true
+diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
+deleted file mode 100644
+index 1c4c5be..0000000
+--- a/src/main/resources/plugin.yml
++++ /dev/null
+@@ -1,6 +0,0 @@
+-name: SoundMuffler
+-description: Muffles nearby sound
+-version: ${project.version}
+-api-version: 1.14
+-depend: [Slimefun, ProtocolLib]
+-main: dev.j3fftw.soundmuffler.SoundMuffler
+-- 
+2.44.0.windows.1
+

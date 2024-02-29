@@ -62,3 +62,6 @@
 [submodule "SMG"]
     path = Addons/SMG
     url = https://github.com/Sefiraat/SMG
+[submodule "SoundMuffler"]
+	path = Addons/SoundMuffler
+	url = https://github.com/Slimefun-Addon-Community/SoundMuffler

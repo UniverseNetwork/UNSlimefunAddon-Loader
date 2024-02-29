@@ -47,6 +47,7 @@ if ($args[0]) {
         checkUpstream Addons/DyedBackpacks
         checkUpstream Addons/DynaTech
         checkUpstream Addons/EcoPower
+        checkUpstream Addons/ExoticGarden
         checkUpstream Addons/ExtraGear
         checkUpstream Addons/ExtraHeads
         checkUpstream Addons/ExtraTools
@@ -58,6 +59,7 @@ if ($args[0]) {
         checkUpstream Addons/SFCalc
         checkUpstream Addons/SfChunkInfo
         checkUpstream Addons/SMG
+        checkUpstream Addons/SoundMuffler
     } else {checkUpstream $args[0]}
 } else {
     Write-Host "The argument is empty" -f yellow

@@ -1,10 +1,10 @@
-From 54085593880d7eec1a765571635135dfffd58be9 Mon Sep 17 00:00:00 2001
+From 9c8e3ad3c7ebff3160e77cd199aeecb180b58742 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 25 Feb 2024 08:10:51 +0700
+Date: Thu, 29 Feb 2024 09:46:54 +0700
 Subject: [PATCH] HeadLimiter
 
 ---
- pom.xml                                       |  95 ++--------------
+ pom.xml                                       |  99 ++---------------
  .../dev/j3fftw/headlimiter/CountCommand.java  |  58 ----------
  .../dev/j3fftw/headlimiter/HeadLimiter.java   | 103 ------------------
  .../j3fftw/headlimiter/MetricsService.java    |  30 -----
@@ -18,7 +18,7 @@ Subject: [PATCH] HeadLimiter
  .../headlimiter/blocklimiter/Group.java       |  63 +++--------
  .../HeadLimiter}/config.yml                   |   0
  src/main/resources/plugin.yml                 |  15 ---
- 14 files changed, 241 insertions(+), 470 deletions(-)
+ 14 files changed, 241 insertions(+), 474 deletions(-)
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/CountCommand.java
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/HeadLimiter.java
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/MetricsService.java
@@ -34,7 +34,7 @@ Subject: [PATCH] HeadLimiter
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 6a9c156..fe65d31 100644
+index 6a9c156..ebd5930 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,9 +1,14 @@
@@ -53,7 +53,7 @@ index 6a9c156..fe65d31 100644
      <groupId>dev.j3fftw.headlimiter</groupId>
      <artifactId>HeadLimiter</artifactId>
      <version>UNOFFICIAL</version>
-@@ -11,78 +16,11 @@
+@@ -11,90 +16,15 @@
  
      <name>HeadLimiter</name>
  
@@ -129,10 +129,11 @@ index 6a9c156..fe65d31 100644
 -            <id>jitpack.io</id>
 -            <url>https://jitpack.io</url>
 -        </repository>
+-        <repository>
+-            <id>paper-repo</id>
+-            <url>https://repo.papermc.io/repository/maven-public/</url>
+-        </repository>
          <repository>
-             <id>paper-repo</id>
-             <url>https://repo.papermc.io/repository/maven-public/</url>
-@@ -91,10 +29,6 @@
              <id>sonatype</id>
              <url>https://oss.sonatype.org/content/groups/public/</url>
          </repository>
@@ -143,7 +144,7 @@ index 6a9c156..fe65d31 100644
      </repositories>
  
      <dependencies>
-@@ -105,24 +39,11 @@
+@@ -105,24 +35,11 @@
              <scope>provided</scope>
          </dependency>
  

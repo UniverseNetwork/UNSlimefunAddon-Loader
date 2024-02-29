@@ -34,3 +34,4 @@ addons:
   sfcalc: true
   sfchunkinfo: true
   smg: true
+  soundmuffler: true
