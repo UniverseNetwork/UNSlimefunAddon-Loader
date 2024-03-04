@@ -1,6 +1,6 @@
-From 6b39d4688eb1621483598312d8ee0a8d22933117 Mon Sep 17 00:00:00 2001
+From c214125972296ca57379ad7fdc10079a8629ba59 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 25 Feb 2024 08:11:52 +0700
+Date: Sun, 3 Mar 2024 11:24:43 +0700
 Subject: [PATCH] ExoticGarden
 
 ---
@@ -369,7 +369,7 @@ diff --git a/src/main/java/io/github/thebusybiscuit/exoticgarden/ExoticGarden.ja
 similarity index 77%
 rename from src/main/java/io/github/thebusybiscuit/exoticgarden/ExoticGarden.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/ExoticGarden.java
-index cb9fd4a..29d6179 100644
+index cb9fd4a..48b4b91 100644
 --- a/src/main/java/io/github/thebusybiscuit/exoticgarden/ExoticGarden.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/ExoticGarden.java
 @@ -1,17 +1,16 @@
@@ -392,9 +392,9 @@ index cb9fd4a..29d6179 100644
 +import id.universenetwork.sfa_loader.addons.exoticgarden.listeners.PlantsListener;
 +import id.universenetwork.sfa_loader.annotations.AddonInfo;
 +import id.universenetwork.sfa_loader.enums.PaperRequirementLevel;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import id.universenetwork.sfa_loader.utils.LogUtils;
  import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
@@ -457,7 +457,7 @@ index cb9fd4a..29d6179 100644
 -    private final File schematicsFolder = new File(getDataFolder(), "schematics");
 +    private final String schematicsPath = "addons-config/ExoticGarden/schematics/";
 +    @Getter
-+    private final File schematicsFolder = new File(AbstractAddon.instance().getDataFolder(), schematicsPath);
++    private final File schematicsFolder = new File(AbstractAddon.getInstance().getDataFolder(), schematicsPath);
  
      private final List<Berry> berries = new ArrayList<>();
      private final List<Tree> trees = new ArrayList<>();
@@ -497,7 +497,7 @@ index cb9fd4a..29d6179 100644
  
 -        new AndroidListener(this);
 -        new PlantsListener(this);
-+        Events.registerListeners(new AndroidListener(), new PlantsListener(this));
++        Event.registerListeners(new AndroidListener(), new PlantsListener(this));
      }
  
      private void registerItems() {
@@ -569,7 +569,7 @@ index cb9fd4a..29d6179 100644
          while (iterator.hasNext()) {
              String key = iterator.next();
 -            cfg.setDefaultValue("grass-drops." + key, true);
-+            getConfig().setDefaultValue("grass-drops." + key, true);
++            getConfig().setDefault("grass-drops." + key, true);
  
 -            if (!cfg.getBoolean("grass-drops." + key)) {
 -                iterator.remove();
@@ -622,7 +622,7 @@ index cb9fd4a..29d6179 100644
  
      private void saveSchematic(@Nonnull String id) {
 -        try (InputStream input = getClass().getResourceAsStream("/schematics/" + id + ".schematic")) {
-+        try (InputStream input = AbstractAddon.instance().getResource(schematicsPath + id + ".schematic")) {
++        try (InputStream input = AbstractAddon.getInstance().getResource(schematicsPath + id + ".schematic")) {
              try (FileOutputStream output = new FileOutputStream(new File(schematicsFolder, id + ".schematic"))) {
                  byte[] buffer = new byte[1024];
                  int len;
@@ -765,13 +765,13 @@ index cb9fd4a..29d6179 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/ExoticGardenRecipeTypes.java b/src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/ExoticGardenRecipeTypes.java
 new file mode 100644
-index 0000000..51b30be
+index 0000000..82fb52f
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/ExoticGardenRecipeTypes.java
 @@ -0,0 +1,14 @@
 +package id.universenetwork.sfa_loader.addons.exoticgarden;
 +
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 +import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 +import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
@@ -1364,14 +1364,14 @@ index 07e44d9..f653d3b 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/items/FoodRegistry.java b/src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/items/FoodRegistry.java
 new file mode 100644
-index 0000000..14843ff
+index 0000000..c3b7567
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/items/FoodRegistry.java
 @@ -0,0 +1,533 @@
 +package id.universenetwork.sfa_loader.addons.exoticgarden.items;
 +
 +import id.universenetwork.sfa_loader.addons.exoticgarden.CustomPotion;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -1969,7 +1969,7 @@ diff --git a/src/main/java/io/github/thebusybiscuit/exoticgarden/items/Kitchen.j
 similarity index 65%
 rename from src/main/java/io/github/thebusybiscuit/exoticgarden/items/Kitchen.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/items/Kitchen.java
-index 292ccef..542ae5b 100644
+index 292ccef..d0d4d85 100644
 --- a/src/main/java/io/github/thebusybiscuit/exoticgarden/items/Kitchen.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/items/Kitchen.java
 @@ -1,11 +1,16 @@
@@ -1982,7 +1982,7 @@ index 292ccef..542ae5b 100644
 -import javax.annotation.ParametersAreNonnullByDefault;
 -
 -import org.bukkit.Bukkit;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Scheduler;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -2052,13 +2052,13 @@ index 292ccef..542ae5b 100644
                  }
  
 -                Bukkit.getScheduler().runTaskLater(plugin, () -> p.getWorld().playSound(furnace.getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 1F, 1F), 55L);
-+                Scheduler.run(55L, () -> p.getWorld().playSound(furnace.getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 1F, 1F));
++                AbstractAddon.getScheduler().run(55, () -> p.getWorld().playSound(furnace.getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 1F, 1F));
  
 -                for (int i = 1; i < 7; i++) {
 -                    Bukkit.getScheduler().runTaskLater(plugin, () -> p.getWorld().playSound(furnace.getLocation(), Sound.BLOCK_METAL_PLACE, 7F, 1F), i * 5L);
 -                }
 +                for (int i = 1; i < 7; i++)
-+                    Scheduler.run(i * 5L, () -> p.getWorld().playSound(furnace.getLocation(), Sound.BLOCK_METAL_PLACE, 7F, 1F));
++                    AbstractAddon.getScheduler().run(i * 5, () -> p.getWorld().playSound(furnace.getLocation(), Sound.BLOCK_METAL_PLACE, 7F, 1F));
  
 -                if (furnaceInventory.getResult() == null) {
 -                    furnaceInventory.setResult(output);
@@ -2156,7 +2156,7 @@ diff --git a/src/main/java/io/github/thebusybiscuit/exoticgarden/listeners/Plant
 similarity index 59%
 rename from src/main/java/io/github/thebusybiscuit/exoticgarden/listeners/PlantsListener.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/listeners/PlantsListener.java
-index 30bf7af..0f6455d 100644
+index 30bf7af..ac88277 100644
 --- a/src/main/java/io/github/thebusybiscuit/exoticgarden/listeners/PlantsListener.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/listeners/PlantsListener.java
 @@ -1,19 +1,17 @@
@@ -2179,8 +2179,8 @@ index 30bf7af..0f6455d 100644
 -import org.bukkit.World;
 +import id.universenetwork.sfa_loader.addons.exoticgarden.*;
 +import id.universenetwork.sfa_loader.addons.exoticgarden.items.BonemealableItem;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 +import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 +import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
@@ -2323,7 +2323,7 @@ index 30bf7af..0f6455d 100644
 +                        if (PaperLib.isChunkGenerated(world, chunkX, chunkZ)) pasteTree(e, x, z, tree);
 +                        else PaperLib.getChunkAtAsync(world, chunkX, chunkZ).thenRun(() -> pasteTree(e, x, z, tree));
 +                    } else
-+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(AbstractAddon.instance(), () -> pasteTree(e, x, z, tree));
++                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(AbstractAddon.getInstance(), () -> pasteTree(e, x, z, tree));
                  }
              }
          }
@@ -2452,7 +2452,7 @@ index 30bf7af..0f6455d 100644
 +                    case BUSH:
 +                        if (isPaper) current.setType(Material.OAK_LEAVES);
 +                        else
-+                            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(AbstractAddon.instance(), () -> current.setType(Material.OAK_LEAVES));
++                            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(AbstractAddon.getInstance(), () -> current.setType(Material.OAK_LEAVES));
 +                        break;
 +                    case FRUIT:
 +                        if (isPaper) {
@@ -2488,7 +2488,7 @@ index 30bf7af..0f6455d 100644
 -                default:
 -                    break;
 +                        } else
-+                            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(AbstractAddon.instance(), () -> {
++                            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(AbstractAddon.getInstance(), () -> {
 +                                current.setType(Material.PLAYER_HEAD);
 +                                Rotatable s = (Rotatable) current.getBlockData();
 +                                s.setRotation(faces[random.nextInt(faces.length)]);
@@ -2505,7 +2505,7 @@ index 30bf7af..0f6455d 100644
 +                            current.setBlockData(s);
 +                            PlayerHead.setSkin(current, PlayerSkin.fromHashCode(berry.getTexture()), true);
 +                        } else {
-+                            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(AbstractAddon.instance(), () -> {
++                            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(AbstractAddon.getInstance(), () -> {
 +                                BlockStorage.store(current.getRelative(BlockFace.UP), berry.getItem());
 +                                current.setType(Material.OAK_LEAVES);
 +                                current.getRelative(BlockFace.UP).setType(Material.PLAYER_HEAD);

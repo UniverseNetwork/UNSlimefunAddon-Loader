@@ -1,6 +1,6 @@
 package id.universenetwork.sfa_loader.addons.arvinmemories;
 
-import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
+import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 import id.universenetwork.sfa_loader.template.AddonTemplate;
 
 public class ArvinMemories extends AddonTemplate {

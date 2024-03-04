@@ -1,11 +1,11 @@
-From 66becf622397fd37e73251ab92afa13636847dcf Mon Sep 17 00:00:00 2001
+From 52043747ea6a7d7440ad3aaad07af9d4f1a0ff6a Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 13 Jan 2024 05:51:31 +0700
+Date: Mon, 4 Mar 2024 09:20:14 +0700
 Subject: [PATCH] SFCalc
 
 ---
  README.md                                     | 10 +-
- pom.xml                                       | 84 ++---------------
+ pom.xml                                       | 86 ++----------------
  .../sfa_loader/addons/sfcalc/CalcCommand.java | 22 +++++
  .../sfa_loader/addons}/sfcalc/Calculator.java | 74 +++++++--------
  .../addons/sfcalc/NeededCommand.java          | 67 ++++++++++++++
@@ -15,7 +15,7 @@ Subject: [PATCH] SFCalc
  .../github/seggan/sfcalc/SFCalcMetrics.java   | 54 -----------
  .../{ => addons-config/SFCalc}/config.yml     |  2 -
  src/main/resources/plugin.yml                 | 13 ---
- 11 files changed, 163 insertions(+), 342 deletions(-)
+ 11 files changed, 164 insertions(+), 343 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/CalcCommand.java
  rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/Calculator.java (66%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java
@@ -58,7 +58,7 @@ index b738bfd..4825e14 100644
 +Slimefun version: RC-20 or newer
 \ No newline at end of file
 diff --git a/pom.xml b/pom.xml
-index 7ce30c7..7699c3c 100644
+index 7ce30c7..9fc1a64 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -4,12 +4,17 @@
@@ -120,7 +120,7 @@ index 7ce30c7..7699c3c 100644
              <plugin>
                  <groupId>org.apache.maven.plugins</groupId>
                  <artifactId>maven-shade-plugin</artifactId>
-                 <version>3.2.4</version>
+-                <version>3.2.4</version>
 -                <dependencies>
 -                    <dependency>
 -                        <groupId>org.ow2.asm</groupId>
@@ -133,6 +133,7 @@ index 7ce30c7..7699c3c 100644
 -                        <version>9.1</version>
 -                    </dependency>
 -                </dependencies>
++                <version>3.5.2</version>
                  <configuration>
                      <relocations>
                          <relocation>
@@ -233,14 +234,14 @@ diff --git a/src/main/java/io/github/seggan/sfcalc/Calculator.java b/src/main/ja
 similarity index 66%
 rename from src/main/java/io/github/seggan/sfcalc/Calculator.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/Calculator.java
-index b0e328c..1536b5b 100644
+index b0e328c..55cc49e 100644
 --- a/src/main/java/io/github/seggan/sfcalc/Calculator.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/Calculator.java
 @@ -1,5 +1,6 @@
 -package io.github.seggan.sfcalc;
 +package id.universenetwork.sfa_loader.addons.sfcalc;
  
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
@@ -279,7 +280,7 @@ index b0e328c..1536b5b 100644
       */
      public void printResults(@Nonnull CommandSender sender, @Nonnull SlimefunItem item, long amount, boolean needed) {
 -        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-+        Bukkit.getScheduler().runTaskAsynchronously(AbstractAddon.instance(), () -> {
++        Bukkit.getScheduler().runTaskAsynchronously(AbstractAddon.getInstance(), () -> {
              Map<ItemStack, Long> results = calculate(item, amount);
  
 -            StringRegistry registry = plugin.getStringRegistry();
@@ -571,14 +572,14 @@ diff --git a/src/main/java/io/github/seggan/sfcalc/StringRegistry.java b/src/mai
 similarity index 79%
 rename from src/main/java/io/github/seggan/sfcalc/StringRegistry.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/StringRegistry.java
-index e3ea036..dda5161 100644
+index e3ea036..bf1fe93 100644
 --- a/src/main/java/io/github/seggan/sfcalc/StringRegistry.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/StringRegistry.java
 @@ -1,20 +1,16 @@
 -package io.github.seggan.sfcalc;
 +package id.universenetwork.sfa_loader.addons.sfcalc;
  
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
  import lombok.Getter;
  import org.apache.commons.lang.Validate;
@@ -841,5 +842,5 @@ index 48349f4..0000000
 -      - sfc
 \ No newline at end of file
 -- 
-2.43.0.windows.1
+2.44.0.windows.1
 

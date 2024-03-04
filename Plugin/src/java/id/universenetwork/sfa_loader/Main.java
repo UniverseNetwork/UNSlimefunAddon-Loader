@@ -1,7 +1,7 @@
 package id.universenetwork.sfa_loader;
 
 import id.universenetwork.sfa_loader.command.MainCommand;
-import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
+import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 import id.universenetwork.sfa_loader.managers.CommandManager;
 import id.universenetwork.sfa_loader.managers.LibraryManager;
 import id.universenetwork.sfa_loader.utils.LogUtils;
@@ -15,7 +15,7 @@ public final class Main extends AbstractAddon {
         CommandManager.init();
         CommandManager.register(new MainCommand());
         if (Bukkit.getPluginManager().isPluginEnabled("Slimefun")) {
-            if (config().getBoolean("loader-settings.disable-all-addons"))
+            if (getConfig().getBoolean("loader-settings.disable-all-addons"))
                 LogUtils.warning("All addons are disabled by default, " +
                         "you can change them in config.yml.");
             else AddonsLoader.loadEnabledAddons();

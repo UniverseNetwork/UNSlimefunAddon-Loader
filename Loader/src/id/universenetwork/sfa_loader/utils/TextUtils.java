@@ -1,6 +1,6 @@
 package id.universenetwork.sfa_loader.utils;
 
-import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
+import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
@@ -105,7 +105,7 @@ public class TextUtils {
     @SuppressWarnings("deprecation")
     public String translateColor(String txt) {
         txt = StringUtils.replace(txt, "%p%",
-                AbstractAddon.config().getString("plugin-settings.prefix"));
+                AbstractAddon.getAddonConfig().getString("plugin-settings.prefix"));
         return ChatColor.translateAlternateColorCodes('&', txt);
     }
 

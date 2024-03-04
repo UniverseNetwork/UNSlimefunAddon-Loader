@@ -1,6 +1,6 @@
-From 46f291128e5f70d312067a4bcc487696fb12213d Mon Sep 17 00:00:00 2001
+From f0486f99b86471292fdfee4c496c1032e4082894 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 13 Jan 2024 08:10:57 +0700
+Date: Sun, 3 Mar 2024 10:20:06 +0700
 Subject: [PATCH] DyedBackpacks
 
 ---
@@ -14,7 +14,7 @@ Subject: [PATCH] DyedBackpacks
  rename src/main/java/{io/github/thebusybiscuit => id/universenetwork/sfa_loader/addons}/dyedbackpacks/BackpackColor.java (88%)
  rename src/main/java/{io/github/thebusybiscuit => id/universenetwork/sfa_loader/addons}/dyedbackpacks/DyedBackpack.java (96%)
  rename src/main/java/{io/github/thebusybiscuit => id/universenetwork/sfa_loader/addons}/dyedbackpacks/DyedBackpacks.java (55%)
- rename src/main/resources/{ => addons-config/DyedBackpacks}/config.yml (64%)
+ rename src/main/resources/{ => addons-config/DyedBackpacks}/config.yml (76%)
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
@@ -280,7 +280,7 @@ diff --git a/src/main/java/io/github/thebusybiscuit/dyedbackpacks/DyedBackpacks.
 similarity index 55%
 rename from src/main/java/io/github/thebusybiscuit/dyedbackpacks/DyedBackpacks.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dyedbackpacks/DyedBackpacks.java
-index 2669b69..36b751c 100644
+index 2669b69..b8b3d80 100644
 --- a/src/main/java/io/github/thebusybiscuit/dyedbackpacks/DyedBackpacks.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dyedbackpacks/DyedBackpacks.java
 @@ -1,63 +1,43 @@
@@ -294,8 +294,8 @@ index 2669b69..36b751c 100644
 -import org.bukkit.plugin.java.JavaPlugin;
 -
 -import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -386,7 +386,7 @@ index 2669b69..36b751c 100644
 +}
 \ No newline at end of file
 diff --git a/src/main/resources/config.yml b/src/main/resources/addons-config/DyedBackpacks/config.yml
-similarity index 64%
+similarity index 76%
 rename from src/main/resources/config.yml
 rename to src/main/resources/addons-config/DyedBackpacks/config.yml
 index a04bba3..ab94b3a 100644
@@ -418,5 +418,5 @@ index cdd8793..0000000
 -api-version: 1.14
 \ No newline at end of file
 -- 
-2.43.0.windows.1
+2.44.0.windows.1
 

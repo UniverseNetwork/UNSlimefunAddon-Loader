@@ -7,8 +7,8 @@ import cloud.commandframework.annotations.CommandPermission;
 import cloud.commandframework.annotations.suggestions.Suggestions;
 import cloud.commandframework.context.CommandContext;
 import id.universenetwork.sfa_loader.AddonsLoader;
-import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
+import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
+import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
 import id.universenetwork.sfa_loader.template.AddonTemplate;
 import id.universenetwork.sfa_loader.utils.LogUtils;
 import id.universenetwork.sfa_loader.utils.TextUtils;
@@ -26,7 +26,7 @@ public final class MainCommand {
     @CommandDescription("Main command of SlimefunAddon-Loader")
     public void cmd(final CommandSender sender) {
         TextUtils.sendCentered(sender,
-                "", "&aSF&dAddon &bLoader &6v" + AbstractAddon.instance().getDescription().getVersion(),
+                "", "&aSF&dAddon &bLoader &6v" + AbstractAddon.getInstance().getDescription().getVersion(),
                 "&dMade By &bARVIN&a3108 &cI&fD &dfor &bUniverse&eNetwork", "");
     }
 
@@ -34,7 +34,7 @@ public final class MainCommand {
     @CommandPermission("sfaloader.command.reload.all")
     public void cmdReloadAll(final CommandSender sender) {
         LogUtils.info("&eReloading all configuration files...");
-        AbstractAddon.config().reload();
+        AbstractAddon.getAddonConfig().reload();
         Set<AddonTemplate> loadedAddon = AddonsLoader.getLoadedAddons();
         for (AddonTemplate addon : loadedAddon) {
             AddonConfig config = addon.getConfig();
@@ -49,7 +49,7 @@ public final class MainCommand {
     @CommandPermission("sfaloader.command.reload.plugin")
     public void cmdReloadPlugin(final CommandSender sender) {
         LogUtils.info("&eReloading plugin configuration files...");
-        AbstractAddon.config().reload();
+        AbstractAddon.getAddonConfig().reload();
         if (sender instanceof Player) TextUtils.send(sender,
                 "%p% &aPlugin configuration files have been reloaded!");
         LogUtils.info("&aPlugin configuration files have been reloaded!");

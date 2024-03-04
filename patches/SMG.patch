@@ -1,6 +1,6 @@
-From 81976d08b6d32d493600186a6e66219905d085b5 Mon Sep 17 00:00:00 2001
+From df033fa443fabfaef55ed00c57322eb5b3290e5a Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Wed, 17 Jan 2024 14:02:53 +0700
+Date: Mon, 4 Mar 2024 09:21:37 +0700
 Subject: [PATCH] SMG
 
 ---
@@ -152,14 +152,14 @@ diff --git a/src/main/java/me/waleks/simplematerialgenerators/SMGItems.java b/sr
 similarity index 54%
 rename from src/main/java/me/waleks/simplematerialgenerators/SMGItems.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SMGItems.java
-index ccf49a1..03013de 100644
+index ccf49a1..4659509 100644
 --- a/src/main/java/me/waleks/simplematerialgenerators/SMGItems.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SMGItems.java
 @@ -1,150 +1,135 @@
 -package me.waleks.simplematerialgenerators;
 +package id.universenetwork.sfa_loader.addons.simplematerialgenerators;
  
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
@@ -393,7 +393,7 @@ index ccf49a1..03013de 100644
              Material.REDSTONE_BLOCK,
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SimpleMaterialGenerators.java b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SimpleMaterialGenerators.java
 new file mode 100644
-index 0000000..5ef3e7c
+index 0000000..02964aa
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/simplematerialgenerators/SimpleMaterialGenerators.java
 @@ -0,0 +1,223 @@
@@ -403,7 +403,7 @@ index 0000000..5ef3e7c
 +import id.universenetwork.sfa_loader.addons.simplematerialgenerators.items.GeneratorMultiblock;
 +import id.universenetwork.sfa_loader.addons.simplematerialgenerators.items.MaterialGenerator;
 +import id.universenetwork.sfa_loader.annotations.AddonInfo;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 +import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
@@ -1093,5 +1093,5 @@ index c464a0f..0000000
 -- Slimefun
 \ No newline at end of file
 -- 
-2.43.0.windows.1
+2.44.0.windows.1
 

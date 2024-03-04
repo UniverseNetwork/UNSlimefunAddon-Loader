@@ -1,6 +1,7 @@
 package id.universenetwork.sfa_loader.utils;
 
-import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
+import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
+import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -41,6 +42,42 @@ public class LogUtils {
         if (lvl.equals(Level.SEVERE))
             Bukkit.getLogger().log(lvl, checkAndConvert("%p% &c" + msg), e);
         else Bukkit.getLogger().log(lvl, checkAndConvert("%p% &r" + msg), e);
+    }
+
+    /**
+     * Logs a message in the console.
+     * The message will be converted in colored strings with the chosen prefix in config.yml
+     *
+     * @param lvl   the Level of the log
+     * @param msg   the message
+     * @param param the parameter to the message
+     * @author ARVIN3108 ID
+     * @see Logger#log(Level, String, Object)
+     */
+    public void log(Level lvl, String msg, Object param) {
+        if (lvl.equals(Level.WARNING))
+            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &e" + msg), param);
+        if (lvl.equals(Level.SEVERE))
+            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &c" + msg), param);
+        else Bukkit.getLogger().log(lvl, checkAndConvert("%p% &r" + msg), param);
+    }
+
+    /**
+     * Logs a message in the console.
+     * The message will be converted in colored strings with the chosen prefix in config.yml
+     *
+     * @param lvl    the Level of the log
+     * @param msg    the message
+     * @param params the parameter to the message
+     * @author ARVIN3108 ID
+     * @see Logger#log(Level, String, Object[])
+     */
+    public void log(Level lvl, String msg, Object[] params) {
+        if (lvl.equals(Level.WARNING))
+            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &e" + msg), params);
+        if (lvl.equals(Level.SEVERE))
+            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &c" + msg), params);
+        else Bukkit.getLogger().log(lvl, checkAndConvert("%p% &r" + msg), params);
     }
 
     /**
@@ -105,7 +142,7 @@ public class LogUtils {
         // Continue if String is neither not null nor empty
         if (msg != null && !msg.isEmpty()) {
             // replace %p% with prefix
-            msg = StringUtils.replace(msg, "%p%", AbstractAddon.config()
+            msg = StringUtils.replace(msg, "%p%", AbstractAddon.getAddonConfig()
                     .getString("plugin-settings.prefix"));
             // copy of string
             String msgCopy = String.copyValueOf(msg.toCharArray()) + ConsoleColor.RESET.ansiColor;
@@ -158,6 +195,13 @@ public class LogUtils {
 
 
         private final char bukkitColor;
+        /**
+         * Returns the ANSI-ColorCode of the color code
+         *
+         * @return the Ansi-ColorCode
+         * @author Timeout
+         */
+        @Getter
         private final String ansiColor;
 
         ConsoleColor(char bukkitColor, String pattern, int ansiCode) {
@@ -180,16 +224,6 @@ public class LogUtils {
             }
             // return null for not found
             throw new IllegalArgumentException("Color with code " + code + " does not exists");
-        }
-
-        /**
-         * Returns the ANSI-ColorCode of the color code
-         *
-         * @return the Ansi-ColorCode
-         * @author Timeout
-         */
-        public String getAnsiColor() {
-            return ansiColor;
         }
     }
 }

@@ -1,6 +1,6 @@
-From a21e20dbd88edc1284c01bd3dba25718a0d6b49e Mon Sep 17 00:00:00 2001
+From b081cf792a8ead857858e66c4c2fba1b6cb452be Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 13 Jan 2024 14:43:01 +0700
+Date: Sun, 3 Mar 2024 11:02:04 +0700
 Subject: [PATCH] PrivateStorage
 
 ---
@@ -221,7 +221,7 @@ index aa062b4..da203ac 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/privatestorage/PrivateStorage.java b/src/main/java/id/universenetwork/sfa_loader/addons/privatestorage/PrivateStorage.java
 new file mode 100644
-index 0000000..3515e6e
+index 0000000..6ff2356
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/privatestorage/PrivateStorage.java
 @@ -0,0 +1,20 @@
@@ -229,7 +229,7 @@ index 0000000..3515e6e
 +
 +import id.universenetwork.sfa_loader.addons.privatestorage.storage.PrivateChests;
 +import id.universenetwork.sfa_loader.addons.privatestorage.storage.PublicChests;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
@@ -422,7 +422,7 @@ index 6e67953..5c83451 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/privatestorage/storage/PrivateChests.java b/src/main/java/id/universenetwork/sfa_loader/addons/privatestorage/storage/PrivateChests.java
 new file mode 100644
-index 0000000..dca9929
+index 0000000..0979e84
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/privatestorage/storage/PrivateChests.java
 @@ -0,0 +1,121 @@
@@ -430,8 +430,8 @@ index 0000000..dca9929
 +
 +import id.universenetwork.sfa_loader.addons.privatestorage.ChestProtectionLevel;
 +import id.universenetwork.sfa_loader.addons.privatestorage.SlimefunChest;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 +import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -550,7 +550,7 @@ index 0000000..dca9929
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/privatestorage/storage/PublicChests.java b/src/main/java/id/universenetwork/sfa_loader/addons/privatestorage/storage/PublicChests.java
 new file mode 100644
-index 0000000..cd097c0
+index 0000000..4f5196f
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/privatestorage/storage/PublicChests.java
 @@ -0,0 +1,122 @@
@@ -558,8 +558,8 @@ index 0000000..cd097c0
 +
 +import id.universenetwork.sfa_loader.addons.privatestorage.ChestProtectionLevel;
 +import id.universenetwork.sfa_loader.addons.privatestorage.SlimefunChest;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 +import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -1029,5 +1029,5 @@ index eeaccb8..0000000
 -    default: false
 \ No newline at end of file
 -- 
-2.43.0.windows.1
+2.44.0.windows.1
 

@@ -1,6 +1,6 @@
-From e639d0e8d536c3c90c9d55f3cf80d827eb46fab1 Mon Sep 17 00:00:00 2001
+From 32ae8468f767434607a3beeef72afff2c76f4a38 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Mon, 15 Jan 2024 19:22:40 +0700
+Date: Sun, 3 Mar 2024 10:19:15 +0700
 Subject: [PATCH] DyeBench
 
 ---
@@ -171,7 +171,7 @@ index 2cf77a5..79f140f 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/DyeBench.java b/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/DyeBench.java
 new file mode 100644
-index 0000000..e02ddff
+index 0000000..85f7186
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/DyeBench.java
 @@ -0,0 +1,127 @@
@@ -180,7 +180,7 @@ index 0000000..e02ddff
 +import id.universenetwork.sfa_loader.addons.dyebench.implemention.items.machines.TheDyeBench;
 +import id.universenetwork.sfa_loader.addons.dyebench.implemention.items.pigments.DyePigments;
 +import id.universenetwork.sfa_loader.annotations.AddonLibrary;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 +import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
@@ -307,14 +307,14 @@ diff --git a/src/main/java/me/jasperchasetoq/dyebench/DyeBenchItems.java b/src/m
 similarity index 84%
 rename from src/main/java/me/jasperchasetoq/dyebench/DyeBenchItems.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dyebench/DyeBenchItems.java
-index ce0a514..d36076d 100644
+index ce0a514..fa49d1c 100644
 --- a/src/main/java/me/jasperchasetoq/dyebench/DyeBenchItems.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dyebench/DyeBenchItems.java
 @@ -1,28 +1,25 @@
 -package me.jasperchasetoq.dyebench;
 +package id.universenetwork.sfa_loader.addons.dyebench;
  
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
  import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.groups.SubItemGroup;
@@ -1813,5 +1813,5 @@ index 9a0d509..0000000
 -- Slimefun
 \ No newline at end of file
 -- 
-2.43.0.windows.1
+2.44.0.windows.1
 

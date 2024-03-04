@@ -1,6 +1,6 @@
-[submodule "InfinityLib-Standalone"]
-    path = InfinityLib-Standalone
-    url = https://github.com/ARVIN3108/InfinityLib-Standalone
+[submodule "InfinityGuizhanLib-Standalone"]
+	path = InfinityGuizhanLib-Standalone
+	url = https://github.com/ARVIN3108/InfinityGuizhanLib-Standalone
 
 [submodule "ColoredEnderChests"]
     path = Addons/ColoredEnderChests

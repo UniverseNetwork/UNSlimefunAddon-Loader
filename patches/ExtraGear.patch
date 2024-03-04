@@ -1,6 +1,6 @@
-From 358e59efa24d5d03d4142885e63b061a9fe3d919 Mon Sep 17 00:00:00 2001
+From 1134e50b6921be4cefb5de242265f385d332905f Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 13 Jan 2024 15:39:10 +0700
+Date: Sun, 3 Mar 2024 10:25:32 +0700
 Subject: [PATCH] ExtraGear
 
 ---
@@ -186,7 +186,7 @@ diff --git a/src/main/java/io/github/thebusybiscuit/extragear/ExtraGear.java b/s
 similarity index 71%
 rename from src/main/java/io/github/thebusybiscuit/extragear/ExtraGear.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/extragear/ExtraGear.java
-index b5085ff..6c587b0 100644
+index b5085ff..63677c3 100644
 --- a/src/main/java/io/github/thebusybiscuit/extragear/ExtraGear.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extragear/ExtraGear.java
 @@ -1,62 +1,50 @@
@@ -203,8 +203,8 @@ index b5085ff..6c587b0 100644
 -import org.bukkit.plugin.java.JavaPlugin;
 +package id.universenetwork.sfa_loader.addons.extragear;
  
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -379,5 +379,5 @@ index 9d25072..0000000
 -main: io.github.thebusybiscuit.extragear.ExtraGear
 \ No newline at end of file
 -- 
-2.43.0.windows.1
+2.44.0.windows.1
 

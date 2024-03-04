@@ -1,35 +1,35 @@
-From 245d4f4affa3c436d5453f80fc85a60cb338f950 Mon Sep 17 00:00:00 2001
+From 7cf851a0e97d4a02712278a0c8ac59ba093caad0 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 13 Jan 2024 05:50:12 +0700
+Date: Sun, 3 Mar 2024 10:43:26 +0700
 Subject: [PATCH] ExtraTools
 
 ---
  pom.xml                                       | 105 ++------------
- .../addons/extratools/ExtraTools.java         |  84 +++++++++++
- .../interfaces/ETInventoryBlock.java          |   2 +-
- .../machines/CobblestoneGenerator.java        |  35 +++--
- .../machines/ConcreteFactory.java             | 130 ++++++++++++++++++
- .../machines/ElectricComposter.java           |  43 +++---
- .../machines/GoldTransmuter.java              |  64 ++++-----
- .../implementation/machines/Pulverizer.java   |  60 ++++----
- .../implementation/machines/Vaporizer.java    |  34 ++---
- .../implementation/tools/Hammer.java          |  14 +-
- .../addons/extratools/lists/ETItems.java      |  88 ++++++++++++
+ .../addons/extratools/ExtraTools.java         |  78 +++++++++++
+ .../interfaces/ETInventoryBlock.java          |   5 +-
+ .../machines/CobblestoneGenerator.java        |  62 ++++-----
+ .../machines/ConcreteFactory.java             | 126 +++++++++++++++++
+ .../machines/ElectricComposter.java           |  57 ++++----
+ .../machines/GoldTransmuter.java              |  70 +++++-----
+ .../implementation/machines/Pulverizer.java   |  67 +++++----
+ .../implementation/machines/Vaporizer.java    |  42 +++---
+ .../implementation/tools/Hammer.java          |  34 ++---
+ .../addons/extratools/lists/ETItems.java      |  84 +++++++++++
  .../me/sfiguz7/extratools/ExtraTools.java     | 127 -----------------
  .../machines/ConcreteFactory.java             | 130 ------------------
  .../me/sfiguz7/extratools/lists/ETItems.java  |  89 ------------
  src/main/resources/config.yml                 |   2 -
  src/main/resources/plugin.yml                 |  10 --
- 16 files changed, 435 insertions(+), 582 deletions(-)
+ 16 files changed, 440 insertions(+), 648 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/extratools/ExtraTools.java
- rename src/main/java/{me/sfiguz7 => id/universenetwork/sfa_loader/addons}/extratools/implementation/interfaces/ETInventoryBlock.java (94%)
- rename src/main/java/{me/sfiguz7 => id/universenetwork/sfa_loader/addons}/extratools/implementation/machines/CobblestoneGenerator.java (83%)
+ rename src/main/java/{me/sfiguz7 => id/universenetwork/sfa_loader/addons}/extratools/implementation/interfaces/ETInventoryBlock.java (93%)
+ rename src/main/java/{me/sfiguz7 => id/universenetwork/sfa_loader/addons}/extratools/implementation/machines/CobblestoneGenerator.java (78%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/ConcreteFactory.java
- rename src/main/java/{me/sfiguz7 => id/universenetwork/sfa_loader/addons}/extratools/implementation/machines/ElectricComposter.java (63%)
+ rename src/main/java/{me/sfiguz7 => id/universenetwork/sfa_loader/addons}/extratools/implementation/machines/ElectricComposter.java (60%)
  rename src/main/java/{me/sfiguz7 => id/universenetwork/sfa_loader/addons}/extratools/implementation/machines/GoldTransmuter.java (52%)
  rename src/main/java/{me/sfiguz7 => id/universenetwork/sfa_loader/addons}/extratools/implementation/machines/Pulverizer.java (54%)
  rename src/main/java/{me/sfiguz7 => id/universenetwork/sfa_loader/addons}/extratools/implementation/machines/Vaporizer.java (68%)
- rename src/main/java/{me/sfiguz7 => id/universenetwork/sfa_loader/addons}/extratools/implementation/tools/Hammer.java (81%)
+ rename src/main/java/{me/sfiguz7 => id/universenetwork/sfa_loader/addons}/extratools/implementation/tools/Hammer.java (72%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/extratools/lists/ETItems.java
  delete mode 100644 src/main/java/me/sfiguz7/extratools/ExtraTools.java
  delete mode 100644 src/main/java/me/sfiguz7/extratools/implementation/machines/ConcreteFactory.java
@@ -176,27 +176,25 @@ index 07e1657..6383572 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/extratools/ExtraTools.java b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/ExtraTools.java
 new file mode 100644
-index 0000000..b49c8a2
+index 0000000..60a92fc
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/ExtraTools.java
-@@ -0,0 +1,84 @@
+@@ -0,0 +1,78 @@
 +package id.universenetwork.sfa_loader.addons.extratools;
 +
 +import id.universenetwork.sfa_loader.addons.extratools.implementation.machines.*;
 +import id.universenetwork.sfa_loader.addons.extratools.implementation.tools.Hammer;
 +import id.universenetwork.sfa_loader.addons.extratools.lists.ETItems;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 +
 +public class ExtraTools extends AddonTemplate {
-+
 +    private int researchId = 4100;
 +
 +    @Override
 +    public void onLoad() {
-+
 +        new Hammer().register(SlimefunAddonInstance.getSFAInstance());
 +        new Research(AbstractAddon.createKey("HAMMER"),
 +                ++researchId, "Hammer", 3)
@@ -208,7 +206,6 @@ index 0000000..b49c8a2
 +                .addItems(ETItems.GOLD_TRANSMUTER).register();
 +
 +        new ElectricComposter(ElectricComposter.Tier.ONE) {
-+
 +            @Override
 +            public int getEnergyConsumption() {
 +                return 9;
@@ -225,7 +222,6 @@ index 0000000..b49c8a2
 +                .addItems(ETItems.ELECTRIC_COMPOSTER).register();
 +
 +        new ElectricComposter(ElectricComposter.Tier.TWO) {
-+
 +            @Override
 +            public int getEnergyConsumption() {
 +                return 25;
@@ -260,15 +256,14 @@ index 0000000..b49c8a2
 +        new Research(AbstractAddon.createKey("PULVERIZER"),
 +                ++researchId, "Pulverizer", 18)
 +                .addItems(ETItems.PULVERIZER).register();
-+
 +    }
-+
 +}
+\ No newline at end of file
 diff --git a/src/main/java/me/sfiguz7/extratools/implementation/interfaces/ETInventoryBlock.java b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/interfaces/ETInventoryBlock.java
-similarity index 94%
+similarity index 93%
 rename from src/main/java/me/sfiguz7/extratools/implementation/interfaces/ETInventoryBlock.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/interfaces/ETInventoryBlock.java
-index fc24a33..e7b15c9 100644
+index fc24a33..ce7acae 100644
 --- a/src/main/java/me/sfiguz7/extratools/implementation/interfaces/ETInventoryBlock.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/interfaces/ETInventoryBlock.java
 @@ -1,4 +1,4 @@
@@ -277,11 +272,26 @@ index fc24a33..e7b15c9 100644
  
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
+ import java.util.function.Consumer;
+ 
+ public interface ETInventoryBlock {
+-
+     int[] getInputSlots();
+ 
+     int[] getOutputSlots();
+@@ -32,4 +31,4 @@ public interface ETInventoryBlock {
+             }
+         };
+     }
+-}
++}
+\ No newline at end of file
 diff --git a/src/main/java/me/sfiguz7/extratools/implementation/machines/CobblestoneGenerator.java b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/CobblestoneGenerator.java
-similarity index 83%
+similarity index 78%
 rename from src/main/java/me/sfiguz7/extratools/implementation/machines/CobblestoneGenerator.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/CobblestoneGenerator.java
-index c434fd2..7485cd6 100644
+index c434fd2..32bd685 100644
 --- a/src/main/java/me/sfiguz7/extratools/implementation/machines/CobblestoneGenerator.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/CobblestoneGenerator.java
 @@ -1,5 +1,7 @@
@@ -302,13 +312,14 @@ index c434fd2..7485cd6 100644
  import org.bukkit.Material;
  import org.bukkit.block.Block;
  import org.bukkit.entity.Player;
-@@ -29,23 +29,23 @@ import java.util.List;
+@@ -28,24 +28,22 @@ import org.bukkit.inventory.ItemStack;
+ import java.util.List;
  
  
- public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implements ETInventoryBlock,
+-public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implements ETInventoryBlock,
 -    EnergyNetComponent {
-+        EnergyNetComponent {
- 
+-
++public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implements ETInventoryBlock, EnergyNetComponent {
      private static final int ENERGY_CONSUMPTION = 32;
      private final int[] border = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 18, 19, 20, 21, 22, 27, 28, 29, 30,
 -        31, 36, 37, 38, 39, 40, 41, 42, 43, 44, 22};
@@ -334,30 +345,37 @@ index c434fd2..7485cd6 100644
  
          createPreset(this, this::constructMenu);
  
-@@ -55,18 +55,18 @@ public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implem
+@@ -53,22 +51,18 @@ public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implem
+     }
+ 
      private void constructMenu(BlockMenuPreset preset) {
-         for (int i : border) {
+-        for (int i : border) {
++        for (int i : border)
              preset.addItem(i, new CustomItemStack(new ItemStack(Material.GRAY_STAINED_GLASS_PANE), " "),
 -                ChestMenuUtils.getEmptyClickHandler());
+-        }
+-        for (int i : inputBorder) {
 +                    ChestMenuUtils.getEmptyClickHandler());
-         }
-         for (int i : inputBorder) {
++        for (int i : inputBorder)
              preset.addItem(i, new CustomItemStack(new ItemStack(Material.CYAN_STAINED_GLASS_PANE), " "),
 -                ChestMenuUtils.getEmptyClickHandler());
+-        }
+-        for (int i : outputBorder) {
 +                    ChestMenuUtils.getEmptyClickHandler());
-         }
-         for (int i : outputBorder) {
++        for (int i : outputBorder)
              preset.addItem(i, new CustomItemStack(new ItemStack(Material.ORANGE_STAINED_GLASS_PANE), " "),
 -                ChestMenuUtils.getEmptyClickHandler());
+-        }
 +                    ChestMenuUtils.getEmptyClickHandler());
-         }
  
 -        for (int i : getOutputSlots()) {
 +        for (int i : getOutputSlots())
              preset.addMenuClickHandler(i, new ChestMenu.AdvancedMenuClickHandler() {
- 
+-
                  @Override
-@@ -80,17 +80,16 @@ public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implem
+                 public boolean onClick(Player p, int slot, ItemStack cursor, ClickAction action) {
+                     return false;
+@@ -80,17 +74,16 @@ public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implem
                      return cursor == null || cursor.getType() == Material.AIR;
                  }
              });
@@ -377,12 +395,65 @@ index c434fd2..7485cd6 100644
      }
  
      @Override
+@@ -105,7 +98,6 @@ public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implem
+ 
+     public BlockBreakHandler onBreak() {
+         return new BlockBreakHandler(false, false) {
+-
+             @Override
+             public void onPlayerBreak(BlockBreakEvent e, ItemStack item, List<ItemStack> drops) {
+                 Block b = e.getBlock();
+@@ -122,7 +114,6 @@ public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implem
+     @Override
+     public BlockTicker getItemHandler() {
+         return new BlockTicker() {
+-
+             @Override
+             // Fires first!! The method tick() fires after this
+             public void uniqueTick() {
+@@ -134,25 +125,20 @@ public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implem
+                     return;
+                 }
+                 decrement--;
+-
+             }
+ 
+             @Override
+             public void tick(Block b, SlimefunItem sf, Config data) {
+                 // We only act once per decrement cycle, when decrement got to
+                 // lowest and has been reset
+-                if (decrement != 2) {
+-                    return;
+-                }
++                if (decrement != 2) return;
+ 
+                 ItemStack output = new ItemStack(Material.COBBLESTONE);
+ 
+                 if (getCharge(b.getLocation()) >= ENERGY_CONSUMPTION) {
+                     BlockMenu menu = BlockStorage.getInventory(b);
+ 
+-                    if (!menu.fits(output, getOutputSlots())) {
+-                        return;
+-                    }
++                    if (!menu.fits(output, getOutputSlots())) return;
+ 
+                     removeCharge(b.getLocation(), ENERGY_CONSUMPTION);
+                     menu.pushItem(output, getOutputSlots());
+@@ -165,6 +151,4 @@ public class CobblestoneGenerator extends SimpleSlimefunItem<BlockTicker> implem
+             }
+         };
+     }
+-
+-}
+-
++}
+\ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/ConcreteFactory.java b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/ConcreteFactory.java
 new file mode 100644
-index 0000000..1cb354c
+index 0000000..d3d8443
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/ConcreteFactory.java
-@@ -0,0 +1,130 @@
+@@ -0,0 +1,126 @@
 +package id.universenetwork.sfa_loader.addons.extratools.implementation.machines;
 +
 +import id.universenetwork.sfa_loader.addons.extratools.lists.ETItems;
@@ -403,7 +474,6 @@ index 0000000..1cb354c
 +import java.util.List;
 +
 +public class ConcreteFactory extends AContainer implements RecipeDisplayItem {
-+
 +    public ConcreteFactory() {
 +        super(ETItems.extra_tools, ETItems.CONCRETE_FACTORY, RecipeType.ENHANCED_CRAFTING_TABLE,
 +                new ItemStack[]{new ItemStack(Material.WATER_BUCKET), SlimefunItems.GILDED_IRON,
@@ -418,7 +488,6 @@ index 0000000..1cb354c
 +
 +    @Override
 +    protected void registerDefaultRecipes() {
-+
 +        registerRecipe(4, new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE_POWDER, 8)},
 +                new ItemStack[]{new ItemStack(Material.WHITE_CONCRETE, 8)});
 +        registerRecipe(4, new ItemStack[]{new ItemStack(Material.ORANGE_CONCRETE_POWDER, 8)},
@@ -498,7 +567,6 @@ index 0000000..1cb354c
 +
 +    public BlockBreakHandler onBreak() {
 +        return new BlockBreakHandler(false, false) {
-+
 +            @Override
 +            public void onPlayerBreak(BlockBreakEvent e, ItemStack item, List<ItemStack> drops) {
 +                Block b = e.getBlock();
@@ -511,13 +579,13 @@ index 0000000..1cb354c
 +            }
 +        };
 +    }
-+
 +}
+\ No newline at end of file
 diff --git a/src/main/java/me/sfiguz7/extratools/implementation/machines/ElectricComposter.java b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/ElectricComposter.java
-similarity index 63%
+similarity index 60%
 rename from src/main/java/me/sfiguz7/extratools/implementation/machines/ElectricComposter.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/ElectricComposter.java
-index 11abf2c..5eeec14 100644
+index 11abf2c..49934c5 100644
 --- a/src/main/java/me/sfiguz7/extratools/implementation/machines/ElectricComposter.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/ElectricComposter.java
 @@ -1,15 +1,14 @@
@@ -538,7 +606,12 @@ index 11abf2c..5eeec14 100644
  import org.bukkit.Material;
  import org.bukkit.Tag;
  import org.bukkit.block.Block;
-@@ -25,7 +24,7 @@ public abstract class ElectricComposter extends AContainer implements RecipeDisp
+@@ -20,12 +19,11 @@ import java.util.ArrayList;
+ import java.util.List;
+ 
+ public abstract class ElectricComposter extends AContainer implements RecipeDisplayItem {
+-
+     private final Tier tier;
  
      public ElectricComposter(Tier tier) {
          super(ETItems.extra_tools, tier == Tier.ONE ? ETItems.ELECTRIC_COMPOSTER : ETItems.ELECTRIC_COMPOSTER_2,
@@ -547,37 +620,50 @@ index 11abf2c..5eeec14 100644
          this.tier = tier;
  
          addItemHandler(onBreak());
-@@ -35,19 +34,19 @@ public abstract class ElectricComposter extends AContainer implements RecipeDisp
-     protected void registerDefaultRecipes() {
+@@ -33,22 +31,18 @@ public abstract class ElectricComposter extends AContainer implements RecipeDisp
  
-         for (Material leave : Tag.LEAVES.getValues()) {
+     @Override
+     protected void registerDefaultRecipes() {
+-
+-        for (Material leave : Tag.LEAVES.getValues()) {
 -            registerRecipe(8, new ItemStack[] { new ItemStack(leave, 8) },
 -                new ItemStack[] { new ItemStack(Material.DIRT) });
-+            registerRecipe(8, new ItemStack[]{new ItemStack(leave, 8)},
-+                    new ItemStack[]{new ItemStack(Material.DIRT)});
-         }
-         for (Material sapling : Tag.SAPLINGS.getValues()) {
+-        }
+-        for (Material sapling : Tag.SAPLINGS.getValues()) {
 -            registerRecipe(8, new ItemStack[] { new ItemStack(sapling, 8) },
 -                new ItemStack[] { new ItemStack(Material.DIRT) });
-+            registerRecipe(8, new ItemStack[]{new ItemStack(sapling, 8)},
-+                    new ItemStack[]{new ItemStack(Material.DIRT)});
-         }
+-        }
 -        registerRecipe(8, new ItemStack[] { new ItemStack(Material.STONE, 4) },
 -            new ItemStack[] { new ItemStack(Material.NETHERRACK) });
 -        registerRecipe(8, new ItemStack[] { new ItemStack(Material.SAND, 2) },
 -            new ItemStack[] { new ItemStack(Material.SOUL_SAND) });
 -        registerRecipe(8, new ItemStack[] { new ItemStack(Material.WHEAT, 4) },
 -            new ItemStack[] { new ItemStack(Material.NETHER_WART) });
+-
++        for (Material leave : Tag.LEAVES.getValues())
++            registerRecipe(8, new ItemStack[]{new ItemStack(leave, 8)},
++                    new ItemStack[]{new ItemStack(Material.DIRT)});
++        for (Material sapling : Tag.SAPLINGS.getValues())
++            registerRecipe(8, new ItemStack[]{new ItemStack(sapling, 8)},
++                    new ItemStack[]{new ItemStack(Material.DIRT)});
 +        registerRecipe(8, new ItemStack[]{new ItemStack(Material.STONE, 4)},
 +                new ItemStack[]{new ItemStack(Material.NETHERRACK)});
 +        registerRecipe(8, new ItemStack[]{new ItemStack(Material.SAND, 2)},
 +                new ItemStack[]{new ItemStack(Material.SOUL_SAND)});
 +        registerRecipe(8, new ItemStack[]{new ItemStack(Material.WHEAT, 4)},
 +                new ItemStack[]{new ItemStack(Material.NETHER_WART)});
- 
      }
  
-@@ -100,15 +99,15 @@ public abstract class ElectricComposter extends AContainer implements RecipeDisp
+     @Override
+@@ -85,7 +79,6 @@ public abstract class ElectricComposter extends AContainer implements RecipeDisp
+ 
+     public BlockBreakHandler onBreak() {
+         return new BlockBreakHandler(false, false) {
+-
+             @Override
+             public void onPlayerBreak(BlockBreakEvent e, ItemStack item, List<ItemStack> drops) {
+                 Block b = e.getBlock();
+@@ -100,15 +93,15 @@ public abstract class ElectricComposter extends AContainer implements RecipeDisp
      }
  
      public enum Tier {
@@ -601,11 +687,20 @@ index 11abf2c..5eeec14 100644
          );
  
          private final ItemStack[] recipe;
+@@ -117,6 +110,4 @@ public abstract class ElectricComposter extends AContainer implements RecipeDisp
+             this.recipe = recipe;
+         }
+     }
+-
+-}
+-
++}
+\ No newline at end of file
 diff --git a/src/main/java/me/sfiguz7/extratools/implementation/machines/GoldTransmuter.java b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/GoldTransmuter.java
 similarity index 52%
 rename from src/main/java/me/sfiguz7/extratools/implementation/machines/GoldTransmuter.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/GoldTransmuter.java
-index 9e4d182..49d02dc 100644
+index 9e4d182..64c06c5 100644
 --- a/src/main/java/me/sfiguz7/extratools/implementation/machines/GoldTransmuter.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/GoldTransmuter.java
 @@ -1,5 +1,6 @@
@@ -624,8 +719,11 @@ index 9e4d182..49d02dc 100644
  import org.bukkit.Material;
  import org.bukkit.block.Block;
  import org.bukkit.event.block.BlockBreakEvent;
-@@ -21,10 +21,10 @@ public class GoldTransmuter extends AContainer implements RecipeDisplayItem {
+@@ -18,46 +18,44 @@ import java.util.ArrayList;
+ import java.util.List;
  
+ public class GoldTransmuter extends AContainer implements RecipeDisplayItem {
+-
      public GoldTransmuter() {
          super(ETItems.extra_tools, ETItems.GOLD_TRANSMUTER, RecipeType.ENHANCED_CRAFTING_TABLE,
 -            new ItemStack[] {null, SlimefunItems.SILVER_INGOT, null,
@@ -639,10 +737,10 @@ index 9e4d182..49d02dc 100644
  
          addItemHandler(onBreak());
      }
-@@ -32,32 +32,32 @@ public class GoldTransmuter extends AContainer implements RecipeDisplayItem {
+ 
      @Override
      protected void registerDefaultRecipes() {
- 
+-
 -        registerRecipe(7, new ItemStack[] {SlimefunItems.GOLD_24K_BLOCK},
 -            new ItemStack[] {new ItemStack(Material.GOLD_BLOCK)});
 -        registerRecipe(2, new ItemStack[] {SlimefunItems.GOLD_4K},
@@ -698,11 +796,27 @@ index 9e4d182..49d02dc 100644
      }
  
      @Override
+@@ -104,7 +102,6 @@ public class GoldTransmuter extends AContainer implements RecipeDisplayItem {
+ 
+     public BlockBreakHandler onBreak() {
+         return new BlockBreakHandler(false, false) {
+-
+             @Override
+             public void onPlayerBreak(BlockBreakEvent e, ItemStack item, List<ItemStack> drops) {
+                 Block b = e.getBlock();
+@@ -117,5 +114,4 @@ public class GoldTransmuter extends AContainer implements RecipeDisplayItem {
+             }
+         };
+     }
+-
+-}
++}
+\ No newline at end of file
 diff --git a/src/main/java/me/sfiguz7/extratools/implementation/machines/Pulverizer.java b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/Pulverizer.java
 similarity index 54%
 rename from src/main/java/me/sfiguz7/extratools/implementation/machines/Pulverizer.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/Pulverizer.java
-index 3296d8d..d637189 100644
+index 3296d8d..c636668 100644
 --- a/src/main/java/me/sfiguz7/extratools/implementation/machines/Pulverizer.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/Pulverizer.java
 @@ -1,5 +1,6 @@
@@ -721,8 +835,11 @@ index 3296d8d..d637189 100644
  import org.bukkit.Material;
  import org.bukkit.block.Block;
  import org.bukkit.event.block.BlockBreakEvent;
-@@ -21,10 +21,10 @@ public class Pulverizer extends AContainer implements RecipeDisplayItem {
+@@ -18,45 +18,42 @@ import java.util.ArrayList;
+ import java.util.List;
  
+ public class Pulverizer extends AContainer implements RecipeDisplayItem {
+-
      public Pulverizer() {
          super(ETItems.extra_tools, ETItems.PULVERIZER, RecipeType.ENHANCED_CRAFTING_TABLE,
 -            new ItemStack[] {SlimefunItems.SILICON, SlimefunItems.HARDENED_METAL_INGOT, SlimefunItems.SILICON,
@@ -736,10 +853,10 @@ index 3296d8d..d637189 100644
  
          addItemHandler(onBreak());
      }
-@@ -32,30 +32,30 @@ public class Pulverizer extends AContainer implements RecipeDisplayItem {
+ 
      @Override
      protected void registerDefaultRecipes() {
- 
+-
 -        registerRecipe(8, new ItemStack[] {new ItemStack(Material.STONE, 4)},
 -            new ItemStack[] {new ItemStack(Material.SAND)});
 -        registerRecipe(8, new ItemStack[] {new ItemStack(Material.GRANITE, 4)},
@@ -764,6 +881,7 @@ index 3296d8d..d637189 100644
 -
 -        registerRecipe(8, new ItemStack[] {new ItemStack(Material.NETHERRACK, 4)},
 -            new ItemStack[] {new ItemStack(Material.SOUL_SAND)});
+-
 +        registerRecipe(8, new ItemStack[]{new ItemStack(Material.STONE, 4)},
 +                new ItemStack[]{new ItemStack(Material.SAND)});
 +        registerRecipe(8, new ItemStack[]{new ItemStack(Material.GRANITE, 4)},
@@ -788,14 +906,30 @@ index 3296d8d..d637189 100644
 +
 +        registerRecipe(8, new ItemStack[]{new ItemStack(Material.NETHERRACK, 4)},
 +                new ItemStack[]{new ItemStack(Material.SOUL_SAND)});
- 
      }
  
+     @Override
+@@ -103,7 +100,6 @@ public class Pulverizer extends AContainer implements RecipeDisplayItem {
+ 
+     public BlockBreakHandler onBreak() {
+         return new BlockBreakHandler(false, false) {
+-
+             @Override
+             public void onPlayerBreak(BlockBreakEvent e, ItemStack item, List<ItemStack> drops) {
+                 Block b = e.getBlock();
+@@ -116,5 +112,4 @@ public class Pulverizer extends AContainer implements RecipeDisplayItem {
+             }
+         };
+     }
+-
+-}
++}
+\ No newline at end of file
 diff --git a/src/main/java/me/sfiguz7/extratools/implementation/machines/Vaporizer.java b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/Vaporizer.java
 similarity index 68%
 rename from src/main/java/me/sfiguz7/extratools/implementation/machines/Vaporizer.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/Vaporizer.java
-index 56d96d2..34a6459 100644
+index 56d96d2..42858be 100644
 --- a/src/main/java/me/sfiguz7/extratools/implementation/machines/Vaporizer.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/machines/Vaporizer.java
 @@ -1,5 +1,6 @@
@@ -814,8 +948,11 @@ index 56d96d2..34a6459 100644
  import org.bukkit.Material;
  import org.bukkit.block.Block;
  import org.bukkit.event.block.BlockBreakEvent;
-@@ -22,11 +22,11 @@ public class Vaporizer extends AContainer implements RecipeDisplayItem {
+@@ -19,32 +19,29 @@ import java.util.ArrayList;
+ import java.util.List;
  
+ public class Vaporizer extends AContainer implements RecipeDisplayItem {
+-
      public Vaporizer() {
          super(ETItems.extra_tools, ETItems.VAPORIZER, RecipeType.ENHANCED_CRAFTING_TABLE,
 -            new ItemStack[] {new ItemStack(Material.MAGMA_BLOCK), SlimefunItems.ELECTRIC_MOTOR,
@@ -831,10 +968,10 @@ index 56d96d2..34a6459 100644
  
          addItemHandler(onBreak());
      }
-@@ -34,16 +34,16 @@ public class Vaporizer extends AContainer implements RecipeDisplayItem {
+ 
      @Override
      protected void registerDefaultRecipes() {
- 
+-
 -        registerRecipe(8, new ItemStack[] {new ItemStack(Material.WATER_BUCKET)},
 -            new ItemStack[] {new ItemStack(Material.BUCKET),
 -                new CustomItemStack(SlimefunItems.SALT, 4)
@@ -845,6 +982,7 @@ index 56d96d2..34a6459 100644
 -            });
 -        registerRecipe(3, new ItemStack[] {new ItemStack(Material.MAGMA_BLOCK)},
 -            new ItemStack[] {SlimefunItems.SULFATE});
+-
 +        registerRecipe(8, new ItemStack[]{new ItemStack(Material.WATER_BUCKET)},
 +                new ItemStack[]{new ItemStack(Material.BUCKET),
 +                        new CustomItemStack(SlimefunItems.SALT, 4)
@@ -855,17 +993,34 @@ index 56d96d2..34a6459 100644
 +                });
 +        registerRecipe(3, new ItemStack[]{new ItemStack(Material.MAGMA_BLOCK)},
 +                new ItemStack[]{SlimefunItems.SULFATE});
- 
      }
  
+     @Override
+@@ -91,7 +88,6 @@ public class Vaporizer extends AContainer implements RecipeDisplayItem {
+ 
+     public BlockBreakHandler onBreak() {
+         return new BlockBreakHandler(false, false) {
+-
+             @Override
+             public void onPlayerBreak(BlockBreakEvent e, ItemStack item, List<ItemStack> drops) {
+                 Block b = e.getBlock();
+@@ -104,6 +100,4 @@ public class Vaporizer extends AContainer implements RecipeDisplayItem {
+             }
+         };
+     }
+-
+-}
+-
++}
+\ No newline at end of file
 diff --git a/src/main/java/me/sfiguz7/extratools/implementation/tools/Hammer.java b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/tools/Hammer.java
-similarity index 81%
+similarity index 72%
 rename from src/main/java/me/sfiguz7/extratools/implementation/tools/Hammer.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/tools/Hammer.java
-index ad36e72..f576451 100644
+index ad36e72..159defe 100644
 --- a/src/main/java/me/sfiguz7/extratools/implementation/tools/Hammer.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/implementation/tools/Hammer.java
-@@ -1,11 +1,11 @@
+@@ -1,23 +1,22 @@
 -package me.sfiguz7.extratools.implementation.tools;
 +package id.universenetwork.sfa_loader.addons.extratools.implementation.tools;
  
@@ -880,8 +1035,9 @@ index ad36e72..f576451 100644
  import org.bukkit.Material;
  import org.bukkit.block.Block;
  import org.bukkit.inventory.ItemStack;
-@@ -14,10 +14,10 @@ public class Hammer extends SimpleSlimefunItem<ToolUseHandler> {
  
+ public class Hammer extends SimpleSlimefunItem<ToolUseHandler> {
+-
      public Hammer() {
          super(ETItems.extra_tools, ETItems.HAMMER, RecipeType.MAGIC_WORKBENCH,
 -            new ItemStack[] {new ItemStack(Material.IRON_INGOT), new ItemStack(Material.IRON_INGOT),
@@ -895,15 +1051,61 @@ index ad36e72..f576451 100644
      }
  
      @Override
+@@ -39,7 +38,6 @@ public class Hammer extends SimpleSlimefunItem<ToolUseHandler> {
+ 
+ 
+     public ItemStack getDrop(Block b) {
+-
+         Material m = b.getType();
+ 
+         switch (m) {
+@@ -47,31 +45,25 @@ public class Hammer extends SimpleSlimefunItem<ToolUseHandler> {
+             case GRANITE:
+             case DIORITE:
+             case ANDESITE:
+-            case COBBLESTONE: {
++            case COBBLESTONE:
+                 return new ItemStack(Material.GRAVEL);
+-            }
+             case GRAVEL:
+             case GRASS_BLOCK:
+             case DIRT:
+             case COARSE_DIRT:
+-            case PODZOL: {
++            case PODZOL:
+                 return new ItemStack(Material.SAND);
+-            }
+             case IRON_ORE:
+-            case DEEPSLATE_IRON_ORE: {
++            case DEEPSLATE_IRON_ORE:
+                 return SlimefunItems.IRON_DUST;
+-            }
+             case GOLD_ORE:
+-            case DEEPSLATE_GOLD_ORE: {
++            case DEEPSLATE_GOLD_ORE:
+                 return SlimefunItems.GOLD_DUST;
+-            }
+             case COPPER_ORE:
+-            case DEEPSLATE_COPPER_ORE: {
++            case DEEPSLATE_COPPER_ORE:
+                 return SlimefunItems.COPPER_DUST;
+-            }
+-            case NETHERRACK: {
++            case NETHERRACK:
+                 return new ItemStack(Material.SOUL_SAND);
+-            }
+         }
+ 
+         return null;
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/extratools/lists/ETItems.java b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/lists/ETItems.java
 new file mode 100644
-index 0000000..8e3ed37
+index 0000000..3d4ccce
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extratools/lists/ETItems.java
-@@ -0,0 +1,88 @@
+@@ -0,0 +1,84 @@
 +package id.universenetwork.sfa_loader.addons.extratools.lists;
 +
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 +import io.github.thebusybiscuit.slimefun4.core.attributes.MachineTier;
@@ -913,7 +1115,6 @@ index 0000000..8e3ed37
 +import org.bukkit.Material;
 +
 +public final class ETItems {
-+
 +    /* Category */
 +    public static final ItemGroup extra_tools = new ItemGroup(AbstractAddon.createKey("extra_tools"),
 +            new CustomItemStack(Material.DIAMOND_AXE, "&4Extra Tools")
@@ -985,9 +1186,6 @@ index 0000000..8e3ed37
 +            LoreBuilder.powerBuffer(256),
 +            LoreBuilder.powerPerSecond(18)
 +    );
-+
-+    private ETItems() {
-+    }
 +}
 \ No newline at end of file
 diff --git a/src/main/java/me/sfiguz7/extratools/ExtraTools.java b/src/main/java/me/sfiguz7/extratools/ExtraTools.java
@@ -1381,5 +1579,5 @@ index 973ca69..0000000
 -
 -api-version: 1.14
 -- 
-2.43.0.windows.1
+2.44.0.windows.1
 

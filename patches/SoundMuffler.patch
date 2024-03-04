@@ -1,6 +1,6 @@
-From 9896758430fbe2d2c6f6ca3f22916c10cfc758f6 Mon Sep 17 00:00:00 2001
+From f12af6d5ce84128cbb2c183c37a70c1c42e33698 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Thu, 29 Feb 2024 09:38:34 +0700
+Date: Sun, 3 Mar 2024 10:56:39 +0700
 Subject: [PATCH] SoundMuffler
 
 ---
@@ -191,15 +191,15 @@ index a55cab4..0000000
 -}
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMuffler.java b/src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMuffler.java
 new file mode 100644
-index 0000000..0c16cb5
+index 0000000..e52c54b
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMuffler.java
 @@ -0,0 +1,31 @@
 +package id.universenetwork.sfa_loader.addons.soundmuffler;
 +
 +import id.universenetwork.sfa_loader.annotations.AddonDependencies;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.api.researches.Research;
@@ -231,7 +231,7 @@ diff --git a/src/main/java/dev/j3fftw/soundmuffler/SoundMufflerListener.java b/s
 similarity index 73%
 rename from src/main/java/dev/j3fftw/soundmuffler/SoundMufflerListener.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMufflerListener.java
-index e3c4675..378f147 100644
+index e3c4675..c08824d 100644
 --- a/src/main/java/dev/j3fftw/soundmuffler/SoundMufflerListener.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/soundmuffler/SoundMufflerListener.java
 @@ -1,10 +1,11 @@
@@ -243,7 +243,7 @@ index e3c4675..378f147 100644
  import com.comphenix.protocol.events.ListenerPriority;
  import com.comphenix.protocol.events.PacketAdapter;
  import com.comphenix.protocol.events.PacketEvent;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
  import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
@@ -261,7 +261,7 @@ index e3c4675..378f147 100644
 -        super(plugin, ListenerPriority.NORMAL,
 -            PacketType.Play.Server.NAMED_SOUND_EFFECT, PacketType.Play.Server.ENTITY_SOUND
 +    public SoundMufflerListener() {
-+        super(AbstractAddon.instance(), ListenerPriority.NORMAL,
++        super(AbstractAddon.getInstance(), ListenerPriority.NORMAL,
 +                PacketType.Play.Server.NAMED_SOUND_EFFECT, PacketType.Play.Server.ENTITY_SOUND
          );
      }

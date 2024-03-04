@@ -1,6 +1,6 @@
-From 9c8e3ad3c7ebff3160e77cd199aeecb180b58742 Mon Sep 17 00:00:00 2001
+From 70ea09553e4e16712ed2d39d9cd867dfa523cc38 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Thu, 29 Feb 2024 09:46:54 +0700
+Date: Sun, 3 Mar 2024 10:54:07 +0700
 Subject: [PATCH] HeadLimiter
 
 ---
@@ -12,13 +12,13 @@ Subject: [PATCH] HeadLimiter
  .../addons}/headlimiter/CountResult.java      |   5 +-
  .../addons/headlimiter/HeadLimiter.java       |  90 +++++++++++++++
  .../sfa_loader/addons}/headlimiter/Utils.java |  51 ++++-----
- .../blocklimiter/BlockLimiter.java            |  86 ++++++---------
- .../blocklimiter/BlockListener.java           |  46 +++-----
+ .../blocklimiter/BlockLimiter.java            |  87 ++++++---------
+ .../blocklimiter/BlockListener.java           |  45 +++-----
  .../blocklimiter/ChunkContent.java            |  19 ++--
  .../headlimiter/blocklimiter/Group.java       |  63 +++--------
  .../HeadLimiter}/config.yml                   |   0
  src/main/resources/plugin.yml                 |  15 ---
- 14 files changed, 241 insertions(+), 474 deletions(-)
+ 14 files changed, 239 insertions(+), 476 deletions(-)
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/CountCommand.java
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/HeadLimiter.java
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/MetricsService.java
@@ -27,7 +27,7 @@ Subject: [PATCH] HeadLimiter
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java
  rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/Utils.java (76%)
  rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/blocklimiter/BlockLimiter.java (58%)
- rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/blocklimiter/BlockListener.java (73%)
+ rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/blocklimiter/BlockListener.java (72%)
  rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/blocklimiter/ChunkContent.java (88%)
  rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/blocklimiter/Group.java (63%)
  rename src/main/resources/{ => addons-config/HeadLimiter}/config.yml (100%)
@@ -465,7 +465,7 @@ index 23ab396..c5acda0 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java
 new file mode 100644
-index 0000000..4e78783
+index 0000000..80b4193
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java
 @@ -0,0 +1,90 @@
@@ -476,7 +476,7 @@ index 0000000..4e78783
 +import id.universenetwork.sfa_loader.annotations.AddonInfo;
 +import id.universenetwork.sfa_loader.annotations.AddonLibrary;
 +import id.universenetwork.sfa_loader.enums.PaperRequirementLevel;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
 +import id.universenetwork.sfa_loader.managers.CommandManager;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -509,7 +509,7 @@ index 0000000..4e78783
 +
 +        Utils.loadPermissions();
 +
-+        Events.registerListeners(this);
++        Event.registerListeners(this);
 +
 +        CommandManager.register(new CountCommand());
 +
@@ -564,7 +564,7 @@ diff --git a/src/main/java/dev/j3fftw/headlimiter/Utils.java b/src/main/java/id/
 similarity index 76%
 rename from src/main/java/dev/j3fftw/headlimiter/Utils.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/Utils.java
-index 764723e..7485551 100644
+index 764723e..520f4a1 100644
 --- a/src/main/java/dev/j3fftw/headlimiter/Utils.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/Utils.java
 @@ -1,14 +1,11 @@
@@ -573,7 +573,7 @@ index 764723e..7485551 100644
  
  import com.google.common.util.concurrent.ThreadFactoryBuilder;
  import com.palmergames.bukkit.towny.TownyAPI;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Scheduler;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import me.mrCookieSlime.Slimefun.api.BlockStorage;
 -import org.bukkit.Bukkit;
@@ -643,7 +643,7 @@ index 764723e..7485551 100644
          boolean isPlacingRestricted = isPlacingRestricted(block);
          if (count > maxAmount || isPlacingRestricted) {
 -            Bukkit.getScheduler().runTask(HeadLimiter.getInstance(), () -> {
-+            Scheduler.run(() -> {
++            AbstractAddon.getScheduler().run(() -> {
                  if (block.getType() != Material.AIR) {
                      block.setType(Material.AIR);
 -                    if (player.getGameMode() != GameMode.CREATIVE) {
@@ -684,10 +684,10 @@ diff --git a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockLimiter.java
 similarity index 58%
 rename from src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockLimiter.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockLimiter.java
-index 09b5c96..7b2be50 100644
+index 09b5c96..182a14f 100644
 --- a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockLimiter.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockLimiter.java
-@@ -1,62 +1,52 @@
+@@ -1,62 +1,53 @@
 -package dev.j3fftw.headlimiter.blocklimiter;
 -
 -import java.util.HashMap;
@@ -706,7 +706,8 @@ index 09b5c96..7b2be50 100644
  
  import com.google.common.base.Preconditions;
 -
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Scheduler;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.ChunkPosition;
 -
@@ -739,8 +740,8 @@ index 09b5c96..7b2be50 100644
          instance = this;
 -        new BlockListener(headLimiter);
 -        headLimiter.getServer().getScheduler().runTaskLater(headLimiter, this::loadBlockStorage, 1);
-+        new BlockListener();
-+        Scheduler.run(1, this::loadBlockStorage);
++        Event.registerListeners(new BlockListener());
++        AbstractAddon.getScheduler().run(1, this::loadBlockStorage);
      }
  
      private void loadBlockStorage() {
@@ -778,7 +779,7 @@ index 09b5c96..7b2be50 100644
          }
      }
  
-@@ -71,11 +61,7 @@ public final class BlockLimiter {
+@@ -71,11 +62,7 @@ public final class BlockLimiter {
  
      @Nullable
      public Group getGroupByItem(@Nonnull String itemId) {
@@ -791,7 +792,7 @@ index 09b5c96..7b2be50 100644
          return null;
      }
  
-@@ -85,11 +71,8 @@ public final class BlockLimiter {
+@@ -85,11 +72,8 @@ public final class BlockLimiter {
  
      public int getPlayerLimitByItem(@Nonnull Player player, @Nonnull String itemId) {
          Group group = getGroupByItem(itemId);
@@ -805,7 +806,7 @@ index 09b5c96..7b2be50 100644
      }
  
      public Set<Group> getGroups() {
-@@ -99,9 +82,4 @@ public final class BlockLimiter {
+@@ -99,9 +83,4 @@ public final class BlockLimiter {
      public void setChunkContent(@Nonnull ChunkPosition chunkPosition, @Nonnull ChunkContent content) {
          contentMap.put(chunkPosition, content);
      }
@@ -818,13 +819,13 @@ index 09b5c96..7b2be50 100644
 +}
 \ No newline at end of file
 diff --git a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockListener.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockListener.java
-similarity index 73%
+similarity index 72%
 rename from src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockListener.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockListener.java
-index 698220f..268ecbe 100644
+index 698220f..f2f50ac 100644
 --- a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockListener.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockListener.java
-@@ -1,22 +1,19 @@
+@@ -1,34 +1,23 @@
 -package dev.j3fftw.headlimiter.blocklimiter;
 -
 -import javax.annotation.Nonnull;
@@ -834,7 +835,6 @@ index 698220f..268ecbe 100644
 -import org.bukkit.event.Listener;
 +package id.universenetwork.sfa_loader.addons.headlimiter.blocklimiter;
  
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
  import io.github.thebusybiscuit.slimefun4.api.events.SlimefunBlockBreakEvent;
  import io.github.thebusybiscuit.slimefun4.api.events.SlimefunBlockPlaceEvent;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -850,12 +850,11 @@ index 698220f..268ecbe 100644
 -
 -    public BlockListener(@Nonnull HeadLimiter headLimiter) {
 -        headLimiter.getServer().getPluginManager().registerEvents(this, headLimiter);
-+    public BlockListener() {
-+        Events.registerListeners(this);
-     }
- 
+-    }
+-
      @EventHandler
-@@ -25,10 +22,7 @@ public class BlockListener implements Listener {
+     public void onSlimefunItemPlaced(@Nonnull SlimefunBlockPlaceEvent event) {
+         SlimefunItem slimefunItem = event.getSlimefunItem();
          String slimefunItemId = slimefunItem.getId();
          int definedLimit = BlockLimiter.getInstance().getPlayerLimitByItem(event.getPlayer(), slimefunItem);
  
@@ -867,7 +866,7 @@ index 698220f..268ecbe 100644
  
          ChunkPosition chunkPosition = new ChunkPosition(event.getBlockPlaced().getChunk());
          ChunkContent content = BlockLimiter.getInstance().getChunkContent(chunkPosition);
-@@ -38,10 +32,9 @@ public class BlockListener implements Listener {
+@@ -38,10 +27,9 @@ public class BlockListener implements Listener {
              content = new ChunkContent();
              content.incrementAmount(slimefunItemId);
              BlockLimiter.getInstance().setChunkContent(chunkPosition, content);
@@ -881,7 +880,7 @@ index 698220f..268ecbe 100644
              // Chunk has hit its limit for this type, time to deny the placement
              event.setCancelled(true);
              event.getPlayer().sendMessage(ChatColor.RED + "You cannot place any more of this item within this chunk.");
-@@ -53,22 +46,15 @@ public class BlockListener implements Listener {
+@@ -53,22 +41,15 @@ public class BlockListener implements Listener {
          SlimefunItem slimefunItem = event.getSlimefunItem();
          String slimefunItemId = slimefunItem.getId();
          int definedLimit = BlockLimiter.getInstance().getPlayerLimitByItem(event.getPlayer(), slimefunItem);

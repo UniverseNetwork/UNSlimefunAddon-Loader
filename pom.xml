@@ -38,7 +38,7 @@
         <module>Plugin</module>
         <module>Loader</module>
         <module>Addons</module>
-        <module>InfinityLib-Standalone</module>
+        <module>InfinityGuizhanLib-Standalone</module>
     </modules>
 
     <repositories>
@@ -47,7 +47,7 @@
             <url>https://repo.papermc.io/repository/maven-public</url>
         </repository>
         <repository>
-            <id>JitPack.io</id>
+            <id>JitPack</id>
             <url>https://jitpack.io</url>
         </repository>
     </repositories>

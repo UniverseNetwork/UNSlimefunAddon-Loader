@@ -1,23 +1,23 @@
-From 33efe8db7e134bf77f154bf2ae8083ab0e223222 Mon Sep 17 00:00:00 2001
+From 1ab8be3b0e33db081b7771bdaab19ef6e1d8af17 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 25 Feb 2024 08:11:09 +0700
+Date: Mon, 4 Mar 2024 09:19:34 +0700
 Subject: [PATCH] FluffyMachines
 
 ---
  pom.xml                                       | 109 +--------
  .../fluffymachines/FluffyItemSetup.java       | 184 ++++++---------
- .../addons/fluffymachines/FluffyMachines.java |  95 ++++++++
+ .../addons/fluffymachines/FluffyMachines.java |  89 ++++++++
  .../addons}/fluffymachines/items/Barrel.java  | 179 +++++----------
- .../items/EnderChestExtractionNode.java       |  62 ++---
+ .../items/EnderChestExtractionNode.java       |  62 ++----
  .../items/EnderChestInsertionNode.java        |  29 +--
- .../fluffymachines/items/FireproofRune.java   |  56 ++---
+ .../fluffymachines/items/FireproofRune.java   |  55 ++---
  .../fluffymachines/items/HelicopterHat.java   |  11 +-
  .../fluffymachines/items/MiniBarrel.java      |  17 +-
  .../items/tools/ACBUpgradeCard.java           |  31 ++-
  .../items/tools/AlternateBreakEvent.java      |   5 +-
- .../items/tools/CargoManipulator.java         |  76 ++-----
+ .../items/tools/CargoManipulator.java         |  72 ++----
  .../fluffymachines/items/tools/Dolly.java     |  92 +++-----
- .../items/tools/FluffyWrench.java             |  60 ++---
+ .../items/tools/FluffyWrench.java             |  63 +++---
  .../fluffymachines/items/tools/Paxel.java     |  65 ++----
  .../items/tools/PortableCharger.java          |  65 ++----
  .../fluffymachines/items/tools/Scythe.java    |  34 ++-
@@ -25,7 +25,7 @@ Subject: [PATCH] FluffyMachines
  .../items/tools/UpgradedExplosiveShovel.java  |  22 +-
  .../items/tools/UpgradedExplosiveTool.java    |  92 +++-----
  .../items/tools/UpgradedLumberAxe.java        |  54 ++---
- .../items/tools/WarpPadConfigurator.java      |  62 ++---
+ .../items/tools/WarpPadConfigurator.java      |  62 +++---
  .../items/tools/WateringCan.java              | 109 +++------
  .../listeners/KeyedCrafterListener.java       |  37 +--
  .../machines/AdvancedAutoDisenchanter.java    | 104 +++------
@@ -41,7 +41,7 @@ Subject: [PATCH] FluffyMachines
  .../machines/BackpackUnloader.java            |  55 ++---
  .../machines/ElectricDustFabricator.java      |  41 ++--
  .../machines/ElectricDustRecycler.java        |  24 +-
- .../fluffymachines/machines/SmartFactory.java | 113 +++------
+ .../fluffymachines/machines/SmartFactory.java | 113 +++-------
  .../fluffymachines/machines/WarpPad.java      |  21 +-
  .../machines/WaterSprinkler.java              |  80 +++----
  .../multiblocks/CrankGenerator.java           |  36 +--
@@ -58,12 +58,12 @@ Subject: [PATCH] FluffyMachines
  .../fluffymachines/utils/FluffyItems.java     |  29 +--
  .../fluffymachines/utils/McMMOEvents.java     |  10 +-
  .../addons}/fluffymachines/utils/Utils.java   |  81 ++-----
- .../fluffymachines/FluffyMachines.java        | 215 ------------------
+ .../fluffymachines/FluffyMachines.java        | 210 ------------------
  .../machines/AutoArmorForge.java              |  15 --
  .../fluffymachines/utils/CancelPlace.java     |   4 -
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  31 ---
- 59 files changed, 1192 insertions(+), 2363 deletions(-)
+ 59 files changed, 1183 insertions(+), 2359 deletions(-)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/FluffyItemSetup.java (81%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/Barrel.java (84%)
@@ -74,9 +74,9 @@ Subject: [PATCH] FluffyMachines
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/MiniBarrel.java (90%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/ACBUpgradeCard.java (81%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/AlternateBreakEvent.java (77%)
- rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/CargoManipulator.java (85%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/CargoManipulator.java (84%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/Dolly.java (80%)
- rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/FluffyWrench.java (75%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/FluffyWrench.java (74%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/Paxel.java (73%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/PortableCharger.java (79%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/Scythe.java (75%)
@@ -124,7 +124,7 @@ Subject: [PATCH] FluffyMachines
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 0413fe6..d4ddf37 100644
+index 66a2148..d4ddf37 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,34 +1,24 @@
@@ -241,7 +241,7 @@ index 0413fe6..d4ddf37 100644
 -        <dependency>
 -            <groupId>io.github.TheBusyBiscuit</groupId>
 -            <artifactId>Slimefun4</artifactId>
--            <version>RC-36</version>
+-            <version>RC-37</version>
 -            <scope>provided</scope>
 -        </dependency>
 -
@@ -282,7 +282,7 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/FluffyItemSetup.java
 similarity index 81%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/FluffyItemSetup.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyItemSetup.java
-index 42146e0..17306b4 100644
+index 42146e0..548ea8b 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/FluffyItemSetup.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyItemSetup.java
 @@ -1,5 +1,16 @@
@@ -299,8 +299,8 @@ index 42146e0..17306b4 100644
 +import id.universenetwork.sfa_loader.addons.fluffymachines.multiblocks.components.GeneratorCore;
 +import id.universenetwork.sfa_loader.addons.fluffymachines.multiblocks.components.SuperheatedFurnace;
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.FluffyItems;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -816,24 +816,23 @@ index 42146e0..17306b4 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
 new file mode 100644
-index 0000000..67a6c91
+index 0000000..b7316b2
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
-@@ -0,0 +1,95 @@
+@@ -0,0 +1,89 @@
 +package id.universenetwork.sfa_loader.addons.fluffymachines;
 +
 +import id.universenetwork.sfa_loader.addons.fluffymachines.listeners.KeyedCrafterListener;
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.EventUtils;
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.McMMOEvents;
 +import id.universenetwork.sfa_loader.annotations.AddonLibrary;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import id.universenetwork.sfa_loader.utils.LogUtils;
 +import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 +import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 +import lombok.SneakyThrows;
 +import org.bukkit.Bukkit;
-+import org.bukkit.ChatColor;
 +import org.bukkit.inventory.*;
 +
 +import java.util.*;
@@ -885,7 +884,7 @@ index 0000000..67a6c91
 +        // Register McMMO Events
 +        if (Bukkit.getPluginManager().isPluginEnabled("McMMO")) {
 +            LogUtils.info("McMMO found!");
-+            Events.registerListeners(new McMMOEvents());
++            Event.registerListeners(new McMMOEvents());
 +        }
 +
 +        // Registering Items
@@ -893,12 +892,7 @@ index 0000000..67a6c91
 +        FluffyItemSetup.setupBarrels();
 +
 +        // Register Events Class
-+        Events.registerListeners(new EventUtils(), new KeyedCrafterListener());
-+
-+        LogUtils.info(ChatColor.GREEN + "Hi there! Want to share your server with the " +
-+                "Slimefun community?");
-+        LogUtils.info(ChatColor.GREEN + "Join the official Slimefun Discord server at " +
-+                "https://discord.gg/slimefun");
++        Event.registerListeners(new EventUtils(), new KeyedCrafterListener());
 +    }
 +
 +    private void saveAllPlayers() {
@@ -1586,10 +1580,10 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/FireproofRune.
 similarity index 78%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/FireproofRune.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/FireproofRune.java
-index 7ebc158..25626fd 100644
+index 7ebc158..3d69c7b 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/FireproofRune.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/FireproofRune.java
-@@ -1,17 +1,14 @@
+@@ -1,17 +1,13 @@
 -package io.ncbpfluffybear.fluffymachines.items;
 +package id.universenetwork.sfa_loader.addons.fluffymachines.items;
  
@@ -1599,8 +1593,7 @@ index 7ebc158..25626fd 100644
 -import io.ncbpfluffybear.fluffymachines.utils.Utils;
 -import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.Utils;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Scheduler;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 -import org.bukkit.ChatColor;
@@ -1615,7 +1608,7 @@ index 7ebc158..25626fd 100644
  import org.bukkit.entity.Entity;
  import org.bukkit.entity.Item;
  import org.bukkit.entity.Player;
-@@ -39,16 +36,13 @@ import java.util.Optional;
+@@ -39,16 +35,13 @@ import java.util.Optional;
   * @author Walshy
   * @author TheBusyBiscuit
   */
@@ -1635,7 +1628,7 @@ index 7ebc158..25626fd 100644
      }
  
      @Nonnull
-@@ -57,11 +51,9 @@ public class FireproofRune extends SimpleSlimefunItem<ItemDropHandler> {
+@@ -57,11 +50,9 @@ public class FireproofRune extends SimpleSlimefunItem<ItemDropHandler> {
          return (e, p, item) -> {
              if (isItem(item.getItemStack())) {
  
@@ -1645,11 +1638,11 @@ index 7ebc158..25626fd 100644
 +                if (!this.canUse(p, true)) return true;
  
 -                Utils.runSync(() -> activate(p, item), 20L);
-+                Scheduler.run(20L, () -> activate(p, item));
++                AbstractAddon.getScheduler().run(20, () -> activate(p, item));
  
                  return true;
              }
-@@ -70,9 +62,7 @@ public class FireproofRune extends SimpleSlimefunItem<ItemDropHandler> {
+@@ -70,9 +61,7 @@ public class FireproofRune extends SimpleSlimefunItem<ItemDropHandler> {
      }
  
      private void activate(Player p, Item rune) {
@@ -1660,16 +1653,16 @@ index 7ebc158..25626fd 100644
  
          Location l = rune.getLocation();
          Collection<Entity> entities = l.getWorld().getNearbyEntities(l, RANGE, RANGE, RANGE, this::findCompatibleItem);
-@@ -86,7 +76,7 @@ public class FireproofRune extends SimpleSlimefunItem<ItemDropHandler> {
+@@ -86,7 +75,7 @@ public class FireproofRune extends SimpleSlimefunItem<ItemDropHandler> {
                  // This lightning is just an effect, it deals no damage.
                  l.getWorld().strikeLightningEffect(l);
  
 -                Utils.runSync(() -> {
-+                Scheduler.run(10L, () -> {
++                AbstractAddon.getScheduler().run(10, () -> {
                      // Being sure entities are still valid and not picked up or whatsoever.
                      if (rune.isValid() && item.isValid() && itemStack.getAmount() == 1) {
  
-@@ -100,13 +90,9 @@ public class FireproofRune extends SimpleSlimefunItem<ItemDropHandler> {
+@@ -100,13 +89,9 @@ public class FireproofRune extends SimpleSlimefunItem<ItemDropHandler> {
                          l.getWorld().dropItemNaturally(l, itemStack);
  
                          Utils.send(p, "&aYour item is now fireproof");
@@ -1686,7 +1679,7 @@ index 7ebc158..25626fd 100644
          }
      }
  
-@@ -139,9 +125,7 @@ public class FireproofRune extends SimpleSlimefunItem<ItemDropHandler> {
+@@ -139,9 +124,7 @@ public class FireproofRune extends SimpleSlimefunItem<ItemDropHandler> {
          if (item != null && item.getType() != Material.AIR) {
              ItemMeta meta = item.hasItemMeta() ? item.getItemMeta() : null;
              return hasFireproofFlag(meta);
@@ -1697,7 +1690,7 @@ index 7ebc158..25626fd 100644
      }
  
      private static boolean hasFireproofFlag(@Nullable ItemMeta meta) {
-@@ -151,4 +135,4 @@ public class FireproofRune extends SimpleSlimefunItem<ItemDropHandler> {
+@@ -151,4 +134,4 @@ public class FireproofRune extends SimpleSlimefunItem<ItemDropHandler> {
          }
          return false;
      }
@@ -1879,53 +1872,47 @@ index 0f1c7f2..a265eea 100644
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/CargoManipulator.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/CargoManipulator.java
-similarity index 85%
+similarity index 84%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/CargoManipulator.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/CargoManipulator.java
-index 538b231..a1ac02f 100644
+index 8c97956..0931a83 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/CargoManipulator.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/CargoManipulator.java
-@@ -1,5 +1,7 @@
+@@ -1,7 +1,9 @@
 -package io.ncbpfluffybear.fluffymachines.items.tools;
 +package id.universenetwork.sfa_loader.addons.fluffymachines.items.tools;
  
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParser;
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.Utils;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
-@@ -13,14 +15,8 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+@@ -14,16 +16,12 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
- import io.github.thebusybiscuit.slimefun4.libraries.unirest.json.JSONObject;
  import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 -import io.ncbpfluffybear.fluffymachines.FluffyMachines;
 -import io.ncbpfluffybear.fluffymachines.utils.Utils;
--import java.util.HashMap;
--import java.util.Map;
--import javax.annotation.Nonnull;
  import me.mrCookieSlime.Slimefun.api.BlockStorage;
  import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 -import org.bukkit.Bukkit;
  import org.bukkit.Color;
  import org.bukkit.Particle;
  import org.bukkit.block.Block;
-@@ -33,20 +29,23 @@ import org.bukkit.event.player.PlayerInteractEvent;
- import org.bukkit.inventory.Inventory;
- import org.bukkit.inventory.ItemStack;
- 
-+import javax.annotation.Nonnull;
-+import java.util.HashMap;
-+import java.util.Map;
-+
- /**
-  * used to quickly manipulate cargo nodes
-  *
+ import org.bukkit.entity.Player;
+-import org.bukkit.event.Event;
+ import org.bukkit.event.EventHandler;
+ import org.bukkit.event.Listener;
+ import org.bukkit.event.block.Action;
+@@ -41,31 +39,27 @@ import java.util.Map;
   * @author NCBPFluffyBear
   */
  public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> implements Listener {
 -
      private static final int[] CARGO_SLOTS = {19, 20, 21, 28, 29, 30, 37, 38, 39};
-     private Map<Player, Pair<JSONObject, ItemStack[]>> storedFilters = new HashMap<>();
+     private final Map<Player, Pair<JsonObject, ItemStack[]>> storedFilters = new HashMap<>();
  
 -    public CargoManipulator(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
 -        super(category, item, recipeType, recipe);
@@ -1933,11 +1920,15 @@ index 538b231..a1ac02f 100644
 +        super(itemGroup, item, recipeType, recipe);
  
 -        Bukkit.getPluginManager().registerEvents(this, FluffyMachines.getInstance());
-+        Events.registerListeners(this);
++        Event.registerListeners(this);
      }
  
      @Nonnull
-@@ -57,13 +56,10 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
+     @Override
+     public ItemUseHandler getItemHandler() {
+-        return e -> e.setUseBlock(Event.Result.DENY); // Prevent opening inventories
++        return e -> e.setUseBlock(org.bukkit.event.Event.Result.DENY); // Prevent opening inventories
+     }
  
      @EventHandler
      private void onCargoManipulatorUse(PlayerInteractEvent e) {
@@ -1952,7 +1943,7 @@ index 538b231..a1ac02f 100644
  
          e.setCancelled(true);
  
-@@ -77,23 +73,15 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
+@@ -79,23 +73,15 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
                  nodeType != SlimefunItems.CARGO_OUTPUT_NODE &&
                          nodeType != SlimefunItems.CARGO_OUTPUT_NODE_2 &&
                          nodeType != SlimefunItems.CARGO_INPUT_NODE
@@ -1981,7 +1972,7 @@ index 538b231..a1ac02f 100644
      }
  
      /**
-@@ -110,11 +98,8 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
+@@ -112,11 +98,8 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
              BlockMenu parentInventory = BlockStorage.getInventory(parent);
              for (int i = 0; i < 9; i++) { // Iterate through all slots in cargo filter
                  ItemStack menuItem = parentInventory.getItemInSlot(CARGO_SLOTS[i]);
@@ -1995,7 +1986,7 @@ index 538b231..a1ac02f 100644
              }
          }
  
-@@ -158,19 +143,15 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
+@@ -160,19 +143,15 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
              Inventory playerInventory = p.getInventory();
  
              for (int i = 0; i < 9; i++) {
@@ -2017,7 +2008,7 @@ index 538b231..a1ac02f 100644
  
                  // Check if item not in inventory
                  if (!SlimefunUtils.containsSimilarItem(playerInventory, filterItems[i], true)) {
-@@ -180,7 +161,7 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
+@@ -182,7 +161,7 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
                  }
  
                  // Consume item in player inventory
@@ -2026,7 +2017,7 @@ index 538b231..a1ac02f 100644
                      if (SlimefunUtils.isItemSimilar(playerItem, filterItems[i], false, false)) {
                          playerItem.setAmount(playerItem.getAmount() - 1);
  
-@@ -188,7 +169,6 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
+@@ -190,7 +169,6 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
                          nodeMenu.replaceExistingItem(CARGO_SLOTS[i], new CustomItemStack(playerItem, 1));
                          break;
                      }
@@ -2034,7 +2025,7 @@ index 538b231..a1ac02f 100644
              }
          }
  
-@@ -235,9 +215,7 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
+@@ -237,9 +215,7 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
      private void clearNodeFilter(Block node, Player p) {
          // Empty filter contents
          BlockMenu nodeMenu = BlockStorage.getInventory(node);
@@ -2045,7 +2036,7 @@ index 538b231..a1ac02f 100644
      }
  
      private void clearFilterSlot(BlockMenu nodeMenu, int slot, Player p) {
-@@ -252,15 +230,11 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
+@@ -254,15 +230,11 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
       * Get the SlimefunItemStack of the cargo node
       */
      private SlimefunItemStack getCargoNodeType(Block b) {
@@ -2063,7 +2054,7 @@ index 538b231..a1ac02f 100644
  
          return (SlimefunItemStack) SlimefunItem.getById(blockId).getItem();
      }
-@@ -269,4 +243,4 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
+@@ -271,4 +243,4 @@ public class CargoManipulator extends SimpleSlimefunItem<ItemUseHandler> impleme
          Particle.DustOptions dustOption = new Particle.DustOptions(color, 1);
          b.getLocation().getWorld().spawnParticle(Particle.REDSTONE, b.getLocation().add(0.5, 0.5, 0.5), 1, dustOption);
      }
@@ -2074,7 +2065,7 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/Dolly.ja
 similarity index 80%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/Dolly.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/Dolly.java
-index 5f45ecc..0d505b6 100644
+index 5f45ecc..a8909d0 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/Dolly.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/Dolly.java
 @@ -1,5 +1,7 @@
@@ -2082,7 +2073,7 @@ index 5f45ecc..0d505b6 100644
 +package id.universenetwork.sfa_loader.addons.fluffymachines.items.tools;
  
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.Utils;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Scheduler;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
  import io.github.thebusybiscuit.slimefun4.api.player.PlayerBackpack;
@@ -2249,7 +2240,7 @@ index 5f45ecc..0d505b6 100644
              }
  
 -            Utils.runSync(new BukkitRunnable() {
-+            Scheduler.run(new BukkitRunnable() {
++            AbstractAddon.getScheduler().run(new BukkitRunnable() {
                  @Override
                  public void run() {
                      createChest(chestBlock, p, singleChest);
@@ -2303,17 +2294,17 @@ index 5f45ecc..0d505b6 100644
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/FluffyWrench.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/FluffyWrench.java
-similarity index 75%
+similarity index 74%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/FluffyWrench.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/FluffyWrench.java
-index 30c1403..85fc03f 100644
+index 30c1403..6d49a19 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/FluffyWrench.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/FluffyWrench.java
-@@ -1,22 +1,21 @@
+@@ -1,27 +1,25 @@
 -package io.ncbpfluffybear.fluffymachines.items.tools;
 +package id.universenetwork.sfa_loader.addons.fluffymachines.items.tools;
  
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -2340,7 +2331,12 @@ index 30c1403..85fc03f 100644
  import org.bukkit.Bukkit;
  import org.bukkit.Material;
  import org.bukkit.block.Block;
-@@ -46,11 +45,11 @@ public class FluffyWrench extends SimpleSlimefunItem<ItemUseHandler> implements
+ import org.bukkit.entity.Player;
+-import org.bukkit.event.Event;
+ import org.bukkit.event.EventHandler;
+ import org.bukkit.event.Listener;
+ import org.bukkit.event.block.BlockBreakEvent;
+@@ -46,17 +44,17 @@ public class FluffyWrench extends SimpleSlimefunItem<ItemUseHandler> implements
      private final HashMap<UUID, Long> cooldowns = new HashMap<>();
      private static final int WRENCH_DELAY = 250; // Not an itemsetting, too low causes dupes and no reason to increase
  
@@ -2351,11 +2347,18 @@ index 30c1403..85fc03f 100644
          this.type = type;
  
 -        Bukkit.getPluginManager().registerEvents(this, FluffyMachines.getInstance());
-+        Events.registerListeners(this);
++        Event.registerListeners(this);
      }
  
      @Nonnull
-@@ -66,40 +65,32 @@ public class FluffyWrench extends SimpleSlimefunItem<ItemUseHandler> implements
+     @Override
+     public ItemUseHandler getItemHandler() {
+-        return e -> e.setUseBlock(Event.Result.DENY);
++        return e -> e.setUseBlock(org.bukkit.event.Event.Result.DENY);
+     }
+ 
+     @EventHandler
+@@ -66,40 +64,32 @@ public class FluffyWrench extends SimpleSlimefunItem<ItemUseHandler> implements
  
          Long cooldown = cooldowns.get(p.getUniqueId());
          if (isItem(wrenchItem) && cooldown != null
@@ -2407,7 +2410,7 @@ index 30c1403..85fc03f 100644
          }
      }
  
-@@ -119,11 +110,8 @@ public class FluffyWrench extends SimpleSlimefunItem<ItemUseHandler> implements
+@@ -119,11 +109,8 @@ public class FluffyWrench extends SimpleSlimefunItem<ItemUseHandler> implements
  
      @Override
      public float getMaxItemCharge(ItemStack item) {
@@ -2425,7 +2428,7 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/Paxel.ja
 similarity index 73%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/Paxel.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/Paxel.java
-index d0c5334..57af5e3 100644
+index d0c5334..8af7d32 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/Paxel.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/Paxel.java
 @@ -1,19 +1,13 @@
@@ -2433,7 +2436,7 @@ index d0c5334..57af5e3 100644
 +package id.universenetwork.sfa_loader.addons.fluffymachines.items.tools;
  
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.FluffyItems;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -2476,7 +2479,7 @@ index d0c5334..57af5e3 100644
 +        super(itemGroup, item, recipeType, recipe);
  
 -        Bukkit.getPluginManager().registerEvents(this, FluffyMachines.getInstance());
-+        Events.registerListeners(this);
++        Event.registerListeners(this);
      }
  
      @EventHandler(ignoreCancelled = true)
@@ -2551,7 +2554,7 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/Portable
 similarity index 79%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/PortableCharger.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/PortableCharger.java
-index 4fec639..59cfed8 100644
+index 4fec639..caeb23e 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/PortableCharger.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/PortableCharger.java
 @@ -1,19 +1,20 @@
@@ -2560,8 +2563,8 @@ index 4fec639..59cfed8 100644
  
  
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.Utils;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -2613,7 +2616,7 @@ index 4fec639..59cfed8 100644
          this.CHARGE_SPEED = chargeSpeed;
  
 -        Bukkit.getPluginManager().registerEvents(this, FluffyMachines.getInstance());
-+        Events.registerListeners(this);
++        Event.registerListeners(this);
      }
  
      @Nonnull
@@ -2680,7 +2683,7 @@ index 4fec639..59cfed8 100644
                      }
                  }
 -            }.runTaskTimer(plugin, 0, 20);
-+            }.runTaskTimer(AbstractAddon.instance(), 0, 20);
++            }.runTaskTimer(AbstractAddon.getInstance(), 0, 20);
          };
      }
  
@@ -3222,7 +3225,7 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/WarpPadC
 similarity index 71%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/WarpPadConfigurator.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/WarpPadConfigurator.java
-index 3ffd6c2..2e4453c 100644
+index 3ffd6c2..30ae52b 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/WarpPadConfigurator.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/WarpPadConfigurator.java
 @@ -1,5 +1,9 @@
@@ -3231,8 +3234,8 @@ index 3ffd6c2..2e4453c 100644
  
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.FluffyItems;
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.Utils;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -3271,7 +3274,7 @@ index 3ffd6c2..2e4453c 100644
 +        super(itemGroup, item, recipeType, recipe);
  
 -        Bukkit.getPluginManager().registerEvents(this, FluffyMachines.getInstance());
-+        Events.registerListeners(this);
++        Event.registerListeners(this);
  
          addItemSetting(MAX_DISTANCE);
 -
@@ -3372,7 +3375,7 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/Watering
 similarity index 76%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/WateringCan.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/WateringCan.java
-index 08786a0..901843c 100644
+index 08786a0..5b98056 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/WateringCan.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/WateringCan.java
 @@ -1,31 +1,22 @@
@@ -3382,7 +3385,7 @@ index 08786a0..901843c 100644
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.CancelPlace;
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.Constants;
 +import id.universenetwork.sfa_loader.addons.fluffymachines.utils.Utils;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -4045,14 +4048,14 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/machines/AlternateEl
 similarity index 73%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/machines/AlternateElevatorPlate.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/machines/AlternateElevatorPlate.java
-index 893072d..b1c522f 100644
+index 893072d..1a362ea 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/machines/AlternateElevatorPlate.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/machines/AlternateElevatorPlate.java
 @@ -1,20 +1,20 @@
 -package io.ncbpfluffybear.fluffymachines.machines;
 +package id.universenetwork.sfa_loader.addons.fluffymachines.machines;
  
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Scheduler;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 +import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -4179,7 +4182,7 @@ index 893072d..b1c522f 100644
      @ParametersAreNonnullByDefault
      private void teleport(Player player, String floorName, Block target) {
 -        Utils.runSync(() -> {
-+        Scheduler.run(() -> {
++        AbstractAddon.getScheduler().run(() -> {
              users.add(player.getUniqueId());
  
              float yaw = player.getEyeLocation().getYaw() + 180;
@@ -7634,14 +7637,14 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/utils/Utils.java b/s
 similarity index 71%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/utils/Utils.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/Utils.java
-index 8c1b280..4885dcc 100644
+index 8c1b280..a30b93e 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/utils/Utils.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/utils/Utils.java
 @@ -1,22 +1,17 @@
 -package io.ncbpfluffybear.fluffymachines.utils;
 +package id.universenetwork.sfa_loader.addons.fluffymachines.utils;
  
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import id.universenetwork.sfa_loader.utils.TextUtils;
  import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
  import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
@@ -7809,10 +7812,10 @@ index 8c1b280..4885dcc 100644
 \ No newline at end of file
 diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/FluffyMachines.java b/src/main/java/io/ncbpfluffybear/fluffymachines/FluffyMachines.java
 deleted file mode 100644
-index 23b9ff2..0000000
+index 749db29..0000000
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/FluffyMachines.java
 +++ /dev/null
-@@ -1,215 +0,0 @@
+@@ -1,210 +0,0 @@
 -package io.ncbpfluffybear.fluffymachines;
 -
 -import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
@@ -7925,11 +7928,6 @@ index 23b9ff2..0000000
 -        getServer().getPluginManager().registerEvents(new KeyedCrafterListener(), this);
 -
 -        final Metrics metrics = new Metrics(this, 8927);
--
--        getLogger().log(Level.INFO, ChatColor.GREEN + "Hi there! Want to share your server with the " +
--                "Slimefun community?");
--        getLogger().log(Level.INFO, ChatColor.GREEN + "Join the official Slimefun Discord server at " +
--                "https://discord.gg/slimefun");
 -    }
 -
 -    @Override

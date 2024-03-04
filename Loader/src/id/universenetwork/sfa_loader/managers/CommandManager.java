@@ -9,7 +9,7 @@ import cloud.commandframework.exceptions.NoPermissionException;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
-import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
+import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 import id.universenetwork.sfa_loader.utils.LogUtils;
 import id.universenetwork.sfa_loader.utils.TextUtils;
 import lombok.experimental.UtilityClass;
@@ -31,7 +31,7 @@ public class CommandManager {
                     executionCoordinatorFunction = CommandExecutionCoordinator.simpleCoordinator();
             Function<CommandSender, CommandSender> mapperFunction = Function.identity();
             PaperCommandManager<CommandSender> manager = new PaperCommandManager<>(
-                    AbstractAddon.instance(), executionCoordinatorFunction, mapperFunction, mapperFunction);
+                    AbstractAddon.getInstance(), executionCoordinatorFunction, mapperFunction, mapperFunction);
             Function<ParserParameters, CommandMeta> commandMetaFunction = param -> CommandMeta.simple()
                     .with(CommandMeta.DESCRIPTION, param.get(
                             StandardParameters.DESCRIPTION, "No description"))
@@ -41,7 +41,7 @@ public class CommandManager {
             if (manager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION))
                 manager.registerAsynchronousCompletions();
             manager.registerExceptionHandler(NoPermissionException.class, (sender, e) ->
-                    TextUtils.send(sender, AbstractAddon.config()
+                    TextUtils.send(sender, AbstractAddon.getAddonConfig()
                             .getString("plugin-settings.no-perm")));
             LogUtils.info("&aCommand Manager has been initialized!");
             initialized = true;

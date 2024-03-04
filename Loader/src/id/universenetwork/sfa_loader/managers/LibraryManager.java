@@ -1,6 +1,6 @@
 package id.universenetwork.sfa_loader.managers;
 
-import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
+import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 import id.universenetwork.sfa_loader.utils.LogUtils;
 import lombok.experimental.UtilityClass;
 import net.byteflux.libby.BukkitLibraryManager;
@@ -19,7 +19,7 @@ public class LibraryManager {
     public void init() {
         if (initialized) throw new IllegalStateException("External Library Manager is already initialized!");
         LogUtils.info("&eInitializing External Library Manager...");
-        manager = new BukkitLibraryManager(AbstractAddon.instance());
+        manager = new BukkitLibraryManager(AbstractAddon.getInstance());
 
         // Add Repository
         manager.addMavenCentral();

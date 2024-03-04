@@ -1,11 +1,11 @@
-From c6d1941babcd0629cf98b5f2173900b7cfb65cf8 Mon Sep 17 00:00:00 2001
+From 3399074f0bd1102ee98821592bf2e4cf484479a3 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Tue, 27 Feb 2024 14:10:51 +0700
+Date: Mon, 4 Mar 2024 09:09:12 +0700
 Subject: [PATCH] DynaTech
 
 ---
- pom.xml                                       |  99 +--
- .../sfa_loader/addons/dynatech/DynaTech.java  | 112 +++
+ pom.xml                                       | 102 +--
+ .../sfa_loader/addons/dynatech/DynaTech.java  | 111 +++
  .../addons}/dynatech/DynaTechItems.java       | 107 ++-
  .../dynatech/attributes/LiquidStorage.java    |  61 +-
  .../events/PicnicBasketFeedPlayerEvent.java   |  24 +-
@@ -56,7 +56,7 @@ Subject: [PATCH] DynaTech
  .../addons}/dynatech/items/misc/VexGem.java   |  83 +-
  .../dynatech/items/misc/WitherGolem.java      |  31 +
  .../dynatech/items/tools/AngelGem.java        |  90 +--
- .../dynatech/items/tools/DimensionalHome.java |  59 +-
+ .../dynatech/items/tools/DimensionalHome.java |  61 +-
  .../items/tools/ElectricalStimulator.java     |   5 +-
  .../dynatech/items/tools/InventoryFilter.java |   4 +-
  .../dynatech/items/tools/LiquidTank.java      | 100 +--
@@ -74,7 +74,7 @@ Subject: [PATCH] DynaTech
  .../addons-config/DynaTech/config.yml         |   1 +
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  24 -
- 70 files changed, 2613 insertions(+), 3277 deletions(-)
+ 70 files changed, 2608 insertions(+), 3286 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/DynaTechItems.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/attributes/LiquidStorage.java (77%)
@@ -126,7 +126,7 @@ Subject: [PATCH] DynaTech
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/misc/VexGem.java (92%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/misc/WitherGolem.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/AngelGem.java (63%)
- rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/DimensionalHome.java (53%)
+ rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/DimensionalHome.java (51%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/ElectricalStimulator.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/InventoryFilter.java (89%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/items/tools/LiquidTank.java (79%)
@@ -146,7 +146,7 @@ Subject: [PATCH] DynaTech
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 58724c3..d2dea11 100644
+index 58724c3..82018a1 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,58 +1,27 @@
@@ -237,7 +237,7 @@ index 58724c3..d2dea11 100644
                          </relocation>
                      </relocations>
                  </configuration>
-@@ -88,16 +49,18 @@
+@@ -88,67 +49,50 @@
      </build>
  
      <dependencies>
@@ -247,21 +247,18 @@ index 58724c3..d2dea11 100644
              <artifactId>spigot-api</artifactId>
              <version>1.20.4-R0.1-SNAPSHOT</version>
              <scope>provided</scope>
-         </dependency>
+-        </dependency>
 -	    <dependency>
 -	        <groupId>com.github.Slimefun</groupId>
 -	        <artifactId>Slimefun4</artifactId>
 -	        <version>da9c2ac4cc</version>
-+
-+        <dependency>
-+            <groupId>com.github.Slimefun</groupId>
-+            <artifactId>Slimefun4</artifactId>
-+            <version>da9c2ac4cc</version>
-             <scope>provided</scope>
-             <exclusions>
-                 <exclusion>
-@@ -107,48 +70,42 @@
-             </exclusions>
+-            <scope>provided</scope>
+-            <exclusions>
+-                <exclusion>
+-                    <groupId>io.github.thebusybiscuit</groupId>
+-                    <artifactId>cscorelib2</artifactId>
+-                </exclusion>
+-            </exclusions>
          </dependency>
          <dependency>
 -            <groupId>com.github.thebusybiscuit</groupId>
@@ -321,10 +318,10 @@ index 58724c3..d2dea11 100644
  </project>
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
 new file mode 100644
-index 0000000..2b3b0bb
+index 0000000..7adbe62
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
-@@ -0,0 +1,112 @@
+@@ -0,0 +1,111 @@
 +package id.universenetwork.sfa_loader.addons.dynatech;
 +
 +import com.google.common.base.Preconditions;
@@ -337,9 +334,8 @@ index 0000000..2b3b0bb
 +import id.universenetwork.sfa_loader.addons.dynatech.tasks.ItemBandTask;
 +import id.universenetwork.sfa_loader.annotations.AddonHooks;
 +import id.universenetwork.sfa_loader.annotations.AddonLibrary;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Scheduler;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import id.universenetwork.sfa_loader.utils.LogUtils;
 +import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
@@ -399,22 +395,22 @@ index 0000000..2b3b0bb
 +        }
 +
 +        DynaTechItemsSetup.setup(this);
-+        Events.registerListeners(
++        Event.registerListeners(
 +            new PicnicBasketListener((PicnicBasket) DynaTechItems.PICNIC_BASKET.getItem()),
 +            new ElectricalStimulatorListener((ElectricalStimulator) DynaTechItems.ELECTRICAL_STIMULATOR.getItem()),
 +            new InventoryFilterListener());
 +
 +        try {
 +            Class.forName("io.github.schntgaispock.gastronomicon.api.items.FoodItemStack");
-+            Events.registerListeners(new GastronomiconIntegrationListener());
++            Event.registerListeners(new GastronomiconIntegrationListener());
 +        } catch (ClassNotFoundException ignore) {
 +        }
 +
-+        if (AddonsLoader.isAddonLoaded("ExoticGarden")) Events.registerListeners(new ExoticGardenIntegrationListener());
++        if (AddonsLoader.isAddonLoaded("ExoticGarden")) Event.registerListeners(new ExoticGardenIntegrationListener());
 +
 +        // Tasks
-+        Scheduler.repeatAsync(0, 5 * 20, new ItemBandTask());
-+        Scheduler.repeat(0, TICK_TIME, () -> this.tickInterval++);
++        AbstractAddon.getScheduler().repeatAsync(0, 5 * 20, new ItemBandTask());
++        AbstractAddon.getScheduler().repeat(0, TICK_TIME, () -> this.tickInterval++);
 +
 +        if (Slimefun.getMinecraftVersion().isBefore(MinecraftVersion.MINECRAFT_1_19))
 +            LogUtils.warning("DynaTech only supports 1.19+, " +
@@ -423,7 +419,7 @@ index 0000000..2b3b0bb
 +
 +    @Override
 +    public void onUnload() {
-+        Bukkit.getScheduler().cancelTasks(AbstractAddon.instance());
++        Bukkit.getScheduler().cancelTasks(AbstractAddon.getInstance());
 +
 +        setInstance(null);
 +    }
@@ -432,16 +428,16 @@ index 0000000..2b3b0bb
 +    public static BukkitTask runSync(@Nonnull Runnable runnable) {
 +        Preconditions.checkNotNull(runnable, "Cannot run null");
 +
-+        if (instance == null || !AbstractAddon.instance().isEnabled()) return null;
++        if (instance == null || !AbstractAddon.getInstance().isEnabled()) return null;
 +
-+        return Scheduler.run(runnable);
++        return AbstractAddon.getScheduler().run(runnable);
 +    }
 +}
 diff --git a/src/main/java/me/profelements/dynatech/DynaTechItems.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTechItems.java
 similarity index 91%
 rename from src/main/java/me/profelements/dynatech/DynaTechItems.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTechItems.java
-index 3a43f23..0d15983 100644
+index 3a43f23..2f35d4b 100644
 --- a/src/main/java/me/profelements/dynatech/DynaTechItems.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTechItems.java
 @@ -1,6 +1,11 @@
@@ -450,7 +446,7 @@ index 3a43f23..0d15983 100644
  
  import dev.j3fftw.extrautils.utils.LoreBuilderDynamic;
 +import id.universenetwork.sfa_loader.addons.dynatech.items.electric.MaterialHive;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import io.github.bakedlibs.dough.items.CustomItemStack;
 +import io.github.bakedlibs.dough.skins.PlayerHead;
 +import io.github.bakedlibs.dough.skins.PlayerSkin;
@@ -2072,7 +2068,7 @@ diff --git a/src/main/java/me/profelements/dynatech/items/electric/AntigravityBu
 similarity index 74%
 rename from src/main/java/me/profelements/dynatech/items/electric/AntigravityBubble.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/AntigravityBubble.java
-index 29bfb76..d159f88 100644
+index 29bfb76..96f5b74 100644
 --- a/src/main/java/me/profelements/dynatech/items/electric/AntigravityBubble.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/AntigravityBubble.java
 @@ -1,12 +1,11 @@
@@ -2080,7 +2076,7 @@ index 29bfb76..d159f88 100644
 +package id.universenetwork.sfa_loader.addons.dynatech.items.electric;
  
 +import id.universenetwork.sfa_loader.addons.dynatech.items.abstracts.AbstractElectricTicker;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -2116,7 +2112,7 @@ index 29bfb76..d159f88 100644
 -	}
 +    public AntigravityBubble(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
 +        super(itemGroup, item, recipeType, recipe);
-+        Events.registerListeners(this);
++        Event.registerListeners(this);
 +    }
  
      @Override
@@ -5916,7 +5912,7 @@ diff --git a/src/main/java/me/profelements/dynatech/items/electric/transfer/Tess
 similarity index 77%
 rename from src/main/java/me/profelements/dynatech/items/electric/transfer/Tesseract.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/transfer/Tesseract.java
-index 2b73a87..c78244a 100644
+index 2b73a87..28ee689 100644
 --- a/src/main/java/me/profelements/dynatech/items/electric/transfer/Tesseract.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/transfer/Tesseract.java
 @@ -1,5 +1,7 @@
@@ -5924,7 +5920,7 @@ index 2b73a87..c78244a 100644
 +package id.universenetwork.sfa_loader.addons.dynatech.items.electric.transfer;
  
 +import id.universenetwork.sfa_loader.addons.dynatech.DynaTechItems;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemHandler;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -6311,7 +6307,7 @@ diff --git a/src/main/java/me/profelements/dynatech/items/electric/transfer/Wire
 similarity index 60%
 rename from src/main/java/me/profelements/dynatech/items/electric/transfer/WirelessEnergyPoint.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/transfer/WirelessEnergyPoint.java
-index b6a4d98..20b7a73 100644
+index b6a4d98..c5b4270 100644
 --- a/src/main/java/me/profelements/dynatech/items/electric/transfer/WirelessEnergyPoint.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/transfer/WirelessEnergyPoint.java
 @@ -1,6 +1,7 @@
@@ -6320,7 +6316,7 @@ index b6a4d98..20b7a73 100644
  
 -import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
 +import id.universenetwork.sfa_loader.addons.dynatech.DynaTechItems;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemHandler;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -6689,7 +6685,7 @@ diff --git a/src/main/java/me/profelements/dynatech/items/electric/transfer/Wire
 similarity index 68%
 rename from src/main/java/me/profelements/dynatech/items/electric/transfer/WirelessItemOutput.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/transfer/WirelessItemOutput.java
-index 0a0f7fc..6bed461 100644
+index 0a0f7fc..57fa589 100644
 --- a/src/main/java/me/profelements/dynatech/items/electric/transfer/WirelessItemOutput.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/electric/transfer/WirelessItemOutput.java
 @@ -1,6 +1,7 @@
@@ -6698,7 +6694,7 @@ index 0a0f7fc..6bed461 100644
  
 -import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
 +import id.universenetwork.sfa_loader.addons.dynatech.DynaTechItems;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemHandler;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -7146,14 +7142,14 @@ diff --git a/src/main/java/me/profelements/dynatech/items/misc/ItemBand.java b/s
 similarity index 85%
 rename from src/main/java/me/profelements/dynatech/items/misc/ItemBand.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/misc/ItemBand.java
-index a28d460..9664ee3 100644
+index a28d460..4fa0cdc 100644
 --- a/src/main/java/me/profelements/dynatech/items/misc/ItemBand.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/misc/ItemBand.java
 @@ -1,11 +1,12 @@
 -package me.profelements.dynatech.items.misc;
 +package id.universenetwork.sfa_loader.addons.dynatech.items.misc;
  
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -7302,7 +7298,7 @@ diff --git a/src/main/java/me/profelements/dynatech/items/misc/StarDustMeteor.ja
 similarity index 70%
 rename from src/main/java/me/profelements/dynatech/items/misc/StarDustMeteor.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/misc/StarDustMeteor.java
-index a31de5f..3053df8 100644
+index a31de5f..80204a4 100644
 --- a/src/main/java/me/profelements/dynatech/items/misc/StarDustMeteor.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/misc/StarDustMeteor.java
 @@ -1,72 +1,71 @@
@@ -7380,7 +7376,7 @@ index a31de5f..3053df8 100644
 -}
 +package id.universenetwork.sfa_loader.addons.dynatech.items.misc;
 +
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
 +import io.github.thebusybiscuit.slimefun4.api.geo.GEOResource;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
@@ -7581,7 +7577,7 @@ diff --git a/src/main/java/me/profelements/dynatech/items/tools/AngelGem.java b/
 similarity index 63%
 rename from src/main/java/me/profelements/dynatech/items/tools/AngelGem.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/AngelGem.java
-index 2858c61..f3a00a2 100644
+index 2858c61..d14beba 100644
 --- a/src/main/java/me/profelements/dynatech/items/tools/AngelGem.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/AngelGem.java
 @@ -1,5 +1,9 @@
@@ -7590,7 +7586,7 @@ index 2858c61..f3a00a2 100644
  
 +import com.google.common.base.Preconditions;
 +import id.universenetwork.sfa_loader.addons.dynatech.DynaTechItems;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
 +import id.universenetwork.sfa_loader.utils.TextUtils;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
@@ -7622,7 +7618,7 @@ index 2858c61..f3a00a2 100644
          addItemHandler(onRightClick(), onItemDrop());
  
 -        Bukkit.getPluginManager().registerEvents(this, DynaTech.getInstance());
-+        Events.registerListeners(this);
++        Event.registerListeners(this);
      }
  
      private ItemDropHandler onItemDrop() {
@@ -7740,10 +7736,10 @@ index 2858c61..f3a00a2 100644
 -
  }
 diff --git a/src/main/java/me/profelements/dynatech/items/tools/DimensionalHome.java b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/DimensionalHome.java
-similarity index 53%
+similarity index 51%
 rename from src/main/java/me/profelements/dynatech/items/tools/DimensionalHome.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/DimensionalHome.java
-index e50638f..f439c6e 100644
+index e50638f..2a326a0 100644
 --- a/src/main/java/me/profelements/dynatech/items/tools/DimensionalHome.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/DimensionalHome.java
 @@ -1,18 +1,16 @@
@@ -7752,8 +7748,8 @@ index e50638f..f439c6e 100644
  
 -import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
 +import id.universenetwork.sfa_loader.addons.dynatech.DynaTechItems;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -7778,7 +7774,7 @@ index e50638f..f439c6e 100644
 +    private static final NamespacedKey CHUNK_KEY = AbstractAddon.createKey("chunk-key");
      private static final World DIM_HOME_WORLD = Bukkit.getServer().getWorld("dimensionalhome");
 -    private static final Config CURRENT_HIGHEST_CHUNK_ID = new Config("plugins/DynaTech/current-chunk-highest.yml");
-+    private static final AddonConfig CURRENT_HIGHEST_CHUNK_ID = new AddonConfig("addons-config/DynaTech/current-chunk-highest.yml", false);
++    private static final AddonConfig CURRENT_HIGHEST_CHUNK_ID = new AddonConfig("addons-config/DynaTech/current-chunk-highest.yml");
      private int id = CURRENT_HIGHEST_CHUNK_ID.getInt("current-chunk-highest-id");
  
      public DimensionalHome(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
@@ -7843,7 +7839,8 @@ index e50638f..f439c6e 100644
 -                
 +
                  // THIS IS PROBABLY BAD AND A BAD WAY TO KEEP AN CHUNK ID
-                 CURRENT_HIGHEST_CHUNK_ID.setValue("current-chunk-highest-id", id);
+-                CURRENT_HIGHEST_CHUNK_ID.setValue("current-chunk-highest-id", id);
++                CURRENT_HIGHEST_CHUNK_ID.set("current-chunk-highest-id", id);
                  CURRENT_HIGHEST_CHUNK_ID.save();
              }
 -    
@@ -7911,7 +7908,7 @@ diff --git a/src/main/java/me/profelements/dynatech/items/tools/LiquidTank.java 
 similarity index 79%
 rename from src/main/java/me/profelements/dynatech/items/tools/LiquidTank.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/LiquidTank.java
-index 6806878..d725d03 100644
+index 6806878..23ffc29 100644
 --- a/src/main/java/me/profelements/dynatech/items/tools/LiquidTank.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/LiquidTank.java
 @@ -1,6 +1,10 @@
@@ -7921,8 +7918,8 @@ index 6806878..d725d03 100644
  
 +import id.universenetwork.sfa_loader.addons.dynatech.DynaTech;
 +import id.universenetwork.sfa_loader.addons.dynatech.DynaTechItems;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -7965,7 +7962,7 @@ index 6806878..d725d03 100644
          this.maxLiquidAmount = maxLiquidAmount;
  
 -        Bukkit.getPluginManager().registerEvents(this, DynaTech.getInstance());
-+        Events.registerListeners(this);
++        Event.registerListeners(this);
          addItemHandler(onEntityClick());
          addItemHandler(onRightClick());
      }
@@ -8623,7 +8620,7 @@ diff --git a/src/main/java/me/profelements/dynatech/listeners/PicnicBasketListen
 similarity index 59%
 rename from src/main/java/me/profelements/dynatech/listeners/PicnicBasketListener.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/listeners/PicnicBasketListener.java
-index 89868c2..20bde67 100644
+index 89868c2..cb96091 100644
 --- a/src/main/java/me/profelements/dynatech/listeners/PicnicBasketListener.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/listeners/PicnicBasketListener.java
 @@ -1,20 +1,20 @@
@@ -8633,7 +8630,7 @@ index 89868c2..20bde67 100644
 +import id.universenetwork.sfa_loader.addons.dynatech.DynaTech;
 +import id.universenetwork.sfa_loader.addons.dynatech.events.PicnicBasketFeedPlayerEvent;
 +import id.universenetwork.sfa_loader.addons.dynatech.items.backpacks.PicnicBasket;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.player.PlayerBackpack;
  import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
@@ -8746,7 +8743,7 @@ index 89868c2..20bde67 100644
 -            plugin.getServer().getPluginManager().callEvent(event);
 +            ItemStack item = inv.getItem(slot);
 +            PicnicBasketFeedPlayerEvent event = new PicnicBasketFeedPlayerEvent(p, picnicBasket, picnicBasketItem, item);
-+            Events.call(event);
++            Event.call(event);
  
              if (!event.isCancelled()) {
                  for (ItemStack food : PicnicBasket.getFoods().keySet()) {
@@ -8772,7 +8769,7 @@ diff --git a/src/main/java/me/profelements/dynatech/setup/DynaTechItemsSetup.jav
 similarity index 55%
 rename from src/main/java/me/profelements/dynatech/setup/DynaTechItemsSetup.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/setup/DynaTechItemsSetup.java
-index 9395122..582787b 100644
+index 9395122..7bc9130 100644
 --- a/src/main/java/me/profelements/dynatech/setup/DynaTechItemsSetup.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/setup/DynaTechItemsSetup.java
 @@ -1,8 +1,23 @@
@@ -8799,7 +8796,7 @@ index 9395122..582787b 100644
 +import id.universenetwork.sfa_loader.addons.infinityexpansion.items.mobdata.MobData;
 +import id.universenetwork.sfa_loader.addons.infinityexpansion.items.mobdata.MobDataCard;
 +import id.universenetwork.sfa_loader.addons.infinityexpansion.items.mobdata.MobDataTier;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
  import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;

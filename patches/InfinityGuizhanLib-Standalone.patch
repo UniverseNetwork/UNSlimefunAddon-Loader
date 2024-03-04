@@ -1,0 +1,3781 @@
+From f17b589c96f3e8260ef9c0eebe589374848d9212 Mon Sep 17 00:00:00 2001
+From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
+Date: Sun, 3 Mar 2024 21:31:02 +0700
+Subject: [PATCH] InfinityGuizhanLib-Standalone
+
+---
+ GuizhanLib-common/pom.xml                     |  10 -
+ .../guizhanlib/common/Cooldown.java           |   2 +-
+ .../guizhanlib/common/PersistentType.java     |   2 +-
+ .../guizhanlib/common/RateLimit.java          |   2 +-
+ .../guizhanlib/java/BooleanHelper.java        |   2 +-
+ .../guizhanlib/java/IntegerHelper.java        |   2 +-
+ .../libraries}/guizhanlib/utils/FileUtil.java |   2 +-
+ .../libraries}/guizhanlib/utils/JsonUtil.java |   2 +-
+ .../guizhanlib/utils/RandomUtil.java          |   2 +-
+ .../guizhanlib/utils/StackUtil.java           |   2 +-
+ .../guizhanlib/utils/StringUtil.java          |   2 +-
+ .../guizhanlib/common/package-info.java       |   4 -
+ .../guizhanlib/java/package-info.java         |   4 -
+ .../guizhanlib/utils/package-info.java        |   4 -
+ .../guizhanlib/java/TestBooleanHelper.java    |  19 -
+ .../guizhanlib/java/TestIntegerHelper.java    |  21 --
+ .../guizhanlib/utils/TestStringUtil.java      |  58 ----
+ .../guizhanlib/localization/Language.java     |   2 +-
+ .../guizhanlib/localization/Localization.java |   8 +-
+ .../localization/MinecraftLocalization.java   |   4 +-
+ .../guizhanlib/localization/package-info.java |   4 -
+ .../guizhanlib/minecraft/ChatColors.java      |   2 +-
+ .../guizhanlib/minecraft/LanguageHelper.java  |   2 +-
+ .../guizhanlib/minecraft/MinecraftTag.java    |   2 +-
+ .../minecraft/helper/DyeColorHelper.java      |   6 +-
+ .../minecraft/helper/MaterialHelper.java      |   6 +-
+ .../helper/attribute/AttributeHelper.java     |   4 +-
+ .../minecraft/helper/block/BiomeHelper.java   |   4 +-
+ .../enchantments/EnchantmentHelper.java       |   6 +-
+ .../helper/entity/AxolotlHelper.java          |   4 +-
+ .../minecraft/helper/entity/CatHelper.java    |   4 +-
+ .../minecraft/helper/entity/EntityHelper.java |   2 +-
+ .../helper/entity/EntityTypeHelper.java       |   4 +-
+ .../minecraft/helper/entity/FoxHelper.java    |   4 +-
+ .../minecraft/helper/entity/FrogHelper.java   |   4 +-
+ .../minecraft/helper/entity/HorseHelper.java  |   4 +-
+ .../minecraft/helper/entity/PandaHelper.java  |   4 +-
+ .../helper/entity/PufferFishHelper.java       |  18 +-
+ .../minecraft/helper/entity/RabbitHelper.java |   4 +-
+ .../helper/entity/TropicalFishHelper.java     |   4 +-
+ .../helper/entity/VillagerHelper.java         |   6 +-
+ .../helper/inventory/ItemStackHelper.java     |   8 +-
+ .../helper/potion/PotionEffectTypeHelper.java |   4 +-
+ .../guizhanlib/minecraft/utils/ChatUtil.java  |   2 +-
+ .../minecraft/utils/InventoryUtil.java        |   2 +-
+ .../guizhanlib/minecraft/utils/ItemUtil.java  |   2 +-
+ .../minecraft/commands/AbstractCommand.java   | 206 -----------
+ .../minecraft/commands/BaseCommand.java       |  56 ---
+ .../minecraft/commands/SubCommand.java        |  22 --
+ .../guizhanlib/minecraft/commands/Usage.java  |  60 ----
+ .../minecraft/commands/package-info.java      |   4 -
+ .../helper/attribute/package-info.java        |   4 -
+ .../minecraft/helper/block/package-info.java  |   4 -
+ .../helper/enchantments/package-info.java     |   4 -
+ .../minecraft/helper/entity/package-info.java |   4 -
+ .../helper/inventory/package-info.java        |   4 -
+ .../minecraft/helper/package-info.java        |   4 -
+ .../minecraft/helper/potion/package-info.java |   4 -
+ .../guizhanlib/minecraft/package-info.java    |   4 -
+ .../minecraft/utils/TestChatUtil.java         |  25 --
+ .../minecraft/utils/TestItemUtil.java         |  55 ---
+ .../libraries}/guizhanlib/common/Event.java   |  10 +-
+ .../slimefun/addon/AbstractAddon.java         |  42 +--
+ .../slimefun/addon/AddonConfig.java           |  78 ++++-
+ .../slimefun/addon/Environment.java           |   2 +-
+ .../slimefun/addon/PathBuilder.java           |   2 +-
+ .../guizhanlib/slimefun/addon/Scheduler.java  |   7 +-
+ .../addon}/SlimefunAddonInstance.java         |  17 +-
+ .../slimefun/addon/SlimefunLocalization.java  |   6 +-
+ .../slimefun/groups/MultiGroup.java           |   4 +-
+ .../guizhanlib/slimefun/groups/SubGroup.java  |   4 +-
+ .../guizhanlib/slimefun/items/Metals.java     |   8 +-
+ .../slimefun/items/core/AdvancedMetal.java    |   4 +-
+ .../slimefun/items/core/BasicMetal.java       |   4 +-
+ .../machines/AbstractMachineBlock.java        |   3 +-
+ .../slimefun/machines/CraftingBlock.java      |   2 +-
+ .../machines/CraftingBlockRecipe.java         |   4 +-
+ .../slimefun/machines/MachineBlock.java       |   6 +-
+ .../slimefun/machines/MachineBlockRecipe.java |   4 +-
+ .../slimefun/machines/MachineInput.java       |   2 +-
+ .../slimefun/machines/MachineLayout.java      |   2 +-
+ .../slimefun/machines/MachineLore.java        |   2 +-
+ .../slimefun/machines/MachineRecipeType.java  |   4 +-
+ .../slimefun/machines/MenuBlock.java          |  14 +-
+ .../slimefun/machines/MenuBlockPreset.java    |   2 +-
+ .../slimefun/machines/TickingMenuBlock.java   |   2 +-
+ .../slimefun/utils/BlockStorageUtil.java      |   2 +-
+ .../slimefun/addon/package-info.java          |   4 -
+ .../slimefun/items/core/package-info.java     |   4 -
+ .../slimefun/machines/package-info.java       |   4 -
+ .../guizhanlib/slimefun/package-info.java     |   4 -
+ .../guizhanlib/slimefun/addon/MockAddon.java  |  36 --
+ .../slimefun/addon/TestAbstractAddon.java     |  81 -----
+ .../items/core/TestAdvancedMetals.java        |   4 -
+ .../slimefun/items/core/TestBasicMetal.java   |  23 --
+ .../src/test/resources/config.yml             |   1 -
+ .../src/test/resources/plugin.yml             |   4 -
+ GuizhanLib-updater/pom.xml                    |  24 --
+ .../updater/AbstractGuizhanBuildsUpdater.java | 327 ------------------
+ .../updater/GuizhanBuildsCNUpdater.java       | 105 ------
+ .../updater/GuizhanBuildsUpdater.java         | 105 ------
+ .../guizhanlib/updater/LocaleKey.java         |  23 --
+ .../guizhanlib/updater/UpdaterConfig.java     |  35 --
+ .../updater/UpdaterLocalizations.java         |  77 -----
+ .../guizhanlib/updater/UpdaterTask.java       | 283 ---------------
+ .../guizhanlib/updater/package-info.java      |   4 -
+ pom.xml                                       | 207 +----------
+ 107 files changed, 213 insertions(+), 2109 deletions(-)
+ rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/common/Cooldown.java (94%)
+ rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/common/PersistentType.java (99%)
+ rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/common/RateLimit.java (97%)
+ rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/java/BooleanHelper.java (92%)
+ rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/java/IntegerHelper.java (92%)
+ rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/utils/FileUtil.java (95%)
+ rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/utils/JsonUtil.java (97%)
+ rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/utils/RandomUtil.java (96%)
+ rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/utils/StackUtil.java (98%)
+ rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/utils/StringUtil.java (97%)
+ delete mode 100644 GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/package-info.java
+ delete mode 100644 GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/java/package-info.java
+ delete mode 100644 GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/package-info.java
+ delete mode 100644 GuizhanLib-common/src/test/java/net/guizhanss/guizhanlib/java/TestBooleanHelper.java
+ delete mode 100644 GuizhanLib-common/src/test/java/net/guizhanss/guizhanlib/java/TestIntegerHelper.java
+ delete mode 100644 GuizhanLib-common/src/test/java/net/guizhanss/guizhanlib/utils/TestStringUtil.java
+ rename GuizhanLib-localization/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/localization/Language.java (96%)
+ rename GuizhanLib-localization/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/localization/Localization.java (96%)
+ rename GuizhanLib-localization/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/localization/MinecraftLocalization.java (93%)
+ delete mode 100644 GuizhanLib-localization/src/main/java/net/guizhanss/guizhanlib/localization/package-info.java
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/ChatColors.java (98%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/LanguageHelper.java (97%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/MinecraftTag.java (99%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/DyeColorHelper.java (90%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/MaterialHelper.java (89%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/attribute/AttributeHelper.java (85%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/block/BiomeHelper.java (85%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/enchantments/EnchantmentHelper.java (93%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/entity/AxolotlHelper.java (95%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/entity/CatHelper.java (95%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/entity/EntityHelper.java (93%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/entity/EntityTypeHelper.java (91%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/entity/FoxHelper.java (94%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/entity/FrogHelper.java (94%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/entity/HorseHelper.java (97%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/entity/PandaHelper.java (95%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/entity/PufferFishHelper.java (57%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/entity/RabbitHelper.java (95%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/entity/TropicalFishHelper.java (87%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/entity/VillagerHelper.java (88%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/inventory/ItemStackHelper.java (88%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/helper/potion/PotionEffectTypeHelper.java (93%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/utils/ChatUtil.java (97%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/utils/InventoryUtil.java (96%)
+ rename GuizhanLib-minecraft/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/minecraft/utils/ItemUtil.java (94%)
+ delete mode 100644 GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/AbstractCommand.java
+ delete mode 100644 GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/BaseCommand.java
+ delete mode 100644 GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/SubCommand.java
+ delete mode 100644 GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/Usage.java
+ delete mode 100644 GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/package-info.java
+ delete mode 100644 GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/attribute/package-info.java
+ delete mode 100644 GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/block/package-info.java
+ delete mode 100644 GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/enchantments/package-info.java
+ delete mode 100644 GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/package-info.java
+ delete mode 100644 GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/inventory/package-info.java
+ delete mode 100644 GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/package-info.java
+ delete mode 100644 GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/potion/package-info.java
+ delete mode 100644 GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/package-info.java
+ delete mode 100644 GuizhanLib-minecraft/src/test/java/net/guizhanss/guzihanlib/minecraft/utils/TestChatUtil.java
+ delete mode 100644 GuizhanLib-minecraft/src/test/java/net/guizhanss/guzihanlib/minecraft/utils/TestItemUtil.java
+ rename {GuizhanLib-common/src/main/java/net/guizhanss => GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries}/guizhanlib/common/Event.java (78%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/AbstractAddon.java (89%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/AddonConfig.java (69%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/Environment.java (83%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/PathBuilder.java (94%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/Scheduler.java (88%)
+ rename GuizhanLib-slimefun/src/main/java/id/{arvin3108/standalone => universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon}/SlimefunAddonInstance.java (85%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/SlimefunLocalization.java (97%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/groups/MultiGroup.java (96%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/groups/SubGroup.java (79%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/items/Metals.java (71%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/items/core/AdvancedMetal.java (96%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/items/core/BasicMetal.java (93%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/machines/AbstractMachineBlock.java (96%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/machines/CraftingBlock.java (98%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/machines/CraftingBlockRecipe.java (89%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/machines/MachineBlock.java (95%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/machines/MachineBlockRecipe.java (92%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/machines/MachineInput.java (83%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/machines/MachineLayout.java (96%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/machines/MachineLore.java (94%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/machines/MachineRecipeType.java (85%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/machines/MenuBlock.java (93%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/machines/MenuBlockPreset.java (96%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/machines/TickingMenuBlock.java (95%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/utils/BlockStorageUtil.java (98%)
+ delete mode 100644 GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/package-info.java
+ delete mode 100644 GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/items/core/package-info.java
+ delete mode 100644 GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/package-info.java
+ delete mode 100644 GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/package-info.java
+ delete mode 100644 GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/addon/MockAddon.java
+ delete mode 100644 GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/addon/TestAbstractAddon.java
+ delete mode 100644 GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/items/core/TestAdvancedMetals.java
+ delete mode 100644 GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/items/core/TestBasicMetal.java
+ delete mode 100644 GuizhanLib-slimefun/src/test/resources/config.yml
+ delete mode 100644 GuizhanLib-slimefun/src/test/resources/plugin.yml
+ delete mode 100644 GuizhanLib-updater/pom.xml
+ delete mode 100644 GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/AbstractGuizhanBuildsUpdater.java
+ delete mode 100644 GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/GuizhanBuildsCNUpdater.java
+ delete mode 100644 GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/GuizhanBuildsUpdater.java
+ delete mode 100644 GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/LocaleKey.java
+ delete mode 100644 GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/UpdaterConfig.java
+ delete mode 100644 GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/UpdaterLocalizations.java
+ delete mode 100644 GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/UpdaterTask.java
+ delete mode 100644 GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/package-info.java
+
+diff --git a/GuizhanLib-common/pom.xml b/GuizhanLib-common/pom.xml
+index b10c3d0..30049c8 100644
+--- a/GuizhanLib-common/pom.xml
++++ b/GuizhanLib-common/pom.xml
+@@ -12,14 +12,4 @@
+ 
+     <artifactId>GuizhanLib-common</artifactId>
+     <packaging>jar</packaging>
+-
+-    <dependencies>
+-        <dependency>
+-            <groupId>net.guizhanss</groupId>
+-            <artifactId>GuizhanLib-slimefun</artifactId>
+-            <version>${project.version}</version>
+-            <scope>provided</scope>
+-        </dependency>
+-    </dependencies>
+-
+ </project>
+diff --git a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/Cooldown.java b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/common/Cooldown.java
+similarity index 94%
+rename from GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/Cooldown.java
+rename to GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/common/Cooldown.java
+index 1148ed6..a0715d1 100644
+--- a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/Cooldown.java
++++ b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/common/Cooldown.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.common;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.common;
+ 
+ import java.util.HashMap;
+ import java.util.Map;
+diff --git a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/PersistentType.java b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/common/PersistentType.java
+similarity index 99%
+rename from GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/PersistentType.java
+rename to GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/common/PersistentType.java
+index 556b419..9befdef 100644
+--- a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/PersistentType.java
++++ b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/common/PersistentType.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.common;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.common;
+ 
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+ import lombok.RequiredArgsConstructor;
+diff --git a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/RateLimit.java b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/common/RateLimit.java
+similarity index 97%
+rename from GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/RateLimit.java
+rename to GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/common/RateLimit.java
+index fc040e9..d8c6ac5 100644
+--- a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/RateLimit.java
++++ b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/common/RateLimit.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.common;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.common;
+ 
+ import java.util.HashMap;
+ import java.util.Map;
+diff --git a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/java/BooleanHelper.java b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/java/BooleanHelper.java
+similarity index 92%
+rename from GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/java/BooleanHelper.java
+rename to GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/java/BooleanHelper.java
+index a817408..5ea3181 100644
+--- a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/java/BooleanHelper.java
++++ b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/java/BooleanHelper.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.java;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.java;
+ 
+ import lombok.experimental.UtilityClass;
+ 
+diff --git a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/java/IntegerHelper.java b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/java/IntegerHelper.java
+similarity index 92%
+rename from GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/java/IntegerHelper.java
+rename to GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/java/IntegerHelper.java
+index 8a1d751..0a20ec5 100644
+--- a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/java/IntegerHelper.java
++++ b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/java/IntegerHelper.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.java;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.java;
+ 
+ import lombok.experimental.UtilityClass;
+ 
+diff --git a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/FileUtil.java b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/FileUtil.java
+similarity index 95%
+rename from GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/FileUtil.java
+rename to GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/FileUtil.java
+index 8b2e868..f0b20c5 100644
+--- a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/FileUtil.java
++++ b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/FileUtil.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.utils;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.utils;
+ 
+ import com.google.common.base.Preconditions;
+ import lombok.experimental.UtilityClass;
+diff --git a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/JsonUtil.java b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/JsonUtil.java
+similarity index 97%
+rename from GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/JsonUtil.java
+rename to GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/JsonUtil.java
+index e6059cf..e756114 100644
+--- a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/JsonUtil.java
++++ b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/JsonUtil.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.utils;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.utils;
+ 
+ import com.google.common.base.Preconditions;
+ import com.google.gson.JsonElement;
+diff --git a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/RandomUtil.java b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/RandomUtil.java
+similarity index 96%
+rename from GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/RandomUtil.java
+rename to GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/RandomUtil.java
+index 91c0bb0..c7d0119 100644
+--- a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/RandomUtil.java
++++ b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/RandomUtil.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.utils;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.utils;
+ 
+ import com.google.common.base.Preconditions;
+ import lombok.experimental.UtilityClass;
+diff --git a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/StackUtil.java b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/StackUtil.java
+similarity index 98%
+rename from GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/StackUtil.java
+rename to GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/StackUtil.java
+index 87079fd..0cfff59 100644
+--- a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/StackUtil.java
++++ b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/StackUtil.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.utils;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.utils;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+diff --git a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/StringUtil.java b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/StringUtil.java
+similarity index 97%
+rename from GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/StringUtil.java
+rename to GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/StringUtil.java
+index fa22f0b..2a40a71 100644
+--- a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/StringUtil.java
++++ b/GuizhanLib-common/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/utils/StringUtil.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.utils;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.utils;
+ 
+ import com.google.common.base.Preconditions;
+ import lombok.experimental.UtilityClass;
+diff --git a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/package-info.java b/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/package-info.java
+deleted file mode 100644
+index 34b4f67..0000000
+--- a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * This package provides some useful classes.
+- */
+-package net.guizhanss.guizhanlib.common;
+diff --git a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/java/package-info.java b/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/java/package-info.java
+deleted file mode 100644
+index cf6a95a..0000000
+--- a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/java/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * 该包包含某些Java类型的相关助手
+- */
+-package net.guizhanss.guizhanlib.java;
+diff --git a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/package-info.java b/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/package-info.java
+deleted file mode 100644
+index 11fd133..0000000
+--- a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/utils/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * This package contains utility methods.
+- */
+-package net.guizhanss.guizhanlib.utils;
+diff --git a/GuizhanLib-common/src/test/java/net/guizhanss/guizhanlib/java/TestBooleanHelper.java b/GuizhanLib-common/src/test/java/net/guizhanss/guizhanlib/java/TestBooleanHelper.java
+deleted file mode 100644
+index 4591a73..0000000
+--- a/GuizhanLib-common/src/test/java/net/guizhanss/guizhanlib/java/TestBooleanHelper.java
++++ /dev/null
+@@ -1,19 +0,0 @@
+-package net.guizhanss.guizhanlib.java;
+-
+-import org.junit.jupiter.api.Test;
+-
+-import static org.junit.jupiter.api.Assertions.assertEquals;
+-
+-class TestBooleanHelper {
+-    @Test
+-    void testYesOrNo() {
+-        assertEquals("是", BooleanHelper.yesOrNo(true));
+-        assertEquals("否", BooleanHelper.yesOrNo(false));
+-    }
+-
+-    @Test
+-    void testEnabledOrDisabled() {
+-        assertEquals("已启用", BooleanHelper.enabledOrDisabled(true));
+-        assertEquals("已禁用", BooleanHelper.enabledOrDisabled(false));
+-    }
+-}
+diff --git a/GuizhanLib-common/src/test/java/net/guizhanss/guizhanlib/java/TestIntegerHelper.java b/GuizhanLib-common/src/test/java/net/guizhanss/guizhanlib/java/TestIntegerHelper.java
+deleted file mode 100644
+index 513b38b..0000000
+--- a/GuizhanLib-common/src/test/java/net/guizhanss/guizhanlib/java/TestIntegerHelper.java
++++ /dev/null
+@@ -1,21 +0,0 @@
+-package net.guizhanss.guizhanlib.java;
+-
+-import org.junit.jupiter.api.Test;
+-
+-import static org.junit.jupiter.api.Assertions.assertEquals;
+-
+-class TestIntegerHelper {
+-    @Test
+-    void testParseInt() {
+-        // normal
+-        assertEquals(514, IntegerHelper.parseInt("114514", 114, 514));
+-        assertEquals(1919, IntegerHelper.parseInt("1919", 810, 114514));
+-
+-        // invalid number string
+-        assertEquals(114, IntegerHelper.parseInt("", 114, 514));
+-        assertEquals(114, IntegerHelper.parseInt("asdad", 114, 514));
+-
+-        // null string
+-        assertEquals(114, IntegerHelper.parseInt(null, 114, 514));
+-    }
+-}
+diff --git a/GuizhanLib-common/src/test/java/net/guizhanss/guizhanlib/utils/TestStringUtil.java b/GuizhanLib-common/src/test/java/net/guizhanss/guizhanlib/utils/TestStringUtil.java
+deleted file mode 100644
+index 497095d..0000000
+--- a/GuizhanLib-common/src/test/java/net/guizhanss/guizhanlib/utils/TestStringUtil.java
++++ /dev/null
+@@ -1,58 +0,0 @@
+-package net.guizhanss.guizhanlib.utils;
+-
+-import org.junit.jupiter.api.Test;
+-
+-import static org.junit.jupiter.api.Assertions.assertEquals;
+-import static org.junit.jupiter.api.Assertions.assertFalse;
+-import static org.junit.jupiter.api.Assertions.assertTrue;
+-
+-class TestStringUtil {
+-    @Test
+-    void testHumanize() {
+-        String str1 = "STRinG_FirSt";
+-        String expected1 = "String First";
+-        assertEquals(expected1, StringUtil.humanize(str1));
+-
+-        String str2 = "Do IT again";
+-        String expected2 = "Do It Again";
+-        assertEquals(expected2, StringUtil.humanize(str2));
+-
+-        String str3 = "the_killer_bunny";
+-        String expected3 = "The Killer Bunny";
+-        assertEquals(expected3, StringUtil.humanize(str3));
+-    }
+-
+-    @Test
+-    void testDehumanize() {
+-        String str1 = "Magma Cube";
+-        String expected1 = "MAGMA_CUBE";
+-        assertEquals(expected1, StringUtil.dehumanize(str1));
+-
+-        String str2 = "a-useLESS_sTring";
+-        String expected2 = "A_USELESS_STRING";
+-        assertEquals(expected2, StringUtil.dehumanize(str2));
+-
+-        String str3 = "the_killer_bunny";
+-        String expected3 = "THE_KILLER_BUNNY";
+-        assertEquals(expected3, StringUtil.dehumanize(str3));
+-    }
+-
+-    @Test
+-    void testCapitalize() {
+-        String str1 = "magma_Cube";
+-        String expected1 = "Magma_Cube";
+-        assertEquals(expected1, StringUtil.capitalize(str1));
+-    }
+-
+-    @Test
+-    void testIsBlank() {
+-        String str1 = null;
+-        assertTrue(StringUtil.isBlank(str1));
+-
+-        String str2 = "";
+-        assertTrue(StringUtil.isBlank(str2));
+-
+-        String str3 = "notempty";
+-        assertFalse(StringUtil.isBlank(str3));
+-    }
+-}
+diff --git a/GuizhanLib-localization/src/main/java/net/guizhanss/guizhanlib/localization/Language.java b/GuizhanLib-localization/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/localization/Language.java
+similarity index 96%
+rename from GuizhanLib-localization/src/main/java/net/guizhanss/guizhanlib/localization/Language.java
+rename to GuizhanLib-localization/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/localization/Language.java
+index 924c045..80a00fc 100644
+--- a/GuizhanLib-localization/src/main/java/net/guizhanss/guizhanlib/localization/Language.java
++++ b/GuizhanLib-localization/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/localization/Language.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.localization;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.localization;
+ 
+ import com.google.common.base.Preconditions;
+ import org.bukkit.configuration.file.FileConfiguration;
+diff --git a/GuizhanLib-localization/src/main/java/net/guizhanss/guizhanlib/localization/Localization.java b/GuizhanLib-localization/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/localization/Localization.java
+similarity index 96%
+rename from GuizhanLib-localization/src/main/java/net/guizhanss/guizhanlib/localization/Localization.java
+rename to GuizhanLib-localization/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/localization/Localization.java
+index 9908dd2..979fde0 100644
+--- a/GuizhanLib-localization/src/main/java/net/guizhanss/guizhanlib/localization/Localization.java
++++ b/GuizhanLib-localization/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/localization/Localization.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.localization;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.localization;
+ 
+ import com.google.common.base.Preconditions;
+ import lombok.AccessLevel;
+@@ -12,11 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
+ import java.io.File;
+ import java.io.InputStreamReader;
+ import java.nio.charset.StandardCharsets;
+-import java.util.ArrayList;
+-import java.util.LinkedHashMap;
+-import java.util.LinkedList;
+-import java.util.List;
+-import java.util.Map;
++import java.util.*;
+ import java.util.logging.Level;
+ 
+ /**
+diff --git a/GuizhanLib-localization/src/main/java/net/guizhanss/guizhanlib/localization/MinecraftLocalization.java b/GuizhanLib-localization/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/localization/MinecraftLocalization.java
+similarity index 93%
+rename from GuizhanLib-localization/src/main/java/net/guizhanss/guizhanlib/localization/MinecraftLocalization.java
+rename to GuizhanLib-localization/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/localization/MinecraftLocalization.java
+index 19a5470..c3024e8 100644
+--- a/GuizhanLib-localization/src/main/java/net/guizhanss/guizhanlib/localization/MinecraftLocalization.java
++++ b/GuizhanLib-localization/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/localization/MinecraftLocalization.java
+@@ -1,6 +1,6 @@
+-package net.guizhanss.guizhanlib.localization;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.localization;
+ 
+-import net.guizhanss.guizhanlib.minecraft.utils.ChatUtil;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.utils.ChatUtil;
+ import org.bukkit.plugin.java.JavaPlugin;
+ 
+ import javax.annotation.Nonnull;
+diff --git a/GuizhanLib-localization/src/main/java/net/guizhanss/guizhanlib/localization/package-info.java b/GuizhanLib-localization/src/main/java/net/guizhanss/guizhanlib/localization/package-info.java
+deleted file mode 100644
+index c2646c5..0000000
+--- a/GuizhanLib-localization/src/main/java/net/guizhanss/guizhanlib/localization/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * This package provides localization services.
+- */
+-package net.guizhanss.guizhanlib.localization;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/ChatColors.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/ChatColors.java
+similarity index 98%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/ChatColors.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/ChatColors.java
+index 58a99f6..2236301 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/ChatColors.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/ChatColors.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.minecraft;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft;
+ 
+ import com.google.common.base.Preconditions;
+ import lombok.Getter;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/LanguageHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/LanguageHelper.java
+similarity index 97%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/LanguageHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/LanguageHelper.java
+index 52783dc..58186bb 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/LanguageHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/LanguageHelper.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.minecraft;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft;
+ 
+ import com.google.common.base.Preconditions;
+ import com.google.gson.Gson;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/MinecraftTag.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/MinecraftTag.java
+similarity index 99%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/MinecraftTag.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/MinecraftTag.java
+index 8f2724d..2a92357 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/MinecraftTag.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/MinecraftTag.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.minecraft;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft;
+ 
+ import org.bukkit.Material;
+ import org.bukkit.inventory.ItemStack;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/DyeColorHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/DyeColorHelper.java
+similarity index 90%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/DyeColorHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/DyeColorHelper.java
+index 7eac5d3..f557a3a 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/DyeColorHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/DyeColorHelper.java
+@@ -1,9 +1,9 @@
+-package net.guizhanss.guizhanlib.minecraft.helper;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.LanguageHelper;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.minecraft.LanguageHelper;
+-import net.guizhanss.guizhanlib.utils.StringUtil;
+ import org.bukkit.DyeColor;
+ 
+ import javax.annotation.Nonnull;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/MaterialHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/MaterialHelper.java
+similarity index 89%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/MaterialHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/MaterialHelper.java
+index 174ec36..25d50e8 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/MaterialHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/MaterialHelper.java
+@@ -1,9 +1,9 @@
+-package net.guizhanss.guizhanlib.minecraft.helper;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.LanguageHelper;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.minecraft.LanguageHelper;
+-import net.guizhanss.guizhanlib.utils.StringUtil;
+ import org.bukkit.Material;
+ 
+ import javax.annotation.Nonnull;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/attribute/AttributeHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/attribute/AttributeHelper.java
+similarity index 85%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/attribute/AttributeHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/attribute/AttributeHelper.java
+index d0d6ded..99c8c1d 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/attribute/AttributeHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/attribute/AttributeHelper.java
+@@ -1,8 +1,8 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.attribute;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.attribute;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.LanguageHelper;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.minecraft.LanguageHelper;
+ import org.bukkit.attribute.Attribute;
+ import org.bukkit.block.Biome;
+ 
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/block/BiomeHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/block/BiomeHelper.java
+similarity index 85%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/block/BiomeHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/block/BiomeHelper.java
+index 70e047a..d2dd91c 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/block/BiomeHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/block/BiomeHelper.java
+@@ -1,8 +1,8 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.block;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.block;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.LanguageHelper;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.minecraft.LanguageHelper;
+ import org.bukkit.block.Biome;
+ 
+ import javax.annotation.Nonnull;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/enchantments/EnchantmentHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/enchantments/EnchantmentHelper.java
+similarity index 93%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/enchantments/EnchantmentHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/enchantments/EnchantmentHelper.java
+index 7d142fd..6a4b1cb 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/enchantments/EnchantmentHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/enchantments/EnchantmentHelper.java
+@@ -1,9 +1,9 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.enchantments;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.enchantments;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.LanguageHelper;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.minecraft.LanguageHelper;
+-import net.guizhanss.guizhanlib.utils.StringUtil;
+ import org.bukkit.enchantments.Enchantment;
+ 
+ import javax.annotation.Nonnull;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/AxolotlHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/AxolotlHelper.java
+similarity index 95%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/AxolotlHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/AxolotlHelper.java
+index 1297d09..5197c4e 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/AxolotlHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/AxolotlHelper.java
+@@ -1,9 +1,9 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.entity;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.entity;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
+ import lombok.Getter;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.utils.StringUtil;
+ import org.bukkit.entity.Axolotl;
+ 
+ import javax.annotation.Nonnull;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/CatHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/CatHelper.java
+similarity index 95%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/CatHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/CatHelper.java
+index 5eb4886..84c1c81 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/CatHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/CatHelper.java
+@@ -1,9 +1,9 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.entity;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.entity;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
+ import lombok.Getter;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.utils.StringUtil;
+ import org.bukkit.entity.Cat;
+ 
+ import javax.annotation.Nonnull;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/EntityHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/EntityHelper.java
+similarity index 93%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/EntityHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/EntityHelper.java
+index edfa707..caf9fa1 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/EntityHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/EntityHelper.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.entity;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.entity;
+ 
+ import com.google.common.base.Preconditions;
+ import lombok.experimental.UtilityClass;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/EntityTypeHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/EntityTypeHelper.java
+similarity index 91%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/EntityTypeHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/EntityTypeHelper.java
+index 3cdef4e..31272e4 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/EntityTypeHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/EntityTypeHelper.java
+@@ -1,8 +1,8 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.entity;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.entity;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.LanguageHelper;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.minecraft.LanguageHelper;
+ import org.bukkit.entity.EntityType;
+ 
+ import javax.annotation.Nonnull;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/FoxHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/FoxHelper.java
+similarity index 94%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/FoxHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/FoxHelper.java
+index 853a9b5..e4fb543 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/FoxHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/FoxHelper.java
+@@ -1,9 +1,9 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.entity;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.entity;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
+ import lombok.Getter;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.utils.StringUtil;
+ import org.bukkit.entity.Fox;
+ 
+ import javax.annotation.Nonnull;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/FrogHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/FrogHelper.java
+similarity index 94%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/FrogHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/FrogHelper.java
+index 7f5ec6d..3fd4b20 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/FrogHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/FrogHelper.java
+@@ -1,9 +1,9 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.entity;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.entity;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
+ import lombok.Getter;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.utils.StringUtil;
+ import org.bukkit.entity.Frog;
+ 
+ import javax.annotation.Nonnull;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/HorseHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/HorseHelper.java
+similarity index 97%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/HorseHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/HorseHelper.java
+index f4d6196..aa2899e 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/HorseHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/HorseHelper.java
+@@ -1,9 +1,9 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.entity;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.entity;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
+ import lombok.Getter;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.utils.StringUtil;
+ import org.bukkit.entity.Horse;
+ 
+ import javax.annotation.Nonnull;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/PandaHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/PandaHelper.java
+similarity index 95%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/PandaHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/PandaHelper.java
+index 1eadfac..c2a27b2 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/PandaHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/PandaHelper.java
+@@ -1,9 +1,9 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.entity;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.entity;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
+ import lombok.Getter;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.utils.StringUtil;
+ import org.bukkit.entity.Panda;
+ 
+ import javax.annotation.Nonnull;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/PufferFishHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/PufferFishHelper.java
+similarity index 57%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/PufferFishHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/PufferFishHelper.java
+index 5a24370..4f30153 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/PufferFishHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/PufferFishHelper.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.entity;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.entity;
+ 
+ import lombok.experimental.UtilityClass;
+ import org.bukkit.entity.PufferFish;
+@@ -21,11 +21,15 @@ public final class PufferFishHelper {
+      */
+     @Nonnull
+     public static String getPuffState(int level) {
+-        return switch (level) {
+-            case 0 -> "未膨胀";
+-            case 1 -> "半膨胀";
+-            case 2 -> "完全膨胀";
+-            default -> "未知";
+-        };
++        switch (level) {
++            case 0:
++                return "未膨胀";
++            case 1:
++                return "半膨胀";
++            case 2:
++                return "完全膨胀";
++            default:
++                return "未知";
++        }
+     }
+ }
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/RabbitHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/RabbitHelper.java
+similarity index 95%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/RabbitHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/RabbitHelper.java
+index da617ce..943257a 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/RabbitHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/RabbitHelper.java
+@@ -1,9 +1,9 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.entity;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.entity;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
+ import lombok.Getter;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.utils.StringUtil;
+ import org.bukkit.entity.Rabbit;
+ 
+ import javax.annotation.Nonnull;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/TropicalFishHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/TropicalFishHelper.java
+similarity index 87%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/TropicalFishHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/TropicalFishHelper.java
+index 6d35d55..6846e99 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/TropicalFishHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/TropicalFishHelper.java
+@@ -1,8 +1,8 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.entity;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.entity;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.LanguageHelper;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.minecraft.LanguageHelper;
+ import org.bukkit.entity.TropicalFish;
+ import org.bukkit.entity.TropicalFish.Pattern;
+ 
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/VillagerHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/VillagerHelper.java
+similarity index 88%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/VillagerHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/VillagerHelper.java
+index 07d1211..a58b647 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/VillagerHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/entity/VillagerHelper.java
+@@ -1,9 +1,9 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.entity;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.entity;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.LanguageHelper;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.minecraft.LanguageHelper;
+-import net.guizhanss.guizhanlib.utils.StringUtil;
+ import org.bukkit.entity.Villager;
+ import org.bukkit.entity.Villager.Profession;
+ 
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/inventory/ItemStackHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/inventory/ItemStackHelper.java
+similarity index 88%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/inventory/ItemStackHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/inventory/ItemStackHelper.java
+index 47a82bc..2db8809 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/inventory/ItemStackHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/inventory/ItemStackHelper.java
+@@ -1,10 +1,10 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.inventory;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.inventory;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.LanguageHelper;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.MinecraftTag;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.MaterialHelper;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.minecraft.LanguageHelper;
+-import net.guizhanss.guizhanlib.minecraft.MinecraftTag;
+-import net.guizhanss.guizhanlib.minecraft.helper.MaterialHelper;
+ import org.bukkit.Material;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.inventory.meta.PotionMeta;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/potion/PotionEffectTypeHelper.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/potion/PotionEffectTypeHelper.java
+similarity index 93%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/potion/PotionEffectTypeHelper.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/potion/PotionEffectTypeHelper.java
+index 0ef3015..6c04e1b 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/potion/PotionEffectTypeHelper.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/helper/potion/PotionEffectTypeHelper.java
+@@ -1,10 +1,10 @@
+-package net.guizhanss.guizhanlib.minecraft.helper.potion;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.helper.potion;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.LanguageHelper;
+ import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
+ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.minecraft.LanguageHelper;
+ import org.bukkit.potion.PotionEffectType;
+ 
+ import javax.annotation.Nonnull;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/utils/ChatUtil.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/utils/ChatUtil.java
+similarity index 97%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/utils/ChatUtil.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/utils/ChatUtil.java
+index 8598ed1..505cd7f 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/utils/ChatUtil.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/utils/ChatUtil.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.minecraft.utils;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.utils;
+ 
+ import com.google.common.base.Preconditions;
+ import lombok.experimental.UtilityClass;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/utils/InventoryUtil.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/utils/InventoryUtil.java
+similarity index 96%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/utils/InventoryUtil.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/utils/InventoryUtil.java
+index dabe701..2ac2f3d 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/utils/InventoryUtil.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/utils/InventoryUtil.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.minecraft.utils;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.utils;
+ 
+ import com.google.common.base.Preconditions;
+ import lombok.experimental.UtilityClass;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/utils/ItemUtil.java b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/utils/ItemUtil.java
+similarity index 94%
+rename from GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/utils/ItemUtil.java
+rename to GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/utils/ItemUtil.java
+index 849cfb6..01c2389 100644
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/utils/ItemUtil.java
++++ b/GuizhanLib-minecraft/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/minecraft/utils/ItemUtil.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.minecraft.utils;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.utils;
+ 
+ import com.google.common.base.Preconditions;
+ import lombok.experimental.UtilityClass;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/AbstractCommand.java b/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/AbstractCommand.java
+deleted file mode 100644
+index 3f55308..0000000
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/AbstractCommand.java
++++ /dev/null
+@@ -1,206 +0,0 @@
+-package net.guizhanss.guizhanlib.minecraft.commands;
+-
+-import com.google.common.base.Preconditions;
+-import lombok.Getter;
+-import org.bukkit.ChatColor;
+-import org.bukkit.command.Command;
+-import org.bukkit.command.CommandSender;
+-
+-import javax.annotation.Nonnull;
+-import javax.annotation.Nullable;
+-import javax.annotation.ParametersAreNonnullByDefault;
+-import java.util.ArrayDeque;
+-import java.util.Arrays;
+-import java.util.Deque;
+-import java.util.HashSet;
+-import java.util.List;
+-import java.util.Set;
+-import java.util.function.BiFunction;
+-import java.util.stream.Collectors;
+-
+-/**
+- * This is a node in a command tree.
+- * A node can have 0-1 parent node and 0-n child nodes.
+- *
+- * @author ybw0014
+- */
+-@SuppressWarnings("ConstantConditions")
+-@Getter
+-public abstract class AbstractCommand {
+-    private final Set<SubCommand> subCommands = new HashSet<>();
+-    private final AbstractCommand parent;
+-    private final String name;
+-    private final BiFunction<AbstractCommand, CommandSender, String> description;
+-    private final Usage usage;
+-
+-    /**
+-     * Creates a new {@link AbstractCommand} instance.
+-     *
+-     * @param parent      the parent node.
+-     * @param name        the name of this node.
+-     * @param description the description of this node.
+-     * @param usage       the usage of this node.
+-     * @param subCommands the sub-commands of this node.
+-     */
+-    protected AbstractCommand(@Nullable AbstractCommand parent, @Nonnull String name,
+-                              @Nonnull BiFunction<AbstractCommand, CommandSender, String> description,
+-                              @Nonnull String usage, @Nonnull SubCommand... subCommands) {
+-        Preconditions.checkArgument(name != null && !name.isEmpty(), "name cannot be null or empty");
+-        Preconditions.checkArgument(description != null, "description cannot be null");
+-
+-        this.parent = parent;
+-        this.name = name;
+-        this.description = description;
+-        this.usage = new Usage(usage);
+-        this.subCommands.addAll(Set.of(subCommands));
+-    }
+-
+-    /**
+-     * Creates a new {@link AbstractCommand} instance, without a parent node.
+-     *
+-     * @param name        the name of this node.
+-     * @param description the description of this node.
+-     * @param usage       the usage of this node.
+-     * @param subCommands the sub-commands of this node.
+-     */
+-    @ParametersAreNonnullByDefault
+-    protected AbstractCommand(String name, BiFunction<AbstractCommand, CommandSender, String> description,
+-                              String usage, SubCommand... subCommands) {
+-        this(null, name, description, usage, subCommands);
+-    }
+-
+-    /**
+-     * Adds several {@link SubCommand} to this node.
+-     *
+-     * @param subCommands the array of {@link SubCommand} to add.
+-     * @return This {@link AbstractCommand} instance, for chaining.
+-     */
+-    @Nonnull
+-    public AbstractCommand addSubCommand(@Nonnull SubCommand... subCommands) {
+-        this.subCommands.addAll(Set.of(subCommands));
+-        return this;
+-    }
+-
+-    /**
+-     * Check if this node has a parent node.
+-     *
+-     * @return Whether this node has a parent node.
+-     */
+-    public boolean hasParent() {
+-        return parent != null;
+-    }
+-
+-    /**
+-     * Check if this node has child nodes.
+-     *
+-     * @return Whether this node has child nodes.
+-     */
+-    public boolean hasSubCommands() {
+-        return !subCommands.isEmpty();
+-    }
+-
+-    /**
+-     * The general logic of command execution. This does not contain the real logic of the command.
+-     *
+-     * @param sender The {@link CommandSender} of the command.
+-     * @param args   The arguments of the command.
+-     */
+-    @ParametersAreNonnullByDefault
+-    protected final void onCommandExecute(CommandSender sender, Command command, String label, String[] args) {
+-        if (!hasSubCommands()) {
+-            if (getUsage().isValid(args)) {
+-                onExecute(sender, args);
+-            } else {
+-                sendHelp(sender, label);
+-            }
+-        } else {
+-            if (args.length == 0) {
+-                sendHelp(sender, label);
+-            } else {
+-                for (var subCommand : getSubCommands()) {
+-                    if (subCommand.getName().equalsIgnoreCase(args[0])) {
+-                        subCommand.onCommandExecute(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
+-                        return;
+-                    }
+-                }
+-                sendHelp(sender, label);
+-            }
+-        }
+-    }
+-
+-    /**
+-     * The general logic of tab complete execution. This does not contain the real logic of the command.
+-     *
+-     * @param sender The {@link CommandSender} of the command.
+-     * @param args   The arguments of the command.
+-     */
+-    @Nullable
+-    @ParametersAreNonnullByDefault
+-    protected final List<String> onTabCompleteExecute(CommandSender sender, String[] args) {
+-        if (hasSubCommands()) {
+-            if (args.length == 1) {
+-                return getSubCommands().stream().map(AbstractCommand::getName).toList();
+-            } else {
+-                for (var subCommand : getSubCommands()) {
+-                    if (subCommand.getName().equalsIgnoreCase(args[0])) {
+-                        return subCommand.onTabCompleteExecute(sender, Arrays.copyOfRange(args, 1,
+-                            args.length));
+-                    }
+-                }
+-                return List.of();
+-            }
+-        } else {
+-            return onTab(sender, args);
+-        }
+-    }
+-
+-    /**
+-     * Get the full usage of this node.
+-     * <p>
+-     * Example: /command subcommand &lt;arg1&gt; [arg2]
+-     *
+-     * @param label The label of the command.
+-     * @return The full usage of this node.
+-     */
+-    @Nonnull
+-    public String getFullUsage(@Nonnull String label) {
+-        final Deque<AbstractCommand> layers = new ArrayDeque<>();
+-        AbstractCommand current = this;
+-        while (current != null) {
+-            layers.push(current);
+-            current = current.getParent();
+-        }
+-        String cmd = layers.stream()
+-            .map(command -> command instanceof BaseCommand ? label : command.getName())
+-            .collect(Collectors.joining(" ", "/", ""));
+-        cmd += " " + getUsage().get();
+-        return cmd;
+-    }
+-
+-    /**
+-     * Send the help message of this node to the {@link CommandSender}.
+-     *
+-     * @param sender The {@link CommandSender} to send the help message to.
+-     * @param label  The label of the command.
+-     */
+-    @ParametersAreNonnullByDefault
+-    protected void sendHelp(CommandSender sender, String label) {
+-        if (hasSubCommands()) {
+-            for (var subCommand : getSubCommands()) {
+-                subCommand.sendHelp(sender, label);
+-            }
+-        } else {
+-            sender.sendMessage(ChatColor.YELLOW + getFullUsage(label) + ChatColor.WHITE + " - " + getDescription().apply(this, sender));
+-        }
+-    }
+-
+-    // The actual command logic.
+-    @ParametersAreNonnullByDefault
+-    public abstract void onExecute(CommandSender sender, String[] args);
+-
+-    // The actual tab complete logic.
+-    @ParametersAreNonnullByDefault
+-    public List<String> onTab(CommandSender sender, String[] args) {
+-        return List.of();
+-    }
+-}
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/BaseCommand.java b/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/BaseCommand.java
+deleted file mode 100644
+index 34504e1..0000000
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/BaseCommand.java
++++ /dev/null
+@@ -1,56 +0,0 @@
+-package net.guizhanss.guizhanlib.minecraft.commands;
+-
+-import lombok.Getter;
+-import org.bukkit.command.Command;
+-import org.bukkit.command.CommandExecutor;
+-import org.bukkit.command.CommandSender;
+-import org.bukkit.command.PluginCommand;
+-import org.bukkit.command.TabCompleter;
+-
+-import javax.annotation.Nullable;
+-import javax.annotation.ParametersAreNonnullByDefault;
+-import java.util.List;
+-import java.util.function.BiFunction;
+-
+-/**
+- * The {@link BaseCommand} is the root node of a command tree.
+- * It has no parent node, and is {@link CommandExecutor} and {@link TabCompleter}.
+- * <p>
+- * Be sure to call {@link #register()} after creating a new instance of this class.
+- *
+- * @author ybw0014
+- */
+-@Getter
+-public abstract class BaseCommand extends AbstractCommand implements CommandExecutor, TabCompleter {
+-
+-    private final PluginCommand command;
+-
+-    @ParametersAreNonnullByDefault
+-    protected BaseCommand(PluginCommand command, BiFunction<AbstractCommand, CommandSender, String> description, String usage,
+-                          SubCommand... subCommands) {
+-        super(command.getName(), description, usage, subCommands);
+-        this.command = command;
+-    }
+-
+-    @Override
+-    @ParametersAreNonnullByDefault
+-    public final boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+-        onCommandExecute(sender, command, label, args);
+-        return true;
+-    }
+-
+-    @Override
+-    @Nullable
+-    @ParametersAreNonnullByDefault
+-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+-        return onTabCompleteExecute(sender, args);
+-    }
+-
+-    /**
+-     * Register this command.
+-     */
+-    public void register() {
+-        command.setExecutor(this);
+-        command.setTabCompleter(this);
+-    }
+-}
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/SubCommand.java b/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/SubCommand.java
+deleted file mode 100644
+index 7938802..0000000
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/SubCommand.java
++++ /dev/null
+@@ -1,22 +0,0 @@
+-package net.guizhanss.guizhanlib.minecraft.commands;
+-
+-import org.bukkit.command.CommandSender;
+-
+-import javax.annotation.Nonnull;
+-import javax.annotation.Nullable;
+-import javax.annotation.ParametersAreNonnullByDefault;
+-import java.util.function.BiFunction;
+-
+-public abstract class SubCommand extends AbstractCommand {
+-    protected SubCommand(@Nullable AbstractCommand parent, @Nonnull String name,
+-                         @Nonnull BiFunction<AbstractCommand, CommandSender, String> description,
+-                         @Nonnull String usage, @Nonnull SubCommand... subCommands) {
+-        super(parent, name, description, usage, subCommands);
+-    }
+-
+-    @ParametersAreNonnullByDefault
+-    protected SubCommand(String name, BiFunction<AbstractCommand, CommandSender, String> description,
+-                         String usage, SubCommand... subCommands) {
+-        super(name, description, usage, subCommands);
+-    }
+-}
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/Usage.java b/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/Usage.java
+deleted file mode 100644
+index 4c04e19..0000000
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/Usage.java
++++ /dev/null
+@@ -1,60 +0,0 @@
+-package net.guizhanss.guizhanlib.minecraft.commands;
+-
+-import com.google.common.base.Preconditions;
+-
+-import javax.annotation.Nonnull;
+-import java.util.ArrayList;
+-import java.util.List;
+-import java.util.regex.Matcher;
+-import java.util.regex.Pattern;
+-
+-/**
+- * This class stores the usage of a command.
+- * Can also validate the args based on the usage.
+- *
+- * @author ybw0014
+- */
+-@SuppressWarnings("ConstantConditions")
+-public final class Usage {
+-    private static final Pattern USAGE_ARG_PATTERN = Pattern.compile("<[^>]*>|\\[[^]]*\\]|\\S+");
+-    private final String usageStr;
+-
+-    public Usage(@Nonnull String usage) {
+-        Preconditions.checkArgument(usage != null, "usage cannot be null");
+-        this.usageStr = usage.trim();
+-    }
+-
+-    @Nonnull
+-    public String get() {
+-        return usageStr;
+-    }
+-
+-    public boolean isValid(@Nonnull String[] args) {
+-        if (args.length < getRequiredArgsCount()) {
+-            return false;
+-        } else {
+-            return args.length <= parseUsage().length;
+-        }
+-    }
+-
+-    private String[] parseUsage() {
+-        List<String> args = new ArrayList<>();
+-        Matcher matcher = USAGE_ARG_PATTERN.matcher(usageStr);
+-
+-        while (matcher.find()) {
+-            args.add(matcher.group());
+-        }
+-
+-        return args.toArray(new String[0]);
+-    }
+-
+-    private int getRequiredArgsCount() {
+-        int count = 0;
+-        for (String arg : parseUsage()) {
+-            if (arg.startsWith("<")) {
+-                count++;
+-            }
+-        }
+-        return count;
+-    }
+-}
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/package-info.java b/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/package-info.java
+deleted file mode 100644
+index 2cdcd38..0000000
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/commands/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * This package contains a command framework.
+- */
+-package net.guizhanss.guizhanlib.minecraft.commands;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/attribute/package-info.java b/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/attribute/package-info.java
+deleted file mode 100644
+index bba0ede..0000000
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/attribute/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * 该包提供了属性相关的语言助手
+- */
+-package net.guizhanss.guizhanlib.minecraft.helper.attribute;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/block/package-info.java b/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/block/package-info.java
+deleted file mode 100644
+index 5b4f1a8..0000000
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/block/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * 该包提供了方块相关的语言助手
+- */
+-package net.guizhanss.guizhanlib.minecraft.helper.block;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/enchantments/package-info.java b/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/enchantments/package-info.java
+deleted file mode 100644
+index c85a9a5..0000000
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/enchantments/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * 该包提供了附魔相关的语言助手
+- */
+-package net.guizhanss.guizhanlib.minecraft.helper.enchantments;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/package-info.java b/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/package-info.java
+deleted file mode 100644
+index 5f6c484..0000000
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/entity/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * 该包提供了实体相关的语言助手
+- */
+-package net.guizhanss.guizhanlib.minecraft.helper.entity;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/inventory/package-info.java b/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/inventory/package-info.java
+deleted file mode 100644
+index 9f2bb86..0000000
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/inventory/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * 该包提供了背包相关的语言助手
+- */
+-package net.guizhanss.guizhanlib.minecraft.helper.inventory;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/package-info.java b/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/package-info.java
+deleted file mode 100644
+index 117bd42..0000000
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * 语言助手包，从Minecraft语言中获取内容
+- */
+-package net.guizhanss.guizhanlib.minecraft.helper;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/potion/package-info.java b/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/potion/package-info.java
+deleted file mode 100644
+index c896c52..0000000
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/helper/potion/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * 该包提供了药水相关的语言助手
+- */
+-package net.guizhanss.guizhanlib.minecraft.helper.potion;
+diff --git a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/package-info.java b/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/package-info.java
+deleted file mode 100644
+index 371c448..0000000
+--- a/GuizhanLib-minecraft/src/main/java/net/guizhanss/guizhanlib/minecraft/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * 该包包含我的世界(Minecraft)本地相关助手类
+- */
+-package net.guizhanss.guizhanlib.minecraft;
+diff --git a/GuizhanLib-minecraft/src/test/java/net/guizhanss/guzihanlib/minecraft/utils/TestChatUtil.java b/GuizhanLib-minecraft/src/test/java/net/guizhanss/guzihanlib/minecraft/utils/TestChatUtil.java
+deleted file mode 100644
+index 6ef6618..0000000
+--- a/GuizhanLib-minecraft/src/test/java/net/guizhanss/guzihanlib/minecraft/utils/TestChatUtil.java
++++ /dev/null
+@@ -1,25 +0,0 @@
+-package net.guizhanss.guzihanlib.minecraft.utils;
+-
+-import net.guizhanss.guizhanlib.minecraft.utils.ChatUtil;
+-import org.junit.jupiter.api.Test;
+-
+-import java.util.Arrays;
+-import java.util.List;
+-
+-import static org.junit.jupiter.api.Assertions.assertEquals;
+-
+-class TestChatUtil {
+-    @Test
+-    void testColorString() {
+-        String original1 = "&c114514";
+-        String expected1 = "§c114514";
+-        assertEquals(expected1, ChatUtil.color(original1));
+-    }
+-
+-    @Test
+-    void testColorStringList() {
+-        List<String> original1 = Arrays.asList("&c114514", "&a1919810");
+-        List<String> expected1 = Arrays.asList("§c114514", "§a1919810");
+-        assertEquals(expected1, ChatUtil.color(original1));
+-    }
+-}
+diff --git a/GuizhanLib-minecraft/src/test/java/net/guizhanss/guzihanlib/minecraft/utils/TestItemUtil.java b/GuizhanLib-minecraft/src/test/java/net/guizhanss/guzihanlib/minecraft/utils/TestItemUtil.java
+deleted file mode 100644
+index 43313ca..0000000
+--- a/GuizhanLib-minecraft/src/test/java/net/guizhanss/guzihanlib/minecraft/utils/TestItemUtil.java
++++ /dev/null
+@@ -1,55 +0,0 @@
+-package net.guizhanss.guzihanlib.minecraft.utils;
+-
+-import be.seeseemelk.mockbukkit.MockBukkit;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+-import net.guizhanss.guizhanlib.minecraft.utils.ItemUtil;
+-import org.bukkit.Material;
+-import org.bukkit.inventory.ItemStack;
+-import org.bukkit.inventory.meta.ItemMeta;
+-import org.junit.jupiter.api.AfterAll;
+-import org.junit.jupiter.api.Assertions;
+-import org.junit.jupiter.api.BeforeAll;
+-import org.junit.jupiter.api.DisplayName;
+-import org.junit.jupiter.api.Test;
+-
+-import java.util.List;
+-
+-class TestItemUtil {
+-    @BeforeAll
+-    public static void setUp() {
+-        MockBukkit.mock();
+-    }
+-
+-    @AfterAll
+-    public static void tearDown() {
+-        MockBukkit.unmock();
+-    }
+-
+-    @Test
+-    @DisplayName("Test ItemUtil.appendLore(...)")
+-    void testAppendLore() {
+-        ItemStack itemStack = new CustomItemStack(
+-            Material.DIAMOND,
+-            "&aTest Item",
+-            "&cOriginal Lore"
+-        );
+-
+-        ItemStack expected = new CustomItemStack(
+-            Material.DIAMOND,
+-            "&aTest Item",
+-            "&cOriginal Lore",
+-            "&aNew Lore"
+-        );
+-
+-        ItemUtil.appendLore(itemStack, "&aNew Lore");
+-
+-        Assertions.assertTrue(itemStack.hasItemMeta());
+-
+-        ItemMeta meta = itemStack.getItemMeta();
+-        Assertions.assertTrue(meta.hasLore());
+-
+-        List<String> lore = meta.getLore();
+-
+-        Assertions.assertEquals(lore, expected.getItemMeta().getLore());
+-    }
+-}
+diff --git a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/Event.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/common/Event.java
+similarity index 78%
+rename from GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/Event.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/common/Event.java
+index c101604..2105271 100644
+--- a/GuizhanLib-common/src/main/java/net/guizhanss/guizhanlib/common/Event.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/common/Event.java
+@@ -1,8 +1,8 @@
+-package net.guizhanss.guizhanlib.common;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.common;
+ 
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
+ import lombok.AccessLevel;
+ import lombok.NoArgsConstructor;
+-import net.guizhanss.guizhanlib.slimefun.addon.AbstractAddon;
+ import org.bukkit.Bukkit;
+ import org.bukkit.event.EventPriority;
+ import org.bukkit.event.Listener;
+@@ -32,8 +32,10 @@ public final class Event implements Listener {
+     /**
+      * Registers the given listener class
+      */
+-    public static void registerListener(Listener listener) {
+-        Bukkit.getPluginManager().registerEvents(listener, AbstractAddon.getInstance());
++    public static void registerListeners(Listener... listeners) {
++        for (Listener listener : listeners) {
++            Bukkit.getPluginManager().registerEvents(listener, AbstractAddon.getInstance());
++        }
+     }
+ 
+     /**
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/AbstractAddon.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/AbstractAddon.java
+similarity index 89%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/AbstractAddon.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/AbstractAddon.java
+index 7587e48..6a4b7f0 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/AbstractAddon.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/AbstractAddon.java
+@@ -1,8 +1,7 @@
+-package net.guizhanss.guizhanlib.slimefun.addon;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon;
+ 
+ import com.google.common.base.Preconditions;
+-import id.arvin3108.standalone.SlimefunAddonInstance;
+-import net.guizhanss.guizhanlib.minecraft.utils.ChatUtil;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.utils.ChatUtil;
+ import org.bukkit.Bukkit;
+ import org.bukkit.NamespacedKey;
+ import org.bukkit.command.PluginCommand;
+@@ -41,7 +40,6 @@ public abstract class AbstractAddon extends JavaPlugin {
+     private static AbstractAddon instance;
+ 
+     private final Environment environment;
+-    private final String autoUpdateKey;
+ 
+     private AddonConfig config;
+     private Scheduler scheduler;
+@@ -52,12 +50,9 @@ public abstract class AbstractAddon extends JavaPlugin {
+ 
+     /**
+      * Live addon constructor.
+-     *
+-     * @param autoUpdateKey Auto update key in the config
+      */
+-    protected AbstractAddon(String autoUpdateKey) {
++    protected AbstractAddon() {
+         this.environment = Environment.LIVE;
+-        this.autoUpdateKey = autoUpdateKey;
+         validate();
+     }
+ 
+@@ -89,7 +84,6 @@ public abstract class AbstractAddon extends JavaPlugin {
+                   String autoUpdateKey, Environment environment) {
+         super(loader, description, dataFolder, file);
+         this.environment = environment;
+-        this.autoUpdateKey = autoUpdateKey;
+         validate();
+     }
+ 
+@@ -256,23 +250,6 @@ public abstract class AbstractAddon extends JavaPlugin {
+             e.printStackTrace();
+         }
+ 
+-        // Validate autoUpdateKey
+-        if (autoUpdateKey == null || autoUpdateKey.isEmpty()) {
+-            brokenConfig = true;
+-            handleException(new IllegalStateException("Invalid autoUpdateKey"));
+-        }
+-
+-        // Check updater
+-        if (environment == Environment.LIVE) {
+-            // Set up warning
+-            if (brokenConfig) {
+-                handleException(new IllegalArgumentException("Auto update is not configured correctly"));
+-            } else if (config.getBoolean(autoUpdateKey)) {
+-                autoUpdateEnabled = true;
+-                autoUpdate();
+-            }
+-        }
+-
+         // Create Scheduler
+         scheduler = new Scheduler(this);
+ 
+@@ -326,12 +303,6 @@ public abstract class AbstractAddon extends JavaPlugin {
+      */
+     protected abstract void disable();
+ 
+-    /**
+-     * Called when auto update is enabled
+-     */
+-    protected void autoUpdate() {
+-    }
+-
+     /**
+      * Handle the {@link RuntimeException} in different environments.
+      * Print the exception if in live environment, throw the exception if in testing environment
+@@ -340,8 +311,11 @@ public abstract class AbstractAddon extends JavaPlugin {
+      */
+     private void handleException(RuntimeException ex) {
+         switch (environment) {
+-            case LIVE -> ex.printStackTrace();
+-            case TESTING, LIB_TESTING -> throw ex;
++            case LIVE:
++                ex.printStackTrace();
++            case TESTING:
++            case LIB_TESTING:
++                throw ex;
+         }
+     }
+ 
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/AddonConfig.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/AddonConfig.java
+similarity index 69%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/AddonConfig.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/AddonConfig.java
+index 1b64fe2..e0a04f3 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/AddonConfig.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/AddonConfig.java
+@@ -1,19 +1,19 @@
+-package net.guizhanss.guizhanlib.slimefun.addon;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon;
+ 
+-import net.guizhanss.guizhanlib.utils.StringUtil;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
++import org.bukkit.Chunk;
++import org.bukkit.Location;
++import org.bukkit.Sound;
++import org.bukkit.World;
+ import org.bukkit.configuration.file.YamlConfiguration;
++import org.bukkit.inventory.Inventory;
+ 
+ import javax.annotation.Nonnull;
+ import javax.annotation.Nullable;
+ import javax.annotation.ParametersAreNonnullByDefault;
+-import java.io.BufferedReader;
+-import java.io.File;
+-import java.io.IOException;
+-import java.io.InputStream;
+-import java.io.InputStreamReader;
++import java.io.*;
+ import java.nio.charset.StandardCharsets;
+-import java.util.HashMap;
+-import java.util.Map;
++import java.util.*;
+ 
+ /**
+  * Represent an extended {@link YamlConfiguration} from addon.
+@@ -88,6 +88,13 @@ public final class AddonConfig extends YamlConfiguration {
+         }
+     }
+ 
++    /**
++     * Sets the Value for the specified path
++     * (If the path does not yet exist)
++     *
++     * @param path The path in the {@link AddonConfig} file
++     * @param obj  The Value for that path
++     */
+     public void setDefault(@Nonnull String path, @Nullable Object obj) {
+         if (!contains(path)) {
+             set(path, obj);
+@@ -225,4 +232,57 @@ public final class AddonConfig extends YamlConfiguration {
+ 
+         return yamlBuilder.toString();
+     }
++
++    @SuppressWarnings("unchecked")
++    public <T> T getOrSetDefault(@Nonnull String path, T value) {
++        Object val = get(path);
++
++        if (value.getClass().isInstance(val)) {
++            return (T) val;
++        } else {
++            set(path, value);
++            return value;
++        }
++    }
++
++    /**
++     * Sets the Value for the specified path
++     *
++     * @param path  The path in the Config File
++     * @param value The Value for that path
++     */
++    @Override
++    public void set(@Nonnull String path, Object value) {
++        if (value instanceof Optional) {
++            super.set(path, ((Optional<?>) value).orElse(null));
++        } else if (value instanceof Inventory) {
++            super.set(path + ".size", ((Inventory) value).getSize());
++            for (int i = 0; i < ((Inventory) value).getSize(); i++) {
++                super.set(path + "." + i, ((Inventory) value).getItem(i));
++            }
++        } else if (value instanceof Date) {
++            super.set(path, String.valueOf(((Date) value).getTime()));
++        } else if (value instanceof Long) {
++            super.set(path, String.valueOf(value));
++        } else if (value instanceof UUID) {
++            super.set(path, value.toString());
++        } else if (value instanceof Sound) {
++            super.set(path, String.valueOf(value));
++        } else if (value instanceof Location) {
++            super.set(path + ".x", ((Location) value).getX());
++            super.set(path + ".y", ((Location) value).getY());
++            super.set(path + ".z", ((Location) value).getZ());
++            super.set(path + ".pitch", ((Location) value).getPitch());
++            super.set(path + ".yaw", ((Location) value).getYaw());
++            super.set(path + ".world", ((Location) value).getWorld().getName());
++        } else if (value instanceof Chunk) {
++            super.set(path + ".x", ((Chunk) value).getX());
++            super.set(path + ".z", ((Chunk) value).getZ());
++            super.set(path + ".world", ((Chunk) value).getWorld().getName());
++        } else if (value instanceof World) {
++            super.set(path, ((World) value).getName());
++        } else {
++            super.set(path, value);
++        }
++    }
+ }
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/Environment.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/Environment.java
+similarity index 83%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/Environment.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/Environment.java
+index 8f7ea99..d3fa0a1 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/Environment.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/Environment.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.slimefun.addon;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon;
+ 
+ /**
+  * This class represents runtime environments
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/PathBuilder.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/PathBuilder.java
+similarity index 94%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/PathBuilder.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/PathBuilder.java
+index 3a35ddd..3879ed0 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/PathBuilder.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/PathBuilder.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.slimefun.addon;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon;
+ 
+ import java.util.ArrayList;
+ import java.util.List;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/Scheduler.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/Scheduler.java
+similarity index 88%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/Scheduler.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/Scheduler.java
+index 8876401..abe2444 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/Scheduler.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/Scheduler.java
+@@ -1,8 +1,9 @@
+-package net.guizhanss.guizhanlib.slimefun.addon;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon;
+ 
+ import com.google.common.base.Preconditions;
+ import org.bukkit.Bukkit;
+ import org.bukkit.plugin.Plugin;
++import org.bukkit.scheduler.BukkitTask;
+ 
+ import javax.annotation.Nonnull;
+ import javax.annotation.ParametersAreNonnullByDefault;
+@@ -25,8 +26,8 @@ public final class Scheduler {
+         this.plugin = plugin;
+     }
+ 
+-    public void run(@Nonnull Runnable runnable) {
+-        Bukkit.getScheduler().runTask(plugin, runnable);
++    public BukkitTask run(@Nonnull Runnable runnable) {
++        return Bukkit.getScheduler().runTask(plugin, runnable);
+     }
+ 
+     public void runAsync(@Nonnull Runnable runnable) {
+diff --git a/GuizhanLib-slimefun/src/main/java/id/arvin3108/standalone/SlimefunAddonInstance.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/SlimefunAddonInstance.java
+similarity index 85%
+rename from GuizhanLib-slimefun/src/main/java/id/arvin3108/standalone/SlimefunAddonInstance.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/SlimefunAddonInstance.java
+index 8911122..bc7d0f8 100644
+--- a/GuizhanLib-slimefun/src/main/java/id/arvin3108/standalone/SlimefunAddonInstance.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/SlimefunAddonInstance.java
+@@ -1,10 +1,8 @@
+-package id.arvin3108.standalone;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+ import lombok.Getter;
+-import net.guizhanss.guizhanlib.slimefun.addon.AbstractAddon;
+-import net.guizhanss.guizhanlib.slimefun.addon.Environment;
+ import org.bukkit.plugin.java.JavaPlugin;
+ 
+ import javax.annotation.Nonnull;
+@@ -36,21 +34,17 @@ public class SlimefunAddonInstance implements SlimefunAddon {
+     private final String githubUser;
+     @Getter
+     private final String githubRepo;
+-    @Getter
+-    private final String githubBranch;
+     private final String bugTrackerURL;
+ 
+     /**
+      * {@link SlimefunAddon} constructor
+      *
+-     * @param githubUser   GitHub username of this project
+-     * @param githubRepo   GitHub repository of this project
+-     * @param githubBranch GitHub branch of this project
++     * @param githubUser GitHub username of this project
++     * @param githubRepo GitHub repository of this project
+      */
+-    public SlimefunAddonInstance(String githubUser, String githubRepo, String githubBranch) {
++    public SlimefunAddonInstance(String githubUser, String githubRepo) {
+         this.githubUser = githubUser;
+         this.githubRepo = githubRepo;
+-        this.githubBranch = githubBranch;
+         this.bugTrackerURL = MessageFormat.format("https://github.com/{0}/{1}/issues", githubUser, githubRepo);
+         validate();
+     }
+@@ -68,9 +62,6 @@ public class SlimefunAddonInstance implements SlimefunAddon {
+         if (!GITHUB_PATTERN.matcher(githubRepo).matches()) {
+             throw new IllegalArgumentException("Invalid githubRepo");
+         }
+-        if (!GITHUB_PATTERN.matcher(githubBranch).matches()) {
+-            throw new IllegalArgumentException("Invalid githubBranch");
+-        }
+     }
+ 
+     /**
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/SlimefunLocalization.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/SlimefunLocalization.java
+similarity index 97%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/SlimefunLocalization.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/SlimefunLocalization.java
+index a58c133..a6bb30f 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/SlimefunLocalization.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/SlimefunLocalization.java
+@@ -1,12 +1,12 @@
+-package net.guizhanss.guizhanlib.slimefun.addon;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.localization.MinecraftLocalization;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.utils.ItemUtil;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import lombok.Getter;
+ import lombok.Setter;
+-import net.guizhanss.guizhanlib.localization.MinecraftLocalization;
+-import net.guizhanss.guizhanlib.minecraft.utils.ItemUtil;
+ import org.bukkit.Material;
+ import org.bukkit.NamespacedKey;
+ import org.bukkit.inventory.ItemStack;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/groups/MultiGroup.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/groups/MultiGroup.java
+similarity index 96%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/groups/MultiGroup.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/groups/MultiGroup.java
+index c2f6956..364ffac 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/groups/MultiGroup.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/groups/MultiGroup.java
+@@ -1,5 +1,6 @@
+-package net.guizhanss.guizhanlib.slimefun.groups;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.groups;
+ 
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
+ import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup;
+@@ -11,7 +12,6 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
+ import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+-import net.guizhanss.guizhanlib.slimefun.addon.AbstractAddon;
+ import org.bukkit.ChatColor;
+ import org.bukkit.Sound;
+ import org.bukkit.entity.Player;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/groups/SubGroup.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/groups/SubGroup.java
+similarity index 79%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/groups/SubGroup.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/groups/SubGroup.java
+index 212086e..786ccc9 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/groups/SubGroup.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/groups/SubGroup.java
+@@ -1,7 +1,7 @@
+-package net.guizhanss.guizhanlib.slimefun.groups;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.groups;
+ 
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+-import net.guizhanss.guizhanlib.slimefun.addon.AbstractAddon;
+ import org.bukkit.entity.Player;
+ import org.bukkit.inventory.ItemStack;
+ 
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/items/Metals.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/items/Metals.java
+similarity index 71%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/items/Metals.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/items/Metals.java
+index 32b3f0a..7f6ac6c 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/items/Metals.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/items/Metals.java
+@@ -1,9 +1,9 @@
+-package net.guizhanss.guizhanlib.slimefun.items;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.items;
+ 
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.items.core.AdvancedMetal;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.items.core.BasicMetal;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
+ import lombok.experimental.UtilityClass;
+-import net.guizhanss.guizhanlib.slimefun.items.core.AdvancedMetal;
+-import net.guizhanss.guizhanlib.slimefun.items.core.BasicMetal;
+-import net.guizhanss.guizhanlib.utils.StringUtil;
+ 
+ import javax.annotation.Nonnull;
+ 
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/items/core/AdvancedMetal.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/items/core/AdvancedMetal.java
+similarity index 96%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/items/core/AdvancedMetal.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/items/core/AdvancedMetal.java
+index c28b547..51ff36b 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/items/core/AdvancedMetal.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/items/core/AdvancedMetal.java
+@@ -1,8 +1,8 @@
+-package net.guizhanss.guizhanlib.slimefun.items.core;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.items.core;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
+ import lombok.Getter;
+-import net.guizhanss.guizhanlib.utils.StringUtil;
+ 
+ import javax.annotation.Nonnull;
+ import javax.annotation.Nullable;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/items/core/BasicMetal.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/items/core/BasicMetal.java
+similarity index 93%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/items/core/BasicMetal.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/items/core/BasicMetal.java
+index f8343e3..3c8ceda 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/items/core/BasicMetal.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/items/core/BasicMetal.java
+@@ -1,8 +1,8 @@
+-package net.guizhanss.guizhanlib.slimefun.items.core;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.items.core;
+ 
+ import com.google.common.base.Preconditions;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StringUtil;
+ import lombok.Getter;
+-import net.guizhanss.guizhanlib.utils.StringUtil;
+ 
+ import javax.annotation.Nonnull;
+ import javax.annotation.Nullable;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/AbstractMachineBlock.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/AbstractMachineBlock.java
+similarity index 96%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/AbstractMachineBlock.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/AbstractMachineBlock.java
+index 8c947e9..0c7338d 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/AbstractMachineBlock.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/AbstractMachineBlock.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.slimefun.machines;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.machines;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+@@ -17,7 +17,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
+ @Setter
+ @ParametersAreNonnullByDefault
+ public abstract class AbstractMachineBlock extends TickingMenuBlock implements EnergyNetComponent {
+-
+     protected int energyPerTick = -1;
+     protected int energyCapacity = -1;
+ 
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/CraftingBlock.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/CraftingBlock.java
+similarity index 98%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/CraftingBlock.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/CraftingBlock.java
+index 73da7d8..ef74bcf 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/CraftingBlock.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/CraftingBlock.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.slimefun.machines;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.machines;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/CraftingBlockRecipe.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/CraftingBlockRecipe.java
+similarity index 89%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/CraftingBlockRecipe.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/CraftingBlockRecipe.java
+index 8676798..f9fb39b 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/CraftingBlockRecipe.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/CraftingBlockRecipe.java
+@@ -1,10 +1,10 @@
+-package net.guizhanss.guizhanlib.slimefun.machines;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.machines;
+ 
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StackUtil;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemStackSnapshot;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
+ import lombok.Getter;
+-import net.guizhanss.guizhanlib.utils.StackUtil;
+ import org.bukkit.entity.Player;
+ import org.bukkit.inventory.ItemStack;
+ 
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineBlock.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineBlock.java
+similarity index 95%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineBlock.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineBlock.java
+index f81d87e..79fa1d1 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineBlock.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineBlock.java
+@@ -1,6 +1,7 @@
+-package net.guizhanss.guizhanlib.slimefun.machines;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.machines;
+ 
+-import id.arvin3108.standalone.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StackUtil;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+@@ -8,7 +9,6 @@ import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+ import lombok.Setter;
+ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+-import net.guizhanss.guizhanlib.utils.StackUtil;
+ import org.bukkit.block.Block;
+ import org.bukkit.inventory.ItemStack;
+ 
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineBlockRecipe.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineBlockRecipe.java
+similarity index 92%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineBlockRecipe.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineBlockRecipe.java
+index b56c8bc..b68899a 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineBlockRecipe.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineBlockRecipe.java
+@@ -1,7 +1,7 @@
+-package net.guizhanss.guizhanlib.slimefun.machines;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.machines;
+ 
++import id.universenetwork.sfa_loader.libraries.guizhanlib.utils.StackUtil;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
+-import net.guizhanss.guizhanlib.utils.StackUtil;
+ import org.bukkit.inventory.ItemStack;
+ 
+ import java.util.HashMap;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineInput.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineInput.java
+similarity index 83%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineInput.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineInput.java
+index 894e9f1..0d28e24 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineInput.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineInput.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.slimefun.machines;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.machines;
+ 
+ import org.bukkit.inventory.ItemStack;
+ 
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineLayout.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineLayout.java
+similarity index 96%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineLayout.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineLayout.java
+index 80c36ac..fa2c5c7 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineLayout.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineLayout.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.slimefun.machines;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.machines;
+ 
+ import lombok.Getter;
+ 
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineLore.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineLore.java
+similarity index 94%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineLore.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineLore.java
+index a67652e..bd8a18b 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineLore.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineLore.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.slimefun.machines;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.machines;
+ 
+ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+ import lombok.experimental.UtilityClass;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineRecipeType.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineRecipeType.java
+similarity index 85%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineRecipeType.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineRecipeType.java
+index c2f667e..fde8061 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MachineRecipeType.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MachineRecipeType.java
+@@ -1,8 +1,8 @@
+-package net.guizhanss.guizhanlib.slimefun.machines;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.machines;
+ 
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
+ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import lombok.Getter;
+-import net.guizhanss.guizhanlib.slimefun.addon.AbstractAddon;
+ import org.bukkit.inventory.ItemStack;
+ 
+ import java.util.ArrayList;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MenuBlock.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MenuBlock.java
+similarity index 93%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MenuBlock.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MenuBlock.java
+index 91433f4..aac230f 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MenuBlock.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MenuBlock.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.slimefun.machines;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.machines;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+@@ -91,10 +91,14 @@ public abstract class MenuBlock extends SlimefunItem {
+     @ParametersAreNonnullByDefault
+     @Nonnull
+     protected final int[] getTransportSlots(DirtyChestMenu menu, ItemTransportFlow flow, ItemStack item) {
+-        return switch (flow) {
+-            case INSERT -> getInputSlots(menu, item);
+-            case WITHDRAW -> getOutputSlots();
+-        };
++        switch (flow) {
++            case INSERT:
++                return getInputSlots(menu, item);
++            case WITHDRAW:
++                return getOutputSlots();
++            default:
++                return new int[0];
++        }
+     }
+ 
+     @ParametersAreNonnullByDefault
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MenuBlockPreset.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MenuBlockPreset.java
+similarity index 96%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MenuBlockPreset.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MenuBlockPreset.java
+index 9ca2f42..1d21dfd 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/MenuBlockPreset.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/MenuBlockPreset.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.slimefun.machines;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.machines;
+ 
+ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/TickingMenuBlock.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/TickingMenuBlock.java
+similarity index 95%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/TickingMenuBlock.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/TickingMenuBlock.java
+index bc9d256..6729225 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/TickingMenuBlock.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/machines/TickingMenuBlock.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.slimefun.machines;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.machines;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/utils/BlockStorageUtil.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/utils/BlockStorageUtil.java
+similarity index 98%
+rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/utils/BlockStorageUtil.java
+rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/utils/BlockStorageUtil.java
+index 34748e7..5aafc08 100644
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/utils/BlockStorageUtil.java
++++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/utils/BlockStorageUtil.java
+@@ -1,4 +1,4 @@
+-package net.guizhanss.guizhanlib.slimefun.utils;
++package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.utils;
+ 
+ import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
+ import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/package-info.java b/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/package-info.java
+deleted file mode 100644
+index e3f9430..0000000
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * This package contains useful classes for developing Slimefun addons.
+- */
+-package net.guizhanss.guizhanlib.slimefun.addon;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/items/core/package-info.java b/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/items/core/package-info.java
+deleted file mode 100644
+index fe6e073..0000000
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/items/core/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * Slimefun 本体相关
+- */
+-package net.guizhanss.guizhanlib.slimefun.items.core;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/package-info.java b/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/package-info.java
+deleted file mode 100644
+index ed3e65e..0000000
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/machines/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * This package contains useful classes for slimefun machines.
+- */
+-package net.guizhanss.guizhanlib.slimefun.machines;
+diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/package-info.java b/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/package-info.java
+deleted file mode 100644
+index 389d80b..0000000
+--- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * This package is slimefun related.
+- */
+-package net.guizhanss.guizhanlib.slimefun;
+diff --git a/GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/addon/MockAddon.java b/GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/addon/MockAddon.java
+deleted file mode 100644
+index e3c4e1a..0000000
+--- a/GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/addon/MockAddon.java
++++ /dev/null
+@@ -1,36 +0,0 @@
+-package net.guizhanss.guizhanlib.slimefun.addon;
+-
+-import id.arvin3108.standalone.SlimefunAddonInstance;
+-import org.bukkit.plugin.PluginDescriptionFile;
+-import org.bukkit.plugin.java.JavaPluginLoader;
+-
+-import java.io.File;
+-
+-/**
+- * A mock addon for testing purpose.
+- * Modified from InfinityLib
+- *
+- * @author Mooy1
+- * @author ybw0014
+- */
+-public class MockAddon extends AbstractAddon {
+-
+-    public MockAddon(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+-        this(loader, description, dataFolder, file, Environment.LIB_TESTING);
+-    }
+-
+-    public MockAddon(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file,
+-                     Environment environment) {
+-        super(loader, description, dataFolder, file, "auto-update", environment);
+-    }
+-
+-    @Override
+-    protected void enable() {
+-        new SlimefunAddonInstance("ybw0014", "GuizhanLib", "master").initialize();
+-    }
+-
+-    @Override
+-    protected void disable() {
+-
+-    }
+-}
+diff --git a/GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/addon/TestAbstractAddon.java b/GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/addon/TestAbstractAddon.java
+deleted file mode 100644
+index 2ea4936..0000000
+--- a/GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/addon/TestAbstractAddon.java
++++ /dev/null
+@@ -1,81 +0,0 @@
+-package net.guizhanss.guizhanlib.slimefun.addon;
+-
+-import be.seeseemelk.mockbukkit.MockBukkit;
+-import be.seeseemelk.mockbukkit.ServerMock;
+-import id.arvin3108.standalone.SlimefunAddonInstance;
+-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+-import org.junit.jupiter.api.AfterAll;
+-import org.junit.jupiter.api.BeforeAll;
+-import org.junit.jupiter.api.Test;
+-import org.junit.jupiter.api.function.ThrowingSupplier;
+-
+-import static org.junit.jupiter.api.Assertions.*;
+-
+-/**
+- * Test for {@link AbstractAddon}, modified from InfinityLib.
+- *
+- * @author Mooy1
+- * @author ybw0014
+- */
+-public class TestAbstractAddon {
+-
+-    private static ServerMock server;
+-    private static MockAddon addon;
+-
+-    @BeforeAll
+-    public static void load() {
+-        server = MockBukkit.mock();
+-        MockBukkit.load(Slimefun.class);
+-        addon = MockBukkit.load(MockAddon.class);
+-    }
+-
+-    @AfterAll
+-    public static void unload() {
+-        MockBukkit.unmock();
+-    }
+-
+-    @Test
+-    void testNotNullEnvironment() {
+-        assertNotNull(addon.getEnvironment());
+-    }
+-
+-    @Test
+-    void testNotNullConfig() {
+-        assertNotNull(addon.getConfig());
+-    }
+-
+-    @Test
+-    void testCreateKey() {
+-        assertNotNull(MockAddon.createKey("test"));
+-    }
+-
+-    @Test
+-    void testAutoUpdatedDisabled() {
+-        assertFalse(addon.isAutoUpdateEnabled());
+-    }
+-
+-    @Test
+-    void testBugTrackerURL() {
+-        assertEquals("https://github.com/ybw0014/GuizhanLib/issues", SlimefunAddonInstance.getSFAInstance().getBugTrackerURL());
+-    }
+-
+-    @Test
+-    void testInstance() {
+-        assertDoesNotThrow((ThrowingSupplier<Object>) MockAddon::getInstance);
+-    }
+-
+-    @Test
+-    void testDuplicateInstance() {
+-        assertThrows(RuntimeException.class, () -> MockBukkit.load(MockAddon.class));
+-    }
+-
+-    void testSlimefunTickCount() {
+-        server.getScheduler().performOneTick();
+-        assertEquals(1, SlimefunAddonInstance.getSlimefunTickCount());
+-    }
+-
+-    @Test
+-    void testNotRelocatedLive() {
+-        assertThrows(RuntimeException.class, () -> MockBukkit.load(MockAddon.class, Environment.LIVE, null));
+-    }
+-}
+diff --git a/GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/items/core/TestAdvancedMetals.java b/GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/items/core/TestAdvancedMetals.java
+deleted file mode 100644
+index 0952d1d..0000000
+--- a/GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/items/core/TestAdvancedMetals.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-package net.guizhanss.guizhanlib.slimefun.items.core;
+-
+-public class TestAdvancedMetals {
+-}
+diff --git a/GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/items/core/TestBasicMetal.java b/GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/items/core/TestBasicMetal.java
+deleted file mode 100644
+index 02eeb60..0000000
+--- a/GuizhanLib-slimefun/src/test/java/net/guizhanss/guizhanlib/slimefun/items/core/TestBasicMetal.java
++++ /dev/null
+@@ -1,23 +0,0 @@
+-package net.guizhanss.guizhanlib.slimefun.items.core;
+-
+-import org.junit.jupiter.api.Test;
+-
+-import static org.junit.jupiter.api.Assertions.assertEquals;
+-
+-class TestBasicMetal {
+-    @Test
+-    void testFromEnglish() {
+-        assertEquals(BasicMetal.GOLD, BasicMetal.fromEnglish("Gold"));
+-        assertEquals(BasicMetal.IRON, BasicMetal.fromEnglish("IRON"));
+-        assertEquals(BasicMetal.TIN, BasicMetal.fromEnglish("tin"));
+-        assertEquals(BasicMetal.ZINC, BasicMetal.fromEnglish("ziNC"));
+-    }
+-
+-    @Test
+-    void testFromChinese() {
+-        assertEquals(BasicMetal.GOLD, BasicMetal.fromChinese("金"));
+-        assertEquals(BasicMetal.IRON, BasicMetal.fromChinese("铁"));
+-        assertEquals(BasicMetal.TIN, BasicMetal.fromChinese("锡"));
+-        assertEquals(BasicMetal.ZINC, BasicMetal.fromChinese("锌"));
+-    }
+-}
+diff --git a/GuizhanLib-slimefun/src/test/resources/config.yml b/GuizhanLib-slimefun/src/test/resources/config.yml
+deleted file mode 100644
+index 3c2f946..0000000
+--- a/GuizhanLib-slimefun/src/test/resources/config.yml
++++ /dev/null
+@@ -1 +0,0 @@
+-auto-update: true
+diff --git a/GuizhanLib-slimefun/src/test/resources/plugin.yml b/GuizhanLib-slimefun/src/test/resources/plugin.yml
+deleted file mode 100644
+index b44f9f6..0000000
+--- a/GuizhanLib-slimefun/src/test/resources/plugin.yml
++++ /dev/null
+@@ -1,4 +0,0 @@
+-name: MockAddon
+-version: Testing
+-main: net.guizhanss.guizhanlib.slimefun.addon.MockAddon
+-depend: [ Slimefun ]
+diff --git a/GuizhanLib-updater/pom.xml b/GuizhanLib-updater/pom.xml
+deleted file mode 100644
+index 63d824a..0000000
+--- a/GuizhanLib-updater/pom.xml
++++ /dev/null
+@@ -1,24 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-         xmlns="http://maven.apache.org/POM/4.0.0"
+-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+-    <modelVersion>4.0.0</modelVersion>
+-
+-    <parent>
+-        <groupId>net.guizhanss</groupId>
+-        <artifactId>GuizhanLib</artifactId>
+-        <version>1.7.6</version>
+-    </parent>
+-
+-    <artifactId>GuizhanLib-updater</artifactId>
+-    <packaging>jar</packaging>
+-
+-    <dependencies>
+-        <dependency>
+-            <groupId>net.guizhanss</groupId>
+-            <artifactId>GuizhanLib-common</artifactId>
+-            <version>${project.version}</version>
+-            <scope>provided</scope>
+-        </dependency>
+-    </dependencies>
+-</project>
+diff --git a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/AbstractGuizhanBuildsUpdater.java b/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/AbstractGuizhanBuildsUpdater.java
+deleted file mode 100644
+index 8786761..0000000
+--- a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/AbstractGuizhanBuildsUpdater.java
++++ /dev/null
+@@ -1,327 +0,0 @@
+-package net.guizhanss.guizhanlib.updater;
+-
+-import com.google.common.base.Preconditions;
+-import lombok.AccessLevel;
+-import lombok.Getter;
+-import org.bukkit.Bukkit;
+-import org.bukkit.plugin.Plugin;
+-
+-import javax.annotation.Nonnull;
+-import javax.annotation.Nullable;
+-import javax.annotation.ParametersAreNonnullByDefault;
+-import java.io.File;
+-import java.io.FileInputStream;
+-import java.io.IOException;
+-import java.security.MessageDigest;
+-import java.security.NoSuchAlgorithmException;
+-import java.text.MessageFormat;
+-import java.util.logging.Level;
+-import java.util.logging.Logger;
+-
+-/**
+- * The Guizhan Builds Updater is responsible to auto-update the plugin from
+- * Guizhan Builds (builds.guizhanss.net).
+- * <p>
+- * This class can be extended to provide mirror URLs.
+- *
+- * @author ybw0014
+- */
+-@Getter
+-@SuppressWarnings("ConstantConditions")
+-public abstract class AbstractGuizhanBuildsUpdater {
+-
+-    private final Plugin plugin;
+-    private final File file;
+-    private final String user;
+-    private final String repo;
+-    private final String branch;
+-    private final UpdaterConfig config;
+-
+-    @Getter(AccessLevel.NONE)
+-    private final Logger logger;
+-
+-    /**
+-     * This constructor sets up the updater.
+-     *
+-     * @param plugin The {@link Plugin} instance
+-     * @param file   The {@link File} of plugin
+-     * @param user   GitHub user
+-     * @param repo   GitHub repository
+-     * @param branch GitHub branch
+-     */
+-    @ParametersAreNonnullByDefault
+-    protected AbstractGuizhanBuildsUpdater(
+-        Plugin plugin,
+-        File file,
+-        String user,
+-        String repo,
+-        String branch
+-    ) {
+-        this(plugin, file, user, repo, branch, UpdaterConfig.DEFAULT);
+-    }
+-
+-    /**
+-     * This constructor sets up the updater.
+-     *
+-     * @param plugin        The {@link Plugin} instance
+-     * @param file          The {@link File} of plugin
+-     * @param user          GitHub user
+-     * @param repo          GitHub repository
+-     * @param branch        GitHub branch
+-     * @param updaterConfig The {@link UpdaterConfig} of updater.
+-     */
+-    @ParametersAreNonnullByDefault
+-    protected AbstractGuizhanBuildsUpdater(
+-        Plugin plugin,
+-        File file,
+-        String user,
+-        String repo,
+-        String branch,
+-        UpdaterConfig updaterConfig
+-    ) {
+-        this.plugin = plugin;
+-        this.file = file;
+-        this.user = user;
+-        this.repo = repo;
+-        this.branch = branch;
+-        this.config = updaterConfig;
+-
+-        this.logger = plugin.getLogger();
+-
+-        prepareUpdateFolder();
+-    }
+-
+-    /**
+-     * This constructor sets up the updater.
+-     *
+-     * @param plugin    The {@link Plugin} instance
+-     * @param file      The {@link File} of plugin
+-     * @param user      GitHub user
+-     * @param repo      GitHub repository
+-     * @param branch    GitHub branch
+-     * @param checkOnly Whether to check the version only, without downloading
+-     * @deprecated in favor of {@link UpdaterConfig}.
+-     */
+-    @Deprecated
+-    @ParametersAreNonnullByDefault
+-    protected AbstractGuizhanBuildsUpdater(
+-        Plugin plugin,
+-        File file,
+-        String user,
+-        String repo,
+-        String branch,
+-        boolean checkOnly
+-    ) {
+-        this(plugin, file, user, repo, branch, UpdaterConfig.builder().checkOnly(checkOnly).build());
+-    }
+-
+-    /**
+-     * This constructor sets up the updater.
+-     *
+-     * @param plugin    The {@link Plugin} instance
+-     * @param file      The {@link File} of plugin
+-     * @param user      GitHub user
+-     * @param repo      GitHub repository
+-     * @param branch    GitHub branch
+-     * @param checkOnly Whether to check the version only, without downloading
+-     * @param lang      The language of updater
+-     * @deprecated The language option is no longer used, it is configured globally in GuizhanLibPlugin, or depends
+-     * on the updater implementation.
+-     */
+-    @Deprecated
+-    @ParametersAreNonnullByDefault
+-    protected AbstractGuizhanBuildsUpdater(
+-        Plugin plugin,
+-        File file,
+-        String user,
+-        String repo,
+-        String branch,
+-        boolean checkOnly,
+-        String lang
+-    ) {
+-        this(plugin, file, user, repo, branch, checkOnly);
+-    }
+-
+-    /**
+-     * Create update folder
+-     */
+-    @SuppressWarnings("ResultOfMethodCallIgnored")
+-    private void prepareUpdateFolder() {
+-        File dir = new File("plugins/" + Bukkit.getUpdateFolder());
+-
+-        if (!dir.exists()) {
+-            dir.mkdirs();
+-        }
+-    }
+-
+-    /**
+-     * Override this method to specify the builds page's URL.
+-     * <p>
+-     * No trailing slash is needed.
+-     * <p>
+-     * Example: {@code https://builds.guizhanss.net}
+-     *
+-     * @return the URL of builds page
+-     */
+-    @Nonnull
+-    public abstract String getBuildsURL();
+-
+-    /**
+-     * Override this method to specify the R2 bucket URL.
+-     * <p>
+-     * No trailing slash is needed.
+-     * <p>
+-     * Example: {@code https://builds-r2.gzassets.net}
+-     *
+-     * @return The R2 bucket URL
+-     */
+-    @Nonnull
+-    public abstract String getR2URL();
+-
+-    /**
+-     * Override this method to set the language of updater.
+-     *
+-     * @return the language of updater
+-     */
+-    @Nonnull
+-    public abstract String getLanguage();
+-
+-    /**
+-     * Run updater task.
+-     */
+-    public void start() {
+-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new UpdaterTask(this));
+-    }
+-
+-    /**
+-     * Get the URL of repository list file (repos.json).
+-     *
+-     * @return the URL of repository list file
+-     */
+-    @Nonnull
+-    public String getReposFileURL() {
+-        return getBuildsURL() + "/repos.json";
+-    }
+-
+-    /**
+-     * Get the repository key in repos.json.
+-     *
+-     * @return the repository key
+-     */
+-    @Nonnull
+-    public String getRepoKey() {
+-        return MessageFormat.format("{0}/{1}:{2}", user, repo, branch);
+-    }
+-
+-    /**
+-     * Get the URL of builds information file (builds.json).
+-     *
+-     * @param directory Working directory
+-     * @return the URL of builds information file
+-     */
+-    @Nonnull
+-    public String getBuildsInfo(@Nonnull String directory) {
+-        return MessageFormat.format("{0}/{1}/builds.json", getR2URL(), directory);
+-    }
+-
+-    /**
+-     * Call the logger of plugin.
+-     *
+-     * @param level   log {@link Level}
+-     * @param message the message
+-     * @param args    the arguments
+-     */
+-    public void log(Level level, String message, Object... args) {
+-        logger.log(level, () -> MessageFormat.format(message, args));
+-    }
+-
+-    /**
+-     * Call the logger of plugin.
+-     *
+-     * @param level     log {@link Level}
+-     * @param exception the {@link Exception}
+-     * @param message   the message
+-     * @param args      the arguments
+-     */
+-    public void log(Level level, Exception exception, String message, Object... args) {
+-        logger.log(level, exception, () -> MessageFormat.format(message, args));
+-    }
+-
+-    /**
+-     * Call the logger of plugin.
+-     *
+-     * @param level log {@link Level}
+-     * @param key   the message key
+-     * @param args  the arguments
+-     */
+-    public void log(Level level, LocaleKey key, Object... args) {
+-        log(level, getLocalizedString(key), args);
+-    }
+-
+-    /**
+-     * Call the logger of plugin.
+-     *
+-     * @param level     log {@link Level}
+-     * @param exception the {@link Exception}
+-     * @param key       the message key
+-     * @param args      the arguments
+-     */
+-    public void log(Level level, Exception exception, LocaleKey key, Object... args) {
+-        log(level, exception, getLocalizedString(key), args);
+-    }
+-
+-    /**
+-     * Get the URL of the build artifact.
+-     *
+-     * @param directory Working directory
+-     * @param target    Target filename
+-     * @return the URL of the build artifact
+-     */
+-    @ParametersAreNonnullByDefault
+-    @Nonnull
+-    public String getTargetUrl(String directory, String target) {
+-        return MessageFormat.format("{0}/{1}/{2}", getR2URL(), directory, target);
+-    }
+-
+-    /**
+-     * Get localized {@link String}.
+-     *
+-     * @param key The localization key.
+-     * @return The localized {@link String}.
+-     */
+-    @ParametersAreNonnullByDefault
+-    @Nonnull
+-    public String getLocalizedString(LocaleKey key) {
+-        Preconditions.checkArgument(key != null, "The localization key cannot be null.");
+-
+-        return UpdaterLocalizations.get(getLanguage(), key);
+-    }
+-
+-    /**
+-     * Get the SHA1 checksum of the file.
+-     *
+-     * @return the checksum of the file, null when there is an error.
+-     */
+-    @Nullable
+-    public String getChecksum() {
+-        try {
+-            MessageDigest digest = MessageDigest.getInstance("SHA-1");
+-            FileInputStream fis = new FileInputStream(file);
+-            byte[] byteArray = new byte[1024];
+-            int bytesCount;
+-            while ((bytesCount = fis.read(byteArray)) != -1) {
+-                digest.update(byteArray, 0, bytesCount);
+-            }
+-            fis.close();
+-            byte[] bytes = digest.digest();
+-            StringBuilder sb = new StringBuilder();
+-            for (byte aByte : bytes) {
+-                sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
+-            }
+-            return sb.toString();
+-        } catch (NoSuchAlgorithmException | IOException ex) {
+-            log(Level.SEVERE, ex, LocaleKey.CANNOT_CALCULATE_CHECKSUM);
+-            return null;
+-        }
+-    }
+-}
+diff --git a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/GuizhanBuildsCNUpdater.java b/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/GuizhanBuildsCNUpdater.java
+deleted file mode 100644
+index ce13497..0000000
+--- a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/GuizhanBuildsCNUpdater.java
++++ /dev/null
+@@ -1,105 +0,0 @@
+-package net.guizhanss.guizhanlib.updater;
+-
+-import org.bukkit.plugin.Plugin;
+-
+-import javax.annotation.Nonnull;
+-import javax.annotation.ParametersAreNonnullByDefault;
+-import java.io.File;
+-
+-/**
+- * The Guizhan Builds Updater is responsible to auto-update the plugin from
+- * Mainland China mirror of Guizhan Builds (builds.guizhanss.cn).
+- *
+- * @author ybw0014
+- */
+-public final class GuizhanBuildsCNUpdater extends AbstractGuizhanBuildsUpdater {
+-
+-    /**
+-     * This constructor sets up the updater.
+-     *
+-     * @param plugin The {@link Plugin} instance
+-     * @param file   The {@link File} of plugin
+-     * @param user   GitHub user
+-     * @param repo   GitHub repository
+-     * @param branch GitHub branch
+-     */
+-    @ParametersAreNonnullByDefault
+-    public GuizhanBuildsCNUpdater(Plugin plugin, File file, String user, String repo, String branch) {
+-        super(plugin, file, user, repo, branch, UpdaterConfig.DEFAULT);
+-    }
+-
+-    /**
+-     * This constructor sets up the updater.
+-     *
+-     * @param plugin        The {@link Plugin} instance
+-     * @param file          The {@link File} of plugin
+-     * @param user          GitHub user
+-     * @param repo          GitHub repository
+-     * @param branch        GitHub branch
+-     * @param updaterConfig The {@link UpdaterConfig}.
+-     */
+-    @ParametersAreNonnullByDefault
+-    public GuizhanBuildsCNUpdater(Plugin plugin, File file, String user, String repo, String branch,
+-                                  UpdaterConfig updaterConfig) {
+-        super(plugin, file, user, repo, branch, updaterConfig);
+-    }
+-
+-    /**
+-     * This constructor sets up the updater.
+-     *
+-     * @param plugin    The {@link Plugin} instance
+-     * @param file      The {@link File} of plugin
+-     * @param user      GitHub user
+-     * @param repo      GitHub repository
+-     * @param branch    GitHub branch
+-     * @param checkOnly Whether to check the version only, without downloading
+-     * @deprecated in favor of {@link UpdaterConfig}.
+-     */
+-    @Deprecated
+-    @ParametersAreNonnullByDefault
+-    public GuizhanBuildsCNUpdater(Plugin plugin, File file, String user, String repo, String branch, boolean checkOnly) {
+-        super(plugin, file, user, repo, branch, checkOnly);
+-    }
+-
+-    /**
+-     * This constructor sets up the updater.
+-     *
+-     * @param plugin    The {@link Plugin} instance
+-     * @param file      The {@link File} of plugin
+-     * @param user      GitHub user
+-     * @param repo      GitHub repository
+-     * @param branch    GitHub branch
+-     * @param checkOnly Whether to check the version only, without downloading
+-     * @param lang      The language of updater
+-     * @deprecated The language option is no longer used, since it is now
+-     * configured under global config file (/plugins/GuizhanBuildsUpdater/config.yml).
+-     */
+-    @Deprecated
+-    @ParametersAreNonnullByDefault
+-    public GuizhanBuildsCNUpdater(Plugin plugin, File file, String user, String repo, String branch, boolean checkOnly, String lang) {
+-        super(plugin, file, user, repo, branch, checkOnly);
+-    }
+-
+-    @Nonnull
+-    @Override
+-    public String getBuildsURL() {
+-        return "https://builds.guizhanss.cn";
+-    }
+-
+-    @Nonnull
+-    @Override
+-    public String getR2URL() {
+-        return "https://builds-r2.gzassets.cn";
+-    }
+-
+-    /**
+-     * Set the language of updater.
+-     *
+-     * @return the language of updater
+-     */
+-    @Nonnull
+-    @Override
+-    public String getLanguage() {
+-        return "zh-CN";
+-    }
+-}
+diff --git a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/GuizhanBuildsUpdater.java b/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/GuizhanBuildsUpdater.java
+deleted file mode 100644
+index 84f806f..0000000
+--- a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/GuizhanBuildsUpdater.java
++++ /dev/null
+@@ -1,105 +0,0 @@
+-package net.guizhanss.guizhanlib.updater;
+-
+-import org.bukkit.plugin.Plugin;
+-
+-import javax.annotation.Nonnull;
+-import javax.annotation.ParametersAreNonnullByDefault;
+-import java.io.File;
+-
+-/**
+- * The Guizhan Builds Updater is responsible to auto-update the plugin from
+- * Guizhan Builds (builds.guizhanss.com).
+- *
+- * @author ybw0014
+- */
+-public final class GuizhanBuildsUpdater extends AbstractGuizhanBuildsUpdater {
+-
+-    /**
+-     * This constructor sets up the updater.
+-     *
+-     * @param plugin The {@link Plugin} instance
+-     * @param file   The {@link File} of plugin
+-     * @param user   GitHub user
+-     * @param repo   GitHub repository
+-     * @param branch GitHub branch
+-     */
+-    @ParametersAreNonnullByDefault
+-    public GuizhanBuildsUpdater(Plugin plugin, File file, String user, String repo, String branch) {
+-        super(plugin, file, user, repo, branch, UpdaterConfig.DEFAULT);
+-    }
+-
+-    /**
+-     * This constructor sets up the updater.
+-     *
+-     * @param plugin        The {@link Plugin} instance
+-     * @param file          The {@link File} of plugin
+-     * @param user          GitHub user
+-     * @param repo          GitHub repository
+-     * @param branch        GitHub branch
+-     * @param updaterConfig The {@link UpdaterConfig}.
+-     */
+-    @ParametersAreNonnullByDefault
+-    public GuizhanBuildsUpdater(Plugin plugin, File file, String user, String repo, String branch,
+-                                UpdaterConfig updaterConfig) {
+-        super(plugin, file, user, repo, branch, updaterConfig);
+-    }
+-
+-    /**
+-     * This constructor sets up the updater.
+-     *
+-     * @param plugin    The {@link Plugin} instance
+-     * @param file      The {@link File} of plugin
+-     * @param user      GitHub user
+-     * @param repo      GitHub repository
+-     * @param branch    GitHub branch
+-     * @param checkOnly Whether to check the version only, without downloading
+-     * @deprecated in favor of {@link UpdaterConfig}.
+-     */
+-    @Deprecated
+-    @ParametersAreNonnullByDefault
+-    public GuizhanBuildsUpdater(Plugin plugin, File file, String user, String repo, String branch, boolean checkOnly) {
+-        super(plugin, file, user, repo, branch, checkOnly);
+-    }
+-
+-    /**
+-     * This constructor sets up the updater.
+-     *
+-     * @param plugin    The {@link Plugin} instance
+-     * @param file      The {@link File} of plugin
+-     * @param user      GitHub user
+-     * @param repo      GitHub repository
+-     * @param branch    GitHub branch
+-     * @param checkOnly Whether to check the version only, without downloading
+-     * @param lang      The language of updater
+-     * @deprecated The language option is no longer used, since it is now
+-     * configured under global config file (/plugins/GuizhanBuildsUpdater/config.yml).
+-     */
+-    @Deprecated
+-    @ParametersAreNonnullByDefault
+-    public GuizhanBuildsUpdater(Plugin plugin, File file, String user, String repo, String branch, boolean checkOnly, String lang) {
+-        super(plugin, file, user, repo, branch, checkOnly);
+-    }
+-
+-    @Nonnull
+-    @Override
+-    public String getBuildsURL() {
+-        return "https://builds.guizhanss.com";
+-    }
+-
+-    @Nonnull
+-    @Override
+-    public String getR2URL() {
+-        return "https://builds-r2.gzassets.net";
+-    }
+-
+-    /**
+-     * Set the language of updater.
+-     *
+-     * @return the language of updater
+-     */
+-    @Nonnull
+-    @Override
+-    public String getLanguage() {
+-        return "en-US";
+-    }
+-}
+diff --git a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/LocaleKey.java b/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/LocaleKey.java
+deleted file mode 100644
+index 2d8ebc3..0000000
+--- a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/LocaleKey.java
++++ /dev/null
+@@ -1,23 +0,0 @@
+-package net.guizhanss.guizhanlib.updater;
+-
+-/**
+- * All the keys of Localization.
+- *
+- * @author ybw0014
+- */
+-public enum LocaleKey {
+-    CANNOT_FIND_REPO,
+-    CANNOT_FETCH_INFO,
+-    INVALID_VERSION,
+-    INVALID_FILE_VERSION,
+-    CANNOT_FIND_BUILDS,
+-    CANNOT_CALCULATE_CHECKSUM,
+-    UP_TO_DATE,
+-    NEED_UPDATE,
+-    DOWNLOAD_NOTIFICATION,
+-    DOWNLOADING,
+-    DOWNLOAD_FAIL,
+-    UPDATE_INFO_0,
+-    UPDATE_INFO_1,
+-    UPDATE_INFO_2
+-}
+diff --git a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/UpdaterConfig.java b/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/UpdaterConfig.java
+deleted file mode 100644
+index 1f35974..0000000
+--- a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/UpdaterConfig.java
++++ /dev/null
+@@ -1,35 +0,0 @@
+-package net.guizhanss.guizhanlib.updater;
+-
+-import lombok.AllArgsConstructor;
+-import lombok.Builder;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-import lombok.experimental.Accessors;
+-
+-/**
+- * This class contains config options for {@link AbstractGuizhanBuildsUpdater},
+- * which is passed as an argument.
+- *
+- * @author ybw0014
+- * @see AbstractGuizhanBuildsUpdater
+- */
+-@Data
+-@NoArgsConstructor
+-@AllArgsConstructor
+-@Builder
+-@Accessors(fluent = true)
+-public final class UpdaterConfig {
+-
+-    public static final UpdaterConfig DEFAULT = new UpdaterConfig();
+-
+-    /**
+-     * Limits the updater to check update only,
+-     * no file download.
+-     */
+-    private boolean checkOnly = false;
+-
+-    /**
+-     * Whether the updater checks the version format
+-     */
+-    private boolean checkVersionFormat = false;
+-}
+diff --git a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/UpdaterLocalizations.java b/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/UpdaterLocalizations.java
+deleted file mode 100644
+index 4f0d4d2..0000000
+--- a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/UpdaterLocalizations.java
++++ /dev/null
+@@ -1,77 +0,0 @@
+-package net.guizhanss.guizhanlib.updater;
+-
+-import com.google.common.base.Preconditions;
+-import lombok.experimental.UtilityClass;
+-
+-import javax.annotation.Nonnull;
+-import javax.annotation.ParametersAreNonnullByDefault;
+-import java.util.EnumMap;
+-import java.util.HashMap;
+-import java.util.Map;
+-
+-/**
+- * Hard-coded localization.
+- * <p>
+- * I'm lazy to fix the resource stream shit.
+- *
+- * @author ybw0014
+- */
+-@UtilityClass
+-@SuppressWarnings("ConstantConditions")
+-class UpdaterLocalizations {
+-    private static final Map<String, Map<LocaleKey, String>> MAP = new HashMap<>();
+-
+-    private static final Map<LocaleKey, String> LOCALE_EN = new EnumMap<>(LocaleKey.class);
+-    private static final Map<LocaleKey, String> LOCALE_ZH_CN = new EnumMap<>(LocaleKey.class);
+-
+-    static {
+-        LOCALE_EN.put(LocaleKey.CANNOT_FIND_REPO, "Cannot find repository in Guizhan Builds. Did you set up updater " +
+-            "correctly? Is it down?");
+-        LOCALE_EN.put(LocaleKey.CANNOT_FETCH_INFO, "Cannot fetch information from Guizhan Builds. Is it down?");
+-        LOCALE_EN.put(LocaleKey.INVALID_VERSION, "Cannot fetch version format from Guizhan Builds. Is it down?");
+-        LOCALE_EN.put(LocaleKey.INVALID_FILE_VERSION, "Auto updater has been shut down since this version is not from Guizhan Builds.");
+-        LOCALE_EN.put(LocaleKey.CANNOT_FIND_BUILDS, "Cannot find successful builds. How did you get this plugin?");
+-        LOCALE_EN.put(LocaleKey.CANNOT_CALCULATE_CHECKSUM, "Cannot calculate the checksum of this plugin.");
+-        LOCALE_EN.put(LocaleKey.UP_TO_DATE, "{0} is up to date.");
+-        LOCALE_EN.put(LocaleKey.NEED_UPDATE, "{0} needs to be updated.");
+-        LOCALE_EN.put(LocaleKey.DOWNLOAD_NOTIFICATION, "Downloading has been disabled due to check only mode. You will need to download from Guizhan Builds manually.");
+-        LOCALE_EN.put(LocaleKey.DOWNLOADING, "Downloading {0} - Build {1}.");
+-        LOCALE_EN.put(LocaleKey.DOWNLOAD_FAIL, "Failed to download the new version of {0}.");
+-        LOCALE_EN.put(LocaleKey.UPDATE_INFO_0, "============== Auto update ==============");
+-        LOCALE_EN.put(LocaleKey.UPDATE_INFO_1, "Downloaded {0} - Build {1}");
+-        LOCALE_EN.put(LocaleKey.UPDATE_INFO_2, "Restart server to install the update");
+-
+-        LOCALE_ZH_CN.put(LocaleKey.CANNOT_FIND_REPO, "无法找到仓库信息。你确定设置好了？");
+-        LOCALE_ZH_CN.put(LocaleKey.CANNOT_FETCH_INFO, "无法从构建站获取信息。");
+-        LOCALE_ZH_CN.put(LocaleKey.INVALID_VERSION, "无法从构建站获取版本格式信息。");
+-        LOCALE_ZH_CN.put(LocaleKey.INVALID_FILE_VERSION, "自动更新已禁用，该版本不是从鬼斩构建站下载的。");
+-        LOCALE_ZH_CN.put(LocaleKey.CANNOT_FIND_BUILDS, "无法找到成功的构建。你是怎么获取这个插件的。");
+-        LOCALE_ZH_CN.put(LocaleKey.CANNOT_CALCULATE_CHECKSUM, "无法计算插件的校验和。");
+-        LOCALE_ZH_CN.put(LocaleKey.UP_TO_DATE, "{0} 已是最新版本。");
+-        LOCALE_ZH_CN.put(LocaleKey.NEED_UPDATE, "{0} 需要更新。");
+-        LOCALE_ZH_CN.put(LocaleKey.DOWNLOAD_NOTIFICATION, "由于开启了仅通知模式，下载更新已禁用。你需要手动前往鬼斩构建站下载更新。");
+-        LOCALE_ZH_CN.put(LocaleKey.DOWNLOADING, "正在下载 {0} - 构建 #{1}");
+-        LOCALE_ZH_CN.put(LocaleKey.DOWNLOAD_FAIL, "下载 {0} 的新版本失败。");
+-        LOCALE_ZH_CN.put(LocaleKey.UPDATE_INFO_0, "============== 自动更新 ==============");
+-        LOCALE_ZH_CN.put(LocaleKey.UPDATE_INFO_1, "已下载 {0} - 构建 #{1}");
+-        LOCALE_ZH_CN.put(LocaleKey.UPDATE_INFO_2, "重启服务器以安装新版本");
+-
+-        MAP.put("en-US", LOCALE_EN);
+-        MAP.put("zh-CN", LOCALE_ZH_CN);
+-    }
+-
+-    @Nonnull
+-    @ParametersAreNonnullByDefault
+-    public static String get(String lang, LocaleKey key) {
+-        Preconditions.checkArgument(lang != null, "Language cannot be null");
+-        Preconditions.checkArgument(key != null, "Language key cannot be null");
+-
+-        Map<LocaleKey, String> localeMap = MAP.get(lang);
+-
+-        if (localeMap == null) {
+-            localeMap = MAP.get("en-US");
+-        }
+-
+-        return localeMap.get(key);
+-    }
+-}
+diff --git a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/UpdaterTask.java b/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/UpdaterTask.java
+deleted file mode 100644
+index 7b71733..0000000
+--- a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/UpdaterTask.java
++++ /dev/null
+@@ -1,283 +0,0 @@
+-package net.guizhanss.guizhanlib.updater;
+-
+-import com.google.gson.JsonArray;
+-import com.google.gson.JsonElement;
+-import com.google.gson.JsonObject;
+-import lombok.AccessLevel;
+-import lombok.Getter;
+-import net.guizhanss.guizhanlib.utils.JsonUtil;
+-
+-import javax.annotation.Nonnull;
+-import javax.annotation.Nullable;
+-import java.io.BufferedInputStream;
+-import java.io.BufferedReader;
+-import java.io.File;
+-import java.io.FileOutputStream;
+-import java.io.IOException;
+-import java.io.InputStreamReader;
+-import java.net.MalformedURLException;
+-import java.net.URL;
+-import java.net.URLConnection;
+-import java.nio.charset.StandardCharsets;
+-import java.util.Map;
+-import java.util.logging.Level;
+-import java.util.regex.Matcher;
+-import java.util.regex.Pattern;
+-
+-/**
+- * Auto update task.
+- *
+- * @author ybw0014
+- */
+-class UpdaterTask implements Runnable {
+-    @Getter(AccessLevel.NONE)
+-    private static boolean debug = false;
+-
+-    private final AbstractGuizhanBuildsUpdater updater;
+-
+-    private String workingDirectory;
+-    private JsonObject repoInfo = null;
+-    private JsonObject updateInfo = null;
+-
+-    UpdaterTask(AbstractGuizhanBuildsUpdater updater) {
+-        this.updater = updater;
+-    }
+-
+-    @Override
+-    public void run() {
+-        getRepoInfo();
+-
+-        if (updater.getConfig().checkVersionFormat()) {
+-            String format = getVersionFormat();
+-            if (format == null) {
+-                updater.log(Level.SEVERE, LocaleKey.INVALID_VERSION);
+-                return;
+-            }
+-            if (!checkVersion(format)) {
+-                updater.log(Level.WARNING, LocaleKey.INVALID_FILE_VERSION);
+-                return;
+-            }
+-        }
+-
+-        if (hasUpdate()) {
+-            if (updater.getConfig().checkOnly()) {
+-                sendUpdateNotification();
+-            } else {
+-                update();
+-            }
+-        }
+-    }
+-
+-    /**
+-     * Get repository information.
+-     */
+-    private void getRepoInfo() {
+-        try {
+-            URL reposUrl = new URL(updater.getReposFileURL());
+-            String repos = fetch(reposUrl);
+-            if (repos == null) {
+-                throw new IllegalStateException("Repository list is null");
+-            }
+-            JsonObject reposJson = (JsonObject) JsonUtil.parse(repos);
+-
+-            String key = updater.getRepoKey();
+-            // direct find
+-            JsonElement currentRepoInfo = JsonUtil.getFromPath(reposJson, key);
+-
+-            if (currentRepoInfo == null) {
+-                // find by alias
+-                for (Map.Entry<String, JsonElement> repoEntry : reposJson.entrySet()) {
+-                    JsonObject repoObj = repoEntry.getValue().getAsJsonObject();
+-                    if (!repoObj.has("alias")) {
+-                        continue;
+-                    }
+-                    for (JsonElement alias : repoObj.get("alias").getAsJsonArray()) {
+-                        String aliasPrimitive = alias.getAsJsonPrimitive().getAsString();
+-                        if (aliasPrimitive.equals(key)) {
+-                            currentRepoInfo = repoObj;
+-                            key = repoEntry.getKey();
+-                            break;
+-                        }
+-                    }
+-                    if (currentRepoInfo != null) {
+-                        break;
+-                    }
+-                }
+-            }
+-
+-            if (currentRepoInfo == null) {
+-                throw new IllegalStateException("Repository information is not found");
+-            }
+-
+-            repoInfo = (JsonObject) currentRepoInfo;
+-
+-            // Get working directory
+-            workingDirectory = key.replace(":", "/");
+-        } catch (MalformedURLException | IllegalStateException | IllegalArgumentException | NullPointerException ex) {
+-            updater.log(Level.SEVERE, LocaleKey.CANNOT_FIND_REPO);
+-            if (debug) {
+-                updater.log(Level.SEVERE, ex, ex.getMessage());
+-            }
+-        }
+-    }
+-
+-    /**
+-     * Get the version format.
+-     *
+-     * @return the version format, {@code null} if failed
+-     */
+-    @Nullable
+-    private String getVersionFormat() {
+-        try {
+-            return JsonUtil.getFromPath(repoInfo, "buildOptions.version").getAsString();
+-        } catch (IllegalStateException | IllegalArgumentException | NullPointerException ex) {
+-            if (debug) {
+-                updater.log(Level.SEVERE, ex, ex.getMessage());
+-            }
+-            return null;
+-        }
+-    }
+-
+-    /**
+-     * Check if version format matches.
+-     *
+-     * @param format The version format.
+-     * @return Whether the version format matches.
+-     */
+-    private boolean checkVersion(String format) {
+-        String regex = format.replace("(", "\\(")
+-            .replace(")", "\\)")
+-            .replace("{version}", "\\d{1,6}")
+-            .replace("{git_commit}", "([a-z0-9]{7})")
+-            .replace("{Year}", "\\d{4}")
+-            .replace("{year}", "\\d{2}")
+-            .replace("{Month}", "\\d{2}")
+-            .replace("{month}", "\\d{1,2}")
+-            .replace("{Date}", "\\d{2}")
+-            .replace("{date}", "\\d{1,2}");
+-        Pattern pattern = Pattern.compile(regex);
+-        Matcher m = pattern.matcher(updater.getPlugin().getDescription().getVersion());
+-        return m.matches();
+-    }
+-
+-    /**
+-     * Check if there is new build.
+-     *
+-     * @return Whether new build exists.
+-     */
+-    private boolean hasUpdate() {
+-        try {
+-            // Retrieve builds info
+-            URL buildsUrl = new URL(updater.getBuildsInfo(workingDirectory));
+-            JsonObject buildsJson = (JsonObject) JsonUtil.parse(fetch(buildsUrl));
+-            JsonArray builds = (JsonArray) JsonUtil.getFromPath(buildsJson, "builds");
+-
+-            JsonObject build = null;
+-            for (int i = builds.size() - 1; i >= 0; i--) {
+-                build = (JsonObject) builds.get(i);
+-                if (build.get("success").getAsBoolean()) break;
+-                build = null;
+-            }
+-            if (build == null) {
+-                updater.log(Level.SEVERE, LocaleKey.CANNOT_FIND_BUILDS);
+-                return false;
+-            }
+-
+-            // compare the checksum
+-            String currentChecksum = updater.getChecksum();
+-            if (currentChecksum == null) {
+-                return false;
+-            }
+-
+-            String checksum = build.get("sha1").getAsString();
+-            if (currentChecksum.equals(checksum)) {
+-                updater.log(Level.INFO, LocaleKey.UP_TO_DATE, updater.getPlugin().getName());
+-                return false;
+-            }
+-            updateInfo = build;
+-            return true;
+-        } catch (IllegalArgumentException | IllegalStateException | NullPointerException | IOException ex) {
+-            updater.log(Level.SEVERE, LocaleKey.CANNOT_FETCH_INFO);
+-            if (debug) {
+-                updater.log(Level.SEVERE, ex, ex.getMessage());
+-            }
+-            return false;
+-        }
+-    }
+-
+-    /**
+-     * Send update notification.
+-     */
+-    private void sendUpdateNotification() {
+-        updater.log(Level.INFO, LocaleKey.NEED_UPDATE, updater.getPlugin().getName());
+-        updater.log(Level.INFO, LocaleKey.DOWNLOAD_NOTIFICATION, updater.getPlugin().getName());
+-    }
+-
+-    /**
+-     * Download and install the latest version
+-     */
+-    private void update() {
+-        String targetFilename = updateInfo.get("target").getAsString();
+-        updater.log(Level.INFO, LocaleKey.NEED_UPDATE, updater.getPlugin().getName());
+-        updater.log(Level.INFO, LocaleKey.DOWNLOADING, updater.getPlugin().getName(), updateInfo.get("id").getAsString());
+-
+-        try {
+-            BufferedInputStream input = new BufferedInputStream(new URL(updater.getTargetUrl(workingDirectory, targetFilename)).openStream());
+-            FileOutputStream output = new FileOutputStream(new File("plugins/" + updater.getPlugin().getServer().getUpdateFolder(), updater.getFile().getName()));
+-            byte[] data = new byte[1024];
+-            int read;
+-
+-            while ((read = input.read(data, 0, 1024)) != -1) {
+-                output.write(data, 0, read);
+-            }
+-
+-            input.close();
+-            output.close();
+-        } catch (Exception ex) {
+-            updater.log(Level.SEVERE, LocaleKey.DOWNLOAD_FAIL, updater.getPlugin().getName());
+-            if (debug) {
+-                updater.log(Level.SEVERE, ex, ex.getMessage());
+-            }
+-            return;
+-        }
+-
+-        updater.log(Level.INFO, " ");
+-        updater.log(Level.INFO, LocaleKey.UPDATE_INFO_0);
+-        updater.log(Level.INFO, LocaleKey.UPDATE_INFO_1, updater.getPlugin().getName(), updateInfo.get("id").getAsString());
+-        updater.log(Level.INFO, LocaleKey.UPDATE_INFO_2);
+-        updater.log(Level.INFO, " ");
+-    }
+-
+-    /**
+-     * Fetch information from {@link URL}.
+-     *
+-     * @param url The {@link URL} of resource.
+-     * @return The content {@link String}.
+-     */
+-    @Nullable
+-    private String fetch(@Nonnull URL url) {
+-        try {
+-            StringBuilder content = new StringBuilder();
+-
+-            URLConnection connection = url.openConnection();
+-            connection.setConnectTimeout(10_000);
+-            connection.addRequestProperty("User-Agent", "Guizhan Updater");
+-            connection.setDoOutput(true);
+-
+-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+-            String line = reader.readLine();
+-            while (line != null) {
+-                content.append(line);
+-                line = reader.readLine();
+-            }
+-
+-            return content.toString();
+-        } catch (IOException | NullPointerException ex) {
+-            updater.log(Level.WARNING, LocaleKey.CANNOT_FETCH_INFO);
+-            if (debug) {
+-                updater.log(Level.SEVERE, ex, ex.getMessage());
+-            }
+-            return null;
+-        }
+-    }
+-}
+diff --git a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/package-info.java b/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/package-info.java
+deleted file mode 100644
+index c372994..0000000
+--- a/GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * The updater module provides auto-update feature to your plugin.
+- */
+-package net.guizhanss.guizhanlib.updater;
+diff --git a/pom.xml b/pom.xml
+index 8e8c961..9e88ca8 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -4,6 +4,12 @@
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+ 
++    <parent>
++        <groupId>id.universenetwork.sfa_loader</groupId>
++        <artifactId>SlimefunAddon-Loader</artifactId>
++        <version>UNOFFICIAL</version>
++    </parent>
++
+     <groupId>net.guizhanss</groupId>
+     <artifactId>GuizhanLib</artifactId>
+     <version>1.7.6</version>
+@@ -36,7 +42,6 @@
+     </scm>
+ 
+     <properties>
+-        <java.version>16</java.version>
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+ 
+         <sonar.organization>ybw0014</sonar.organization>
+@@ -53,39 +58,10 @@
+         <module>GuizhanLib-localization</module>
+         <module>GuizhanLib-minecraft</module>
+         <module>GuizhanLib-slimefun</module>
+-        <module>GuizhanLib-updater</module>
+ 
+         <module>GuizhanLib-api</module>
+     </modules>
+ 
+-    <distributionManagement>
+-        <snapshotRepository>
+-            <id>ossrh</id>
+-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+-        </snapshotRepository>
+-        <repository>
+-            <id>ossrh</id>
+-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+-        </repository>
+-    </distributionManagement>
+-
+-    <repositories>
+-        <repository>
+-            <id>jitpack.io</id>
+-            <url>https://jitpack.io/</url>
+-        </repository>
+-
+-        <repository>
+-            <id>spigot-repo</id>
+-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+-        </repository>
+-
+-        <repository>
+-            <id>paper-repo</id>
+-            <url>https://papermc.io/repo/repository/maven-public</url>
+-        </repository>
+-    </repositories>
+-
+     <dependencies>
+         <!-- Minecraft -->
+         <dependency>
+@@ -110,176 +86,5 @@
+             <version>3.0.2</version>
+             <scope>provided</scope>
+         </dependency>
+-
+-        <dependency>
+-            <groupId>org.projectlombok</groupId>
+-            <artifactId>lombok</artifactId>
+-            <version>1.18.30</version>
+-            <scope>provided</scope>
+-        </dependency>
+-
+-        <dependency>
+-            <groupId>org.junit.jupiter</groupId>
+-            <artifactId>junit-jupiter</artifactId>
+-            <version>5.10.1</version>
+-            <scope>test</scope>
+-        </dependency>
+-
+-        <dependency>
+-            <groupId>com.github.seeseemelk</groupId>
+-            <artifactId>MockBukkit-v1.19</artifactId>
+-            <version>2.117.1</version>
+-            <scope>test</scope>
+-
+-            <exclusions>
+-                <exclusion>
+-                    <groupId>org.jetbrains</groupId>
+-                    <artifactId>annotations</artifactId>
+-                </exclusion>
+-            </exclusions>
+-        </dependency>
+-
+     </dependencies>
+-
+-    <profiles>
+-        <profile>
+-            <id>release</id>
+-            <build>
+-                <plugins>
+-                    <plugin>
+-                        <groupId>org.apache.maven.plugins</groupId>
+-                        <artifactId>maven-source-plugin</artifactId>
+-                        <version>3.3.0</version>
+-
+-                        <executions>
+-                            <execution>
+-                                <id>attach-sources</id>
+-                                <phase>package</phase>
+-
+-                                <goals>
+-                                    <goal>jar</goal>
+-                                </goals>
+-                            </execution>
+-                        </executions>
+-                    </plugin>
+-
+-                    <plugin>
+-                        <groupId>org.apache.maven.plugins</groupId>
+-                        <artifactId>maven-javadoc-plugin</artifactId>
+-                        <version>3.6.3</version>
+-
+-                        <configuration>
+-                            <includeDependencySources>false</includeDependencySources>
+-
+-                            <links>
+-                                <link>https://hub.spigotmc.org/javadocs/spigot/</link>
+-                            </links>
+-                        </configuration>
+-
+-                        <executions>
+-                            <execution>
+-                                <id>attach-javadocs</id>
+-
+-                                <goals>
+-                                    <goal>jar</goal>
+-                                </goals>
+-                            </execution>
+-                        </executions>
+-                    </plugin>
+-
+-                    <plugin>
+-                        <groupId>org.apache.maven.plugins</groupId>
+-                        <artifactId>maven-release-plugin</artifactId>
+-                        <version>3.0.1</version>
+-
+-                        <configuration>
+-                            <autoVersionSubmodules>true</autoVersionSubmodules>
+-                            <goals>deploy</goals>
+-                        </configuration>
+-                    </plugin>
+-
+-                    <plugin>
+-                        <groupId>org.sonatype.plugins</groupId>
+-                        <artifactId>nexus-staging-maven-plugin</artifactId>
+-                        <version>1.6.13</version>
+-                        <extensions>true</extensions>
+-
+-                        <configuration>
+-                            <serverId>ossrh</serverId>
+-                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+-                        </configuration>
+-                    </plugin>
+-
+-                    <plugin>
+-                        <groupId>org.apache.maven.plugins</groupId>
+-                        <artifactId>maven-gpg-plugin</artifactId>
+-                        <version>3.1.0</version>
+-
+-                        <executions>
+-                            <execution>
+-                                <id>sign-artifacts</id>
+-                                <phase>verify</phase>
+-
+-                                <goals>
+-                                    <goal>sign</goal>
+-                                </goals>
+-                            </execution>
+-                        </executions>
+-                    </plugin>
+-                </plugins>
+-            </build>
+-        </profile>
+-    </profiles>
+-
+-    <build>
+-        <defaultGoal>clean package</defaultGoal>
+-        <finalName>${project.name}-${project.version}</finalName>
+-        <resources>
+-            <resource>
+-                <directory>${project.basedir}/src/main/resources</directory>
+-            </resource>
+-        </resources>
+-        <testResources>
+-            <testResource>
+-                <directory>src/test/resources</directory>
+-            </testResource>
+-        </testResources>
+-
+-        <plugins>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-compiler-plugin</artifactId>
+-                <version>3.12.1</version>
+-
+-                <configuration>
+-                    <release>${java.version}</release>
+-
+-                    <excludes>
+-                        <exclude>**/package-info.java</exclude>
+-                    </excludes>
+-
+-                    <showDeprecation>true</showDeprecation>
+-                    <showWarnings>true</showWarnings>
+-                </configuration>
+-            </plugin>
+-
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-dependency-plugin</artifactId>
+-                <version>3.6.1</version>
+-            </plugin>
+-
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-surefire-plugin</artifactId>
+-                <version>3.2.5</version>
+-
+-                <configuration>
+-                    <junitArtifactName>org.junit.jupiter:junit-jupiter</junitArtifactName>
+-                    <trimStackTrace>false</trimStackTrace>
+-                </configuration>
+-            </plugin>
+-        </plugins>
+-    </build>
+ </project>
+-- 
+2.44.0.windows.1
+

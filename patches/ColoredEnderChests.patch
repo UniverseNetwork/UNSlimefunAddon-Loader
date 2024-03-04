@@ -1,6 +1,6 @@
-From d707a677655986197d4572e2ef8c2b48de88b334 Mon Sep 17 00:00:00 2001
+From 150f41e9a544e45093d0c510fb8d2f850ab9c1e6 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 13 Jan 2024 05:49:26 +0700
+Date: Sun, 3 Mar 2024 10:18:12 +0700
 Subject: [PATCH] ColoredEnderChests
 
 ---
@@ -378,14 +378,14 @@ index 87cb981..50e323c 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/coloredenderchests/ColoredEnderChests.java b/src/main/java/id/universenetwork/sfa_loader/addons/coloredenderchests/ColoredEnderChests.java
 new file mode 100644
-index 0000000..8f4b0d1
+index 0000000..73ddad6
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/coloredenderchests/ColoredEnderChests.java
 @@ -0,0 +1,64 @@
 +package id.universenetwork.sfa_loader.addons.coloredenderchests;
 +
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 +import io.github.thebusybiscuit.slimefun4.api.researches.Research;
@@ -586,5 +586,5 @@ index 77091e3..0000000
 -- Slimefun
 \ No newline at end of file
 -- 
-2.43.0.windows.1
+2.44.0.windows.1
 

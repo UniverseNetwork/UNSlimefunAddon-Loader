@@ -40,7 +40,7 @@ function checkUpstream($dir) {
 
 if ($args[0]) {
     if ($args[0] -eq "--all") {
-        checkUpstream InfinityLib-Standalone
+        checkUpstream InfinityGuizhanLib-Standalone
 
         checkUpstream Addons/ColoredEnderChests
         checkUpstream Addons/DyeBench

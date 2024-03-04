@@ -61,7 +61,7 @@ if ($args[0]) {
     if ($args[0] -eq "--all") {
         disableCommitSigning
 
-        applyPatch InfinityLib-Standalone
+        applyPatch InfinityGuizhanLib-Standalone
 
         applyPatch Addons/ColoredEnderChests
         applyPatch Addons/DyeBench

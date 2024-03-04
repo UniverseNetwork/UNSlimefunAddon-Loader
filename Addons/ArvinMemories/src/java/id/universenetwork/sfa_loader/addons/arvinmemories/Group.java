@@ -1,6 +1,6 @@
 package id.universenetwork.sfa_loader.addons.arvinmemories;
 
-import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
+import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 import id.universenetwork.sfa_loader.utils.TextUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;

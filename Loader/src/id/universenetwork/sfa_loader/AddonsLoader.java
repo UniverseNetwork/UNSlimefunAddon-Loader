@@ -2,8 +2,8 @@ package id.universenetwork.sfa_loader;
 
 import id.universenetwork.sfa_loader.annotations.*;
 import id.universenetwork.sfa_loader.enums.PaperRequirementLevel;
-import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
+import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
+import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 import id.universenetwork.sfa_loader.managers.LibraryManager;
 import id.universenetwork.sfa_loader.template.AddonTemplate;
 import id.universenetwork.sfa_loader.utils.LogUtils;
@@ -33,14 +33,14 @@ public class AddonsLoader {
         Reflections reflections = new Reflections("id.universenetwork.sfa_loader.addons");
         allAddonsClasses.addAll(reflections.getSubTypesOf(AddonTemplate.class));
 
-        new SlimefunAddonInstance("UniverseNetwork", "SlimefunAddon-Loader");
+        new SlimefunAddonInstance("UniverseNetwork", "SlimefunAddon-Loader").initialize();
 
         LogUtils.info("&eStart loading the enabled addons in the configuration file...");
         TookTimeUtils tookTime = new TookTimeUtils();
 
         for (Class<? extends AddonTemplate> addon : allAddonsClasses) {
             String name = getAddonName(addon);
-            if (AbstractAddon.config().getBoolean("addons." + name.toLowerCase()))
+            if (AbstractAddon.getAddonConfig().getBoolean("addons." + name.toLowerCase()))
                 loadAddon(addon, name);
         }
         if (!addonsWithHooksClasses.isEmpty())
@@ -109,7 +109,7 @@ public class AddonsLoader {
                 .value()).collect(Collectors.toSet());
         for (Iterator<String> iterator = hooks.iterator(); iterator.hasNext(); ) {
             String hook = iterator.next();
-            if (AbstractAddon.config().getBoolean("addons." + hook.toLowerCase())) {
+            if (AbstractAddon.getAddonConfig().getBoolean("addons." + hook.toLowerCase())) {
                 if (isAddonLoaded(hook)) continue;
                 addonIterator.remove();
                 addonsWithHooksClasses.add(addonClass);

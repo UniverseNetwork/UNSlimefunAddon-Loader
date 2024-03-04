@@ -1,6 +1,6 @@
-From 6f0493c50acc0ead128a5d747c60c5476f8ef039 Mon Sep 17 00:00:00 2001
+From f4354bd54fbb51e09029c6a20e21114fae682a87 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 25 Feb 2024 08:37:31 +0700
+Date: Sun, 3 Mar 2024 10:32:02 +0700
 Subject: [PATCH] ExtraHeads
 
 ---
@@ -174,7 +174,7 @@ diff --git a/src/main/java/io/github/thebusybiscuit/extraheads/ExtraHeads.java b
 similarity index 56%
 rename from src/main/java/io/github/thebusybiscuit/extraheads/ExtraHeads.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/extraheads/ExtraHeads.java
-index 66e4160..6300938 100644
+index 66e4160..c9b31d8 100644
 --- a/src/main/java/io/github/thebusybiscuit/extraheads/ExtraHeads.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/ExtraHeads.java
 @@ -1,178 +1,207 @@
@@ -213,8 +213,8 @@ index 66e4160..6300938 100644
 +import id.universenetwork.sfa_loader.addons.extraheads.special.MobHeadProvider;
 +import id.universenetwork.sfa_loader.addons.extraheads.special.SheepHeadHandler;
 +import id.universenetwork.sfa_loader.addons.extraheads.special.ShulkerHeadHandler;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
 +import id.universenetwork.sfa_loader.utils.LogUtils;
  
@@ -495,7 +495,7 @@ diff --git a/src/main/java/io/github/thebusybiscuit/extraheads/HeadListener.java
 similarity index 52%
 rename from src/main/java/io/github/thebusybiscuit/extraheads/HeadListener.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/extraheads/HeadListener.java
-index da0777c..469640c 100644
+index da0777c..f81c416 100644
 --- a/src/main/java/io/github/thebusybiscuit/extraheads/HeadListener.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/HeadListener.java
 @@ -1,4 +1,4 @@
@@ -509,7 +509,7 @@ index da0777c..469640c 100644
  import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
  
 -public class HeadListener implements Listener {
-+import id.universenetwork.sfa_loader.libraries.infinitylib.common.Events;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
  
 -    private final ExtraHeads plugin;
 +public class HeadListener implements Listener {
@@ -521,7 +521,7 @@ index da0777c..469640c 100644
 +        this.main = main;
  
 -        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-+        Events.registerListeners(this);
++        Event.registerListeners(this);
      }
  
      @EventHandler(ignoreCancelled = true)
@@ -612,7 +612,7 @@ index 0000000..bbc87fe
 +}
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/BeeHeadHandler.java b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/BeeHeadHandler.java
 new file mode 100644
-index 0000000..24f8b66
+index 0000000..0e553c9
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/BeeHeadHandler.java
 @@ -0,0 +1,64 @@
@@ -625,7 +625,7 @@ index 0000000..24f8b66
 +
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 +
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
 +
 +public class BeeHeadHandler extends MobHeadHandler {
 +    final AddonConfig cfg;
@@ -682,7 +682,7 @@ index 0000000..24f8b66
 +}
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/FrogHeadHandler.java b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/FrogHeadHandler.java
 new file mode 100644
-index 0000000..0814e6f
+index 0000000..f906af8
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/FrogHeadHandler.java
 @@ -0,0 +1,66 @@
@@ -693,7 +693,7 @@ index 0000000..0814e6f
 +
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 +
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
 +
 +public class FrogHeadHandler extends MobHeadHandler {
 +    final AddonConfig cfg;
@@ -802,7 +802,7 @@ index 0000000..b604024
 +}
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/SheepHeadHandler.java b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/SheepHeadHandler.java
 new file mode 100644
-index 0000000..ace60b0
+index 0000000..136543c
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/SheepHeadHandler.java
 @@ -0,0 +1,119 @@
@@ -813,7 +813,7 @@ index 0000000..ace60b0
 +
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 +
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
 +
 +public class SheepHeadHandler extends MobHeadHandler {
 +    final AddonConfig cfg;
@@ -927,7 +927,7 @@ index 0000000..ace60b0
 +}
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/ShulkerHeadHandler.java b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/ShulkerHeadHandler.java
 new file mode 100644
-index 0000000..837fc92
+index 0000000..9272f6d
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/extraheads/special/ShulkerHeadHandler.java
 @@ -0,0 +1,121 @@
@@ -938,7 +938,7 @@ index 0000000..837fc92
 +
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 +
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AddonConfig;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
 +
 +public class ShulkerHeadHandler extends MobHeadHandler {
 +    final AddonConfig cfg;

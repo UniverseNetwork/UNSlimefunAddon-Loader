@@ -1,6 +1,6 @@
-From 9ad14d7ed9d01f34e5113d37d1ee2ca449a0f8b9 Mon Sep 17 00:00:00 2001
+From be7d89b43856369036e68641f60aabdd00ae3877 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Wed, 17 Jan 2024 14:02:23 +0700
+Date: Sun, 3 Mar 2024 10:23:22 +0700
 Subject: [PATCH] EcoPower
 
 ---
@@ -172,7 +172,7 @@ diff --git a/src/main/java/io/github/thebusybiscuit/ecopower/EcoPowerPlugin.java
 similarity index 80%
 rename from src/main/java/io/github/thebusybiscuit/ecopower/EcoPowerPlugin.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/ecopower/EcoPowerPlugin.java
-index e29fb49..27d4ef2 100644
+index e29fb49..52647c2 100644
 --- a/src/main/java/io/github/thebusybiscuit/ecopower/EcoPowerPlugin.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/ecopower/EcoPowerPlugin.java
 @@ -1,118 +1,101 @@
@@ -197,8 +197,8 @@ index e29fb49..27d4ef2 100644
 +import id.universenetwork.sfa_loader.addons.ecopower.generators.*;
 +import id.universenetwork.sfa_loader.addons.ecopower.items.SteelRotor;
 +import id.universenetwork.sfa_loader.annotations.AddonInfo;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.AbstractAddon;
-+import id.universenetwork.sfa_loader.libraries.infinitylib.core.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -888,5 +888,5 @@ index cdb22f0..0000000
 -version: ${project.version}
 -api-version: 1.14
 -- 
-2.43.0.windows.1
+2.44.0.windows.1
 
