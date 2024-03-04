@@ -1,6 +1,6 @@
-From 3399074f0bd1102ee98821592bf2e4cf484479a3 Mon Sep 17 00:00:00 2001
+From cf07e5d13abd582e6ab5fc5db217714684384656 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Mon, 4 Mar 2024 09:09:12 +0700
+Date: Mon, 4 Mar 2024 14:13:26 +0700
 Subject: [PATCH] DynaTech
 
 ---
@@ -56,7 +56,7 @@ Subject: [PATCH] DynaTech
  .../addons}/dynatech/items/misc/VexGem.java   |  83 +-
  .../dynatech/items/misc/WitherGolem.java      |  31 +
  .../dynatech/items/tools/AngelGem.java        |  90 +--
- .../dynatech/items/tools/DimensionalHome.java |  61 +-
+ .../dynatech/items/tools/DimensionalHome.java |  63 +-
  .../items/tools/ElectricalStimulator.java     |   5 +-
  .../dynatech/items/tools/InventoryFilter.java |   4 +-
  .../dynatech/items/tools/LiquidTank.java      | 100 +--
@@ -74,7 +74,7 @@ Subject: [PATCH] DynaTech
  .../addons-config/DynaTech/config.yml         |   1 +
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  24 -
- 70 files changed, 2608 insertions(+), 3286 deletions(-)
+ 70 files changed, 2610 insertions(+), 3286 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/dynatech/DynaTech.java
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/DynaTechItems.java (91%)
  rename src/main/java/{me/profelements => id/universenetwork/sfa_loader/addons}/dynatech/attributes/LiquidStorage.java (77%)
@@ -7739,14 +7739,15 @@ diff --git a/src/main/java/me/profelements/dynatech/items/tools/DimensionalHome.
 similarity index 51%
 rename from src/main/java/me/profelements/dynatech/items/tools/DimensionalHome.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/DimensionalHome.java
-index e50638f..2a326a0 100644
+index e50638f..fcea74e 100644
 --- a/src/main/java/me/profelements/dynatech/items/tools/DimensionalHome.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/dynatech/items/tools/DimensionalHome.java
-@@ -1,18 +1,16 @@
+@@ -1,18 +1,17 @@
 -package me.profelements.dynatech.items.tools;
 +package id.universenetwork.sfa_loader.addons.dynatech.items.tools;
  
 -import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
++import id.universenetwork.sfa_loader.addons.dynatech.DynaTech;
 +import id.universenetwork.sfa_loader.addons.dynatech.DynaTechItems;
 +import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
@@ -7765,7 +7766,11 @@ index e50638f..2a326a0 100644
  import org.bukkit.Bukkit;
  import org.bukkit.Location;
  import org.bukkit.NamespacedKey;
-@@ -25,10 +23,9 @@ import javax.annotation.Nonnull;
+@@ -22,13 +21,13 @@ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.inventory.meta.ItemMeta;
+ 
+ import javax.annotation.Nonnull;
++import java.io.File;
  import java.util.List;
  
  public class DimensionalHome extends SlimefunItem {
@@ -7774,11 +7779,11 @@ index e50638f..2a326a0 100644
 +    private static final NamespacedKey CHUNK_KEY = AbstractAddon.createKey("chunk-key");
      private static final World DIM_HOME_WORLD = Bukkit.getServer().getWorld("dimensionalhome");
 -    private static final Config CURRENT_HIGHEST_CHUNK_ID = new Config("plugins/DynaTech/current-chunk-highest.yml");
-+    private static final AddonConfig CURRENT_HIGHEST_CHUNK_ID = new AddonConfig("addons-config/DynaTech/current-chunk-highest.yml");
++    private static final AddonConfig CURRENT_HIGHEST_CHUNK_ID = new AddonConfig(new File(DynaTech.getInstance().getAddonFolder(), "current-chunk-highest.yml"), false);
      private int id = CURRENT_HIGHEST_CHUNK_ID.getInt("current-chunk-highest-id");
  
      public DimensionalHome(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
-@@ -37,33 +34,24 @@ public class DimensionalHome extends SlimefunItem {
+@@ -37,33 +36,24 @@ public class DimensionalHome extends SlimefunItem {
      }
  
      public ItemUseHandler onRightClick() {
@@ -7826,7 +7831,7 @@ index e50638f..2a326a0 100644
          };
      }
  
-@@ -71,21 +59,18 @@ public class DimensionalHome extends SlimefunItem {
+@@ -71,21 +61,18 @@ public class DimensionalHome extends SlimefunItem {
          ItemMeta im = item.getItemMeta();
          List<String> lore = im.getLore();
  
