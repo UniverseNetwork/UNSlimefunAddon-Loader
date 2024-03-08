@@ -79,6 +79,7 @@ if ($args[0]) {
         applyPatch Addons/PrivateStorage
         applyPatch Addons/SFCalc
         applyPatch Addons/SfChunkInfo
+        applyPatch Addons/SlimefunTranslation
         applyPatch Addons/SMG
         applyPatch Addons/SoundMuffler
 

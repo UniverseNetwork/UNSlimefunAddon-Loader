@@ -31,6 +31,7 @@
         <module>PrivateStorage</module>
         <module>SFCalc</module>
         <module>SfChunkInfo</module>
+        <module>SlimefunTranslation</module>
         <module>SMG</module>
         <module>SoundMuffler</module>
     </modules>

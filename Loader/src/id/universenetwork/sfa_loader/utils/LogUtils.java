@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -29,55 +30,43 @@ public class LogUtils {
      * Logs a message in the console.
      * The message will be converted in colored strings with the chosen prefix in config.yml
      *
-     * @param lvl the Level of the log
-     * @param msg the message
-     * @param e   the exception
+     * @param lvl  the Level of the log
+     * @param msg  the message
+     * @param e    the exception
+     * @param args the arguments with in
      * @author Timeout
      * @author ARVIN3108 ID
      * @see Logger#log(Level, String, Throwable)
      */
-    public void log(Level lvl, String msg, Throwable e) {
+    public void log(Level lvl, String msg, Throwable e, Object... args) {
         if (lvl.equals(Level.WARNING))
-            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &e" + msg), e);
+            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &e" + MessageFormat.format(msg, args)), e);
         if (lvl.equals(Level.SEVERE))
-            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &c" + msg), e);
-        else Bukkit.getLogger().log(lvl, checkAndConvert("%p% &r" + msg), e);
+            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &e" + MessageFormat.format(msg, args)), e);
+        else Bukkit.getLogger().log(lvl, checkAndConvert("%p% &e" + MessageFormat.format(msg, args)), e);
     }
 
     /**
      * Logs a message in the console.
      * The message will be converted in colored strings with the chosen prefix in config.yml
      *
-     * @param lvl   the Level of the log
-     * @param msg   the message
-     * @param param the parameter to the message
-     * @author ARVIN3108 ID
-     * @see Logger#log(Level, String, Object)
-     */
-    public void log(Level lvl, String msg, Object param) {
-        if (lvl.equals(Level.WARNING))
-            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &e" + msg), param);
-        if (lvl.equals(Level.SEVERE))
-            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &c" + msg), param);
-        else Bukkit.getLogger().log(lvl, checkAndConvert("%p% &r" + msg), param);
-    }
-
-    /**
-     * Logs a message in the console.
-     * The message will be converted in colored strings with the chosen prefix in config.yml
-     *
-     * @param lvl    the Level of the log
-     * @param msg    the message
-     * @param params the parameter to the message
+     * @param lvl  the Level of the log
+     * @param msg  the message
+     * @param args the parameter to the message
      * @author ARVIN3108 ID
      * @see Logger#log(Level, String, Object[])
      */
-    public void log(Level lvl, String msg, Object[] params) {
+    public void log(Level lvl, String msg, Object... args) {
         if (lvl.equals(Level.WARNING))
-            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &e" + msg), params);
+            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &e" + MessageFormat.format(msg, args)));
         if (lvl.equals(Level.SEVERE))
-            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &c" + msg), params);
-        else Bukkit.getLogger().log(lvl, checkAndConvert("%p% &r" + msg), params);
+            Bukkit.getLogger().log(lvl, checkAndConvert("%p% &c" + MessageFormat.format(msg, args)));
+        else Bukkit.getLogger().log(lvl, checkAndConvert("%p% &r" + MessageFormat.format(msg, args)));
+    }
+
+    public static void log(Level level, String... messages) {
+        Logger logger = Bukkit.getLogger();
+        for (String msg : messages) logger.log(level, checkAndConvert("%p% &e" + msg));
     }
 
     /**

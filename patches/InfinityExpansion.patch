@@ -1,11 +1,11 @@
-From ffc97e525472ce0949164393b38d6be2faaf9bb1 Mon Sep 17 00:00:00 2001
+From 7d94f6369456093b7803ec42a97ac1a23806b21f Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 3 Mar 2024 22:01:17 +0700
+Date: Fri, 8 Mar 2024 21:27:27 +0700
 Subject: [PATCH] InfinityExpansion
 
 ---
  pom.xml                                       | 121 +------
- .../infinityexpansion/InfinityExpansion.java  |  71 ++++
+ .../infinityexpansion/InfinityExpansion.java  |  72 ++++
  .../infinityexpansion/categories/Groups.java  |  24 +-
  .../categories/InfinityGroup.java             | 188 ++++------
  .../commands/GiveRecipe.java                  |  57 ++++
@@ -18,7 +18,7 @@ Subject: [PATCH] InfinityExpansion
  .../items/blocks/Blocks.java                  |  36 +-
  .../items/blocks/InfinityWorkbench.java       |  66 ++--
  .../items/blocks/StrainerBase.java            | 116 +++----
- .../infinityexpansion/items/gear/Gear.java    | 119 +++----
+ .../infinityexpansion/items/gear/Gear.java    | 118 +++----
  .../items/gear/InfinityArmor.java             |  27 +-
  .../items/gear/InfinityBow.java               |  33 +-
  .../items/gear/InfinityMatrix.java            |  55 ++-
@@ -55,7 +55,7 @@ Subject: [PATCH] InfinityExpansion
  .../items/storage/StorageForge.java           |  23 +-
  .../items/storage/StorageSaveFix.java         |  39 +--
  .../items/storage/StorageUnit.java            | 120 +++----
- .../addons}/infinityexpansion/utils/Util.java |  67 ++--
+ .../addons}/infinityexpansion/utils/Util.java |  66 ++--
  .../infinityexpansion/InfinityExpansion.java  |  85 -----
  .../commands/GiveRecipe.java                  |  68 ----
  .../infinityexpansion/commands/PrintItem.java |  44 ---
@@ -63,7 +63,7 @@ Subject: [PATCH] InfinityExpansion
  .../InfinityExpansion}/config.yml             |  10 +-
  src/main/resources/plugin.yml                 |  27 --
  .../TestInfinityExpansion.java                |  28 --
- 59 files changed, 1922 insertions(+), 2800 deletions(-)
+ 59 files changed, 1921 insertions(+), 2800 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/Groups.java (69%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/InfinityGroup.java (74%)
@@ -114,7 +114,7 @@ Subject: [PATCH] InfinityExpansion
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/storage/StorageForge.java (62%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/storage/StorageSaveFix.java (76%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/items/storage/StorageUnit.java (73%)
- rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/utils/Util.java (78%)
+ rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/utils/Util.java (77%)
  delete mode 100644 src/main/java/io/github/mooy1/infinityexpansion/InfinityExpansion.java
  delete mode 100644 src/main/java/io/github/mooy1/infinityexpansion/commands/GiveRecipe.java
  delete mode 100644 src/main/java/io/github/mooy1/infinityexpansion/commands/PrintItem.java
@@ -283,10 +283,10 @@ index 4e75192..246fcd4 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
 new file mode 100644
-index 0000000..870d04a
+index 0000000..28bf7a0
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
-@@ -0,0 +1,71 @@
+@@ -0,0 +1,72 @@
 +package id.universenetwork.sfa_loader.addons.infinityexpansion;
 +
 +import id.universenetwork.sfa_loader.addons.infinityexpansion.categories.Groups;
@@ -308,6 +308,7 @@ index 0000000..870d04a
 +import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
 +import id.universenetwork.sfa_loader.managers.CommandManager;
 +import id.universenetwork.sfa_loader.template.AddonTemplate;
++import id.universenetwork.sfa_loader.utils.LogUtils;
 +import org.bukkit.Bukkit;
 +import org.bukkit.plugin.Plugin;
 +
@@ -325,7 +326,7 @@ index 0000000..870d04a
 +    public void onLoad() {
 +        Plugin lx = Bukkit.getPluginManager().getPlugin("LiteXpansion");
 +        if (lx != null && lx.getConfig().getBoolean("options.nerf-other-addons"))
-+            AbstractAddon.getScheduler().run(() -> AbstractAddon.log(Level.WARNING,
++            AbstractAddon.getScheduler().run(() -> LogUtils.log(Level.WARNING,
 +                    "########################################################",
 +                    "LiteXpansion nerfs energy generation in this addon.",
 +                    "You can disable these nerfs in the LiteXpansion config.",
@@ -2078,7 +2079,7 @@ diff --git a/src/main/java/io/github/mooy1/infinityexpansion/items/gear/Gear.jav
 similarity index 84%
 rename from src/main/java/io/github/mooy1/infinityexpansion/items/gear/Gear.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/gear/Gear.java
-index 3f7ccaa..1352530 100644
+index 3f7ccaa..5ee2e9b 100644
 --- a/src/main/java/io/github/mooy1/infinityexpansion/items/gear/Gear.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/items/gear/Gear.java
 @@ -1,13 +1,17 @@
@@ -2096,8 +2097,8 @@ index 3f7ccaa..1352530 100644
 +import id.universenetwork.sfa_loader.addons.infinityexpansion.items.blocks.InfinityWorkbench;
 +import id.universenetwork.sfa_loader.addons.infinityexpansion.items.materials.Materials;
 +import id.universenetwork.sfa_loader.addons.infinityexpansion.utils.Util;
-+import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.utils.LogUtils;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 +import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -2107,7 +2108,7 @@ index 3f7ccaa..1352530 100644
  import org.bukkit.ChatColor;
  import org.bukkit.Material;
  import org.bukkit.configuration.ConfigurationSection;
-@@ -18,19 +22,14 @@ import org.bukkit.inventory.meta.ItemMeta;
+@@ -18,19 +22,13 @@ import org.bukkit.inventory.meta.ItemMeta;
  import org.bukkit.potion.PotionEffect;
  import org.bukkit.potion.PotionEffectType;
  
@@ -2124,7 +2125,6 @@ index 3f7ccaa..1352530 100644
 +import java.util.List;
 +import java.util.Map;
 +import java.util.Objects;
-+import java.util.logging.Level;
  
  @UtilityClass
  public final class Gear {
@@ -2132,7 +2132,7 @@ index 3f7ccaa..1352530 100644
      public static final SlimefunItemStack ENDER_FLAME = new SlimefunItemStack(
              "ENDER_FLAME",
              Material.ENCHANTED_BOOK,
-@@ -115,8 +114,8 @@ public final class Gear {
+@@ -115,8 +113,8 @@ public final class Gear {
              "&7Upgrades a tool to vein-mine certain materials"
      );
  
@@ -2143,7 +2143,7 @@ index 3f7ccaa..1352530 100644
                  CROWN, CHESTPLATE, LEGGINGS, BOOTS,
                  AXE, BLADE, PICKAXE,
                  SHIELD, SHOVEL, BOW
-@@ -124,125 +123,125 @@ public final class Gear {
+@@ -124,125 +122,125 @@ public final class Gear {
          EnchantmentStorageMeta storageMeta = (EnchantmentStorageMeta) ENDER_FLAME.getItemMeta();
          Objects.requireNonNull(storageMeta).addStoredEnchant(Enchantment.FIRE_ASPECT, 10, true);
          ENDER_FLAME.setItemMeta(storageMeta);
@@ -2298,11 +2298,11 @@ index 3f7ccaa..1352530 100644
  
          if (typeSection == null) {
 -            InfinityExpansion.log(Level.SEVERE, "Config section \"infinity-enchant-levels\" missing, Check your config and report this!");
-+            AbstractAddon.log(Level.SEVERE, "Config section \"infinity-enchant-levels\" missing, Check your config and report this!");
++            LogUtils.severe("Config section \"infinity-enchant-levels\" missing, Check your config and report this!");
              return;
          }
  
-@@ -251,12 +250,8 @@ public final class Gear {
+@@ -251,12 +249,8 @@ public final class Gear {
  
              // lore
              List<String> lore;
@@ -2317,7 +2317,7 @@ index 3f7ccaa..1352530 100644
              lore.add(ChatColor.AQUA + "Soulbound");
              meta.setLore(lore);
  
-@@ -266,12 +261,10 @@ public final class Gear {
+@@ -266,12 +260,10 @@ public final class Gear {
  
              // unbreakable and enchants
              meta.setUnbreakable(Objects.requireNonNull(itemSection).getBoolean("unbreakable"));
@@ -8364,10 +8364,10 @@ index 62ed348..1fa9477 100644
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/github/mooy1/infinityexpansion/utils/Util.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/utils/Util.java
-similarity index 78%
+similarity index 77%
 rename from src/main/java/io/github/mooy1/infinityexpansion/utils/Util.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/utils/Util.java
-index 2bde9e3..13daa4a 100644
+index 2bde9e3..adcf631 100644
 --- a/src/main/java/io/github/mooy1/infinityexpansion/utils/Util.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/utils/Util.java
 @@ -1,16 +1,9 @@
@@ -8383,15 +8383,15 @@ index 2bde9e3..13daa4a 100644
 -import javax.annotation.Nullable;
 +package id.universenetwork.sfa_loader.addons.infinityexpansion.utils;
  
-+import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.utils.LogUtils;
  import lombok.experimental.UtilityClass;
 -
 +import me.mrCookieSlime.Slimefun.api.BlockStorage;
  import org.bukkit.ChatColor;
  import org.bukkit.Location;
  import org.bukkit.block.Block;
-@@ -21,22 +14,22 @@ import org.bukkit.enchantments.Enchantment;
+@@ -21,22 +14,21 @@ import org.bukkit.enchantments.Enchantment;
  import org.bukkit.inventory.ItemStack;
  import org.bukkit.inventory.meta.ItemMeta;
  
@@ -8403,7 +8403,6 @@ index 2bde9e3..13daa4a 100644
 +import java.util.HashMap;
 +import java.util.List;
 +import java.util.Map;
-+import java.util.logging.Level;
  
  @UtilityClass
  public final class Util {
@@ -8424,7 +8423,7 @@ index 2bde9e3..13daa4a 100644
          lore.add("");
          lore.add(ChatColor.GREEN + "-------------------");
          lore.add(ChatColor.GREEN + "\u21E8 Click to craft");
-@@ -46,18 +39,16 @@ public final class Util {
+@@ -46,18 +38,16 @@ public final class Util {
      }
  
      @Nonnull
@@ -8442,11 +8441,11 @@ index 2bde9e3..13daa4a 100644
                  else if (level != 0) {
                      section.set(path, 0);
 -                    InfinityExpansion.log(Level.WARNING,
-+                    AbstractAddon.log(Level.WARNING,
++                    LogUtils.warning(
                              "Enchantment level " + level
                                      + " is out of bounds for " + e.getKey()
                                      + ", resetting to default!"
-@@ -69,7 +60,7 @@ public final class Util {
+@@ -69,7 +59,7 @@ public final class Util {
      }
  
      @Nullable
@@ -8455,7 +8454,7 @@ index 2bde9e3..13daa4a 100644
          switch (path) {
              case "sharpness":
                  return Enchantment.DAMAGE_ALL;
-@@ -110,8 +101,8 @@ public final class Util {
+@@ -110,8 +100,8 @@ public final class Util {
          }
      }
  
@@ -8466,7 +8465,7 @@ index 2bde9e3..13daa4a 100644
              BlockData blockData = b.getBlockData();
  
              if (blockData instanceof Waterlogged) {
-@@ -119,23 +110,16 @@ public final class Util {
+@@ -119,23 +109,16 @@ public final class Util {
                  if (waterLogged.isWaterlogged()) {
                      BlockStorage.addBlockInfo(b.getLocation(), "water_logged", "true");
                      return true;
@@ -8494,7 +8493,7 @@ index 2bde9e3..13daa4a 100644
          String val = BlockStorage.getLocationInfo(block, key);
          if (val == null) {
              BlockStorage.addBlockInfo(block, key, "0");
-@@ -148,5 +132,4 @@ public final class Util {
+@@ -148,5 +131,4 @@ public final class Util {
              return 0;
          }
      }

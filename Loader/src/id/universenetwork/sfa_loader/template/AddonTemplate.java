@@ -6,6 +6,7 @@ import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonCo
 import lombok.Getter;
 
 import java.io.File;
+import java.io.InputStream;
 
 @Getter
 public abstract class AddonTemplate {
@@ -23,5 +24,9 @@ public abstract class AddonTemplate {
     public abstract void onLoad();
 
     public void onUnload() {
+    }
+
+    public InputStream getResource(String path) {
+        return AbstractAddon.getInstance().getResource(addonFolderString + "/" + path);
     }
 }

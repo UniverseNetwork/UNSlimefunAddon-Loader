@@ -3,7 +3,7 @@ description: ${project.parent.description}
 main: ${project.parent.groupId}.Main
 version: ${plugin.version}
 api-version: 1.13
-softdepend: [ Slimefun, ProtocolLib ]
+softdepend: [ Slimefun, ProtocolLib, PlaceholderAPI ]
 website: ${project.parent.url}
 author: ARVIN3108 ID
 prefix: SFALoader

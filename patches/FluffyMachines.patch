@@ -1,6 +1,6 @@
-From 1ab8be3b0e33db081b7771bdaab19ef6e1d8af17 Mon Sep 17 00:00:00 2001
+From b5fc2e5b70e9fbaa326a896e9fc06556cbbaf436 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Mon, 4 Mar 2024 09:19:34 +0700
+Date: Fri, 8 Mar 2024 21:38:22 +0700
 Subject: [PATCH] FluffyMachines
 
 ---
@@ -24,7 +24,7 @@ Subject: [PATCH] FluffyMachines
  .../items/tools/UpgradedExplosivePickaxe.java |  14 +-
  .../items/tools/UpgradedExplosiveShovel.java  |  22 +-
  .../items/tools/UpgradedExplosiveTool.java    |  92 +++-----
- .../items/tools/UpgradedLumberAxe.java        |  54 ++---
+ .../items/tools/UpgradedLumberAxe.java        |  52 ++---
  .../items/tools/WarpPadConfigurator.java      |  62 +++---
  .../items/tools/WateringCan.java              | 109 +++------
  .../listeners/KeyedCrafterListener.java       |  37 +--
@@ -63,7 +63,7 @@ Subject: [PATCH] FluffyMachines
  .../fluffymachines/utils/CancelPlace.java     |   4 -
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  31 ---
- 59 files changed, 1183 insertions(+), 2359 deletions(-)
+ 59 files changed, 1184 insertions(+), 2356 deletions(-)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/FluffyItemSetup.java (81%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/FluffyMachines.java
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/Barrel.java (84%)
@@ -83,7 +83,7 @@ Subject: [PATCH] FluffyMachines
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/UpgradedExplosivePickaxe.java (78%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/UpgradedExplosiveShovel.java (73%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/UpgradedExplosiveTool.java (68%)
- rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/UpgradedLumberAxe.java (79%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/UpgradedLumberAxe.java (78%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/WarpPadConfigurator.java (71%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/items/tools/WateringCan.java (76%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/fluffymachines/listeners/KeyedCrafterListener.java (83%)
@@ -3096,16 +3096,17 @@ index 1dd34dc..8f16343 100644
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/UpgradedLumberAxe.java b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/UpgradedLumberAxe.java
-similarity index 79%
+similarity index 78%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/UpgradedLumberAxe.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/UpgradedLumberAxe.java
-index 2b93d40..d07c75c 100644
+index 2b93d40..726e56f 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/tools/UpgradedLumberAxe.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/tools/UpgradedLumberAxe.java
-@@ -1,21 +1,17 @@
+@@ -1,18 +1,18 @@
 -package io.ncbpfluffybear.fluffymachines.items.tools;
 +package id.universenetwork.sfa_loader.addons.fluffymachines.items.tools;
  
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
  import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -3120,16 +3121,12 @@ index 2b93d40..d07c75c 100644
 -import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
  import me.mrCookieSlime.Slimefun.api.BlockStorage;
--import org.bukkit.Axis;
+ import org.bukkit.Axis;
 -import org.bukkit.Bukkit;
--import org.bukkit.Material;
--import org.bukkit.Sound;
--import org.bukkit.Tag;
-+import org.bukkit.*;
- import org.bukkit.block.Block;
- import org.bukkit.block.data.Orientable;
- import org.bukkit.inventory.ItemStack;
-@@ -26,15 +22,14 @@ import java.util.List;
+ import org.bukkit.Material;
+ import org.bukkit.Sound;
+ import org.bukkit.Tag;
+@@ -26,15 +26,14 @@ import java.util.List;
  import java.util.function.Predicate;
  
  public class UpgradedLumberAxe extends SimpleSlimefunItem<ItemUseHandler> implements NotPlaceable {
@@ -3147,7 +3144,7 @@ index 2b93d40..d07c75c 100644
      }
  
      @Override
-@@ -50,27 +45,21 @@ public class UpgradedLumberAxe extends SimpleSlimefunItem<ItemUseHandler> implem
+@@ -50,27 +49,21 @@ public class UpgradedLumberAxe extends SimpleSlimefunItem<ItemUseHandler> implem
              if (Tag.LOGS.getValues().contains(e.getBlock().getType())) {
  
                  // Prevent use on Slimefun blocks
@@ -3170,17 +3167,18 @@ index 2b93d40..d07c75c 100644
                      if (Slimefun.getProtectionManager().hasPermission(e.getPlayer(), b,
 -                        Interaction.BREAK_BLOCK) && BlockStorage.checkID(b) == null) {
 -                        if (triggerOtherPlugins.getValue()) {
+-                            Bukkit.getPluginManager().callEvent(new AlternateBreakEvent(b, e.getPlayer()));
+-                        }
 +                            Interaction.BREAK_BLOCK) && BlockStorage.checkID(b) == null) {
 +                        if (triggerOtherPlugins.getValue())
-                             Bukkit.getPluginManager().callEvent(new AlternateBreakEvent(b, e.getPlayer()));
--                        }
++                            Event.call(new AlternateBreakEvent(b, e.getPlayer()));
                          b.breakNaturally(tool);
                      }
 -                }
              }
          };
      }
-@@ -87,12 +76,10 @@ public class UpgradedLumberAxe extends SimpleSlimefunItem<ItemUseHandler> implem
+@@ -87,12 +80,10 @@ public class UpgradedLumberAxe extends SimpleSlimefunItem<ItemUseHandler> implem
  
                      logs.remove(block);
  
@@ -3195,7 +3193,7 @@ index 2b93d40..d07c75c 100644
                  }
              }
          };
-@@ -119,20 +106,15 @@ public class UpgradedLumberAxe extends SimpleSlimefunItem<ItemUseHandler> implem
+@@ -119,20 +110,15 @@ public class UpgradedLumberAxe extends SimpleSlimefunItem<ItemUseHandler> implem
      }
  
      private static void expand(Block anchor, List<Block> list, int limit, Predicate<Block> predicate) {

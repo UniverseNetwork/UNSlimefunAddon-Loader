@@ -1,9 +1,10 @@
-From d7afd706244fe789b02044ce632f5463aaef7fd4 Mon Sep 17 00:00:00 2001
+From ae8400ebd0ea521a20247118be96248227aa5d6f Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Mon, 4 Mar 2024 14:06:39 +0700
+Date: Fri, 8 Mar 2024 21:23:25 +0700
 Subject: [PATCH] InfinityGuizhanLib-Standalone
 
 ---
+ GuizhanLib-api/pom.xml                        |   6 -
  GuizhanLib-common/pom.xml                     |  10 -
  .../guizhanlib/common/Cooldown.java           |   2 +-
  .../guizhanlib/common/PersistentType.java     |   2 +-
@@ -66,7 +67,7 @@ Subject: [PATCH] InfinityGuizhanLib-Standalone
  .../minecraft/utils/TestChatUtil.java         |  25 --
  .../minecraft/utils/TestItemUtil.java         |  55 ---
  .../libraries}/guizhanlib/common/Event.java   |  10 +-
- .../slimefun/addon/AbstractAddon.java         |  42 +--
+ .../slimefun/addon/AbstractAddon.java         | 133 +------
  .../slimefun/addon/AddonConfig.java           | 106 +++++-
  .../slimefun/addon/Environment.java           |   2 +-
  .../slimefun/addon/PathBuilder.java           |   2 +-
@@ -111,7 +112,7 @@ Subject: [PATCH] InfinityGuizhanLib-Standalone
  .../guizhanlib/updater/UpdaterTask.java       | 283 ---------------
  .../guizhanlib/updater/package-info.java      |   4 -
  pom.xml                                       | 207 +----------
- 107 files changed, 236 insertions(+), 2114 deletions(-)
+ 108 files changed, 247 insertions(+), 2200 deletions(-)
  rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/common/Cooldown.java (94%)
  rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/common/PersistentType.java (99%)
  rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/common/RateLimit.java (97%)
@@ -173,7 +174,7 @@ Subject: [PATCH] InfinityGuizhanLib-Standalone
  delete mode 100644 GuizhanLib-minecraft/src/test/java/net/guizhanss/guzihanlib/minecraft/utils/TestChatUtil.java
  delete mode 100644 GuizhanLib-minecraft/src/test/java/net/guizhanss/guzihanlib/minecraft/utils/TestItemUtil.java
  rename {GuizhanLib-common/src/main/java/net/guizhanss => GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries}/guizhanlib/common/Event.java (78%)
- rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/AbstractAddon.java (89%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/AbstractAddon.java (58%)
  rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/AddonConfig.java (63%)
  rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/Environment.java (83%)
  rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/PathBuilder.java (94%)
@@ -218,6 +219,22 @@ Subject: [PATCH] InfinityGuizhanLib-Standalone
  delete mode 100644 GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/UpdaterTask.java
  delete mode 100644 GuizhanLib-updater/src/main/java/net/guizhanss/guizhanlib/updater/package-info.java
 
+diff --git a/GuizhanLib-api/pom.xml b/GuizhanLib-api/pom.xml
+index 212cff0..143e36e 100644
+--- a/GuizhanLib-api/pom.xml
++++ b/GuizhanLib-api/pom.xml
+@@ -150,11 +150,5 @@
+             <artifactId>GuizhanLib-slimefun</artifactId>
+             <version>${project.version}</version>
+         </dependency>
+-
+-        <dependency>
+-            <groupId>net.guizhanss</groupId>
+-            <artifactId>GuizhanLib-updater</artifactId>
+-            <version>${project.version}</version>
+-        </dependency>
+     </dependencies>
+ </project>
 diff --git a/GuizhanLib-common/pom.xml b/GuizhanLib-common/pom.xml
 index b10c3d0..30049c8 100644
 --- a/GuizhanLib-common/pom.xml
@@ -1613,24 +1630,40 @@ index c101604..2105271 100644
  
      /**
 diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/AbstractAddon.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/AbstractAddon.java
-similarity index 89%
+similarity index 58%
 rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/AbstractAddon.java
 rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/AbstractAddon.java
-index 7587e48..6a4b7f0 100644
+index 7587e48..53213e2 100644
 --- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/AbstractAddon.java
 +++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/AbstractAddon.java
-@@ -1,8 +1,7 @@
+@@ -1,9 +1,6 @@
 -package net.guizhanss.guizhanlib.slimefun.addon;
 +package id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon;
  
  import com.google.common.base.Preconditions;
 -import id.arvin3108.standalone.SlimefunAddonInstance;
 -import net.guizhanss.guizhanlib.minecraft.utils.ChatUtil;
-+import id.universenetwork.sfa_loader.libraries.guizhanlib.minecraft.utils.ChatUtil;
- import org.bukkit.Bukkit;
+-import org.bukkit.Bukkit;
  import org.bukkit.NamespacedKey;
  import org.bukkit.command.PluginCommand;
-@@ -41,7 +40,6 @@ public abstract class AbstractAddon extends JavaPlugin {
+ import org.bukkit.configuration.file.FileConfiguration;
+@@ -15,9 +12,7 @@ import javax.annotation.Nonnull;
+ import javax.annotation.Nullable;
+ import javax.annotation.ParametersAreNonnullByDefault;
+ import java.io.File;
+-import java.text.MessageFormat;
+ import java.util.Objects;
+-import java.util.logging.Level;
+ 
+ /**
+  * An abstract {@link JavaPlugin} class that contains
+@@ -35,61 +30,50 @@ import java.util.logging.Level;
+ @SuppressWarnings("ConstantConditions")
+ public abstract class AbstractAddon extends JavaPlugin {
+ 
+-    private static final String NULL_LOG_LEVEL = "Log level cannot be null";
+-    private static final String NULL_LOG_MESSAGE = "Log message cannot be null";
+ 
      private static AbstractAddon instance;
  
      private final Environment environment;
@@ -1638,7 +1671,10 @@ index 7587e48..6a4b7f0 100644
  
      private AddonConfig config;
      private Scheduler scheduler;
-@@ -52,12 +50,9 @@ public abstract class AbstractAddon extends JavaPlugin {
+     private boolean loading;
+     private boolean enabling;
+     private boolean disabling;
+-    private boolean autoUpdateEnabled;
  
      /**
       * Live addon constructor.
@@ -1652,15 +1688,108 @@ index 7587e48..6a4b7f0 100644
          validate();
      }
  
-@@ -89,7 +84,6 @@ public abstract class AbstractAddon extends JavaPlugin {
-                   String autoUpdateKey, Environment environment) {
+     /**
+      * Testing addon constructor
+      *
+-     * @param loader        the {@link JavaPluginLoader}
+-     * @param description   the {@link PluginDescriptionFile} of plugin
+-     * @param dataFolder    the {@link File} of plugin's data folder
+-     * @param file          the {@link File} of plugin
+-     * @param autoUpdateKey Auto update key in the config
++     * @param loader      the {@link JavaPluginLoader}
++     * @param description the {@link PluginDescriptionFile} of plugin
++     * @param dataFolder  the {@link File} of plugin's data folder
++     * @param file        the {@link File} of plugin
+      */
+-    protected AbstractAddon(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file,
+-                            String autoUpdateKey) {
+-        this(loader, description, dataFolder, file, autoUpdateKey, Environment.TESTING);
++    protected AbstractAddon(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
++        this(loader, description, dataFolder, file, Environment.TESTING);
+     }
+ 
+     /**
+      * Testing library constructor
+      *
+-     * @param loader        the {@link JavaPluginLoader}
+-     * @param description   the {@link PluginDescriptionFile} of plugin
+-     * @param dataFolder    the {@link File} of plugin's data folder
+-     * @param file          the {@link File} of plugin
+-     * @param autoUpdateKey Auto update key in the config
+-     * @param environment   the {@link Environment} of file
++     * @param loader      the {@link JavaPluginLoader}
++     * @param description the {@link PluginDescriptionFile} of plugin
++     * @param dataFolder  the {@link File} of plugin's data folder
++     * @param file        the {@link File} of plugin
++     * @param environment the {@link Environment} of file
+      */
+     AbstractAddon(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file,
+-                  String autoUpdateKey, Environment environment) {
++                  Environment environment) {
          super(loader, description, dataFolder, file);
          this.environment = environment;
 -        this.autoUpdateKey = autoUpdateKey;
          validate();
      }
  
-@@ -256,23 +250,6 @@ public abstract class AbstractAddon extends JavaPlugin {
+@@ -151,56 +135,6 @@ public abstract class AbstractAddon extends JavaPlugin {
+         return new NamespacedKey(getInstance(), key);
+     }
+ 
+-    /**
+-     * Call the logger to log a message with arguments.
+-     * ChatColor code will be translated automatically,
+-     * and message is dealt with MessageFormat#format().
+-     *
+-     * @param level   the log {@link Level}
+-     * @param message the message
+-     * @param args    the arguments with in
+-     * @see MessageFormat
+-     */
+-    public static void log(@Nonnull Level level, @Nonnull String message, @Nullable Object... args) {
+-        Preconditions.checkArgument(level != null, NULL_LOG_LEVEL);
+-        Preconditions.checkArgument(message != null, NULL_LOG_MESSAGE);
+-
+-        getInstance().getLogger().log(level, ChatUtil.color(MessageFormat.format(message, args)));
+-    }
+-
+-    /**
+-     * Call the logger to log a message with arguments.
+-     * ChatColor code will be translated automatically,
+-     * and message is dealt with MessageFormat#format().
+-     *
+-     * @param level   the log {@link Level}
+-     * @param ex      the {@link Throwable} exception
+-     * @param message the message
+-     * @param args    the arguments with in
+-     * @see MessageFormat
+-     */
+-    public static void log(@Nonnull Level level, @Nonnull Throwable ex, @Nonnull String message, @Nullable Object... args) {
+-        Preconditions.checkArgument(level != null, NULL_LOG_LEVEL);
+-        Preconditions.checkArgument(message != null, NULL_LOG_MESSAGE);
+-
+-        getInstance().getLogger().log(level, ex, () -> ChatUtil.color(MessageFormat.format(message, args)));
+-    }
+-
+-    /**
+-     * Call the {@link org.bukkit.command.ConsoleCommandSender} to send a message with arguments.
+-     * ChatColor code will be translated automatically,
+-     * and message is dealt with MessageFormat#format().
+-     *
+-     * @param message the message
+-     * @param args    the arguments with in
+-     * @see MessageFormat
+-     */
+-    public static void sendConsole(@Nonnull String message, @Nullable Object... args) {
+-        Preconditions.checkArgument(message != null, NULL_LOG_MESSAGE);
+-
+-        Bukkit.getConsoleSender().sendMessage("[" + getInstance().getName() + "] " + ChatUtil.color(MessageFormat.format(message, args)));
+-    }
+-
+     /**
+      * Validate the information given by constructor
+      */
+@@ -256,23 +190,6 @@ public abstract class AbstractAddon extends JavaPlugin {
              e.printStackTrace();
          }
  
@@ -1684,7 +1813,7 @@ index 7587e48..6a4b7f0 100644
          // Create Scheduler
          scheduler = new Scheduler(this);
  
-@@ -326,12 +303,6 @@ public abstract class AbstractAddon extends JavaPlugin {
+@@ -326,12 +243,6 @@ public abstract class AbstractAddon extends JavaPlugin {
       */
      protected abstract void disable();
  
@@ -1697,7 +1826,7 @@ index 7587e48..6a4b7f0 100644
      /**
       * Handle the {@link RuntimeException} in different environments.
       * Print the exception if in live environment, throw the exception if in testing environment
-@@ -340,8 +311,11 @@ public abstract class AbstractAddon extends JavaPlugin {
+@@ -340,8 +251,11 @@ public abstract class AbstractAddon extends JavaPlugin {
       */
      private void handleException(RuntimeException ex) {
          switch (environment) {
@@ -1711,6 +1840,22 @@ index 7587e48..6a4b7f0 100644
          }
      }
  
+@@ -355,15 +269,6 @@ public abstract class AbstractAddon extends JavaPlugin {
+         return environment;
+     }
+ 
+-    /**
+-     * If the auto update is enabled
+-     *
+-     * @return if the auto update is enabled
+-     */
+-    public final boolean isAutoUpdateEnabled() {
+-        return autoUpdateEnabled;
+-    }
+-
+     /**
+      * Get the {@link AddonConfig}
+      *
 diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/AddonConfig.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/AddonConfig.java
 similarity index 63%
 rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/AddonConfig.java

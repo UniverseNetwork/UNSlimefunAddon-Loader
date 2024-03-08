@@ -1,6 +1,6 @@
-From c214125972296ca57379ad7fdc10079a8629ba59 Mon Sep 17 00:00:00 2001
+From 5a33ee5bbeb959122918ef4f118404645335f87d Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 3 Mar 2024 11:24:43 +0700
+Date: Fri, 8 Mar 2024 21:31:06 +0700
 Subject: [PATCH] ExoticGarden
 
 ---
@@ -369,7 +369,7 @@ diff --git a/src/main/java/io/github/thebusybiscuit/exoticgarden/ExoticGarden.ja
 similarity index 77%
 rename from src/main/java/io/github/thebusybiscuit/exoticgarden/ExoticGarden.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/ExoticGarden.java
-index cb9fd4a..48b4b91 100644
+index cb9fd4a..4a19ad0 100644
 --- a/src/main/java/io/github/thebusybiscuit/exoticgarden/ExoticGarden.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/ExoticGarden.java
 @@ -1,17 +1,16 @@
@@ -455,7 +455,7 @@ index cb9fd4a..48b4b91 100644
 +    private static ExoticGarden instance;
  
 -    private final File schematicsFolder = new File(getDataFolder(), "schematics");
-+    private final String schematicsPath = "addons-config/ExoticGarden/schematics/";
++    private final String schematicsPath = "schematics/";
 +    @Getter
 +    private final File schematicsFolder = new File(AbstractAddon.getInstance().getDataFolder(), schematicsPath);
  

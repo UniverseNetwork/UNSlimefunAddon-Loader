@@ -33,5 +33,6 @@ addons:
   privatestorage: true
   sfcalc: true
   sfchunkinfo: true
+  slimefuntranslation: true
   smg: true
   soundmuffler: true
