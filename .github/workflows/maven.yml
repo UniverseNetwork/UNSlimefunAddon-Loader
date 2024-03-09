@@ -18,6 +18,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: true
+        run: |
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -28,8 +33,7 @@ jobs:
       - name: Apply patches
         shell: cmd
         run: |
-          git config --global user.name github-actions
-          git config --global user.email github-actions@github.com
+          git config sfaloader.setup
           patchTools patch --all
 
       - name: Cache Maven packages
