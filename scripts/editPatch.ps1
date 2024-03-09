@@ -24,6 +24,7 @@ $method="rebuild"
 if ($dir -ne $null -and $dir.StartsWith("--")) {
     $method = $dir.Replace("--","")
     $dir = $args[1]
+
 }
 
 if ($dir) {
