@@ -21,18 +21,8 @@ function enableCommitSigningIfNeeded {
 
 $dir=$args[0]
 $method="rebuild"
-if ($dir -eq "--new") {
-    $method = "create"
-    $dir = $args[1]
-}
-
-if ($dir -eq "--fetch") {
-    $method = "fetch"
-    $dir = $args[1]
-}
-
-if ($dir -eq "--merge") {
-    $method = "merge"
+if ($dir -ne $null -and $dir.StartsWith("--")) {
+    $method = $dir.Replace("--","")
     $dir = $args[1]
 }
 

@@ -3,19 +3,19 @@
 if ["%~1"]==[""] (goto noarg)
 
 if ["%~1"]==["create"] (
-powershell ./scripts/rebuildPatch.ps1 --new %~2
+powershell ./scripts/editPatch.ps1 --create %~2
 )
 
 if ["%~1"]==["rebuild"] (
-powershell ./scripts/rebuildPatch.ps1 %~2
+powershell ./scripts/editPatch.ps1 %~2
 )
 
 if ["%~1"]==["fetch"] (
-powershell ./scripts/rebuildPatch.ps1 --fetch %~2
+powershell ./scripts/editPatch.ps1 --fetch %~2
 )
 
 if ["%~1"]==["merge"] (
-powershell ./scripts/rebuildPatch.ps1 --merge %~2
+powershell ./scripts/editPatch.ps1 --merge %~2
 )
 
 if ["%~1"]==["patch"] (
