@@ -1,16 +1,17 @@
-From dfb40300a4ae1b33153191e42d0ac37ebc3d4a11 Mon Sep 17 00:00:00 2001
+From ce85d30df95d233b65ec9527fe6663c1b9179693 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sat, 9 Mar 2024 14:45:51 +0700
+Date: Tue, 12 Mar 2024 09:23:33 +0700
 Subject: [PATCH] SlimefunTranslation
 
 ---
- pom.xml                                       |  47 ++
- .../SlimefunTranslation.java                  |  68 ++
- .../api/SlimefunTranslationAPI.java           |  23 +-
+ pom.xml                                       |  47 ++++
+ .../SlimefunTranslation.java                  |  68 ++++++
+ .../api/SlimefunTranslationAPI.java           |  27 +-
  .../api/config/TranslationConditions.java     |   8 +-
- .../api/config/TranslationConfiguration.java  | 138 ++--
+ .../api/config/TranslationConfiguration.java  | 188 +++++++-------
  .../TranslationConfigurationDefaults.java     |   2 +-
  .../TranslationConfigurationFields.java       |   2 +-
+ .../api/config/Translations.java              |   5 +-
  .../api/config/package-info.java              |   2 +-
  .../api/events/TranslationsLoadEvent.java     |   3 +-
  .../TagMisconfigurationException.java         |   8 +-
@@ -18,26 +19,27 @@ Subject: [PATCH] SlimefunTranslation
  .../slimefuntranslation/api/package-info.java |   2 +-
  .../api/translation/ItemTranslation.java      |   8 +-
  .../api/translation/TranslationStatus.java    |   4 +-
+ .../api/translation/lore/LoreHandler.java     |   4 +-
  .../api/translation/package-info.java         |   4 +
- .../slimefuntranslation/core/Registry.java    |   7 +-
+ .../slimefuntranslation/core/Registry.java    |   9 +-
  .../core/commands/AbstractSubCommand.java     |  13 +
- .../core/commands/subcommands/IdCommand.java  |  33 +-
- .../commands/subcommands/SearchCommand.java   |  48 +-
- .../translation/ExtractCommand.java           |  19 +
- .../translation/GenerateCommand.java          |  99 ++-
- .../translation/ReloadCommand.java            |  20 +
- .../core/factories/MessageFactory.java        |  31 +-
- .../core/services/CommandService.java         |  19 +
+ .../core/commands/subcommands/IdCommand.java  |  33 +--
+ .../commands/subcommands/SearchCommand.java   |  48 ++--
+ .../translation/ExtractCommand.java           |  19 ++
+ .../translation/GenerateCommand.java          |  99 +++-----
+ .../translation/ReloadCommand.java            |  20 ++
+ .../core/factories/MessageFactory.java        |  31 ++-
+ .../core/services/CommandService.java         |  19 ++
  .../core/services/ConfigurationService.java   |  13 +-
- .../core/services/IntegrationService.java     |  59 ++
- .../core/services/ListenerService.java        |  21 +
- .../core/services/PacketListenerService.java  |  27 +
- .../core/services/TranslationService.java     | 171 +++--
+ .../core/services/IntegrationService.java     |  59 +++++
+ .../core/services/ListenerService.java        |  21 ++
+ .../core/services/PacketListenerService.java  |  27 ++
+ .../core/services/TranslationService.java     | 231 ++++++------------
  .../core/services/UserService.java            |  16 +-
  .../slimefuntranslation/core/users/User.java  |  12 +-
  .../listeners/PlayerJoinListener.java         |   8 +-
  .../listeners/PlayerQuitListener.java         |   8 +-
- .../SlimefunBlockRightClickListener.java      |  28 +
+ .../SlimefunBlockRightClickListener.java      |  28 +++
  .../listeners/SlimefunItemLoadListener.java   |  11 +-
  .../SlimefunLanguageChangeListener.java       |  10 +-
  .../listeners/TranslationsLoadListener.java   |  10 +-
@@ -46,41 +48,43 @@ Subject: [PATCH] SlimefunTranslation
  .../client/items/SetCreativeSlotListener.java |  13 +-
  .../client/items/WindowClickListener.java     |  13 +-
  .../server/AServerListener.java               |   8 +-
- .../server/EntityMetadataListener.java        |  31 +-
+ .../server/EntityMetadataListener.java        |  31 +--
  .../server/OpenWindowListener.java            |  24 +-
  .../server/items/SetSlotListener.java         |  17 +-
  .../server/items/WindowItemListener.java      |  17 +-
- .../translations/FixedItemTranslation.java    |  96 ++-
- .../ProgrammedItemTranslation.java            |  28 +-
+ .../translations/FixedItemTranslation.java    |  99 ++++----
+ .../ProgrammedItemTranslation.java            |  28 +--
  .../integrations/placeholders/AExpansion.java |  15 +-
- .../placeholders/SlimefunLoreExpansion.java   |  38 +-
- .../slimefuntranslation/utils/ColorUtils.java |  28 +
- .../utils/ConfigUtils.java                    |  39 +-
- .../slimefuntranslation/utils/FileUtils.java  |  56 +-
+ .../placeholders/SlimefunLoreExpansion.java   |  21 +-
+ .../slimefuntranslation/utils/ColorUtils.java |  28 +++
+ .../utils/ConfigUtils.java                    |  39 +--
+ .../slimefuntranslation/utils/FileUtils.java  |  56 ++---
+ .../utils/GeneralUtils.java                   |  11 +
  .../utils/ReflectionUtils.java                |   2 +-
- .../utils/SlimefunItemUtils.java              |  21 +-
- .../utils/TranslationUtils.java               |  38 +-
- .../utils/constant/Keys.java                  |  15 +
+ .../utils/SlimefunItemUtils.java              |  33 +--
+ .../utils/TranslationUtils.java               |  38 ++-
+ .../utils/constant/Keys.java                  |  16 ++
  .../utils/constant/Methods.java               |  10 +-
  .../utils/constant/Patterns.java              |  12 +
  .../utils/constant/Permissions.java           |   2 +-
- .../utils/tags/SlimefunTranslationTag.java    |  46 +-
- .../utils/tags/TagParser.java                 |  35 +-
- .../SlimefunTranslation.java                  | 132 ----
+ .../utils/tags/SlimefunTranslationTag.java    |  46 ++--
+ .../utils/tags/TagParser.java                 |  35 ++-
+ .../SlimefunTranslation.java                  | 132 ----------
  .../api/exceptions/package-info.java          |   4 -
  .../api/translation/package-info.java         |   4 -
- .../core/commands/AbstractSubCommand.java     |  49 --
- .../core/commands/MainCommand.java            |  27 -
- .../subcommands/TranslationCommand.java       |  27 -
- .../translation/ExtractCommand.java           |  44 --
- .../translation/ReloadCommand.java            |  40 --
+ .../core/commands/AbstractSubCommand.java     |  49 ----
+ .../core/commands/MainCommand.java            |  27 --
+ .../subcommands/TranslationCommand.java       |  27 --
+ .../translation/ExtractCommand.java           |  44 ----
+ .../translation/ReloadCommand.java            |  40 ---
  .../core/services/CommandService.java         |  10 -
- .../core/services/IntegrationService.java     |  76 ---
- .../core/services/ListenerService.java        |  22 -
- .../core/services/PacketListenerService.java  |  30 -
- .../SlimefunBlockRightClickListener.java      |  24 -
- .../slimefuntranslation/utils/ColorUtils.java |  34 -
- .../utils/constant/Keys.java                  |  24 -
+ .../core/services/IntegrationService.java     |  76 ------
+ .../core/services/ListenerService.java        |  22 --
+ .../core/services/PacketListenerService.java  |  30 ---
+ .../SlimefunBlockRightClickListener.java      |  24 --
+ .../slimefuntranslation/utils/ColorUtils.java |  34 ---
+ .../utils/GeneralUtils.java                   |  15 --
+ .../utils/constant/Keys.java                  |  25 --
  .../utils/constant/Patterns.java              |  12 -
  .../SlimefunTranslation}/config.yml           |   0
  .../SlimefunTranslation}/tags/axe.json        |   0
@@ -110,6 +114,7 @@ Subject: [PATCH] SlimefunTranslation
  .../en/slimefun/energy-and-electricity.yml    |   0
  .../translations/en/slimefun/food.yml         |   0
  .../translations/en/slimefun/gps.yml          |   0
+ .../translations/en/slimefun/guide.yml        |   0
  .../translations/en/slimefun/lore-builder.yml |   0
  .../en/slimefun/magical-armor.yml             |   0
  .../en/slimefun/magical-gadgets.yml           |   0
@@ -126,9 +131,33 @@ Subject: [PATCH] SlimefunTranslation
  .../translations/en/slimefun/ui.yml           |   0
  .../translations/en/slimefun/useful-items.yml |   0
  .../translations/en/slimefun/weapons.yml      |   0
+ .../translations/ja/slimefun/armor.yml        |   0
  .../translations/ja/slimefun/food.yml         |   0
  .../ja/slimefun/miscellaneous-items.yml       |   0
  .../ja/slimefun/technical-components.yml      |   0
+ .../translations/vi/messages.yml              |   0
+ .../translations/vi/slimefun/armor.yml        |   0
+ .../vi/slimefun/basic-machines.yml            |   0
+ .../vi/slimefun/cargo-management.yml          |   0
+ .../vi/slimefun/energy-and-electricity.yml    |   0
+ .../translations/vi/slimefun/food.yml         |   0
+ .../translations/vi/slimefun/gps.yml          |   0
+ .../translations/vi/slimefun/lore-builder.yml |   0
+ .../vi/slimefun/magical-armor.yml             |   0
+ .../vi/slimefun/magical-gadgets.yml           |   0
+ .../vi/slimefun/magical-items.yml             |   0
+ .../vi/slimefun/miscellaneous-items.yml       |   0
+ .../vi/slimefun/programmable-androids.yml     |   0
+ .../translations/vi/slimefun/resources.yml    |   0
+ .../translations/vi/slimefun/secret-items.yml |   0
+ .../translations/vi/slimefun/talismans-1.yml  |   0
+ .../translations/vi/slimefun/talismans-2.yml  |   0
+ .../vi/slimefun/technical-components.yml      |   0
+ .../vi/slimefun/technical-gadgets.yml         |   0
+ .../translations/vi/slimefun/tools.yml        |   0
+ .../translations/vi/slimefun/ui.yml           |   0
+ .../translations/vi/slimefun/useful-items.yml |   0
+ .../translations/vi/slimefun/weapons.yml      |   0
  .../translations/zh-Hans/messages.yml         |   0
  .../translations/zh-Hans/slimefun/armor.yml   |   0
  .../zh-Hans/slimefun/basic-machines.yml       |   0
@@ -152,38 +181,15 @@ Subject: [PATCH] SlimefunTranslation
  .../translations/zh-Hans/slimefun/ui.yml      |   0
  .../zh-Hans/slimefun/useful-items.yml         |   0
  .../translations/zh-Hans/slimefun/weapons.yml |   0
- .../translations/ja/slimefun/armor.yml        |  77 ---
- .../resources/translations/vi/messages.yml    |  26 -
- .../translations/vi/slimefun/armor.yml        |  77 ---
- .../vi/slimefun/basic-machines.yml            | 217 -------
- .../vi/slimefun/cargo-management.yml          |  88 ---
- .../vi/slimefun/energy-and-electricity.yml    | 608 ------------------
- .../translations/vi/slimefun/food.yml         |  92 ---
- .../translations/vi/slimefun/gps.yml          | 120 ----
- .../translations/vi/slimefun/lore-builder.yml |  54 --
- .../vi/slimefun/magical-armor.yml             | 182 ------
- .../vi/slimefun/magical-gadgets.yml           | 151 -----
- .../vi/slimefun/magical-items.yml             | 116 ----
- .../vi/slimefun/miscellaneous-items.yml       | 144 -----
- .../vi/slimefun/programmable-androids.yml     | 104 ---
- .../translations/vi/slimefun/resources.yml    | 202 ------
- .../translations/vi/slimefun/secret-items.yml |  13 -
- .../translations/vi/slimefun/talismans-1.yml  | 142 ----
- .../translations/vi/slimefun/talismans-2.yml  | 158 -----
- .../vi/slimefun/technical-components.yml      |  68 --
- .../vi/slimefun/technical-gadgets.yml         | 178 -----
- .../translations/vi/slimefun/tools.yml        |  82 ---
- .../resources/translations/vi/slimefun/ui.yml |  16 -
- .../translations/vi/slimefun/useful-items.yml | 110 ----
- .../translations/vi/slimefun/weapons.yml      |  48 --
- 172 files changed, 898 insertions(+), 4365 deletions(-)
+ 177 files changed, 940 insertions(+), 1401 deletions(-)
  create mode 100644 pom.xml
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/SlimefunTranslation.java
- rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/SlimefunTranslationAPI.java (84%)
+ rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/SlimefunTranslationAPI.java (82%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/config/TranslationConditions.java (93%)
- rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/config/TranslationConfiguration.java (51%)
+ rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/config/TranslationConfiguration.java (50%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/config/TranslationConfigurationDefaults.java (87%)
- rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/config/TranslationConfigurationFields.java (91%)
+ rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/config/TranslationConfigurationFields.java (93%)
+ rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/config/Translations.java (75%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/config/package-info.java (55%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/events/TranslationsLoadEvent.java (89%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/exceptions/TagMisconfigurationException.java (89%)
@@ -191,8 +197,9 @@ Subject: [PATCH] SlimefunTranslation
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/package-info.java (55%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/translation/ItemTranslation.java (83%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/translation/TranslationStatus.java (66%)
+ rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/translation/lore/LoreHandler.java (57%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/translation/package-info.java
- rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/Registry.java (74%)
+ rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/Registry.java (75%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/AbstractSubCommand.java
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/commands/subcommands/IdCommand.java (65%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/commands/subcommands/SearchCommand.java (75%)
@@ -205,7 +212,7 @@ Subject: [PATCH] SlimefunTranslation
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/IntegrationService.java
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/ListenerService.java
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/PacketListenerService.java
- rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/services/TranslationService.java (61%)
+ rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/services/TranslationService.java (54%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/services/UserService.java (63%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/users/User.java (78%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/implementation/listeners/PlayerJoinListener.java (56%)
@@ -223,15 +230,16 @@ Subject: [PATCH] SlimefunTranslation
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/implementation/packetlisteners/server/OpenWindowListener.java (69%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/implementation/packetlisteners/server/items/SetSlotListener.java (60%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/implementation/packetlisteners/server/items/WindowItemListener.java (56%)
- rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/implementation/translations/FixedItemTranslation.java (58%)
+ rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/implementation/translations/FixedItemTranslation.java (57%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/implementation/translations/ProgrammedItemTranslation.java (69%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/integrations/placeholders/AExpansion.java (54%)
- rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/integrations/placeholders/SlimefunLoreExpansion.java (52%)
+ rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/integrations/placeholders/SlimefunLoreExpansion.java (67%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/ColorUtils.java
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/utils/ConfigUtils.java (62%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/utils/FileUtils.java (61%)
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/GeneralUtils.java
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/utils/ReflectionUtils.java (86%)
- rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/utils/SlimefunItemUtils.java (59%)
+ rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/utils/SlimefunItemUtils.java (65%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/utils/TranslationUtils.java (71%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/constant/Keys.java
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/utils/constant/Methods.java (58%)
@@ -253,6 +261,7 @@ Subject: [PATCH] SlimefunTranslation
  delete mode 100644 src/main/java/net/guizhanss/slimefuntranslation/core/services/PacketListenerService.java
  delete mode 100644 src/main/java/net/guizhanss/slimefuntranslation/implementation/listeners/SlimefunBlockRightClickListener.java
  delete mode 100644 src/main/java/net/guizhanss/slimefuntranslation/utils/ColorUtils.java
+ delete mode 100644 src/main/java/net/guizhanss/slimefuntranslation/utils/GeneralUtils.java
  delete mode 100644 src/main/java/net/guizhanss/slimefuntranslation/utils/constant/Keys.java
  delete mode 100644 src/main/java/net/guizhanss/slimefuntranslation/utils/constant/Patterns.java
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/config.yml (100%)
@@ -283,6 +292,7 @@ Subject: [PATCH] SlimefunTranslation
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/en/slimefun/energy-and-electricity.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/en/slimefun/food.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/en/slimefun/gps.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/en/slimefun/guide.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/en/slimefun/lore-builder.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/en/slimefun/magical-armor.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/en/slimefun/magical-gadgets.yml (100%)
@@ -299,9 +309,33 @@ Subject: [PATCH] SlimefunTranslation
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/en/slimefun/ui.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/en/slimefun/useful-items.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/en/slimefun/weapons.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/ja/slimefun/armor.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/ja/slimefun/food.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/ja/slimefun/miscellaneous-items.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/ja/slimefun/technical-components.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/messages.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/armor.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/basic-machines.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/cargo-management.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/energy-and-electricity.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/food.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/gps.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/lore-builder.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/magical-armor.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/magical-gadgets.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/magical-items.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/miscellaneous-items.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/programmable-androids.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/resources.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/secret-items.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/talismans-1.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/talismans-2.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/technical-components.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/technical-gadgets.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/tools.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/ui.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/useful-items.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/weapons.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/zh-Hans/messages.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/zh-Hans/slimefun/armor.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/zh-Hans/slimefun/basic-machines.yml (100%)
@@ -325,30 +359,6 @@ Subject: [PATCH] SlimefunTranslation
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/zh-Hans/slimefun/ui.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/zh-Hans/slimefun/useful-items.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/zh-Hans/slimefun/weapons.yml (100%)
- delete mode 100644 src/main/resources/translations/ja/slimefun/armor.yml
- delete mode 100644 src/main/resources/translations/vi/messages.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/armor.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/basic-machines.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/cargo-management.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/energy-and-electricity.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/food.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/gps.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/lore-builder.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/magical-armor.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/magical-gadgets.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/magical-items.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/miscellaneous-items.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/programmable-androids.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/resources.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/secret-items.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/talismans-1.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/talismans-2.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/technical-components.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/technical-gadgets.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/tools.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/ui.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/useful-items.yml
- delete mode 100644 src/main/resources/translations/vi/slimefun/weapons.yml
 
 diff --git a/pom.xml b/pom.xml
 new file mode 100644
@@ -478,10 +488,10 @@ index 0000000..dbf5007
 +    }
 +}
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/api/SlimefunTranslationAPI.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/SlimefunTranslationAPI.java
-similarity index 84%
+similarity index 82%
 rename from src/main/java/net/guizhanss/slimefuntranslation/api/SlimefunTranslationAPI.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/SlimefunTranslationAPI.java
-index e155a80..13b6b08 100644
+index 8407b27..608210c 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/api/SlimefunTranslationAPI.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/SlimefunTranslationAPI.java
 @@ -1,4 +1,4 @@
@@ -490,21 +500,23 @@ index e155a80..13b6b08 100644
  
  import java.util.UUID;
  
-@@ -14,10 +14,9 @@ import org.bukkit.plugin.Plugin;
+@@ -14,11 +14,10 @@ import org.bukkit.plugin.Plugin;
  
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  
 -import net.guizhanss.slimefuntranslation.SlimefunTranslation;
+-import net.guizhanss.slimefuntranslation.api.translation.lore.LoreHandler;
 -import net.guizhanss.slimefuntranslation.core.factories.MessageFactory;
 -import net.guizhanss.slimefuntranslation.core.users.User;
 -
 +import id.universenetwork.sfa_loader.addons.slimefuntranslation.SlimefunTranslation;
++import id.universenetwork.sfa_loader.addons.slimefuntranslation.api.translation.lore.LoreHandler;
 +import id.universenetwork.sfa_loader.addons.slimefuntranslation.core.factories.MessageFactory;
 +import id.universenetwork.sfa_loader.addons.slimefuntranslation.core.users.User;
  import lombok.experimental.UtilityClass;
  
  /**
-@@ -34,7 +33,7 @@ public final class SlimefunTranslationAPI {
+@@ -35,7 +34,7 @@ public final class SlimefunTranslationAPI {
       * @return The {@link User} with the given {@link UUID}.
       */
      @Nonnull
@@ -513,7 +525,7 @@ index e155a80..13b6b08 100644
          Preconditions.checkArgument(uuid != null, "UUID cannot be null");
  
          return SlimefunTranslation.getUserService().getUser(uuid);
-@@ -47,7 +46,7 @@ public final class SlimefunTranslationAPI {
+@@ -48,7 +47,7 @@ public final class SlimefunTranslationAPI {
       * @return The {@link User} with the given {@link Player}.
       */
      @Nonnull
@@ -522,7 +534,7 @@ index e155a80..13b6b08 100644
          Preconditions.checkArgument(player != null, "Player cannot be null");
  
          return getUser(player.getUniqueId());
-@@ -62,7 +61,7 @@ public final class SlimefunTranslationAPI {
+@@ -63,7 +62,7 @@ public final class SlimefunTranslationAPI {
       * Will return an empty string when the item is null, or the original item name if the translation is disabled.
       */
      @Nonnull
@@ -531,7 +543,7 @@ index e155a80..13b6b08 100644
          Preconditions.checkArgument(user != null, "User cannot be null");
  
          return SlimefunTranslation.getTranslationService().getTranslatedItemName(user, sfItem);
-@@ -78,7 +77,7 @@ public final class SlimefunTranslationAPI {
+@@ -79,7 +78,7 @@ public final class SlimefunTranslationAPI {
       */
      @Nonnull
      @ParametersAreNonnullByDefault
@@ -540,7 +552,7 @@ index e155a80..13b6b08 100644
          Preconditions.checkArgument(user != null, "User cannot be null");
          Preconditions.checkArgument(id != null, "ID cannot be null");
  
-@@ -93,7 +92,7 @@ public final class SlimefunTranslationAPI {
+@@ -94,7 +93,7 @@ public final class SlimefunTranslationAPI {
       * @return Whether the translation is processed.
       */
      @ParametersAreNonnullByDefault
@@ -549,7 +561,7 @@ index e155a80..13b6b08 100644
          Preconditions.checkArgument(user != null, "User cannot be null");
          Preconditions.checkArgument(item != null, "Item cannot be null");
  
-@@ -110,7 +109,7 @@ public final class SlimefunTranslationAPI {
+@@ -111,7 +110,7 @@ public final class SlimefunTranslationAPI {
       */
      @Nonnull
      @ParametersAreNonnullByDefault
@@ -558,7 +570,16 @@ index e155a80..13b6b08 100644
          Preconditions.checkArgument(user != null, "User cannot be null");
          Preconditions.checkArgument(id != null, "ID cannot be null");
  
-@@ -124,7 +123,7 @@ public final class SlimefunTranslationAPI {
+@@ -119,7 +118,7 @@ public final class SlimefunTranslationAPI {
+     }
+ 
+     @ParametersAreNonnullByDefault
+-    public static void registerLoreHandler(String id, LoreHandler handler) {
++    public void registerLoreHandler(String id, LoreHandler handler) {
+         Preconditions.checkArgument(id != null, "ID cannot be null");
+         Preconditions.checkArgument(handler != null, "Handler cannot be null");
+ 
+@@ -133,7 +132,7 @@ public final class SlimefunTranslationAPI {
       * @return The {@link MessageFactory} for the given {@link Plugin}.
       */
      @Nonnull
@@ -601,10 +622,10 @@ index 9396f76..5ab7479 100644
              .matchName(section.getBoolean(KEY_MATCH_NAME, parent.matchName))
              .matchLore(section.getBoolean(KEY_MATCH_LORE, parent.matchLore))
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/api/config/TranslationConfiguration.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/TranslationConfiguration.java
-similarity index 51%
+similarity index 50%
 rename from src/main/java/net/guizhanss/slimefuntranslation/api/config/TranslationConfiguration.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/TranslationConfiguration.java
-index 4af7b64..b465399 100644
+index 2cf0eae..d50aaf4 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/api/config/TranslationConfiguration.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/TranslationConfiguration.java
 @@ -1,6 +1,7 @@
@@ -616,14 +637,7 @@ index 4af7b64..b465399 100644
  import java.util.Map;
  import java.util.Optional;
  import java.util.logging.Level;
-@@ -10,17 +11,18 @@ import javax.annotation.ParametersAreNonnullByDefault;
- 
- import com.google.common.base.Preconditions;
- 
-+import org.bukkit.configuration.ConfigurationSection;
- import org.bukkit.configuration.file.FileConfiguration;
- 
- import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+@@ -17,12 +18,13 @@ import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
  
@@ -631,147 +645,79 @@ index 4af7b64..b465399 100644
 -import net.guizhanss.slimefuntranslation.api.translation.ItemTranslation;
 -import net.guizhanss.slimefuntranslation.implementation.translations.FixedItemTranslation;
 -import net.guizhanss.slimefuntranslation.utils.ConfigUtils;
+-import net.guizhanss.slimefuntranslation.utils.GeneralUtils;
 -
 +import id.universenetwork.sfa_loader.addons.slimefuntranslation.SlimefunTranslation;
 +import id.universenetwork.sfa_loader.addons.slimefuntranslation.api.translation.ItemTranslation;
++import id.universenetwork.sfa_loader.addons.slimefuntranslation.core.Registry;
 +import id.universenetwork.sfa_loader.addons.slimefuntranslation.implementation.translations.FixedItemTranslation;
 +import id.universenetwork.sfa_loader.addons.slimefuntranslation.utils.ConfigUtils;
++import id.universenetwork.sfa_loader.addons.slimefuntranslation.utils.GeneralUtils;
 +import id.universenetwork.sfa_loader.utils.LogUtils;
  import lombok.AccessLevel;
  import lombok.Getter;
  import lombok.RequiredArgsConstructor;
-@@ -82,135 +84,121 @@ public class TranslationConfiguration {
+@@ -82,58 +84,46 @@ public class TranslationConfiguration {
          String itemIdPrefix = config.getString(fields.getPrefix(), defaults.getPrefix());
          String itemIdSuffix = config.getString(fields.getSuffix(), defaults.getSuffix());
  
+-        var guidesSection = config.getConfigurationSection(fields.getGuides());
+-        var itemGroupsSection = config.getConfigurationSection(fields.getItemGroups());
 -        var itemsSection = config.getConfigurationSection(fields.getItems());
 -        var loreSection = config.getConfigurationSection(fields.getLore());
 -        var messagesSection = config.getConfigurationSection(fields.getMessages());
+-
++        ConfigurationSection guidesSection = config.getConfigurationSection(fields.getGuides());
++        ConfigurationSection itemGroupsSection = config.getConfigurationSection(fields.getItemGroups());
 +        ConfigurationSection itemsSection = config.getConfigurationSection(fields.getItems());
 +        ConfigurationSection loreSection = config.getConfigurationSection(fields.getLore());
 +        ConfigurationSection messagesSection = config.getConfigurationSection(fields.getMessages());
-         if (itemsSection == null && loreSection == null && messagesSection == null) {
+         if (GeneralUtils.isAllNull(guidesSection, itemGroupsSection, itemsSection, loreSection, messagesSection)) {
 -            SlimefunTranslation.log(Level.WARNING, "No translations found in " + name);
 +            LogUtils.warning("No translations found in " + name);
              return Optional.empty();
          }
+-
 -        var fileConditions = TranslationConditions.load(config.getConfigurationSection(fields.getConditions()));
 +        TranslationConditions fileConditions = TranslationConditions.load(config.getConfigurationSection(fields.getConditions()));
          SlimefunTranslation.debug("Current file condition: {0}", fileConditions);
-         Map<String, ItemTranslation> itemTranslations = new HashMap<>();
-         Map<String, String> loreTranslations = new HashMap<>();
-         Map<String, String> messageTranslations = new HashMap<>();
+-        var translations = new Translations();
+-        var guideTranslations = translations.getGuide();
+-        var itemGroupTranslations = translations.getItemGroup();
+-        var itemTranslations = translations.getItem();
+-        var loreTranslations = translations.getLore();
+-        var messageTranslations = translations.getMessage();
++        Translations translations = new Translations();
++        Map<String, ItemTranslation> guideTranslations = translations.getGuide();
++        Map<String, String> itemGroupTranslations = translations.getItemGroup();
++        Map<String, ItemTranslation> itemTranslations = translations.getItem();
++        Map<String, String> loreTranslations = translations.getLore();
++        Map<String, String> messageTranslations = translations.getMessage();
  
 -        SlimefunTranslation.log(Level.INFO, "Loading translation configuration \"{0}\", language: {1}", name, lang);
 +        LogUtils.log(Level.INFO, "Loading translation configuration \"{0}\", language: {1}", (Object) name, lang);
  
-         if (itemsSection != null) {
-             int count = 0;
--            for (var id : itemsSection.getKeys(false)) {
-+            for (String id : itemsSection.getKeys(false)) {
-                 String itemId = itemIdPrefix + id + itemIdSuffix;
-                 SlimefunTranslation.debug("Loading item translation {0}", itemId);
+-        if (guidesSection != null) {
+-            loadGuides(guideTranslations, guidesSection);
+-        }
++        if (guidesSection != null) loadGuides(guideTranslations, guidesSection);
  
--                var itemSection = itemsSection.getConfigurationSection(id);
-+                ConfigurationSection itemSection = itemsSection.getConfigurationSection(id);
-                 if (itemSection == null) {
--                    SlimefunTranslation.log(Level.SEVERE, "Invalid item section {0} in configuration file.", id);
-+                    LogUtils.log(Level.SEVERE, "Invalid item section {0} in configuration file.", (Object) id);
-                     continue;
-                 }
- 
--                var itemConditions = TranslationConditions.load(fileConditions, itemSection.getConfigurationSection(fields.getConditions()));
-+                TranslationConditions itemConditions = TranslationConditions.load(fileConditions, itemSection.getConfigurationSection(fields.getConditions()));
-                 SlimefunTranslation.debug("Current item condition: {0}", itemConditions);
-                 boolean forceLoad = itemConditions.isForceLoad();
- 
--                // sfItem
-+                // SFItem
-                 SlimefunItem sfItem = SlimefunItem.getById(itemId);
-                 if (sfItem == null && !forceLoad) {
--                    SlimefunTranslation.log(Level.WARNING, "Item {0} is not registered, ignoring.", itemId);
-+                    LogUtils.log(Level.WARNING, "Item {0} is not registered, ignoring.", (Object) itemId);
-                     continue;
-                 }
- 
--                // name
-+                // Name
-                 String displayName = "";
--                if (itemSection.contains("name")) {
--                    displayName = itemSection.getString("name", "");
--                }
-+                if (itemSection.contains("name")) displayName = itemSection.getString("name", "");
- 
--                // lore
--                var lore = itemSection.getStringList("lore");
-+                // Lore
-+                List<String> lore = itemSection.getStringList("lore");
- 
--                // lore overrides
-+                // Lore overrides
-                 Map<Integer, String> overrides = new HashMap<>();
--                if (itemSection.contains("lore-overrides")) {
--                    try {
--                        Map<String, String> replacements = ConfigUtils.getMap(itemSection.getConfigurationSection("lore-overrides"));
--                        for (var entry : replacements.entrySet()) {
--                            overrides.put(Integer.parseInt(entry.getKey()), entry.getValue());
--                        }
--                    } catch (NumberFormatException | NullPointerException ex) {
--                        SlimefunTranslation.log(Level.SEVERE, "Invalid lore overrides of item {0} in translation {1}", itemId, name);
--                        return Optional.empty();
--                    }
-+                if (itemSection.contains("lore-overrides")) try {
-+                    Map<String, String> replacements = ConfigUtils.getMap(itemSection.getConfigurationSection("lore-overrides"));
-+                    for (Map.Entry<String, String> entry : replacements.entrySet())
-+                        overrides.put(Integer.parseInt(entry.getKey()), entry.getValue());
-+                } catch (NumberFormatException | NullPointerException ex) {
-+                    LogUtils.log(Level.SEVERE, "Invalid lore overrides of item {0} in translation {1}", (Object) itemId, name);
-+                    return Optional.empty();
-                 }
- 
--                // lore replacements
-+                // Lore replacements
-                 Map<Integer, Pair<String, String>> replacements = new HashMap<>();
--                if (itemSection.contains("lore-replacements")) {
--                    try {
--                        for (String idx : itemSection.getConfigurationSection("lore-replacements").getKeys(false)) {
--                            int i = Integer.parseInt(idx);
--                            var section = itemSection.getConfigurationSection("lore-replacements." + idx);
--                            replacements.put(i, new Pair<>(section.getString("original"), section.getString("replaced")));
--                        }
--                    } catch (NumberFormatException | NullPointerException ex) {
--                        SlimefunTranslation.log(Level.SEVERE, "Invalid lore replacements of item {0} in translation {1}", itemId, name);
--                        return Optional.empty();
-+                if (itemSection.contains("lore-replacements")) try {
-+                    for (String idx : itemSection.getConfigurationSection("lore-replacements").getKeys(false)) {
-+                        int i = Integer.parseInt(idx);
-+                        ConfigurationSection section = itemSection.getConfigurationSection("lore-replacements." + idx);
-+                        replacements.put(i, new Pair<>(section.getString("original"), section.getString("replaced")));
-                     }
-+                } catch (NumberFormatException | NullPointerException ex) {
-+                    LogUtils.log(Level.SEVERE, "Invalid lore replacements of item {0} in translation {1}", (Object) itemId, name);
-+                    return Optional.empty();
-                 }
- 
--                // check partial override
--                if (!itemConditions.isPartialOverride() && !forceLoad) {
--                    itemConditions.setPartialOverride(
--                        SlimefunTranslation.getConfigService().getPartialOverrideMaterials().contains(sfItem.getItem().getType())
--                    );
--                }
-+                // Check partial override
-+                if (!itemConditions.isPartialOverride() && !forceLoad) itemConditions.setPartialOverride(
-+                    SlimefunTranslation.getConfigService().getPartialOverrideMaterials().contains(sfItem.getItem().getType())
-+                );
- 
--                var translation = new FixedItemTranslation(displayName, lore, overrides, replacements, itemConditions);
-+                FixedItemTranslation translation = new FixedItemTranslation(displayName, lore, overrides, replacements, itemConditions);
-                 itemTranslations.put(itemId, translation);
-                 count++;
-             }
--            SlimefunTranslation.log(Level.INFO, "Loaded {0} item translations.", count);
-+            LogUtils.log(Level.INFO, "Loaded {0} item translations.", count);
+-        if (itemGroupsSection != null) {
+-            for (var group : itemGroupsSection.getKeys(true)) {
+-                SlimefunTranslation.debug("Loading item group translation {0}", group);
+-                var translation = itemGroupsSection.getString(group);
+-                itemGroupTranslations.put(group, translation);
+-            }
++        if (itemGroupsSection != null) for (String group : itemGroupsSection.getKeys(true)) {
++            SlimefunTranslation.debug("Loading item group translation {0}", group);
++            String translation = itemGroupsSection.getString(group);
++            itemGroupTranslations.put(group, translation);
          }
+ 
+-        if (itemsSection != null) {
++        if (itemsSection != null)
+             loadItems(itemTranslations, itemsSection, fields, fileConditions, itemIdPrefix, itemIdSuffix);
+-        }
  
 -        if (loreSection != null) {
 -            for (var loreId : loreSection.getKeys(true)) {
@@ -784,7 +730,7 @@ index 4af7b64..b465399 100644
 +            String lore = loreSection.getString(loreId);
 +            loreTranslations.put(loreId, lore);
          }
- 
+-
 -        if (messagesSection != null) {
 -            for (var messageId : messagesSection.getKeys(true)) {
 -                SlimefunTranslation.debug("Loading message translation {0}", messageId);
@@ -797,7 +743,139 @@ index 4af7b64..b465399 100644
 +            messageTranslations.put(messageId, message);
          }
  
-         return Optional.of(new TranslationConfiguration(name, lang, itemTranslations, loreTranslations, messageTranslations));
+         return Optional.of(new TranslationConfiguration(name, lang, translations));
+@@ -143,21 +133,21 @@ public class TranslationConfiguration {
+         Map<String, ItemTranslation> translations,
+         ConfigurationSection guidesSection
+     ) {
+-        for (var mode : guidesSection.getKeys(false)) {
++        for (String mode : guidesSection.getKeys(false)) {
+             SlimefunTranslation.debug("Loading guide translation for mode {0}", mode);
+ 
+-            var guideSection = guidesSection.getConfigurationSection(mode);
++            ConfigurationSection guideSection = guidesSection.getConfigurationSection(mode);
+             if (guideSection == null) {
+-                SlimefunTranslation.log(Level.SEVERE, "Invalid guide section {0} in configuration file.", mode);
++                LogUtils.log(Level.SEVERE, "Invalid guide section {0} in configuration file.", (Object) mode);
+                 continue;
+             }
+ 
+-            // name
++            // Name
+             String displayName = guideSection.getString("name", "");
+-            // lore
+-            var lore = guideSection.getStringList("lore");
++            // Lore
++            List<String> lore = guideSection.getStringList("lore");
+ 
+-            var translation = new FixedItemTranslation(displayName, lore);
++            FixedItemTranslation translation = new FixedItemTranslation(displayName, lore);
+             translations.put(mode, translation);
+         }
+     }
+@@ -171,70 +161,63 @@ public class TranslationConfiguration {
+         String suffix
+     ) {
+         int count = 0;
+-        for (var id : itemsSection.getKeys(false)) {
++        for (String id : itemsSection.getKeys(false)) {
+             String itemId = prefix + id + suffix;
+             SlimefunTranslation.debug("Loading item translation {0}", itemId);
+ 
+-            var itemSection = itemsSection.getConfigurationSection(id);
++            ConfigurationSection itemSection = itemsSection.getConfigurationSection(id);
+             if (itemSection == null) {
+-                SlimefunTranslation.log(Level.SEVERE, "Invalid item section {0} in configuration file.", id);
++                LogUtils.log(Level.SEVERE, "Invalid item section {0} in configuration file.", (Object) id);
+                 continue;
+             }
+ 
+-            var itemConditions = TranslationConditions.load(fileConditions, itemSection.getConfigurationSection(fields.getConditions()));
++            TranslationConditions itemConditions = TranslationConditions.load(fileConditions, itemSection.getConfigurationSection(fields.getConditions()));
+             SlimefunTranslation.debug("Current item condition: {0}", itemConditions);
+             boolean forceLoad = itemConditions.isForceLoad();
+ 
+-            // sfItem
++            // SFItem
+             SlimefunItem sfItem = SlimefunItem.getById(itemId);
+             if (sfItem == null && !forceLoad) {
+-                SlimefunTranslation.log(Level.WARNING, "Item {0} is not registered, ignoring.", itemId);
++                LogUtils.log(Level.WARNING, "Item {0} is not registered, ignoring.", (Object) itemId);
+                 continue;
+             }
+ 
+-            // name
++            // Name
+             String displayName = itemSection.getString("name", "");
+ 
+-            // lore
+-            var lore = itemSection.getStringList("lore");
++            // Lore
++            List<String> lore = itemSection.getStringList("lore");
+ 
+-            // lore overrides
++            // Lore overrides
+             Map<Integer, String> overrides = new HashMap<>();
+-            if (itemSection.contains("lore-overrides")) {
+-                try {
+-                    Map<String, String> replacements = ConfigUtils.getMap(itemSection.getConfigurationSection("lore-overrides"));
+-                    for (var entry : replacements.entrySet()) {
+-                        overrides.put(Integer.parseInt(entry.getKey()), entry.getValue());
+-                    }
+-                } catch (NumberFormatException | NullPointerException ex) {
+-                    SlimefunTranslation.log(Level.SEVERE, "Invalid lore overrides of item {0}.", itemId);
+-                    continue;
+-                }
++            if (itemSection.contains("lore-overrides")) try {
++                Map<String, String> replacements = ConfigUtils.getMap(itemSection.getConfigurationSection("lore-overrides"));
++                for (Map.Entry<String, String> entry : replacements.entrySet())
++                    overrides.put(Integer.parseInt(entry.getKey()), entry.getValue());
++            } catch (NumberFormatException | NullPointerException ex) {
++                LogUtils.log(Level.SEVERE, "Invalid lore overrides of item {0}.", itemId);
++                continue;
+             }
+ 
+-            // lore replacements
++            // Lore replacements
+             Map<Integer, Pair<String, String>> replacements = new HashMap<>();
+-            if (itemSection.contains("lore-replacements")) {
+-                try {
+-                    for (String idx : itemSection.getConfigurationSection("lore-replacements").getKeys(false)) {
+-                        int i = Integer.parseInt(idx);
+-                        var section = itemSection.getConfigurationSection("lore-replacements." + idx);
+-                        replacements.put(i, new Pair<>(section.getString("original"), section.getString("replaced")));
+-                    }
+-                } catch (NumberFormatException | NullPointerException ex) {
+-                    SlimefunTranslation.log(Level.SEVERE, "Invalid lore replacements of item {0}", itemId);
+-                    continue;
++            if (itemSection.contains("lore-replacements")) try {
++                for (String idx : itemSection.getConfigurationSection("lore-replacements").getKeys(false)) {
++                    int i = Integer.parseInt(idx);
++                    ConfigurationSection section = itemSection.getConfigurationSection("lore-replacements." + idx);
++                    replacements.put(i, new Pair<>(section.getString("original"), section.getString("replaced")));
+                 }
++            } catch (NumberFormatException | NullPointerException ex) {
++                LogUtils.log(Level.SEVERE, "Invalid lore replacements of item {0}", (Object) itemId);
++                continue;
+             }
+ 
+-            // check partial override
+-            if (!itemConditions.isPartialOverride() && !forceLoad) {
+-                itemConditions.setPartialOverride(
+-                    SlimefunTranslation.getConfigService().getPartialOverrideMaterials().contains(sfItem.getItem().getType())
+-                );
+-            }
++            // Check partial override
++            if (!itemConditions.isPartialOverride() && !forceLoad) itemConditions.setPartialOverride(
++                SlimefunTranslation.getConfigService().getPartialOverrideMaterials().contains(sfItem.getItem().getType())
++            );
+ 
+-            var translation = new FixedItemTranslation(displayName, lore, overrides, replacements, itemConditions);
++            FixedItemTranslation translation = new FixedItemTranslation(displayName, lore, overrides, replacements, itemConditions);
+             translations.put(itemId, translation);
+             count++;
+         }
+@@ -242,23 +225,22 @@ public class TranslationConfiguration {
      }
  
      public void register(@Nonnull SlimefunAddon addon) {
@@ -806,31 +884,39 @@ index 4af7b64..b465399 100644
              throw new IllegalStateException("TranslationConfiguration is already registered");
 -        }
  
--        var allItemTranslations = SlimefunTranslation.getRegistry().getItemTranslations();
-+        Map<String, Map<String, ItemTranslation>> allItemTranslations = SlimefunTranslation.getRegistry().getItemTranslations();
-         allItemTranslations.putIfAbsent(lang, new HashMap<>());
--        var currentTranslations = allItemTranslations.get(lang);
-+        Map<String, ItemTranslation> currentTranslations = allItemTranslations.get(lang);
-         currentTranslations.putAll(itemTranslations);
+-        var registry = SlimefunTranslation.getRegistry();
++        Registry registry = SlimefunTranslation.getRegistry();
  
--        var allLoreTranslations = SlimefunTranslation.getRegistry().getLoreTranslations();
-+        Map<String, Map<String, String>> allLoreTranslations = SlimefunTranslation.getRegistry().getLoreTranslations();
-         allLoreTranslations.putIfAbsent(lang, new HashMap<>());
--        var currentLoreTranslations = allLoreTranslations.get(lang);
-+        Map<String, String> currentLoreTranslations = allLoreTranslations.get(lang);
-         currentLoreTranslations.putAll(loreTranslations);
+-        // guides
++        // Guides
+         registerTranslations(registry.getGuideTranslations(), lang, translations.getGuide());
+-        // itemGroups
++        // ItemGroups
+         registerTranslations(registry.getItemGroupTranslations(), lang, translations.getItemGroup());
+-        // items
++        // Items
+         registerTranslations(registry.getItemTranslations(), lang, translations.getItem());
+-        // lore
++        // Lore
+         registerTranslations(registry.getLoreTranslations(), lang, translations.getLore());
+-        // messages
+-        var allMessageTranslations = registry.getMessageTranslations();
+-        var pluginMessageTranslations = allMessageTranslations.computeIfAbsent(addon.getName(), k -> new HashMap<>());
++        // Messages
++        Map<String, Map<String, Map<String, String>>> allMessageTranslations = registry.getMessageTranslations();
++        Map<String, Map<String, String>> pluginMessageTranslations = allMessageTranslations.computeIfAbsent(addon.getName(), k -> new HashMap<>());
+         registerTranslations(pluginMessageTranslations, lang, translations.getMessage());
  
--        var allMessageTranslations = SlimefunTranslation.getRegistry().getMessageTranslations();
-+        Map<String, Map<String, Map<String, String>>> allMessageTranslations = SlimefunTranslation.getRegistry().getMessageTranslations();
-         allMessageTranslations.putIfAbsent(addon.getName(), new HashMap<>());
--        var pluginMessageTranslations = allMessageTranslations.get(addon.getName());
-+        Map<String, Map<String, String>> pluginMessageTranslations = allMessageTranslations.get(addon.getName());
-         pluginMessageTranslations.putIfAbsent(lang, new HashMap<>());
--        var currentMessageTranslations = pluginMessageTranslations.get(lang);
-+        Map<String, String> currentMessageTranslations = pluginMessageTranslations.get(lang);
-         currentMessageTranslations.putAll(messageTranslations);
+         setAddon(addon);
+@@ -266,7 +248,7 @@ public class TranslationConfiguration {
+     }
  
-         this.addon = addon;
+     private <V> void registerTranslations(Map<String, Map<String, V>> allTranslations, String lang, Map<String, V> translations) {
+-        var currentTranslations = allTranslations.computeIfAbsent(lang, k -> new HashMap<>());
++        Map<String, V> currentTranslations = allTranslations.computeIfAbsent(lang, k -> new HashMap<>());
+         currentTranslations.putAll(translations);
+     }
+ 
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/api/config/TranslationConfigurationDefaults.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/TranslationConfigurationDefaults.java
 similarity index 87%
 rename from src/main/java/net/guizhanss/slimefuntranslation/api/config/TranslationConfigurationDefaults.java
@@ -845,10 +931,10 @@ index 6a99038..6d24512 100644
  import lombok.AllArgsConstructor;
  import lombok.Builder;
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/api/config/TranslationConfigurationFields.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/TranslationConfigurationFields.java
-similarity index 91%
+similarity index 93%
 rename from src/main/java/net/guizhanss/slimefuntranslation/api/config/TranslationConfigurationFields.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/TranslationConfigurationFields.java
-index a03a3f1..1683795 100644
+index 75b0650..f6ef365 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/api/config/TranslationConfigurationFields.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/TranslationConfigurationFields.java
 @@ -1,4 +1,4 @@
@@ -857,6 +943,26 @@ index a03a3f1..1683795 100644
  
  import lombok.AllArgsConstructor;
  import lombok.Builder;
+diff --git a/src/main/java/net/guizhanss/slimefuntranslation/api/config/Translations.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/Translations.java
+similarity index 75%
+rename from src/main/java/net/guizhanss/slimefuntranslation/api/config/Translations.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/Translations.java
+index e94a270..790b51d 100644
+--- a/src/main/java/net/guizhanss/slimefuntranslation/api/config/Translations.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/Translations.java
+@@ -1,10 +1,9 @@
+-package net.guizhanss.slimefuntranslation.api.config;
++package id.universenetwork.sfa_loader.addons.slimefuntranslation.api.config;
+ 
+ import java.util.HashMap;
+ import java.util.Map;
+ 
+-import net.guizhanss.slimefuntranslation.api.translation.ItemTranslation;
+-
++import id.universenetwork.sfa_loader.addons.slimefuntranslation.api.translation.ItemTranslation;
+ import lombok.Getter;
+ 
+ /**
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/api/config/package-info.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/package-info.java
 similarity index 55%
 rename from src/main/java/net/guizhanss/slimefuntranslation/api/config/package-info.java
@@ -987,6 +1093,25 @@ index 936c112..a73b0bb 100644
  
  /**
   * Represents the status of the translation for a specific item.
+diff --git a/src/main/java/net/guizhanss/slimefuntranslation/api/translation/lore/LoreHandler.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/translation/lore/LoreHandler.java
+similarity index 57%
+rename from src/main/java/net/guizhanss/slimefuntranslation/api/translation/lore/LoreHandler.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/translation/lore/LoreHandler.java
+index f29031b..f22bee9 100644
+--- a/src/main/java/net/guizhanss/slimefuntranslation/api/translation/lore/LoreHandler.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/translation/lore/LoreHandler.java
+@@ -1,9 +1,9 @@
+-package net.guizhanss.slimefuntranslation.api.translation.lore;
++package id.universenetwork.sfa_loader.addons.slimefuntranslation.api.translation.lore;
+ 
+ import javax.annotation.Nullable;
+ import javax.annotation.ParametersAreNonnullByDefault;
+ 
+-import net.guizhanss.slimefuntranslation.core.users.User;
++import id.universenetwork.sfa_loader.addons.slimefuntranslation.core.users.User;
+ 
+ public interface LoreHandler {
+     @Nullable
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/translation/package-info.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/translation/package-info.java
 new file mode 100644
 index 0000000..f2a25c6
@@ -998,10 +1123,10 @@ index 0000000..f2a25c6
 + */
 +package id.universenetwork.sfa_loader.addons.slimefuntranslation.api.translation;
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/core/Registry.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/Registry.java
-similarity index 74%
+similarity index 75%
 rename from src/main/java/net/guizhanss/slimefuntranslation/core/Registry.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/Registry.java
-index 7987f54..e2014ea 100644
+index 4a5b3c8..4be1559 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/core/Registry.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/Registry.java
 @@ -1,4 +1,4 @@
@@ -1010,14 +1135,16 @@ index 7987f54..e2014ea 100644
  
  import java.util.HashMap;
  import java.util.HashSet;
-@@ -6,9 +6,8 @@ import java.util.Map;
+@@ -6,10 +6,9 @@ import java.util.Map;
  import java.util.Set;
  import java.util.UUID;
  
 -import net.guizhanss.slimefuntranslation.api.translation.ItemTranslation;
+-import net.guizhanss.slimefuntranslation.api.translation.lore.LoreHandler;
 -import net.guizhanss.slimefuntranslation.core.users.User;
 -
 +import id.universenetwork.sfa_loader.addons.slimefuntranslation.api.translation.ItemTranslation;
++import id.universenetwork.sfa_loader.addons.slimefuntranslation.api.translation.lore.LoreHandler;
 +import id.universenetwork.sfa_loader.addons.slimefuntranslation.core.users.User;
  import lombok.Getter;
  
@@ -1045,7 +1172,7 @@ diff --git a/src/main/java/net/guizhanss/slimefuntranslation/core/commands/subco
 similarity index 65%
 rename from src/main/java/net/guizhanss/slimefuntranslation/core/commands/subcommands/IdCommand.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/subcommands/IdCommand.java
-index 180bb80..ee0bd8a 100644
+index 180bb80..e4a48ca 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/core/commands/subcommands/IdCommand.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/subcommands/IdCommand.java
 @@ -1,22 +1,20 @@
@@ -1089,7 +1216,7 @@ index 180bb80..ee0bd8a 100644
 -    @ParametersAreNonnullByDefault
 -    public void onExecute(CommandSender sender, String[] args) {
 -        if (!(sender instanceof Player p)) {
-+    @CommandMethod("sftranslation id")
++    @CommandMethod("sftranslation|slimefuntranslation|sft|sftr|sftransl id")
 +    @CommandPermission("sftranslation.command.id")
 +    public void cmdId(CommandSender sender) {
 +        if (!(sender instanceof Player)) {
@@ -1118,7 +1245,7 @@ diff --git a/src/main/java/net/guizhanss/slimefuntranslation/core/commands/subco
 similarity index 75%
 rename from src/main/java/net/guizhanss/slimefuntranslation/core/commands/subcommands/SearchCommand.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/subcommands/SearchCommand.java
-index e35fcac..40270b3 100644
+index e35fcac..bd3cc27 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/core/commands/subcommands/SearchCommand.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/subcommands/SearchCommand.java
 @@ -1,10 +1,9 @@
@@ -1165,7 +1292,7 @@ index e35fcac..40270b3 100644
 -    @ParametersAreNonnullByDefault
 -    public void onExecute(CommandSender sender, String[] args) {
 -        if (!(sender instanceof Player p)) {
-+    @CommandMethod("sftranslation search <query>")
++    @CommandMethod("sftranslation|slimefuntranslation|sft|sftr|sftransl search <query>")
 +    @CommandPermission("sftranslation.command.search")
 +    public void cmdSearch(CommandSender sender,
 +                          @Argument("query") @Greedy String query) {
@@ -1225,7 +1352,7 @@ index e35fcac..40270b3 100644
      }
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/subcommands/translation/ExtractCommand.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/subcommands/translation/ExtractCommand.java
 new file mode 100644
-index 0000000..d07c4f3
+index 0000000..9394df0
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/subcommands/translation/ExtractCommand.java
 @@ -0,0 +1,19 @@
@@ -1241,7 +1368,7 @@ index 0000000..d07c4f3
 +import id.universenetwork.sfa_loader.addons.slimefuntranslation.core.commands.AbstractSubCommand;
 +
 +public class ExtractCommand extends AbstractSubCommand {
-+    @CommandMethod("sftranslation translation extract <replace>")
++    @CommandMethod("sftranslation|slimefuntranslation|sft|sftr|sftransl translation extract <replace>")
 +    @ParametersAreNonnullByDefault
 +    public void cmdExtract(CommandSender sender, @Argument("replace") boolean replace) {
 +        SlimefunTranslation.getTranslationService().extractTranslations(replace);
@@ -1252,7 +1379,7 @@ diff --git a/src/main/java/net/guizhanss/slimefuntranslation/core/commands/subco
 similarity index 55%
 rename from src/main/java/net/guizhanss/slimefuntranslation/core/commands/subcommands/translation/GenerateCommand.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/subcommands/translation/GenerateCommand.java
-index cd025d5..400fb68 100644
+index cd025d5..ea98cbd 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/core/commands/subcommands/translation/GenerateCommand.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/subcommands/translation/GenerateCommand.java
 @@ -1,4 +1,4 @@
@@ -1302,7 +1429,7 @@ index cd025d5..400fb68 100644
 -        String language = args[1];
 -
 -        if (!SlimefunTranslation.getInstance().getServer().getPluginManager().isPluginEnabled(addonName)) {
-+    @CommandMethod("sftranslation translation generate <addon> <language> [itemgroup]")
++    @CommandMethod("sftranslation|slimefuntranslation|sft|sftr|sftransl translation generate <addon> <language> [itemgroup]")
 +    @CommandPermission("sftranslation.command.translation.generate")
 +    public void cmdGenerate(CommandSender sender,
 +                            @Argument(value = "addon", suggestions = "getAddons") String addonName,
@@ -1426,7 +1553,7 @@ index cd025d5..400fb68 100644
      }
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/subcommands/translation/ReloadCommand.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/subcommands/translation/ReloadCommand.java
 new file mode 100644
-index 0000000..5bc2c0b
+index 0000000..6fd4d36
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/subcommands/translation/ReloadCommand.java
 @@ -0,0 +1,20 @@
@@ -1441,7 +1568,7 @@ index 0000000..5bc2c0b
 +import id.universenetwork.sfa_loader.addons.slimefuntranslation.core.services.TranslationService;
 +
 +public class ReloadCommand extends AbstractSubCommand {
-+    @CommandMethod("sftranslation translation reload")
++    @CommandMethod("sftranslation|slimefuntranslation|sft|sftr|sftransl translation reload")
 +    @CommandPermission("sftranslation.command.translation.reload")
 +    public void cmdReload(CommandSender sender) {
 +        TranslationService translationService = SlimefunTranslation.getTranslationService();
@@ -1712,10 +1839,10 @@ index 0000000..0adcaab
 +    }
 +}
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/core/services/TranslationService.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/TranslationService.java
-similarity index 61%
+similarity index 54%
 rename from src/main/java/net/guizhanss/slimefuntranslation/core/services/TranslationService.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/TranslationService.java
-index ab8b050..4c2e9b2 100644
+index d90324f..4c2e9b2 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/core/services/TranslationService.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/TranslationService.java
 @@ -1,10 +1,13 @@
@@ -1733,13 +1860,14 @@ index ab8b050..4c2e9b2 100644
  import java.util.Set;
  import java.util.logging.Level;
  
-@@ -20,21 +23,27 @@ import org.bukkit.configuration.file.FileConfiguration;
+@@ -20,22 +23,27 @@ import org.bukkit.configuration.file.FileConfiguration;
  import org.bukkit.configuration.file.YamlConfiguration;
  import org.bukkit.inventory.ItemStack;
  import org.bukkit.inventory.meta.ItemMeta;
 +import org.bukkit.plugin.java.JavaPlugin;
  
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+-import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
  import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
  
 -import net.guizhanss.slimefuntranslation.SlimefunTranslation;
@@ -1772,7 +1900,7 @@ index ab8b050..4c2e9b2 100644
  
  /**
   * This class holds all translations and can be used to access these translations
-@@ -44,16 +53,15 @@ import net.guizhanss.slimefuntranslation.utils.constant.Keys;
+@@ -45,16 +53,15 @@ import net.guizhanss.slimefuntranslation.utils.constant.Keys;
   */
  @SuppressWarnings("ConstantConditions")
  public final class TranslationService {
@@ -1795,7 +1923,7 @@ index ab8b050..4c2e9b2 100644
  
          extractTranslations(false);
      }
-@@ -74,7 +82,7 @@ public final class TranslationService {
+@@ -75,7 +82,7 @@ public final class TranslationService {
      }
  
      public void clearTranslations() {
@@ -1804,7 +1932,7 @@ index ab8b050..4c2e9b2 100644
          registry.getLanguages().clear();
          registry.getItemTranslations().clear();
          registry.getLoreTranslations().clear();
-@@ -87,40 +95,33 @@ public final class TranslationService {
+@@ -88,40 +95,33 @@ public final class TranslationService {
      }
  
      private void loadFixedTranslations() {
@@ -1858,7 +1986,7 @@ index ab8b050..4c2e9b2 100644
                  currentTranslations.put(sfItem.getId(), translation);
              }
          }
-@@ -132,17 +133,20 @@ public final class TranslationService {
+@@ -133,17 +133,20 @@ public final class TranslationService {
       * @param replace Whether to replace existing files.
       */
      public void extractTranslations(boolean replace) {
@@ -1887,7 +2015,7 @@ index ab8b050..4c2e9b2 100644
          }
      }
  
-@@ -156,13 +160,11 @@ public final class TranslationService {
+@@ -157,13 +160,11 @@ public final class TranslationService {
       */
      @ParametersAreNonnullByDefault
      public String exportItemTranslations(String language, String addonName, Set<String> ids) {
@@ -1904,7 +2032,7 @@ index ab8b050..4c2e9b2 100644
          int idx = 1;
          File file;
          String fileName;
-@@ -178,21 +180,17 @@ public final class TranslationService {
+@@ -179,21 +180,17 @@ public final class TranslationService {
          for (String itemId : ids) {
              String path = "translations." + itemId;
              SlimefunItem sfItem = SlimefunItem.getById(itemId);
@@ -1931,7 +2059,7 @@ index ab8b050..4c2e9b2 100644
          }
  
          return fileName;
-@@ -209,14 +207,11 @@ public final class TranslationService {
+@@ -210,14 +207,11 @@ public final class TranslationService {
      @Nonnull
      public String getTranslatedItemName(@Nonnull User user, @Nullable SlimefunItem sfItem) {
          Preconditions.checkArgument(user != null, "user cannot be null");
@@ -1950,31 +2078,88 @@ index ab8b050..4c2e9b2 100644
              SlimefunTranslation.getRegistry().getItemTranslations(), user, sfItem.getId());
          return transl.map(itemTranslation -> SlimefunTranslation.getIntegrationService().applyPlaceholders(
              user,
-@@ -234,43 +229,33 @@ public final class TranslationService {
+@@ -235,98 +229,33 @@ public final class TranslationService {
       */
      public boolean translateItem(@Nonnull User user, @Nullable ItemStack item) {
          Preconditions.checkArgument(user != null, "user cannot be null");
 -        if (item == null || !item.hasItemMeta()) {
 -            return false;
 -        }
+-
+-        // slimefun guide
+-        SlimefunGuideMode guideMode = SlimefunItemUtils.getGuideMode(item);
+-        if (guideMode != null) {
+-            return translateSfGuide(user, item, guideMode);
+-        }
+-
+-        // slimefun item group
+-        String itemGroupKey = SlimefunItemUtils.getItemGroupKey(item);
+-        if (itemGroupKey != null) {
+-            return translateSfItemGroup(user, item, itemGroupKey);
+-        }
+-
+-        // slimefun item
 +        if (item == null || !item.hasItemMeta()) return false;
          String sfId = SlimefunItemUtils.getId(item);
--        if (sfId == null) {
--            return false;
+-        if (sfId != null) {
+-            return translateSfItem(user, item, sfId);
 -        }
 +        if (sfId == null) return false;
  
-         return translateItem(user, item, sfId);
+-        return false;
++        return translateItem(user, item, sfId);
      }
  
      @ParametersAreNonnullByDefault
-     private boolean translateItem(User user, ItemStack item, String sfId) {
+-    private boolean translateSfGuide(User user, ItemStack item, SlimefunGuideMode guideMode) {
+-        var transl = TranslationUtils.findTranslation(
+-            SlimefunTranslation.getRegistry().getGuideTranslations(), user, guideMode.name());
+-        if (transl.isEmpty()) {
+-            return false;
+-        }
+-
+-        var translation = transl.get();
+-        final ItemMeta meta = item.getItemMeta();
+-
+-        var integrationService = SlimefunTranslation.getIntegrationService();
+-        // display name
+-        String originalDisplayName = meta.hasDisplayName() ? meta.getDisplayName() : "";
+-        meta.setDisplayName(integrationService.applyPlaceholders(user, translation.getDisplayName(user, item, meta, originalDisplayName)));
+-        // lore
+-        List<String> originalLore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
+-        meta.setLore(integrationService.applyPlaceholders(user, translation.getLore(user, item, meta, originalLore)));
+-
+-        item.setItemMeta(meta);
+-        return true;
+-    }
+-
+-    @ParametersAreNonnullByDefault
+-    private boolean translateSfItemGroup(User user, ItemStack item, String itemGroupKey) {
+-        var transl = TranslationUtils.findTranslation(
+-            SlimefunTranslation.getRegistry().getItemGroupTranslations(), user, itemGroupKey);
+-        if (transl.isEmpty()) {
+-            return false;
+-        }
+-
+-        var translation = transl.get();
+-        final ItemMeta meta = item.getItemMeta();
+-
+-        var integrationService = SlimefunTranslation.getIntegrationService();
+-        // display name
+-        meta.setDisplayName(integrationService.applyPlaceholders(user, translation));
+-        item.setItemMeta(meta);
+-        return true;
+-    }
+-
+-    @ParametersAreNonnullByDefault
+-    private boolean translateSfItem(User user, ItemStack item, String sfId) {
 -        // check if the item is disabled
 -        if (SlimefunTranslation.getConfigService().getDisabledItems().contains(sfId)) {
 -            return false;
 -        }
 -        // find the translation
 -        var transl = TranslationUtils.findTranslation(
++    private boolean translateItem(User user, ItemStack item, String sfId) {
 +        // Check if the item is disabled
 +        if (SlimefunTranslation.getConfigService().getDisabledItems().contains(sfId)) return false;
 +        // Find the translation
@@ -2007,7 +2192,7 @@ index ab8b050..4c2e9b2 100644
          if (shouldTranslateLore(meta) && status != TranslationStatus.NAME_ONLY) {
              List<String> originalLore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
              meta.setLore(integrationService.applyPlaceholders(user, translation.getLore(user, item, meta, originalLore)));
-@@ -298,7 +283,7 @@ public final class TranslationService {
+@@ -354,7 +283,7 @@ public final class TranslationService {
      @Nonnull
      @ParametersAreNonnullByDefault
      public String getLore(User user, String id, boolean defaultToId) {
@@ -2675,24 +2860,25 @@ index 83bfc50..dac3061 100644
      }
  }
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/implementation/translations/FixedItemTranslation.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/implementation/translations/FixedItemTranslation.java
-similarity index 58%
+similarity index 57%
 rename from src/main/java/net/guizhanss/slimefuntranslation/implementation/translations/FixedItemTranslation.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/implementation/translations/FixedItemTranslation.java
-index ac418f5..1203f52 100644
+index f03dc39..9e0b06b 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/implementation/translations/FixedItemTranslation.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/implementation/translations/FixedItemTranslation.java
-@@ -1,8 +1,9 @@
+@@ -1,8 +1,10 @@
 -package net.guizhanss.slimefuntranslation.implementation.translations;
 +package id.universenetwork.sfa_loader.addons.slimefuntranslation.implementation.translations;
  
  import java.util.ArrayList;
++import java.util.Collections;
  import java.util.List;
  import java.util.Map;
 +import java.util.Optional;
  
  import javax.annotation.Nonnull;
  import javax.annotation.ParametersAreNonnullByDefault;
-@@ -14,11 +15,12 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+@@ -14,11 +16,12 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
  
@@ -2710,7 +2896,16 @@ index ac418f5..1203f52 100644
  
  /**
   * A fixed translation is defined from config file, or from other plugins.
-@@ -38,7 +40,7 @@ public class FixedItemTranslation implements ItemTranslation {
+@@ -34,7 +37,7 @@ public class FixedItemTranslation implements ItemTranslation {
+         String displayName,
+         List<String> lore
+     ) {
+-        this(displayName, lore, Map.of(), Map.of(), new TranslationConditions());
++        this(displayName, lore, Collections.emptyMap(), Collections.emptyMap(), new TranslationConditions());
+     }
+ 
+     @ParametersAreNonnullByDefault
+@@ -45,7 +48,7 @@ public class FixedItemTranslation implements ItemTranslation {
          Map<Integer, Pair<String, String>> replacements,
          TranslationConditions conditions
      ) {
@@ -2719,7 +2914,7 @@ index ac418f5..1203f52 100644
          this.lore = ColorUtils.color(lore);
          this.overrides = overrides;
          this.replacements = replacements;
-@@ -78,41 +80,34 @@ public class FixedItemTranslation implements ItemTranslation {
+@@ -85,41 +88,34 @@ public class FixedItemTranslation implements ItemTranslation {
      public List<String> getLore(User user, ItemStack item, ItemMeta meta, List<String> original) {
          List<String> newLore = new ArrayList<>(original);
  
@@ -2780,7 +2975,7 @@ index ac418f5..1203f52 100644
  
          return newLore;
      }
-@@ -130,38 +125,29 @@ public class FixedItemTranslation implements ItemTranslation {
+@@ -137,38 +133,29 @@ public class FixedItemTranslation implements ItemTranslation {
      @Nonnull
      @ParametersAreNonnullByDefault
      public TranslationStatus canTranslate(User user, ItemStack item, ItemMeta meta, String sfId) {
@@ -2890,7 +3085,7 @@ diff --git a/src/main/java/net/guizhanss/slimefuntranslation/integrations/placeh
 similarity index 54%
 rename from src/main/java/net/guizhanss/slimefuntranslation/integrations/placeholders/AExpansion.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/integrations/placeholders/AExpansion.java
-index 1e37952..fc32e98 100644
+index c63bbb1..2151d18 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/integrations/placeholders/AExpansion.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/integrations/placeholders/AExpansion.java
 @@ -1,4 +1,4 @@
@@ -2923,7 +3118,7 @@ index 1e37952..fc32e98 100644
  
      @Nonnull
      @ParametersAreNonnullByDefault
-     protected String getResult(User user, String id, String... args) {
+     protected String getLore(User user, String id, String... args) {
 -        var translation = SlimefunTranslation.getTranslationService().getLore(user, id, true);
 -        return ColorUtils.color(
 +        String translation = SlimefunTranslation.getTranslationService().getLore(user, id, true);
@@ -2932,10 +3127,10 @@ index 1e37952..fc32e98 100644
                  user, MessageFormat.format(translation, (Object[]) args)
              )
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/integrations/placeholders/SlimefunLoreExpansion.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/integrations/placeholders/SlimefunLoreExpansion.java
-similarity index 52%
+similarity index 67%
 rename from src/main/java/net/guizhanss/slimefuntranslation/integrations/placeholders/SlimefunLoreExpansion.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/integrations/placeholders/SlimefunLoreExpansion.java
-index 0c153ac..aa844ff 100644
+index 89aebdc..029db79 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/integrations/placeholders/SlimefunLoreExpansion.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/integrations/placeholders/SlimefunLoreExpansion.java
 @@ -1,4 +1,4 @@
@@ -2944,57 +3139,44 @@ index 0c153ac..aa844ff 100644
  
  import java.util.Arrays;
  
-@@ -8,8 +8,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
+@@ -8,9 +8,10 @@ import javax.annotation.ParametersAreNonnullByDefault;
  
  import org.bukkit.entity.Player;
  
 -import net.guizhanss.slimefuntranslation.SlimefunTranslation;
+-import net.guizhanss.slimefuntranslation.api.SlimefunTranslationAPI;
 -import net.guizhanss.slimefuntranslation.core.users.User;
 +import id.universenetwork.sfa_loader.addons.slimefuntranslation.SlimefunTranslation;
++import id.universenetwork.sfa_loader.addons.slimefuntranslation.api.SlimefunTranslationAPI;
++import id.universenetwork.sfa_loader.addons.slimefuntranslation.api.translation.lore.LoreHandler;
 +import id.universenetwork.sfa_loader.addons.slimefuntranslation.core.users.User;
  
  public class SlimefunLoreExpansion extends AExpansion {
-     @Override
-@@ -33,27 +33,23 @@ public class SlimefunLoreExpansion extends AExpansion {
+     public SlimefunLoreExpansion() {
+@@ -18,9 +19,9 @@ public class SlimefunLoreExpansion extends AExpansion {
+         SlimefunTranslationAPI.registerLoreHandler("Machine", (user, id, args) -> {
+             if (args.length != 2) return null;
+             return getLore(user, "Machine.Format",
+-                getLore(user, "Machine.TierColor." + args[0]), // color
+-                getLore(user, "Machine.Tier." + args[0]), // tier
+-                getLore(user, "Machine.Type." + args[1]) // type
++                getLore(user, "Machine.TierColor." + args[0]), // Color
++                getLore(user, "Machine.Tier." + args[0]), // Tier
++                getLore(user, "Machine.Type." + args[1]) // Type
+             );
+         });
+         SlimefunTranslationAPI.registerLoreHandler("Radioactive", (user, id, args) -> {
+@@ -54,10 +55,8 @@ public class SlimefunLoreExpansion extends AExpansion {
  
          String id = s[0];
          String[] args = new String[0];
 -        if (s.length >= 2) {
 -            args = Arrays.copyOfRange(s, 1, s.length);
 -        }
--        return switch (id) {
--            case "Machine" -> {
--                if (args.length != 2) yield null;
--                yield getResult(user, "Machine.Format",
+-        var handler = SlimefunTranslation.getRegistry().getSlimefunLoreHandlers().getOrDefault(id, this::getLore);
 +        if (s.length >= 2) args = Arrays.copyOfRange(s, 1, s.length);
-+        switch (id) {
-+            case "Machine":
-+                if (args.length != 2) return null;
-+                return getResult(user, "Machine.Format",
-                     getResult(user, "Machine.TierColor." + args[0]), // color
-                     getResult(user, "Machine.Tier." + args[0]), // tier
-                     getResult(user, "Machine.Type." + args[1]) // type
-                 );
--            }
--            case "Radioactive" -> {
--                if (args.length != 1) yield null;
--                yield getResult(user, "Radioactive", getResult(user, "Radioactivity." + args[0]));
--            }
--            case "Material" -> {
--                if (args.length != 1) yield null;
--                yield getResult(user, "Material", getResult(user, "Materials." + args[0]));
--            }
--            default -> getResult(user, id, args);
--        };
-+            case "Radioactive":
-+                if (args.length != 1) return null;
-+                return getResult(user, "Radioactive", getResult(user, "Radioactivity." + args[0]));
-+            case "Material":
-+                if (args.length != 1) return null;
-+                return getResult(user, "Material", getResult(user, "Materials." + args[0]));
-+            default:
-+                return getResult(user, id, args);
-+        }
++        LoreHandler handler = SlimefunTranslation.getRegistry().getSlimefunLoreHandlers().getOrDefault(id, this::getLore);
+         return handler.getLore(user, id, args);
      }
  }
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/ColorUtils.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/ColorUtils.java
@@ -3235,6 +3417,23 @@ index 0ee33c4..1e44b6a 100644
          }
          return result;
      }
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/GeneralUtils.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/GeneralUtils.java
+new file mode 100644
+index 0000000..35e12ff
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/GeneralUtils.java
+@@ -0,0 +1,11 @@
++package id.universenetwork.sfa_loader.addons.slimefuntranslation.utils;
++
++import lombok.experimental.UtilityClass;
++
++@UtilityClass
++public final class GeneralUtils {
++    public boolean isAllNull(Object... objects) {
++        for (Object object : objects) if (object != null) return false;
++        return true;
++    }
++}
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/utils/ReflectionUtils.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/ReflectionUtils.java
 similarity index 86%
 rename from src/main/java/net/guizhanss/slimefuntranslation/utils/ReflectionUtils.java
@@ -3249,10 +3448,10 @@ index 07a6d58..4814710 100644
  import javax.annotation.ParametersAreNonnullByDefault;
  
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/utils/SlimefunItemUtils.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/SlimefunItemUtils.java
-similarity index 59%
+similarity index 65%
 rename from src/main/java/net/guizhanss/slimefuntranslation/utils/SlimefunItemUtils.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/SlimefunItemUtils.java
-index fc543bd..4c30289 100644
+index 97369d2..833cec0 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/utils/SlimefunItemUtils.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/SlimefunItemUtils.java
 @@ -1,4 +1,4 @@
@@ -3261,8 +3460,8 @@ index fc543bd..4c30289 100644
  
  import javax.annotation.Nonnull;
  import javax.annotation.Nullable;
-@@ -9,27 +9,20 @@ import org.bukkit.inventory.meta.ItemMeta;
- import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+@@ -11,30 +11,21 @@ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
+ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
  
 -import net.guizhanss.slimefuntranslation.utils.constant.Keys;
@@ -3287,6 +3486,29 @@ index fc543bd..4c30289 100644
 +        if (item == null || item.getType().isAir() || !item.hasItemMeta()) return null;
 +        if (item instanceof SlimefunItemStack) return ((SlimefunItemStack) item).getItemId();
 +        else return PersistentDataAPI.getString(item.getItemMeta(), Keys.SLIMEFUN_ITEM);
+     }
+ 
+     @Nullable
+-    public static SlimefunGuideMode getGuideMode(@Nullable ItemStack item) {
+-        if (item == null || item.getType().isAir() || !item.hasItemMeta()) {
+-            return null;
+-        }
++    public SlimefunGuideMode getGuideMode(@Nullable ItemStack item) {
++        if (item == null || item.getType().isAir() || !item.hasItemMeta()) return null;
+         String mode = PersistentDataAPI.getString(item.getItemMeta(), Slimefun.getRegistry().getGuideDataKey());
+         try {
+             return SlimefunGuideMode.valueOf(mode);
+@@ -44,15 +35,13 @@ public class SlimefunItemUtils {
+     }
+ 
+     @Nullable
+-    public static String getItemGroupKey(@Nullable ItemStack item) {
+-        if (item == null || item.getType().isAir() || !item.hasItemMeta()) {
+-            return null;
+-        }
++    public String getItemGroupKey(@Nullable ItemStack item) {
++        if (item == null || item.getType().isAir() || !item.hasItemMeta()) return null;
+         return PersistentDataAPI.getString(item.getItemMeta(), Keys.SLIMEFUN_ITEM_GROUP);
      }
  
      @Nonnull
@@ -3384,10 +3606,10 @@ index 3cfbe82..3d5f938 100644
      }
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/constant/Keys.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/constant/Keys.java
 new file mode 100644
-index 0000000..be5c97c
+index 0000000..32892ec
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/constant/Keys.java
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,16 @@
 +package id.universenetwork.sfa_loader.addons.slimefuntranslation.utils.constant;
 +
 +import org.bukkit.NamespacedKey;
@@ -3397,11 +3619,12 @@ index 0000000..be5c97c
 +
 +@UtilityClass
 +public final class Keys {
-+    public static final NamespacedKey SEARCH_DISPLAY = AbstractAddon.createKey("search_display");
++    public final NamespacedKey SEARCH_DISPLAY = AbstractAddon.createKey("search_display");
 +    // Slimefun keys
-+    public static final NamespacedKey SLIMEFUN_ITEM = new NamespacedKey("slimefun", "slimefun_item");
++    public final NamespacedKey SLIMEFUN_ITEM = new NamespacedKey("slimefun", "slimefun_item");
++    public final NamespacedKey SLIMEFUN_ITEM_GROUP = new NamespacedKey("slimefun", "item_group");
 +    // zAuctionHouse keys
-+    public static final NamespacedKey AUCTION_ITEM = new NamespacedKey("zauctionhousev3", "zauctionhouse-item");
++    public final NamespacedKey AUCTION_ITEM = new NamespacedKey("zauctionhousev3", "zauctionhouse-item");
 +}
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/utils/constant/Methods.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/utils/constant/Methods.java
 similarity index 58%
@@ -4279,12 +4502,33 @@ index 256f834..0000000
 -        return str.stream().map(ColorUtils::useAltCode).collect(Collectors.toCollection(ArrayList::new));
 -    }
 -}
+diff --git a/src/main/java/net/guizhanss/slimefuntranslation/utils/GeneralUtils.java b/src/main/java/net/guizhanss/slimefuntranslation/utils/GeneralUtils.java
+deleted file mode 100644
+index ed85431..0000000
+--- a/src/main/java/net/guizhanss/slimefuntranslation/utils/GeneralUtils.java
++++ /dev/null
+@@ -1,15 +0,0 @@
+-package net.guizhanss.slimefuntranslation.utils;
+-
+-import lombok.experimental.UtilityClass;
+-
+-@UtilityClass
+-public final class GeneralUtils {
+-    public static boolean isAllNull(Object... objects) {
+-        for (var object : objects) {
+-            if (object != null) {
+-                return false;
+-            }
+-        }
+-        return true;
+-    }
+-}
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/utils/constant/Keys.java b/src/main/java/net/guizhanss/slimefuntranslation/utils/constant/Keys.java
 deleted file mode 100644
-index de0660b..0000000
+index 4d1fbd0..0000000
 --- a/src/main/java/net/guizhanss/slimefuntranslation/utils/constant/Keys.java
 +++ /dev/null
-@@ -1,24 +0,0 @@
+@@ -1,25 +0,0 @@
 -package net.guizhanss.slimefuntranslation.utils.constant;
 -
 -import javax.annotation.Nonnull;
@@ -4301,6 +4545,7 @@ index de0660b..0000000
 -    public static final NamespacedKey SEARCH_DISPLAY = create("search_display");
 -    // slimefun keys
 -    public static final NamespacedKey SLIMEFUN_ITEM = new NamespacedKey("slimefun", "slimefun_item");
+-    public static final NamespacedKey SLIMEFUN_ITEM_GROUP = new NamespacedKey("slimefun", "item_group");
 -    // zAuctionHouse keys
 -    public static final NamespacedKey AUCTION_ITEM = new NamespacedKey("zauctionhousev3", "zauctionhouse-item");
 -
@@ -4439,6 +4684,10 @@ diff --git a/src/main/resources/translations/en/slimefun/gps.yml b/src/main/reso
 similarity index 100%
 rename from src/main/resources/translations/en/slimefun/gps.yml
 rename to src/main/resources/addons-config/SlimefunTranslation/translations/en/slimefun/gps.yml
+diff --git a/src/main/resources/translations/en/slimefun/guide.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/en/slimefun/guide.yml
+similarity index 100%
+rename from src/main/resources/translations/en/slimefun/guide.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/en/slimefun/guide.yml
 diff --git a/src/main/resources/translations/en/slimefun/lore-builder.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/en/slimefun/lore-builder.yml
 similarity index 100%
 rename from src/main/resources/translations/en/slimefun/lore-builder.yml
@@ -4503,6 +4752,10 @@ diff --git a/src/main/resources/translations/en/slimefun/weapons.yml b/src/main/
 similarity index 100%
 rename from src/main/resources/translations/en/slimefun/weapons.yml
 rename to src/main/resources/addons-config/SlimefunTranslation/translations/en/slimefun/weapons.yml
+diff --git a/src/main/resources/translations/ja/slimefun/armor.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/ja/slimefun/armor.yml
+similarity index 100%
+rename from src/main/resources/translations/ja/slimefun/armor.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/ja/slimefun/armor.yml
 diff --git a/src/main/resources/translations/ja/slimefun/food.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/ja/slimefun/food.yml
 similarity index 100%
 rename from src/main/resources/translations/ja/slimefun/food.yml
@@ -4515,6 +4768,98 @@ diff --git a/src/main/resources/translations/ja/slimefun/technical-components.ym
 similarity index 100%
 rename from src/main/resources/translations/ja/slimefun/technical-components.yml
 rename to src/main/resources/addons-config/SlimefunTranslation/translations/ja/slimefun/technical-components.yml
+diff --git a/src/main/resources/translations/vi/messages.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/messages.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/messages.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/messages.yml
+diff --git a/src/main/resources/translations/vi/slimefun/armor.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/armor.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/armor.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/armor.yml
+diff --git a/src/main/resources/translations/vi/slimefun/basic-machines.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/basic-machines.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/basic-machines.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/basic-machines.yml
+diff --git a/src/main/resources/translations/vi/slimefun/cargo-management.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/cargo-management.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/cargo-management.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/cargo-management.yml
+diff --git a/src/main/resources/translations/vi/slimefun/energy-and-electricity.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/energy-and-electricity.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/energy-and-electricity.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/energy-and-electricity.yml
+diff --git a/src/main/resources/translations/vi/slimefun/food.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/food.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/food.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/food.yml
+diff --git a/src/main/resources/translations/vi/slimefun/gps.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/gps.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/gps.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/gps.yml
+diff --git a/src/main/resources/translations/vi/slimefun/lore-builder.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/lore-builder.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/lore-builder.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/lore-builder.yml
+diff --git a/src/main/resources/translations/vi/slimefun/magical-armor.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/magical-armor.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/magical-armor.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/magical-armor.yml
+diff --git a/src/main/resources/translations/vi/slimefun/magical-gadgets.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/magical-gadgets.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/magical-gadgets.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/magical-gadgets.yml
+diff --git a/src/main/resources/translations/vi/slimefun/magical-items.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/magical-items.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/magical-items.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/magical-items.yml
+diff --git a/src/main/resources/translations/vi/slimefun/miscellaneous-items.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/miscellaneous-items.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/miscellaneous-items.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/miscellaneous-items.yml
+diff --git a/src/main/resources/translations/vi/slimefun/programmable-androids.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/programmable-androids.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/programmable-androids.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/programmable-androids.yml
+diff --git a/src/main/resources/translations/vi/slimefun/resources.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/resources.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/resources.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/resources.yml
+diff --git a/src/main/resources/translations/vi/slimefun/secret-items.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/secret-items.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/secret-items.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/secret-items.yml
+diff --git a/src/main/resources/translations/vi/slimefun/talismans-1.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/talismans-1.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/talismans-1.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/talismans-1.yml
+diff --git a/src/main/resources/translations/vi/slimefun/talismans-2.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/talismans-2.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/talismans-2.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/talismans-2.yml
+diff --git a/src/main/resources/translations/vi/slimefun/technical-components.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/technical-components.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/technical-components.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/technical-components.yml
+diff --git a/src/main/resources/translations/vi/slimefun/technical-gadgets.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/technical-gadgets.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/technical-gadgets.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/technical-gadgets.yml
+diff --git a/src/main/resources/translations/vi/slimefun/tools.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/tools.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/tools.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/tools.yml
+diff --git a/src/main/resources/translations/vi/slimefun/ui.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/ui.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/ui.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/ui.yml
+diff --git a/src/main/resources/translations/vi/slimefun/useful-items.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/useful-items.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/useful-items.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/useful-items.yml
+diff --git a/src/main/resources/translations/vi/slimefun/weapons.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/weapons.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/weapons.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/weapons.yml
 diff --git a/src/main/resources/translations/zh-Hans/messages.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/zh-Hans/messages.yml
 similarity index 100%
 rename from src/main/resources/translations/zh-Hans/messages.yml
@@ -4607,3223 +4952,6 @@ diff --git a/src/main/resources/translations/zh-Hans/slimefun/weapons.yml b/src/
 similarity index 100%
 rename from src/main/resources/translations/zh-Hans/slimefun/weapons.yml
 rename to src/main/resources/addons-config/SlimefunTranslation/translations/zh-Hans/slimefun/weapons.yml
-diff --git a/src/main/resources/translations/ja/slimefun/armor.yml b/src/main/resources/translations/ja/slimefun/armor.yml
-deleted file mode 100644
-index 5cf87f7..0000000
---- a/src/main/resources/translations/ja/slimefun/armor.yml
-+++ /dev/null
-@@ -1,77 +0,0 @@
--### These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Slimefunの防具
--translations:
--  DAMASCUS_STEEL_HELMET:
--    name: "&7ダマスカス鋼のヘルメット"
--  DAMASCUS_STEEL_CHESTPLATE:
--    conditions:
--      match-name: true
--    name: "&7ダマスカス鋼のチェストプレート"
--  DAMASCUS_STEEL_LEGGINGS:
--    name: "&7ダマスカス鋼のレギンス"
--  DAMASCUS_STEEL_BOOTS:
--    name: "&7ダマスカス鋼のブーツ"
--  REINFORCED_ALLOY_HELMET:
--    name: "&b強化ヘルメット"
--  REINFORCED_ALLOY_CHESTPLATE:
--    name: "&b強化チェストプレート"
--  REINFORCED_ALLOY_LEGGINGS:
--    name: "&b強化レギンス"
--  REINFORCED_ALLOY_BOOTS:
--    name: "&b強化ブーツ"
--  CACTUS_HELMET:
--    name: "&2サボテンのヘルメット"
--  CACTUS_CHESTPLATE:
--    name: "&2サボテンのチェストプレート"
--  CACTUS_LEGGINGS:
--    name: "&2サボテンのレギンス"
--  CACTUS_BOOTS:
--    name: "&2サボテンのブーツ"
--  GILDED_IRON_HELMET:
--    name: "&6金メッキ鉄のヘルメット"
--  GILDED_IRON_CHESTPLATE:
--    name: "&6金メッキ鉄のチェストプレート"
--  GILDED_IRON_LEGGINGS:
--    name: "&6金メッキ鉄のレギンス"
--  GILDED_IRON_BOOTS:
--    name: "&6金メッキ鉄のブーツ"
--  SCUBA_HELMET:
--    name: "&cスクーバヘルメット"
--    lore:
--      - ""
--      - "&7水中呼吸ができるようになる"
--      - ""
--      - "&6フルセット効果："
--      - "&e- 被ばく耐性"
--      - "&e- ミツバチに刺される耐性"
--  HAZMAT_CHESTPLATE:
--    name: "&c化学防護服のスーツ"
--    lore:
--      - ""
--      - "&7火と溶岩の中に歩けるようになる"
--      - ""
--      - "&6フルセット効果："
--      - "&e- 被ばく耐性"
--      - "&e- ミツバチに刺される耐性"
--  HAZMAT_LEGGINGS:
--    name: "&c化学防護服のレギンス"
--    lore:
--      - ""
--      - "&6フルセット効果："
--      - "&e- 被ばく耐性"
--      - "&e- ミツバチに刺される耐性"
--  RUBBER_BOOTS:
--    name: "&c化学防護服のブーツ"
--    lore:
--      - ""
--      - "&6フルセット効果："
--      - "&e- 被ばく耐性"
--      - "&e- ミツバチに刺される耐性"
--  GOLD_12K_HELMET:
--    name: "&6金のヘルメット &7(12カラット)"
--  GOLD_12K_CHESTPLATE:
--    name: "&6金のチェストプレート &7(12カラット)"
--  GOLD_12K_LEGGINGS:
--    name: "&6金のレギンス &7(12カラット)"
--  GOLD_12K_BOOTS:
--    name: "&6金のブーツ &7(12カラット)"
-diff --git a/src/main/resources/translations/vi/messages.yml b/src/main/resources/translations/vi/messages.yml
-deleted file mode 100644
-index 8fd8085..0000000
---- a/src/main/resources/translations/vi/messages.yml
-+++ /dev/null
-@@ -1,26 +0,0 @@
--name: Tin nhắn SlimefunTranslation
--messages:
--  player-only: "&cChỉ người chơi mới có thể làm việc này!"
--  no-permission: "Bạn không có quyền thực hiện việc này!"
--  commands:
--    id:
--      description: "Lấy ID của vật phẩm Slimefun trong tay chính của bạn"
--      not-sf-item: "&cVật phẩm trong tay chính của bạn không phải là một vật phẩm Slimefun!"
--      result: "ID của vật phẩm Slimefun trong tay bạn là: "
--      click-to-copy: "Click để sao chép vào bảng nhớ tạm"
--    search:
--      description: "Tìm một vật phẩm Slimefun với ngôn ngữ của bạn"
--      error: "&4Đã có lỗi xảy ra khi hiển thị vật phẩm! Vui lòng thông báo cho admin kiểm tra console!"
--    translation:
--      description: "Quản lý các file dịch"
--      extract:
--        description: "Giải nén các tệp bản dịch vào thư mục \"translations\""
--        success: "&aTất cả các file dịch đã được giải nén! (thay thế: {0})"
--      generate:
--        description: "Tạo một file dịch dựa trên addon và ngôn ngữ đã cho."
--        invalid-addon: "&cCái addon \"{0}\" chưa được bật!"
--        invalid-itemgroup: "&cCái ItemGroup \"{0}\" không tồn tại!"
--        success: "&aĐã xuất thành công file dịch \"{0}\" với ngôn ngữ \"{1}\"!"
--      reload:
--        description: "Tải lại các file dịch"
--        success: "&aTất cả các file dịch đã được tải lại!"
-diff --git a/src/main/resources/translations/vi/slimefun/armor.yml b/src/main/resources/translations/vi/slimefun/armor.yml
-deleted file mode 100644
-index 01946e6..0000000
---- a/src/main/resources/translations/vi/slimefun/armor.yml
-+++ /dev/null
-@@ -1,77 +0,0 @@
--### These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Giáp Slimefun
--translations:
--  DAMASCUS_STEEL_HELMET:
--    name: "&7Mũ Thép Damascus"
--  DAMASCUS_STEEL_CHESTPLATE:
--    conditions:
--      match-name: true
--    name: "&7Áo Giáp Thép Damascus"
--  DAMASCUS_STEEL_LEGGINGS:
--    name: "&7Quần Thép Damascus"
--  DAMASCUS_STEEL_BOOTS:
--    name: "&7Ủng Thép Damascus"
--  REINFORCED_ALLOY_HELMET:
--    name: "&bMũ Gia Cố"
--  REINFORCED_ALLOY_CHESTPLATE:
--    name: "&bÁo Giáp Reinforced"
--  REINFORCED_ALLOY_LEGGINGS:
--    name: "&bQuần Reinforced"
--  REINFORCED_ALLOY_BOOTS:
--    name: "&bỦng Reinforced"
--  CACTUS_HELMET:
--    name: "&2Mũ Xương Rồng"
--  CACTUS_CHESTPLATE:
--    name: "&2Áo Giáp Xương Rồng"
--  CACTUS_LEGGINGS:
--    name: "&2Quần Xương Rồng"
--  CACTUS_BOOTS:
--    name: "&2Ủng Xương Rồng"
--  GILDED_IRON_HELMET:
--    name: "&6Mũ Sắt Mạ Vàng"
--  GILDED_IRON_CHESTPLATE:
--    name: "&6Áo Giáp Sắt Mạ Vàng"
--  GILDED_IRON_LEGGINGS:
--    name: "&6Quần Sắt Mạ Vàng"
--  GILDED_IRON_BOOTS:
--    name: "&6Ủng Sắt Mạ Vàng"
--  SCUBA_HELMET:
--    name: "&cMũ Lặn"
--    lore:
--      - ""
--      - "&7Cho phép bạn thở dưới nước"
--      - ""
--      - "&6Full bộ hiệu ứng:"
--      - "&e- Miễn nhiễm phóng xạ"
--      - "&e- Chống Ong đốt"
--  HAZMAT_CHESTPLATE:
--    name: "&cBộ đồ Hazmat"
--    lore:
--      - ""
--      - "&7Cho phép bạn đi qua lửa và dung nham"
--      - ""
--      - "&6Full bộ hiệu ứng:"
--      - "&e- Miễn nhiễm phóng xạ"
--      - "&e- Chống Ong đốt"
--  HAZMAT_LEGGINGS:
--    name: "&cQuần Hazmat"
--    lore:
--      - ""
--      - "&6Full bộ hiệu ứng:"
--      - "&e- Miễn nhiễm phóng xạ"
--      - "&e- Chống Ong đốt"
--  RUBBER_BOOTS:
--    name: "&cỦng Hazmat"
--    lore:
--      - ""
--      - "&6Full bộ hiệu ứng:"
--      - "&e- Miễn nhiễm phóng xạ"
--      - "&e- Chống Ong đốt"
--  GOLD_12K_HELMET:
--    name: "&6Mũ Vàng &7(12-Carat)"
--  GOLD_12K_CHESTPLATE:
--    name: "&6Áo Giáp Vàng &7(12-Carat)"
--  GOLD_12K_LEGGINGS:
--    name: "&6Quần Vàng &7(12-Carat)"
--  GOLD_12K_BOOTS:
--    name: "&6Ủng Vàng &7(12-Carat)"
-diff --git a/src/main/resources/translations/vi/slimefun/basic-machines.yml b/src/main/resources/translations/vi/slimefun/basic-machines.yml
-deleted file mode 100644
-index ea1392f..0000000
---- a/src/main/resources/translations/vi/slimefun/basic-machines.yml
-+++ /dev/null
-@@ -1,217 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Những Cỗ máy Slimefun Đơn giản
--translations:
--  OUTPUT_CHEST:
--    name: "&4Rương Đầu Ra"
--    lore:
--      - ""
--      - "&c&oMột cỗ máy đơn giản sẽ thử cho"
--      - "&c&ovài vật phẩm vào chiếc rương này nếu nó được đặt"
--      - "&c&obên cạnh Máy phân phát."
--  ENHANCED_CRAFTING_TABLE:
--    conditions:
--      match-name: true
--    name: "&eBàn Chế tạo Nâng Cao"
--    lore:
--      - ""
--      - "&aMột chiếc Bàn Chế tạo thông thường không thể"
--      - "&achịu được lượng Sức mạnh khổng lồ này..."
--  GRIND_STONE:
--    name: "&bĐá Mài"
--    lore:
--      - ""
--      - "&aMài các vật phẩm thành các thứ khác"
--  ARMOR_FORGE:
--    name: "&6Lò Rèn Giáp"
--    lore:
--      - ""
--      - "&aCho bạn khả năng chế tạo bộ giáp mạnh mẽ"
--  ORE_CRUSHER:
--    name: "&bMáy Nghiền Quặng"
--    lore:
--      - ""
--      - "&aNghiền quặng để gấp đôi chúng"
--  COMPRESSOR:
--    name: "&bMáy nén"
--    lore:
--      - ""
--      - "&aNén các vật phấm"
--  MAKESHIFT_SMELTERY:
--    name: "&eLò Luyện Kim Tự Chế"
--    lore:
--      - ""
--      - "&fPhiên bản cải tiến của Lò Luyện Kim"
--      - "&fchỉ cho phép bạn"
--      - "&fnung chảy dust thành các thỏi"
--  SMELTERY:
--    name: "&6Lò Luyện Kim"
--    lore:
--      - ""
--      - "&fLò nung Nhiệt độ cao"
--      - "&fcho phép bạn nung chảy bụi"
--      - "&fthành phôi và tạo hợp kim."
--  IGNITION_CHAMBER:
--    name: "&4Buồng Đánh Lửa Tự Động"
--    lore:
--      - ""
--      - "&fNgăn Lò luyện kim dùng hết lửa."
--      - "&fChỉ cần cho \"Flint and Steel\" vào"
--      - "&fvà đặt nó cạnh dispenser của Lò luyện kim"
--  PRESSURE_CHAMBER:
--    name: "&bBuồng áp suất"
--    lore:
--      - ""
--      - "&aNén các vật phẩm nhiều hơn nữa"
--  MAGIC_WORKBENCH:
--    name: "&6Bàn Chế Tạo Ma Thuật"
--    lore:
--      - ""
--      - "&fTruyền Năng lượng Ma thuật vào vật phẩm"
--  ORE_WASHER:
--    name: "&6Máy Rửa Quặng"
--    lore:
--      - ""
--      - "&aRửa quặng đã sàng để lọc"
--      - "&avừa đưa cho bọn những Khối đá nhỏ"
--  TABLE_SAW:
--    name: "&6Bàn Cưa"
--    lore:
--      - ""
--      - "&aCho phép bạn xẻ 8 ván gỗ từ 1 khúc gỗ"
--      - "&a(Hoạt động với tất cả các loại gỗ)"
--  COMPOSTER:
--    name: "&aPhân Trộn"
--    lore:
--      - ""
--      - "&aCó thể chuyển đổi các loại Vật liệu qua thời gian..."
--  AUTOMATED_PANNING_MACHINE:
--    name: "&eMáy Paning Tự Động"
--    lore:
--      - ""
--      - "&fPhiên bản MultiBlock của Gold Pan"
--      - "&fvà Nether Gold Pan kết hợp trong một máy."
--  INDUSTRIAL_MINER:
--    name: "&bThợ Mỏ Công Nghiệp"
--    lore:
--      - ""
--      - "&fMultiblock này sẽ khai thác bất kỳ Quặng nào"
--      - "&ftrong một khu vực 7x7 bên dưới nó."
--      - "&fĐặt than hoặc thứ tương tự vào rương của nó"
--      - "&fđể cung cấp nhiên liệu cho máy này."
--  ADVANCED_INDUSTRIAL_MINER:
--    name: "&cThợ Mỏ Công Nghiệp Tiên Tiến"
--    lore:
--      - ""
--      - "&fMultiblock này sẽ khai thác bất kỳ Quặng nào"
--      - "&ftrong một khu vực 11x11 bên dưới nó."
--      - "&fĐặt một xô nhiên liệu hoặc dung nham vào"
--      - "&frương của nó để cung cấp nhiên liệu cho máy."
--      - ""
--      - "&a+ Mềm Mại"
--  CRUCIBLE:
--    name: "&cNồi Nấu Kim Loại"
--    lore:
--      - ""
--      - "&aDùng để nấu chảy vật phẩm thành Chất lỏng"
--  JUICER:
--    name: "&aMáy Ép Trái Cây"
--    lore:
--      - ""
--      - "&aCho phép bạn tạo ra nước ép thơm ngon"
--  ENHANCED_FURNACE:
--    name: "&7Lò Nung Hiệu Suất Cao - &eI"
--    lore:
--      - ""
--      - "&7Tốc độ Xử lý: &e1x"
--      - "&7Hiệu quả Năng lượng: &e1x"
--      - "&7Hệ số May mắn: &e1x"
--  ENHANCED_FURNACE_2:
--    name: "&7Lò Nung Hiệu Suất Cao - &eII"
--    lore:
--      - ""
--      - "&7Tốc độ Xử lý: &e2x"
--      - "&7Hiệu quả Năng lượng: &e1x"
--      - "&7Hệ số May mắn: &e1x"
--  ENHANCED_FURNACE_3:
--    name: "&7Lò Nung Hiệu Suất Cao - &eIII"
--    lore:
--      - ""
--      - "&7Tốc độ Xử lý: &e2x"
--      - "&7Hiệu quả Năng lượng: &e2x"
--      - "&7Hệ số May mắn: &e1x"
--  ENHANCED_FURNACE_4:
--    name: "&7Lò Nung Hiệu Suất Cao - &eIV"
--    lore:
--      - ""
--      - "&7Tốc độ Xử lý: &e3x"
--      - "&7Hiệu quả Năng lượng: &e2x"
--      - "&7Hệ số May mắn: &e1x"
--  ENHANCED_FURNACE_5:
--    name: "&7Lò Nung Hiệu Suất Cao - &eV"
--    lore:
--      - ""
--      - "&7Tốc độ Xử lý: &e3x"
--      - "&7Hiệu quả Năng lượng: &e2x"
--      - "&7Hệ số May mắn: &e2x"
--  ENHANCED_FURNACE_6:
--    name: "&7Lò Nung Hiệu Suất Cao - &eVI"
--    lore:
--      - ""
--      - "&7Tốc độ Xử lý: &e3x"
--      - "&7Hiệu quả Năng lượng: &e3x"
--      - "&7Hệ số May mắn: &e2x"
--  ENHANCED_FURNACE_7:
--    name: "&7Lò Nung Hiệu Suất Cao - &eVII"
--    lore:
--      - ""
--      - "&7Tốc độ Xử lý: &e4x"
--      - "&7Hiệu quả Năng lượng: &e3x"
--      - "&7Hệ số May mắn: &e2x"
--  ENHANCED_FURNACE_8:
--    name: "&7Lò Nung Hiệu Suất Cao - &eVIII"
--    lore:
--      - ""
--      - "&7Tốc độ Xử lý: &e4x"
--      - "&7Hiệu quả Năng lượng: &e4x"
--      - "&7Hệ số May mắn: &e2x"
--  ENHANCED_FURNACE_9:
--    name: "&7Lò Nung Hiệu Suất Cao - &eIX"
--    lore:
--      - ""
--      - "&7Tốc độ Xử lý: &e5x"
--      - "&7Hiệu quả Năng lượng: &e4x"
--      - "&7Hệ số May mắn: &e2x"
--  ENHANCED_FURNACE_10:
--    name: "&7Lò Nung Hiệu Suất Cao - &eX"
--    lore:
--      - ""
--      - "&7Tốc độ Xử lý: &e5x"
--      - "&7Hiệu quả Năng lượng: &e5x"
--      - "&7Hệ số May mắn: &e2x"
--  ENHANCED_FURNACE_11:
--    name: "&7Lò Nung Hiệu Suất Cao - &eXI"
--    lore:
--      - ""
--      - "&7Tốc độ Xử lý: &e5x"
--      - "&7Hiệu quả Năng lượng: &e5x"
--      - "&7Hệ số May mắn: &e3x"
--  REINFORCED_FURNACE:
--    name: "&7Lò Nung Gia Cố"
--    lore:
--      - ""
--      - "&7Tốc độ Xử lý: &e10x"
--      - "&7Hiệu suất nhiên liệu: &e10x"
--      - "&7Hệ số May mắn: &e3x"
--  CARBONADO_EDGED_FURNACE:
--    name: "&7Lò Nung Viền Carbonado"
--    lore:
--      - ""
--      - "&7Tốc độ Xử lý: &e20x"
--      - "&7Hiệu suất nhiên liệu: &e10x"
--      - "&7Hệ số May mắn: &e3x"
--  BLOCK_PLACER:
--    name: "&aMáy Đặt Block"
--    lore:
--      - ""
--      - "&fTất cả các block trong Máy Phân Phát"
--      - "&fsẽ tự động được đặt"
-diff --git a/src/main/resources/translations/vi/slimefun/cargo-management.yml b/src/main/resources/translations/vi/slimefun/cargo-management.yml
-deleted file mode 100644
-index e4e5328..0000000
---- a/src/main/resources/translations/vi/slimefun/cargo-management.yml
-+++ /dev/null
-@@ -1,88 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Quản lý Cargo Slimefun
--translations:
--  CARGO_MOTOR:
--    name: "&3Mô-tơ Cargo"
--    lore:
--      - ""
--      - "&7Nguyên liệu quan trong cho các vật phẩm"
--      - "&7liên quan dến Quản lý Cargo"
--  CARGO_MANAGER:
--    conditions:
--      match-name: true
--    name: "&6Bộ Quản Lý Cargo"
--    lore:
--      - ""
--      - "&fThành phần Cốt lõi của một Mạng lưới Vận chuyển Vật phẩm"
--  CARGO_NODE:
--    name: "&7Cargo Node &c(Bộ kết nối)"
--    lore:
--      - ""
--      - "&fPipe Nối Cargo"
--  CARGO_NODE_INPUT:
--    name: "&7Cargo Node &c(Đầu vào)"
--    lore:
--      - ""
--      - "&fỐng Đầu Vào Cargo"
--  CARGO_NODE_OUTPUT:
--    name: "&7Cargo Node &c(Đầu ra)"
--    lore:
--      - ""
--      - "&fỐng Đầu Ra Cargo"
--  CARGO_NODE_OUTPUT_ADVANCED:
--    name: "&6Cargo Node Nâng Cao &c(Đầu ra)"
--    lore:
--      - ""
--      - "&fỐng Đầu Ra Cargo"
--  REACTOR_ACCESS_PORT:
--    name: "&2Cổng Truy Cập Lò Phản Ứng"
--    lore:
--      - ""
--      - "&fCho phép bạn tương tác với một Lò phản ứng"
--      - "&fthông qua các Cargo Nodes, cũng có thể được sử dụng"
--      - "&fnhư một Bộ đệm"
--      - ""
--      - "&8\u21E8 &eBắt buộc phải đặt &a3 các khối &ephía trên Lò phản ứng"
--  TRASH_CAN_BLOCK:
--    name: "&3Thùng Rác"
--    lore:
--      - ""
--      - "&fSẽ phá huỷ tất cả vật phẩm cho vào nó"
--  CRAFTING_MOTOR:
--    name: "&6Mô-tơ Chế Tạo"
--    lore:
--      - ""
--      - "&7Thành phần quan trọng của Auto-Crafters"
--  VANILLA_AUTO_CRAFTER:
--    name: "&2Auto-Crafter &8(Vanilla)"
--    lore:
--      - ""
--      - "&fĐặt chiếc máy này trên một"
--      - "&fcái rương hoặc tương tự và cho nó chế tạo"
--      - "&fbất kỳ thứ gì có thể chế tạo bằng cách dùng một"
--      - "&eBàn Chế tạo &fbình thường"
--      - ""
--      - "%sftrlore_Machine_Advanced_Machine%"
--      - "%sftrlore_Power_16_/Item%"
--  ENHANCED_AUTO_CRAFTER:
--    name: "&2Auto-Crafter &8(Nâng Cao)"
--    lore:
--      - ""
--      - "&fĐặt chiếc máy này trên một"
--      - "&fcái rương hoặc tương tự và cho nó chế tạo"
--      - "&fbất kỳ thứ gì có thể chế tạo bằng cách dùng một"
--      - "&eBàn Chế tạo Nâng Cao"
--      - ""
--      - "%sftrlore_Machine_Advanced_Machine%"
--      - "%sftrlore_Power_16_/Item%"
--  ARMOR_AUTO_CRAFTER:
--    name: "&2Auto-Crafter &8(Lò rèn Giáp)"
--    lore:
--      - ""
--      - "&fĐặt chiếc máy này trên một"
--      - "&fcái rương hoặc tương tự và cho nó chế tạo"
--      - "&fbất kỳ thứ gì có thể chế tạo bằng cách dùng một"
--      - "&eLò Rèn Giáp"
--      - ""
--      - "%sftrlore_Machine_Advanced_Machine%"
--      - "%sftrlore_Power_32_/Item%"
-diff --git a/src/main/resources/translations/vi/slimefun/energy-and-electricity.yml b/src/main/resources/translations/vi/slimefun/energy-and-electricity.yml
-deleted file mode 100644
-index 895f303..0000000
---- a/src/main/resources/translations/vi/slimefun/energy-and-electricity.yml
-+++ /dev/null
-@@ -1,608 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Năng lượng và Điện Slimefun
--translations:
--  ENERGY_REGULATOR:
--    name: "&6Bộ Điều Chỉnh Năng Lượng"
--    lore:
--      - ""
--      - "&fThành phần Cốt lõi của một Mạng lưới Điện"
--  ENERGY_CONNECTOR:
--    name: "&eĐầu Nối Năng Lượng"
--    lore:
--      - "%sftrlore_Range_6%"
--      - ""
--      - "&fĐặt cái này giữa các máy"
--      - "&fvà máy phát điện để kết nối chúng"
--      - "&fđến bộ điều chỉnh điện của bạn."
--  SMALL_CAPACITOR:
--    name: "&aTụ Điện Nhỏ"
--    lore:
--      - "%sftrlore_Range_6%"
--      - ""
--      - "%sftrlore_Machine_Basic_Capacitor%"
--      - "%sftrlore_PowerCapacity_128%"
--  MEDIUM_CAPACITOR:
--    name: "&aTụ Điện Trung Bình"
--    lore:
--      - "%sftrlore_Range_6%"
--      - ""
--      - "%sftrlore_Machine_Average_Capacitor%"
--      - "%sftrlore_PowerCapacity_512%"
--  BIG_CAPACITOR:
--    name: "&aTụ Điện Lớn"
--    lore:
--      - "%sftrlore_Range_6%"
--      - ""
--      - "%sftrlore_Machine_Medium_Capacitor%"
--      - "%sftrlore_PowerCapacity_1024%"
--  LARGE_CAPACITOR:
--    name: "&aTụ Điện Siêu Lớn"
--    lore:
--      - "%sftrlore_Range_6%"
--      - ""
--      - "%sftrlore_Machine_Good_Capacitor%"
--      - "%sftrlore_PowerCapacity_8192%"
--  CARBONADO_EDGED_CAPACITOR:
--    name: "&aTụ Điện Viền Carbonado"
--    lore:
--      - "%sftrlore_Range_6%"
--      - ""
--      - "%sftrlore_Machine_EndGame_Capacitor%"
--      - "%sftrlore_PowerCapacity_65536%"
--  ENERGIZED_CAPACITOR:
--    name: "&aTụ Điện Năng Lượng"
--    lore:
--      - "%sftrlore_Range_6%"
--      - ""
--      - "%sftrlore_Machine_EndGame_Capacitor%"
--      - "%sftrlore_PowerCapacity_524288%"
--  SOLAR_GENERATOR:
--    name: "&bPin Mặt Trời"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Basic_Generator%"
--      - "%sftrlore_PowerBuffer_0%"
--      - "%sftrlore_PowerPerSecond_4%"
--  SOLAR_GENERATOR_2:
--    name: "&cPin Mặt Trời Cải Tiến"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Medium_Generator%"
--      - "%sftrlore_PowerBuffer_0%"
--      - "%sftrlore_PowerPerSecond_16%"
--  SOLAR_GENERATOR_3:
--    name: "&4Pin Mặt Trời Carbonado"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Generator%"
--      - "%sftrlore_PowerBuffer_0%"
--      - "%sftrlore_PowerPerSecond_64%"
--  SOLAR_GENERATOR_4:
--    name: "&cPin Mặt Trời Được Nạp Điện"
--    lore:
--      - ""
--      - "&9Hoạt động vào ban đêm"
--      - ""
--      - "%sftrlore_Machine_EndGame_Generator%"
--      - "%sftrlore_PowerBuffer_0%"
--      - "%sftrlore_PowerPerSecond_256% (Day)"
--      - "%sftrlore_PowerPerSecond_128% (Night)"
--  CHARGING_BENCH:
--    name: "&6Bàn Sạc Điện"
--    lore:
--      - ""
--      - "&fSạc các Vật phẩm như Jetpack"
--      - ""
--      - "%sftrlore_Machine_Basic_Machine%"
--      - "%sftrlore_PowerBuffer_128%"
--      - "&8\u21E8 &e\u26A1 &7Tiêu hao Năng lượng: &c50%"
--  ELECTRIC_FURNACE:
--    name: "&cLò Nung Điện"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Basic_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_4%"
--  ELECTRIC_FURNACE_2:
--    name: "&cLò Nung Điện &7- &eII"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Medium_Machine%"
--      - "%sftrlore_Speed_2%"
--      - "%sftrlore_PowerPerSecond_6%"
--  ELECTRIC_FURNACE_3:
--    name: "&cLò Nung Điện &7- &eIII"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Medium_Machine%"
--      - "%sftrlore_Speed_4%"
--      - "%sftrlore_PowerPerSecond_10%"
--  ELECTRIC_GOLD_PAN:
--    name: "&6Gold Pan Điện"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Basic_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_2%"
--  ELECTRIC_GOLD_PAN_2:
--    name: "&6Gold Pan Điện &7(&eII&7)"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Basic_Machine%"
--      - "%sftrlore_Speed_3%"
--      - "%sftrlore_PowerPerSecond_4%"
--  ELECTRIC_GOLD_PAN_3:
--    name: "&6Gold Pan Điện &7(&eIII&7)"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_10%"
--      - "%sftrlore_PowerPerSecond_14%"
--  ELECTRIC_DUST_WASHER:
--    name: "&3Máy Rửa Dust Điện"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Basic_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_6%"
--  ELECTRIC_DUST_WASHER_2:
--    name: "&3Máy Rửa Dust Điện &7(&eII&7)"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Basic_Machine%"
--      - "%sftrlore_Speed_2%"
--      - "%sftrlore_PowerPerSecond_10%"
--  ELECTRIC_DUST_WASHER_3:
--    name: "&3Máy Rửa Dust Điện &7(&eIII&7)"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_10%"
--      - "%sftrlore_PowerPerSecond_30%"
--  ELECTRIC_INGOT_FACTORY:
--    name: "&cNhà Máy Điện Phôi"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Basic_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_8%"
--  ELECTRIC_INGOT_FACTORY_2:
--    name: "&cNhà Máy Điện Phôi &7(&eII&7)"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Basic_Machine%"
--      - "%sftrlore_Speed_2%"
--      - "%sftrlore_PowerPerSecond_14%"
--  ELECTRIC_INGOT_FACTORY_3:
--    name: "&cNhà Máy Phôi Điện &7(&eIII&7)"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_8%"
--      - "%sftrlore_PowerPerSecond_40%"
--  ELECTRIFIED_CRUCIBLE:
--    name: "&cLò Nung Điện"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_48%"
--  ELECTRIFIED_CRUCIBLE_2:
--    name: "&cLò Nung Điện &7- &eII"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_2%"
--      - "%sftrlore_PowerPerSecond_80%"
--  ELECTRIFIED_CRUCIBLE_3:
--    name: "&cLò Nung Điện &7- &eIII"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_4%"
--      - "%sftrlore_PowerPerSecond_120%"
--  ELECTRIC_ORE_GRINDER:
--    name: "&cMáy Nghiền Quặng Điện"
--    lore:
--      - ""
--      - "&fHoạt động như một Máy nghiền quặng và Máy mài đá"
--      - ""
--      - "%sftrlore_Machine_Advanced_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_12%"
--  ELECTRIC_ORE_GRINDER_2:
--    name: "&cMáy Nghiền Quặng Điện &7(&eII&7)"
--    lore:
--      - ""
--      - "&fHoạt động như một Máy nghiền quặng và Máy mài đá"
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_4%"
--      - "%sftrlore_PowerPerSecond_30%"
--  ELECTRIC_ORE_GRINDER_3:
--    name: "&cMáy Nghiền Quặng Điện &7(&eIII&7)"
--    lore:
--      - ""
--      - "&fHoạt động như một Máy nghiền quặng và Máy mài đá"
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_10%"
--      - "%sftrlore_PowerPerSecond_90%"
--  HEATED_PRESSURE_CHAMBER:
--    name: "&cBuồng Áp Suất Nóng"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_10%"
--  HEATED_PRESSURE_CHAMBER_2:
--    name: "&cBuồng Áp Suất Nóng &7- &eII"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_5%"
--      - "%sftrlore_PowerPerSecond_44%"
--  ELECTRIC_INGOT_PULVERIZER:
--    name: "&cMáy Nghiền Phôi Điện"
--    lore:
--      - ""
--      - "&fNghiền thỏi thành Dust"
--      - ""
--      - "%sftrlore_Machine_Medium_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_14%"
--  COAL_GENERATOR:
--    name: "&cMáy Phát Điện Than"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Average_Generator%"
--      - "%sftrlore_PowerBuffer_64%"
--      - "%sftrlore_PowerPerSecond_16%"
--  COAL_GENERATOR_2:
--    name: "&cMáy Phát Điện Than &7(&eII&7)"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Advanced_Generator%"
--      - "%sftrlore_PowerBuffer_256%"
--      - "%sftrlore_PowerPerSecond_30%"
--  BIO_REACTOR:
--    name: "&2Lò Phản Ứng Sinh Học"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Average_Generator%"
--      - "%sftrlore_PowerBuffer_128%"
--      - "%sftrlore_PowerPerSecond_8%"
--  AUTO_DRIER:
--    name: "&6Máy Sấy Tự Động"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Medium_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_10%"
--  AUTO_BREWER:
--    name: "&6Máy Pha Chế Tự Động"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Medium_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_12%"
--  ELECTRIC_PRESS:
--    name: "&eMáy Ép Điện"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Medium_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_16%"
--  ELECTRIC_PRESS_2:
--    name: "&eMáy Ép Điện &7- &eII"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_3%"
--      - "%sftrlore_PowerPerSecond_40%"
--  MAGNESIUM_GENERATOR:
--    name: "&cMáy phát điện chạy bằng Magiê"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Medium_Generator%"
--      - "%sftrlore_PowerBuffer_128%"
--      - "%sftrlore_PowerPerSecond_36%"
--  AUTO_ENCHANTER:
--    name: "&5Máy Enchant Tự Động"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Medium_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_18%"
--  AUTO_ENCHANTER_2:
--    name: "&5Máy Enchant Tự Động &7- &eII"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_3%"
--      - "%sftrlore_PowerPerSecond_48%"
--  AUTO_DISENCHANTER:
--    name: "&5Máy Xoá Enchant Tự Động"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Medium_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_18%"
--  AUTO_DISENCHANTER_2:
--    name: "&5Máy Xoá Enchant Tự Động &7- &eII"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_3%"
--      - "%sftrlore_PowerPerSecond_48%"
--  AUTO_ANVIL:
--    name: "&7Đe Tự Động"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Advanced_Machine%"
--      - "&8\u21E8 &7Hệ số Sửa chữa: 10%"
--      - "%sftrlore_PowerPerSecond_24%"
--  AUTO_ANVIL_2:
--    name: "&7Đe Tự Động Mk.II"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "&8\u21E8 &7Hệ số Sửa chữa: 25%"
--      - "%sftrlore_PowerPerSecond_32%"
--  BOOK_BINDER:
--    name: "&6Máy Đóng Sách"
--    lore:
--      - ""
--      - "&fĐóng nhiều sách đã enchant thành một."
--      - ""
--      - "%sftrlore_Machine_Medium_Machine%"
--      - "%sftrlore_PowerPerSecond_16%"
--  REFINERY:
--    name: "&cMáy Lọc Dầu"
--    lore:
--      - ""
--      - "&fTinh chế Dầu để tạo ra Nhiên liệu"
--      - ""
--      - "%sftrlore_PowerBuffer_256%"
--      - "%sftrlore_PowerPerSecond_64%"
--  LAVA_GENERATOR:
--    name: "&6Máy Tạo Dung Nham"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Average_Generator%"
--      - "%sftrlore_PowerBuffer_512%"
--      - "%sftrlore_PowerPerSecond_20%"
--  LAVA_GENERATOR_2:
--    name: "&6Máy Tạo Dung Nham&7(&eII&7)"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Advanced_Generator%"
--      - "%sftrlore_PowerBuffer_1024%"
--      - "%sftrlore_PowerPerSecond_40%"
--  COMBUSTION_REACTOR:
--    name: "&cLò Phản Ứng Đốt"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Advanced_Generator%"
--      - "%sftrlore_PowerBuffer_256%"
--      - "%sftrlore_PowerPerSecond_24%"
--  FOOD_FABRICATOR:
--    name: "&cMáy Chế Biến Thực Phẩm"
--    lore:
--      - ""
--      - "&fChế biến &aThực phẩm Hữu cơ"
--      - ""
--      - "%sftrlore_Machine_Advanced_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerBuffer_256%"
--      - "%sftrlore_PowerPerSecond_14%"
--  FOOD_FABRICATOR_2:
--    name: "&cMáy Chế Biến Thực Phẩm&7(&eII&7)"
--    lore:
--      - ""
--      - "&fChế biến &aThực phẩm Hữu cơ"
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_6%"
--      - "%sftrlore_PowerBuffer_512%"
--      - "%sftrlore_PowerPerSecond_48%"
--  AUTO_BREEDER:
--    name: "&eMáy Nhân Giống Tự Động"
--    lore:
--      - ""
--      - "&fChạy bằng &aThực phẩm Hữu cơ"
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_PowerBuffer_1024%"
--      - "%sftrlore_Power_60_/Animal%"
--  ANIMAL_GROWTH_ACCELERATOR:
--    name: "&aMáy Gia Tốc Tăng Trưởng Động Vật"
--    lore:
--      - ""
--      - "&fChạy bằng &aThực phẩm Hữu cơ"
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_PowerBuffer_1024%"
--      - "%sftrlore_PowerPerSecond_28%"
--  TREE_GROWTH_ACCELERATOR:
--    name: "&aMáy Gia Tốc Tăng Trưởng Cây"
--    lore:
--      - ""
--      - "&fChạy bằng &aPhân bón Hữu cơ"
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "&8\u21E8 &7Bán kính: 9x9"
--      - "&8\u21E8 &7Tốc độ: &a4/lần"
--      - "%sftrlore_PowerBuffer_1024%"
--      - "%sftrlore_PowerPerSecond_48%"
--  XP_COLLECTOR:
--    name: "&aMáy Thu Thập Kinh Nghiệm"
--    lore:
--      - ""
--      - "&fThu thập Kinh nghiệm gần đó và lưu trữ nó"
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_PowerBuffer_1024%"
--      - "%sftrlore_PowerPerSecond_20%"
--  FOOD_COMPOSTER:
--    name: "&cMáy Ủ Phân Thực Phẩm"
--    lore:
--      - ""
--      - "&fSản xuất &aPhân bón Hữu cơ"
--      - ""
--      - "%sftrlore_Machine_Advanced_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerBuffer_256%"
--      - "%sftrlore_PowerPerSecond_16%"
--  FOOD_COMPOSTER_2:
--    name: "&cMáy Ủ Phân Thực Phẩm &7(&eII&7)"
--    lore:
--      - ""
--      - "&fSản xuất &aPhân bón Hữu cơ"
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_10%"
--      - "%sftrlore_PowerBuffer_512%"
--      - "%sftrlore_PowerPerSecond_52%"
--  CROP_GROWTH_ACCELERATOR:
--    name: "&aMáy Gia Tốc Tăng Trưởng Cây Trồng"
--    lore:
--      - ""
--      - "&fChạy bằng &aPhân bón Hữu cơ"
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "&8\u21E8 &7Bán kính: 7x7"
--      - "&8\u21E8 &7Tốc độ: &a3/lần"
--      - "%sftrlore_PowerBuffer_1024%"
--      - "%sftrlore_PowerPerSecond_50%"
--  CROP_GROWTH_ACCELERATOR_2:
--    name: "&aMáy Gia Tốc Tăng Trưởng Cây Trồng &7(&eII&7)"
--    lore:
--      - ""
--      - "&fChạy bằng &aPhân bón Hữu cơ"
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "&8\u21E8 &7Bán kính: 9x9"
--      - "&8\u21E8 &7Tốc độ: &a4/lần"
--      - "%sftrlore_PowerBuffer_1024%"
--      - "%sftrlore_PowerPerSecond_60%"
--  FREEZER:
--    name: "&bTủ Đông"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Advanced_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerBuffer_256%"
--      - "%sftrlore_PowerPerSecond_18%"
--  FREEZER_2:
--    name: "&bTủ Đông &7(&eII&7)"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_2%"
--      - "%sftrlore_PowerBuffer_256%"
--      - "%sftrlore_PowerPerSecond_30%"
--  FREEZER_3:
--    name: "&bTủ Đông &7(&eIII&7)"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_3%"
--      - "%sftrlore_PowerBuffer_256%"
--      - "%sftrlore_PowerPerSecond_42%"
--  NUCLEAR_REACTOR:
--    conditions:
--      match-name: true
--    name: "&2Lò Phản Ứng Hạt Nhân"
--    lore:
--      - ""
--      - "&fCần làm mát !"
--      - "&8\u21E8 &bCần phải bao quanh bởi Nước"
--      - "&8\u21E8 &bCần phải cung cấp với Cell Làm mát Lò phản ứng"
--      - ""
--      - "%sftrlore_Machine_EndGame_Generator%"
--      - "%sftrlore_PowerBuffer_16384%"
--      - "%sftrlore_PowerPerSecond_500%"
--  NETHERSTAR_REACTOR:
--    name: "&fLò Phản Ứng Sao Nether"
--    lore:
--      - ""
--      - "&fChạy bằng các Sao Nether"
--      - "&8\u21E8 &bCần phải bao quanh bởi Nước"
--      - "&8\u21E8 &bCần được cung cấp với các Cell Làm Mát Nether Ice"
--      - ""
--      - "%sftrlore_Machine_EndGame_Generator%"
--      - "%sftrlore_PowerBuffer_32768%"
--      - "%sftrlore_PowerPerSecond_1024%"
--      - "&8\u21E8 &4Làm cho các thực thể gần đó bị Héo"
--  FLUID_PUMP:
--    name: "&9Bơm Chất Lỏng"
--    lore:
--      - ""
--      - "%sftrlore_Machine_Advanced_Machine%"
--      - "%sftrlore_PowerPerSecond_32%"
--  CARBON_PRESS:
--    name: "&cMáy Ép Carbon"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_20%"
--  CARBON_PRESS_2:
--    name: "&cMáy Ép Carbon &7- &eII"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_3%"
--      - "%sftrlore_PowerPerSecond_50%"
--  CARBON_PRESS_3:
--    name: "&cMáy Ép Carbon &7- &eIII"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_15%"
--      - "%sftrlore_PowerPerSecond_180%"
--  ELECTRIC_SMELTERY:
--    name: "&cLò Luyện Điện"
--    lore:
--      - ""
--      - "&4Chỉ dành cho Hợp kim, không biến Dust thành Thỏi"
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_20%"
--  ELECTRIC_SMELTERY_2:
--    name: "&cLò Luyện Điện &7- &eII"
--    lore:
--      - ""
--      - "&4Chỉ dành cho Hợp kim, không biến Dust thành Thỏi"
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "%sftrlore_Speed_3%"
--      - "%sftrlore_PowerPerSecond_40%"
--  IRON_GOLEM_ASSEMBLER:
--    name: "&6Máy Chế Tạo Iron Golem"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "&8\u21E8 &7Thời gian chờ: &b30 giây"
--      - "%sftrlore_PowerBuffer_4096%"
--      - "%sftrlore_Power_2048_/Golem%"
--  WITHER_ASSEMBLER:
--    name: "&5Máy Chế Tạo Wither"
--    lore:
--      - ""
--      - "%sftrlore_Machine_EndGame_Machine%"
--      - "&8\u21E8 &7Thời gian chờ: &b30 giây"
--      - "%sftrlore_PowerBuffer_4096%"
--      - "%sftrlore_Power_4096_/Wither%"
--  PRODUCE_COLLECTOR:
--    name: "&bMáy Thu Hoạch Nông Sản"
--    lore:
--      - ""
--      - "&fMáy này cho phép bạn"
--      - "&fthu hoạch sản phẩm từ các động vật gần đó."
--      - ""
--      - "%sftrlore_Machine_Advanced_Machine%"
--      - "%sftrlore_PowerBuffer_512%"
--      - "%sftrlore_PowerPerSecond_32%"
-diff --git a/src/main/resources/translations/vi/slimefun/food.yml b/src/main/resources/translations/vi/slimefun/food.yml
-deleted file mode 100644
-index 3e5be34..0000000
---- a/src/main/resources/translations/vi/slimefun/food.yml
-+++ /dev/null
-@@ -1,92 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Thực phẩm Slimefun
--translations:
--  FORTUNE_COOKIE:
--    conditions:
--      match-name: true
--    name: "&6Bánh quy May mắn"
--    lore:
--      - ""
--      - "&a&oNói cho bạn biết về Tương lai của bạn :o"
--  DIET_COOKIE:
--    name: "&6Bánh quy Ăn kiêng"
--    lore:
--      - ""
--      - "&aMột loại bánh quy rất &a&onhẹ &a."
--  BEEF_JERKY:
--    name: "&6Khô Bò"
--    lore:
--      - ""
--      - "&fCực kỳ ngol!"
--  PORK_JERKY:
--    name: "&6Khô Heo"
--    lore:
--      - ""
--      - "&fCực kỳ ngol!"
--  CHICKEN_JERKY:
--    name: "&6Khô Gà"
--    lore:
--      - ""
--      - "&fCực kỳ ngol!"
--  MUTTON_JERKY:
--    name: "&6Thịt Cừu Khô"
--    lore:
--      - ""
--      - "&fCực kỳ ngol!"
--  RABBIT_JERKY:
--    name: "&6Thịt Thỏ Khô"
--    lore:
--      - ""
--      - "&fCực kỳ ngol!"
--  FISH_JERKY:
--    name: "&6Cá Khô"
--    lore:
--      - ""
--      - "&fCực kỳ ngol!"
--  KELP_COOKIE:
--    name: "&2Bánh quy Tảo bẹ"
--    lore:
--      - ""
--      - "&fCực kỳ ngol!"
--  MAGIC_SUGAR:
--    name: "&6Đường Ma thuật"
--    lore:
--      - ""
--      - "&a&oCảm nhận Sức mạnh từ Hermes!"
--  MONSTER_JERKY:
--    name: "&6Thịt Quái Vật Khô"
--    lore:
--      - ""
--      - "&a&oKhông còn đói nữa"
--  APPLE_JUICE:
--    name: "&cNước Táo"
--    lore:
--      - ""
--      - "%sftrlore_Hunger_3%"
--  CARROT_JUICE:
--    name: "&6Nước Cà Rốt"
--    lore:
--      - ""
--      - "%sftrlore_Hunger_3%"
--  MELON_JUICE:
--    name: "&cNước Ép Dưa"
--    lore:
--      - ""
--      - "%sftrlore_Hunger_3%"
--  PUMPKIN_JUICE:
--    name: "&6Nước Ép Bí Ngô"
--    lore:
--      - ""
--      - "%sftrlore_Hunger_3%"
--  SWEET_BERRY_JUICE:
--    name: "&cNước Ép Quả Mọng Ngọt"
--    lore:
--      - ""
--      - "%sftrlore_Hunger_3%"
--  GOLDEN_APPLE_JUICE:
--    name: "&bNước Táo Vàng"
--  GLOW_BERRY_JUICE:
--    name: "&6Nước Ép Quả Mọng Phát Sáng"
--    lore:
--      - ""
--      - "%sftrlore_Hunger_3%"
-diff --git a/src/main/resources/translations/vi/slimefun/gps.yml b/src/main/resources/translations/vi/slimefun/gps.yml
-deleted file mode 100644
-index 8bf396c..0000000
---- a/src/main/resources/translations/vi/slimefun/gps.yml
-+++ /dev/null
-@@ -1,120 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Các Máy GPS Slimefun
--translations:
--  GPS_TRANSMITTER:
--    conditions:
--      match-name: true
--    name: "&bMáy Phát GPS"
--    lore:
--      - ""
--      - "%sftrlore_PowerBuffer_16%"
--      - "%sftrlore_PowerPerSecond_2%"
--  GPS_TRANSMITTER_2:
--    name: "&cMáy Phát GPS Nâng Cao"
--    lore:
--      - ""
--      - "%sftrlore_PowerBuffer_64%"
--      - "%sftrlore_PowerPerSecond_6%"
--  GPS_TRANSMITTER_3:
--    name: "&cMáy Phát GPS Carbonado"
--    lore:
--      - ""
--      - "%sftrlore_PowerBuffer_256%"
--      - "%sftrlore_PowerPerSecond_22%"
--  GPS_TRANSMITTER_4:
--    name: "&eMáy Phát GPS Có Năng Lượng"
--    lore:
--      - ""
--      - "%sftrlore_PowerBuffer_1024%"
--      - "%sftrlore_PowerPerSecond_92%"
--  GPS_CONTROL_PANEL:
--    name: "&bBảng Điều Khiển GPS"
--    lore:
--      - ""
--      - "&fCho phép bạn theo dõi các Vệ tinh của bạn"
--      - "&fvà quản lý Waypoints"
--  GPS_MARKER_TOOL:
--    name: "&bCông Cụ Đánh Dấu GPS"
--    lore:
--      - "&fCho phép bạn đặt Waypoint ở"
--      - "&fvị trí bạn đặt cái này"
--  GPS_EMERGENCY_TRANSMITTER:
--    name: "&cMáy Phát GPS Khẩn Cấp"
--    lore:
--      - "&fMang theo các này trong Túi đồ của bạn"
--      - "&fsẽ tự động đặt một Waypoint"
--      - "&fở Vị trí bạn chết."
--  GPS_GEO_SCANNER:
--    name: "&bMáy Quét GPS Địa Lý"
--    lore:
--      - "&fQuét một Chunk để tìm các tài nguyên thiên nhiên"
--      - "&fnhư là &8Dầu"
--  PORTABLE_GEO_SCANNER:
--    name: "&bMáy Quét Địa Lý Di Động"
--    lore:
--      - ""
--      - "&fQuét một Chunk để tìm các tài nguyên thiên nhiên"
--      - ""
--      - "&eChuột phải&7 để quét"
--  OIL_PUMP:
--    name: "&4Bơm Dầu"
--    lore:
--      - "&7Bơm Dầu lên và đổ đầy vào Xô"
--      - ""
--      - "&c&l! &cĐảm bảo Geo-Scan cái chunk trước"
--  GEO_MINER:
--    name: "&6GEO Miner"
--    lore:
--      - ""
--      - "&eKhai thác tài nguyên từ chunk"
--      - "&eNhững tài nguyên này không thể khai thác bằng cuốc"
--      - ""
--      - "%sftrlore_Machine_Advanced_Machine%"
--      - "%sftrlore_Speed_1%"
--      - "%sftrlore_PowerPerSecond_48%"
--      - ""
--      - "&c&l! &cĐảm bảo Geo-Scan cái chunk trước"
--  GPS_TELEPORTER_PYLON:
--    name: "&5Tháp Dịch Chuyển GPS"
--    lore:
--      - ""
--      - "&7Thành Phần Bộ Dịch Chuyển"
--  GPS_TELEPORTATION_MATRIX:
--    name: "&bMa Trận Dịch Chuyển GPS"
--    lore:
--      - ""
--      - "&fĐây là Thành phần chính của Bộ dịch chuyển của bạn"
--      - "&fMa trận này cho phép Người chơi lựa chọn tất cả"
--      - "&fWaypoint được tạo ra bởi Người chơi đã đặt"
--      - "&fThiết bị này."
--  PORTABLE_TELEPORTER:
--    name: "&bBộ Dịch Chuyển Di Động"
--    lore-overrides:
--      2: "&fThiết bị này cho phép bạn dịch chuyển"
--      3: "&fđến waypoint từ bất kỳ đâu"
--      7: "%sftrlore_RightClickToUse%"
--  GPS_ACTIVATION_DEVICE_SHARED:
--    name: "&fThiết Bị Kích Hoạt GPS &3(Được chia sẻ)"
--    lore:
--      - ""
--      - "&fĐặt nó vào một Ma trận Dịch chuyển"
--      - "&fvà bước lên tấm Plate để kích hoạt"
--      - "&fquá trình Dịch chuyển"
--  GPS_ACTIVATION_DEVICE_PERSONAL:
--    name: "&fThiết Bị Kích Hoạt GPS &a(Cá nhân)"
--    lore:
--      - ""
--      - "&fĐặt nó vào một Ma trận Dịch chuyển"
--      - "&fvà bước lên tấm Plate để kích hoạt"
--      - "&fquá trình Dịch chuyển"
--      - ""
--      - "&fPhiên bản này chỉ cho phép người"
--      - "&fđã đặt thiết bị này dùng nó"
--  ELEVATOR_PLATE:
--    name: "&bPlate Thang Máy"
--    lore:
--      - ""
--      - "&fĐặt một Plate Thang Máy ở mỗi tầng"
--      - "&fvà bạn sẽ có thể dịch chuyển giữa chúng."
--      - ""
--      - "&eChuột phải khối này &7để đặt tên cho nó"
-diff --git a/src/main/resources/translations/vi/slimefun/lore-builder.yml b/src/main/resources/translations/vi/slimefun/lore-builder.yml
-deleted file mode 100644
-index 25dbdfe..0000000
---- a/src/main/resources/translations/vi/slimefun/lore-builder.yml
-+++ /dev/null
-@@ -1,54 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Trình tạo Lore Slimefun
--lore:
--  HazmatSuitRequired: "&8\u21E8 &4Yêu cầu phải có bộ đồ Hazmat!"
--  Rainbow: "&dHiển thị qua hết các Màu sắc của Cầu Vồng!"
--  RightClickToUse: "&eNhấp Chuột phải &7để dùng"
--  RightClickToOpen: "&eNhấp Chuột phải &7để mở"
--  CrouchToUse: "&eCúi cuống&7 để dùng"
--  Radioactive: "&a\u2622&7 Mức độ phóng xạ: &r{0}"
--  Radioactivity:
--    Low: "&eThấp"
--    Moderate: "&eVừa phải"
--    High: "&6Cao"
--    VeryHigh: "&cCực Cao"
--    VeryDeadly: "&4Rất Nguy hiểm"
--  Speed: "&8\u21E8 &b\u26A1 &7Tốc độ: &b{0}x"
--  Power: "&8\u21E8 &e\u26A1 &7{0} J{1}"
--  PowerBuffer: "%sftrlore_Power_{0}_ Buffer%"
--  PowerCapacity: "%sftrlore_Power_{0}_ Capacity%"
--  PowerPerSecond: "%sftrlore_Power_{0}_/s%"
--  PowerPerTick: "%sftrlore_Power_{0}_/t%"
--  Hunger: "&7&oHồi phục &b&o{0} &7&othanh đói"
--  Material: "&8\u21E8 &7Vật liệu: &b{0}"
--  Materials:
--    Duralumin: "Duralumin"
--    Solder: "Solder"
--    Billon: "Billon"
--    Steel: "Thép"
--    DamascusSteel: "Thép Damascus"
--    ReinforcedAlloy: "Hợp Kim Gia Cố"
--    Carbonado: "Carbonado"
--  Range: "&7Phạm vi: &c{0} khối"
--  Machine:
--    Format: "{0}{1} {2}" #{0} = TierColor, {1} = Tier, {2} = Type
--    TierColor:
--      Basic: "&e"
--      Average: "&6"
--      Medium: "&a"
--      Good: "&2"
--      Advanced: "&6"
--      EndGame: "&4"
--    Tier:
--      Basic: "Cơ bản"
--      Average: "Trung bình"
--      Medium: "Khá"
--      Good: "Tốt"
--      Advanced: "Nâng cao"
--      EndGame: "End-Game"
--    Type:
--      Capacitor: "Tụ điện"
--      Generator: "Máy phát điện"
--      Machine: "Máy móc"
--  MultiTool: "&eCúi xuống và Chuột phải&7 để chuyển chế độ"
--
-diff --git a/src/main/resources/translations/vi/slimefun/magical-armor.yml b/src/main/resources/translations/vi/slimefun/magical-armor.yml
-deleted file mode 100644
-index e71efd1..0000000
---- a/src/main/resources/translations/vi/slimefun/magical-armor.yml
-+++ /dev/null
-@@ -1,182 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Giáp Ma thuật Slimefun
--translations:
--  ENDER_HELMET:
--    conditions:
--      match-name: true
--    name: "&5&lMũ Ender"
--    lore:
--      - ""
--      - "&a&oLúc thì ở đây, lúc thì ở đó !"
--  ENDER_CHESTPLATE:
--    name: "&5&lÁo Giáp Ender"
--    lore:
--      - ""
--      - "&a&oLúc thì ở đây, lúc thì ở đó !"
--  ENDER_LEGGINGS:
--    name: "&5&lQuần Ender"
--    lore:
--      - ""
--      - "&a&oLúc thì ở đây, lúc thì ở đó !"
--  ENDER_BOOTS:
--    name: "&5&lỦng Ender"
--    lore:
--      - ""
--      - "&a&oLúc thì ở đây, lúc thì ở đó !"
--      - ""
--      - "&9+ Không có Sát thương từ Enderpearl"
--  SLIME_HELMET:
--    name: "&a&lMũ Slime"
--    lore:
--      - ""
--      - "&a&oCảm giác Bồng bềnh"
--  SLIME_CHESTPLATE:
--    name: "&a&lÁo Giáp Slime"
--    lore:
--      - ""
--      - "&a&oCảm giác Bồng bềnh"
--  SLIME_LEGGINGS:
--    name: "&a&lQuần Slime"
--    lore:
--      - ""
--      - "&a&oCảm giác Bồng bềnh"
--      - ""
--      - "&9+ Tốc độ"
--  SLIME_BOOTS:
--    name: "&a&lỦng Slime"
--    lore:
--      - ""
--      - "&a&oCảm giác Bồng bềnh"
--      - ""
--      - "&9+ Nhảy Cao"
--      - "&9+ Không Sát Thương Rơi"
--  GLOWSTONE_HELMET:
--    name: "&e&lMũ Glowstone"
--    lore:
--      - ""
--      - "&a&oSáng nhất xóm!"
--      - ""
--      - "&9+ Nhìn Trong Bóng Tối"
--  GLOWSTONE_CHESTPLATE:
--    name: "&e&lÁo Giáp Glowstone"
--    lore:
--      - ""
--      - "&a&oSáng nhất xóm!"
--      - ""
--      - "&9+ Nhìn Trong Bóng Tối"
--  GLOWSTONE_LEGGINGS:
--    name: "&e&lQuần Glowstone"
--    lore:
--      - ""
--      - "&a&oSáng nhất xóm!"
--      - ""
--      - "&9+ Nhìn Trong Bóng Tối"
--  GLOWSTONE_BOOTS:
--    name: "&e&lỦng Glowstone"
--    lore:
--      - ""
--      - "&a&oSáng nhất xóm!"
--      - ""
--      - "&9+ Nhìn Trong Bóng Tối"
--  RAINBOW_HELMET:
--    name: "&d&lMũ Cầu Vồng"
--    lore:
--      - ""
--      - "&fHiển thị qua hết các Màu sắc của Cầu Vồng!"
--  RAINBOW_CHESTPLATE:
--    name: "&d&lÁo Giáp Cầu Vồng"
--    lore:
--      - ""
--      - "&fHiển thị qua hết các Màu sắc của Cầu Vồng!"
--  RAINBOW_LEGGINGS:
--    name: "&d&lQuần Cầu Vồng"
--    lore:
--      - ""
--      - "&fHiển thị qua hết các Màu sắc của Cầu Vồng!"
--  RAINBOW_BOOTS:
--    name: "&d&lỦng Cầu Vồng"
--    lore:
--      - ""
--      - "&fHiển thị qua hết các Màu sắc của Cầu Vồng!"
--  SLIME_STEEL_HELMET:
--    name: "&a&lMũ Slime"
--    lore:
--      - "&7&oGia Cố"
--      - ""
--      - "&a&oCảm giác Bồng bềnh"
--  SLIME_STEEL_CHESTPLATE:
--    name: "&a&lÁo Giáp Slime"
--    lore:
--      - "&7&oGia Cố"
--      - ""
--      - "&a&oCảm giác Bồng bềnh"
--  SLIME_STEEL_LEGGINGS:
--    name: "&a&lQuần Slime"
--    lore:
--      - "&7&oGia Cố"
--      - ""
--      - "&a&oCảm giác Bồng bềnh"
--      - ""
--      - "&9+ Tốc độ"
--  SLIME_STEEL_BOOTS:
--    name: "&a&lỦng Slime"
--    lore:
--      - "&7&oGia Cố"
--      - ""
--      - "&a&oCảm giác Bồng bềnh"
--      - ""
--      - "&9+ Nhảy Cao"
--      - "&9+ Không Sát Thương Rơi"
--  FARMER_SHOES:
--    name: "&eGiày Nông Dân"
--    lore:
--      - ""
--      - "&6&oTránh cho bạn đạp lên Cây trồng"
--  BOOTS_OF_THE_STOMPER:
--    name: "&eỦng của Stomper"
--    lore:
--      - ""
--      - "&9Tất cả Sát thương rơi bạn nhận được"
--      - "&9sẽ được chuyển cho Mobs/Người chơi ở gần"
--      - ""
--      - "&9+ Không Sát Thương Rơi"
--  SOULBOUND_HELMET:
--    name: "&cMũ Soulbound"
--  SOULBOUND_CHESTPLATE:
--    name: "&cÁo Giáp Soulbound"
--  SOULBOUND_LEGGINGS:
--    name: "&cQuần Soulbound"
--  SOULBOUND_BOOTS:
--    name: "&cỦng Soulbound"
--  BEE_HELMET:
--    name: "&e&lMũ Ong"
--    lore:
--      - ""
--      - "&fBzzzzzzz"
--  BEE_WINGS:
--    name: "&e&lCánh Ong"
--    lore:
--      - ""
--      - "&fBzzzzzzz"
--      - ""
--      - "&9Kích hoạt Rơi chậm"
--      - "&9khi đến gần mặt đất"
--  BEE_LEGGINGS:
--    name: "&e&lQuần Ong"
--    lore:
--      - ""
--      - "&fBzzzzzzz"
--  BEE_BOOTS:
--    name: "&e&lỦng Ong"
--    lore:
--      - ""
--      - "&fBzzzzzzz"
--      - ""
--      - "&9+ Nhảy Cao"
--      - "&9+ Không Sát Thương Rơi"
--  ELYTRA_CAP:
--    name: "&5Mũ Elytra"
--    lore:
--      - ""
--      - "&7Chiếc mũ này sẽ bảo vệ bạn khỏi"
--      - "&7việc bị rơi khi bay bằng elytra."
-diff --git a/src/main/resources/translations/vi/slimefun/magical-gadgets.yml b/src/main/resources/translations/vi/slimefun/magical-gadgets.yml
-deleted file mode 100644
-index 85ad828..0000000
---- a/src/main/resources/translations/vi/slimefun/magical-gadgets.yml
-+++ /dev/null
-@@ -1,151 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Tiện Ích Ma Thuật Slimefun
--translations:
--  ENDER_BACKPACK:
--    name: "&6Ba Lô Ender"
--    lore:
--      - "&a&oRương Ender Bỏ Túi"
--      - ""
--      - "%sftrlore_RightClickToOpen%"
--  MAGIC_EYE_OF_ENDER:
--    name: "&6&lMắt Ender Ma Thuật"
--    lore:
--      - "&4&lCần mặc full Giáp Ender"
--      - ""
--      - "&eChuột phải &7để bắn một viên ngọc Ender"
--  STAFF_ELEMENTAL:
--    name: "&6Gậy Nguyên Tố"
--  STAFF_ELEMENTAL_WIND:
--    name: "&6Gậy Nguyên Tố &7-&b&oGió"
--    lore:
--      - ""
--      - "&7Nguyên Tố: &b&oGió"
--      - ""
--      - "&eChuột phải &7để phóng bản thân về phía trước"
--  STAFF_ELEMENTAL_WATER:
--    name: "&6Gậy Nguyên Tố &7-&1&oNước"
--    lore:
--      - ""
--      - "&7Nguyên Tố: &1&oNước"
--      - ""
--      - "&eChuột Phải &7để dập lửa cho bản thân"
--  STAFF_ELEMENTAL_FIRE:
--    name: "&6Gậy Nguyên Tố &7-&c&oLửa"
--    lore:
--      - ""
--      - "&7Nguyên Tố: &c&oLửa"
--  STAFF_ELEMENTAL_STORM:
--    name: "&6Gậy Nguyên Tố &7-&8&Sấm Sét"
--    lore-overrides:
--      2: "&7Nguyên Tố: &8&oSấm Sét"
--      4: "&eChuột Phải &7để triệu hồi một tia sét"
--  MAGICAL_ZOMBIE_PILLS:
--    name: "&6Thuốc Con Nhộng Zombie Ma Thuật"
--    lore:
--      - "&eChuột Phải &7Một Dân làng Thây ma"
--      - "&3hoặc &7một Piglin Thây ma để"
--      - "&7lập tức biến chúng trở lại thành Piglin"
--  INFUSED_MAGNET:
--    name: "&aNam Châm Kép"
--    lore:
--      - ""
--      - "&fNam Châm Kép Ma Thuật"
--      - "&fhút các vật phẩm xung quanh"
--      - "&fmiễn là nó có đâu đó trong"
--      - "&ftúi đồ của bạn"
--      - ""
--      - "&7Giữ &eShift &7để nhặt các vật phẩm xung quanh"
--  BOUND_BACKPACK:
--    name: "&cBa-lô Soulbound"
--    lore-overrides:
--      2: "&7Kích Cỡ: &e36"
--      5: "%sftrlore_RightClickToOpen%"
--  REINFORCED_SPAWNER:
--    name: "&bLồng Spawn Gia Cố"
--  SCROLL_OF_DIMENSIONAL_TELEPOSITION:
--    name: "&6Cuộn Dịch Chuyển Chiều Không Gian"
--    lore:
--      - ""
--      - "&cCuộn này có thể tạo ra"
--      - "&cmột hố đen tạm thời để kéo"
--      - "&ccác thực thể vào và đưa"
--      - "&cchúng đến một chiều không gian nơi"
--      - "&cmọi thứ bị xoay chuyển"
--      - ""
--      - "&fNói cách khác: Làm các Thực thể quay 180 độ"
--  TOME_OF_KNOWLEDGE_SHARING:
--    name: "&6Sách Chia Sẻ Kiến Thức"
--    lore-overrides:
--      3: "&eChuột Phải&7 để ấn định sách"
--      6: "&eChuột Phải&7 để nhận tất cả các Nghiên Cứu của"
--      7: "&7người chơi đã ấn định sách"
--  FLASK_OF_KNOWLEDGE:
--    name: "&cLọ Kiến Thức"
--    lore:
--      - ""
--      - "&fGiúp bạn chứa một phần"
--      - "&fkinh nghiệm của bạn trong lọ"
--      - "&7Giá: &a1 Cấp"
--  FILLED_FLASK_OF_KNOWLEDGE:
--    name: "&cLọ Kiến Thức"
--  ANCIENT_PEDESTAL:
--    name: "&dBệ Cổ Đại"
--    lore:
--      - ""
--      - "&5Một phần của Tế Đàn Cổ Đại"
--  ANCIENT_ALTAR:
--    name: "&dTế Đàn Cổ Đại"
--    lore:
--      - ""
--      - "&5Multi-Block Tế Đàn dùng trong việc"
--      - "&5chế tạo ma thuật"
--  INFERNAL_BONEMEAL:
--    name: "&4Bột Xương Quỷ Quái"
--    lore:
--      - ""
--      - "&cĐẩy nhanh tốc độ Tăng trưởng của"
--      - "&cNether Wart"
--  ELYTRA_SCALE:
--    name: "&cCân Elytra"
--  INFUSED_ELYTRA:
--    conditions:
--      match-name: true
--    name: "&5Cánh Cứng Được Phù Phép"
--  SOULBOUND_ELYTRA:
--    name: "&cCánh Cứng Soulbound"
--  RAINBOW_WOOL:
--    name: "&5Len Cầu Vồng"
--    lore:
--      - ""
--      - "%sftrlore_Rainbow%"
--  RAINBOW_GLASS:
--    name: "&5Kính Cầu Vồng"
--    lore:
--      - ""
--      - "%sftrlore_Rainbow%"
--  RAINBOW_GLASS_PANE:
--    name: "&5Khung Kính Cầu Vồng"
--    lore:
--      - ""
--      - "%sftrlore_Rainbow%"
--  RAINBOW_CLAY:
--    name: "&5Đất Sét Cầu Vồng"
--    lore:
--      - ""
--      - "%sftrlore_Rainbow%"
--  RAINBOW_CONCRETE:
--    name: "&5Bê Tông Cầu Vồng"
--    lore:
--      - ""
--      - "%sftrlore_Rainbow%"
--  RAINBOW_GLAZED_TERRACOTTA:
--    name: "&5Đất Nung Tráng Men Cầu Vồng"
--    lore:
--      - ""
--      - "%sftrlore_Rainbow%"
--  INFUSED_HOPPER:
--    name: "&5Phễu Ma Thuật"
--    lore:
--      - ""
--      - "&fTự động nhặt vật phẩm trong phạm vi 7x7x7"
--      - "&fquanh nơi được đặt"
-diff --git a/src/main/resources/translations/vi/slimefun/magical-items.yml b/src/main/resources/translations/vi/slimefun/magical-items.yml
-deleted file mode 100644
-index e0eede3..0000000
---- a/src/main/resources/translations/vi/slimefun/magical-items.yml
-+++ /dev/null
-@@ -1,116 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Những Vật phẩm Slimefun Ma thuật
--translations:
--  MAGIC_LUMP_1:
--    name: "&6Mảnh Ma Thuật &7- &eI"
--    lore:
--      - ""
--      - "&c&oCấp: I"
--  MAGIC_LUMP_2:
--    name: "&6Mảnh Ma Thuật &7- &eII"
--    lore:
--      - ""
--      - "&c&oCấp: II"
--  MAGIC_LUMP_3:
--    name: "&6Mảnh Ma Thuật &7- &eIII"
--    lore:
--      - ""
--      - "&c&oCấp: III"
--  ENDER_LUMP_1:
--    name: "&5Ender Lump &7- &eI"
--    lore:
--      - ""
--      - "&c&oCấp: I"
--  ENDER_LUMP_2:
--    name: "&5Ender Lump &7- &eII"
--    lore:
--      - ""
--      - "&c&oCấp: II"
--  ENDER_LUMP_3:
--    name: "&5Ender Lump &7- &eIII"
--    lore:
--      - ""
--      - "&c&oCấp: III"
--  MAGICAL_BOOK_COVER:
--    name: "&6Bìa Sách Ma Thuật"
--    lore:
--      - ""
--      - "&a&oĐược sử dụng cho nhiều Sách ma thuật khác nhau"
--  MAGICAL_GLASS:
--    name: "&6Kính Ma Pháp"
--    lore:
--      - ""
--      - "&a&oĐược sử dụng cho các Tiện ích Ma thuật khác nhau"
--  LAVA_CRYSTAL:
--    name: "&4Tinh Thể Dung Nham"
--  COMMON_TALISMAN:
--    conditions:
--      match-name: true
--    name: "&6Bùa Hộ Mệnh Thông Thường"
--  NECROTIC_SKULL:
--    name: "&cHộp Sọ Yểm Bùa"
--  ESSENCE_OF_AFTERLIFE:
--    name: "&4Tinh Hoa Của Hậu Kiếp"
--  SYNTHETIC_SHULKER_SHELL:
--    name: "&dVỏ Shulker Tổng Hợp"
--    lore:
--      - ""
--      - "&fMục này có thể được sử dụng trong một"
--      - "&fbàn chế tạo như một Vỏ Shulker bình thường"
--  BROKEN_SPAWNER:
--    name: "&cSpawner Bị Hỏng"
--    lore-overrides:
--      3: "&cBị hỏng, phải được sửa lại ở một Bệ thờ Cổ"
--  BLANK_RUNE:
--    name: "&8Cổ Ngữ Trống"
--  ANCIENT_RUNE_AIR:
--    name: "&7Cổ Ngữ Cổ Đại &8&l[&b&lKhông Khí&8&l]"
--  ANCIENT_RUNE_EARTH:
--    name: "&7Cổ Ngữ Cổ Đại&8&l[&c&lTrái Đất&8&l]"
--  ANCIENT_RUNE_FIRE:
--    name: "&7Cổ Ngữ Cổ Đại &8&l[&4&lLửa&8&l]"
--  ANCIENT_RUNE_WATER:
--    name: "&7Cổ Ngữ Cổ Đại &8&l[&1&lNước&8&l]"
--  ANCIENT_RUNE_ENDER:
--    conditions:
--      match-name: true
--    name: "&7Cổ Ngữ Cổ Đại &8&l[&5&lEnder&8&l]"
--  ANCIENT_RUNE_LIGHTNING:
--    name: "&7Cổ Ngữ Cổ Đại &8&l[&e&lSấm Sét&8&l]"
--  ANCIENT_RUNE_RAINBOW:
--    name: "&7Cổ Ngữ Cổ Đại &8&l[&d&lCầu Vồng&8&l]"
--  ANCIENT_RUNE_SOULBOUND:
--    name: "&7Cổ Ngữ Cổ Đại &8&l[&5&lSoulbound&8&l]"
--    lore:
--      - "&eThả cổ ngữ này vào một vật phẩm đã ném ra để"
--      - "&5ràng buộc nó &evới linh hồn của bạn."
--      - ""
--      - "&eChúng tôi khuyên bạn chỉ nên sử dụng cổ ngữ này"
--      - "&echo &6các vật phẩm &equan trọng."
--      - ""
--      - "&eVật phẩm sẽ ràng buộc với linh hồn của bạn khiến nó không thể rơi ra khi chết."
--  ANCIENT_RUNE_ENCHANTMENT:
--    name: "&7Cổ Ngữ Cổ Đại &8&l[&6&lCường Hóa&8&l]"
--    lore:
--      - "&eThả cổ ngữ này vào một vật phẩm đã ném ra để"
--      - "&6Cường hóa &egiúp các vật phẩm nhận được các cường hóa ngẫu nhiên."
--  ANCIENT_RUNE_VILLAGERS:
--    name: "&7Cổ Ngữ Cổ Đại &8&l[&4&lDân làng&8&l]"
--    lore:
--      - "&eNhấp chuột phải vào một dân làng để xóa"
--      - "&ecông việc và ngành nghề hiện tại của họ."
--      - "&eDân làng sẽ bắt đầu tìm kiếm"
--      - "&emột công việc một lần nữa sau một khoảng"
--      - "&ethời gian."
--  STRANGE_NETHER_GOO:
--    name: "&5Dịch Nhầy Nether Lạ Lẫm"
--    lore:
--      - ""
--      - "&fMột vấn đề sinh học kỳ lạ mà"
--      - "&fcó thể lấy được từ việc"
--      - "&trao đổi với Piglins"
--  RAINBOW_LEATHER:
--    name: "&dDa Cầu Vồng"
--    lore:
--      - ""
--      - "&fCó thể được sử dụng để chế tạo giáp cầu vồng"
-diff --git a/src/main/resources/translations/vi/slimefun/miscellaneous-items.yml b/src/main/resources/translations/vi/slimefun/miscellaneous-items.yml
-deleted file mode 100644
-index bf017ec..0000000
---- a/src/main/resources/translations/vi/slimefun/miscellaneous-items.yml
-+++ /dev/null
-@@ -1,144 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Những Vật Phẩm Slimefun Linh Tinh
--translations:
--  SIFTED_ORE:
--    name: "&6Quặng Đã Sàng"
--  WHEAT_FLOUR:
--    name: "&fBột Mì"
--  STEEL_PLATE:
--    name: "&7&lTấm Thép"
--  CHAIN:
--    name: "&bDây Xích"
--  HOOK:
--    name: "&bCái Móc"
--  STONE_CHUNK:
--    name: "&6Mảnh Đá"
--  SALT:
--    name: "&fMuối"
--  HEAVY_CREAM:
--    name: "&fKem Béo"
--  CHEESE:
--    name: "&fPhô Mai"
--  BUTTER:
--    name: "&fBơ"
--  CRUSHED_ORE:
--    name: "&6Quặng Đã Được Nghiền"
--  PULVERIZED_ORE:
--    name: "&6Quặng Đã Nghiền Thành Bột"
--  PURE_ORE_CLUSTER:
--    name: "&6Quặng Nguyên Chất"
--  TINY_URANIUM:
--    name: "&cMẩu Chất Phóng Xạ"
--    lore:
--      - ""
--      - "%sftrlore_Radioactive_Low%"
--  SMALL_URANIUM:
--    name: "&cChất Phóng Xạ Nhỏ"
--    lore:
--      - ""
--      - "%sftrlore_Radioactive_Moderate%"
--      - "%sftrlore_HazmatSuitRequired%"
--  CLOTH:
--    name: "&bVải"
--  CAN:
--    conditions:
--      match-name: true
--    name: "&fVỏ Lon Thiếc"
--  GOLD_24K_BLOCK:
--    name: "&fKhối Vàng &7(24-Carat)"
--  REINFORCED_PLATE:
--    name: "&7Tấm Hợp Kim Gia Cố"
--  DUCT_TAPE:
--    name: "&8Băng Keo"
--    lore:
--      - ""
--      - "&fBạn có thể sửa chữa các Vật phẩm khi sử dụng cái này"
--      - "&fTrong Máy Đe Tự động"
--  ORGANIC_FOOD_WHEAT:
--    name: "&aThực Phẩm Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Lúa Mì"
--  ORGANIC_FOOD_CARROT:
--    name: "&aThực Phẩm Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Cà rốt"
--  ORGANIC_FOOD_POTATO:
--    name: "&aThực Phẩm Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Khoai tây"
--  ORGANIC_FOOD_SEEDS:
--    name: "&aThực Phẩm Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Hạt giống"
--  ORGANIC_FOOD_BEETROOT:
--    name: "&aThực Phẩm Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Củ dền"
--  ORGANIC_FOOD_MELON:
--    name: "&aThực Phẩm Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Dưa hấu"
--  ORGANIC_FOOD_APPLE:
--    name: "&aThực Phẩm Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Táo"
--  ORGANIC_FOOD_SWEET_BERRIES:
--    name: "&aThực Phẩm Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Quả mọng ngọt"
--  ORGANIC_FOOD_KELP:
--    name: "&aThực Phẩm Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Tảo bẹ khô"
--  ORGANIC_FOOD_COCOA:
--    name: "&aThực Phẩm Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Hạt cacao"
--  ORGANIC_FOOD_SEAGRASS:
--    name: "&aThực Phẩm Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Cỏ biển"
--  FERTILIZER_WHEAT:
--    name: "&aPhân Bón Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Lúa Mì"
--  FERTILIZER_CARROT:
--    name: "&aPhân Bón Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Cà rốt"
--  FERTILIZER_POTATO:
--    name: "&aPhân Bón Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Khoai tây"
--  FERTILIZER_SEEDS:
--    name: "&aPhân Bón Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Hạt giống"
--  FERTILIZER_BEETROOT:
--    name: "&aPhân Bón Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Củ dền"
--  FERTILIZER_MELON:
--    name: "&aPhân Bón Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Dưa hấu"
--  FERTILIZER_APPLE:
--    name: "&aPhân Bón Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Táo"
--  FERTILIZER_SWEET_BERRIES:
--    name: "&aPhân Bón Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Quả mọng ngọt"
--  FERTILIZER_KELP:
--    name: "&aPhân Bón Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Tảo bẹ khô"
--  FERTILIZER_COCOA:
--    name: "&aPhân Bón Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Hạt cacao"
--  FERTILIZER_SEAGRASS:
--    name: "&aPhân Bón Hữu Cơ"
--    lore:
--      - "&7Chứa: &9Cỏ biển"
-diff --git a/src/main/resources/translations/vi/slimefun/programmable-androids.yml b/src/main/resources/translations/vi/slimefun/programmable-androids.yml
-deleted file mode 100644
-index b25d766..0000000
---- a/src/main/resources/translations/vi/slimefun/programmable-androids.yml
-+++ /dev/null
-@@ -1,104 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Người Máy Slimefun
--conditions:
--  match-name: true
--translations:
--  ANDROID_INTERFACE_ITEMS:
--    name: "&7Giao Diện Người Máy &9(Vật Phẩm)"
--    lore:
--      - ""
--      - "&fCác vật phẩm được trữ trong túi đồ của Người Máy"
--      - "&fsẽ được đưa vào Giao Diện này"
--      - "&fkhi Kịch bản của Người Máy chỉ dẫn nó làm vậy"
--  ANDROID_INTERFACE_FUEL:
--    name: "&7Giao Diện Người Máy &9(Nhiên Liệu)"
--    lore:
--      - ""
--      - "&fCác vật phẩm được trữ trong Giao Diện này"
--      - "&fsẽ được đưa vào Ô Nhiên Liệu của Người Máy"
--      - "&fkhi Kịch bản của Người Máy chỉ dẫn nó làm vậy"
--  PROGRAMMABLE_ANDROID:
--    name: "&cNgười Máy &7(Thường)"
--    lore:
--      - ""
--      - "&8\u21E8 &7Công Dụng: Không"
--      - "&8\u21E8 &7Hiệu Suất Nhiên Liệu: 1.0x"
--  PROGRAMMABLE_ANDROID_MINER:
--    name: "&cNgười Máy &7(Thợ Mỏ)"
--    lore:
--      - ""
--      - "&8\u21E8 &7Công Dụng: Đào Mỏ"
--      - "&8\u21E8 &7Hiệu Suất Nhiên Liệu: 1.0x"
--  PROGRAMMABLE_ANDROID_FARMER:
--    name: "&cNgười Máy &7(Nông Dân)"
--    lore:
--      - ""
--      - "&8\u21E8 &7Công Dụng: Làm Nông"
--      - "&8\u21E8 &7Hiệu Suất Nhiên Liệu: 1.0x"
--  PROGRAMMABLE_ANDROID_WOODCUTTER:
--    name: "&cNgười Máy &7(Thợ Chặt Cây)"
--    lore:
--      - ""
--      - "&8\u21E8 &7Công Dụng: Chặt Cây"
--      - "&8\u21E8 &7Hiệu Suất Nhiên Liệu: 1.0x"
--  PROGRAMMABLE_ANDROID_FISHERMAN:
--    name: "&cNgười Máy &7(Thợ Đánh Cá)"
--    lore:
--      - ""
--      - "&8\u21E8 &7Công Dụng: Câu Cá"
--      - "&8\u21E8 &7Tỉ Lệ Thành Công: 10%"
--      - "&8\u21E8 &7Hiệu Suất Nhiên Liệu: 1.0x"
--  PROGRAMMABLE_ANDROID_BUTCHER:
--    name: "&cNgười Máy &7(Thợ Giết Mổ)"
--    lore:
--      - ""
--      - "&8\u21E8 &7Công Dụng: Giết Mổ"
--      - "&8\u21E8 &7Sát Thương: 4"
--      - "&8\u21E8 &7Hiệu Suất Nhiên Liệu: 1.0x"
--  PROGRAMMABLE_ANDROID_2:
--    name: "&cNgười Máy Cải Tiến &7(Thường)"
--    lore:
--      - ""
--      - "&8\u21E8 &7Công Dụng: Không"
--      - "&8\u21E8 &7Hiệu Suất Nhiên Liệu: 1.5x"
--  PROGRAMMABLE_ANDROID_2_FISHERMAN:
--    name: "&cNgười Máy Cải Tiến &7(Thợ Đánh Cá)"
--    lore:
--      - ""
--      - "&8\u21E8 &7Công Dụng: Câu Cá"
--      - "&8\u21E8 &7Tỉ Lệ Thành Công: 20%"
--      - "&8\u21E8 &7Hiệu Suất Nhiên Liệu: 1.5x"
--  PROGRAMMABLE_ANDROID_2_BUTCHER:
--    name: "&cNgười Máy Cải Tiến &7(Thợ Giết Mổ)"
--    lore:
--      - ""
--      - "&8\u21E8 &7Công Dụng: Giết Mổ"
--      - "&8\u21E8 &7Sát Thương: 8"
--      - "&8\u21E8 &7Hiệu Suất Nhiên Liệu: 1.5x"
--  PROGRAMMABLE_ANDROID_2_FARMER:
--    name: "&cNgười Máy Cải Tiến &7(Nông Dân)"
--    lore:
--      - ""
--      - "&8\u21E8 &7Công Dụng: Làm Nông"
--      - "&8\u21E8 &7Hiệu Suất Nhiên Liệu: 1.5x"
--      - "&8\u21E8 &7Có thể thu hoạch nông sản của Exotic Garden"
--  PROGRAMMABLE_ANDROID_3:
--    name: "&cNgười Máy Cao Cấp &7(Thường)"
--    lore:
--      - ""
--      - "&8\u21E8 &7Công Dụng: Không"
--      - "&8\u21E8 &7Hiệu Suất Nhiên Liệu: 3.0x"
--  PROGRAMMABLE_ANDROID_3_FISHERMAN:
--    name: "&cNgười Máy Cao Cấp &7(Thợ Đánh Cá)"
--    lore:
--      - ""
--      - "&8\u21E8 &7Công Dụng: Câu Cá"
--      - "&8\u21E8 &7Tỉ Lệ Thành Công: 30%"
--      - "&8\u21E8 &7Hiệu Suất Nhiên Liệu: 8.0x"
--  PROGRAMMABLE_ANDROID_3_BUTCHER:
--    name: "&cNgười Máy Cao Cấp &7(Thợ Giết Mổ)"
--    lore:
--      - ""
--      - "&8\u21E8 &7Công Dụng: Giết Mổ"
--      - "&8\u21E8 &7Sát Thương: 20"
--      - "&8\u21E8 &7Hiệu Suất Nhiên Liệu: 8.0x"
-diff --git a/src/main/resources/translations/vi/slimefun/resources.yml b/src/main/resources/translations/vi/slimefun/resources.yml
-deleted file mode 100644
-index 3dc6dd9..0000000
---- a/src/main/resources/translations/vi/slimefun/resources.yml
-+++ /dev/null
-@@ -1,202 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Những Tài Nguyên Slimefun
--translations:
--  REINFORCED_ALLOY_INGOT:
--    name: "&b&lThỏi Hợp Kim Gia Cố"
--  HARDENED_METAL_INGOT:
--    name: "&b&lKim Loại Cứng"
--  DAMASCUS_STEEL_INGOT:
--    name: "&7Thỏi Thép Damascus"
--  STEEL_INGOT:
--    name: "&bThỏi Thép"
--  BRONZE_INGOT:
--    name: "&Thỏi Đồng Thiếc"
--  DURALUMIN_INGOT:
--    name: "&bThỏi Duralumin"
--  BILLON_INGOT:
--    name: "&bThỏi Billon"
--  BRASS_INGOT:
--    name: "&bThỏi Đồng Thau"
--  ALUMINUM_BRASS_INGOT:
--    name: "&bThỏi Nhôm Đồng Thau"
--  ALUMINUM_BRONZE_INGOT:
--    name: "&bThỏi Nhôm Đồng Thiếc"
--  CORINTHIAN_BRONZE_INGOT:
--    name: "&bThỏi Đồng Corinthian"
--  SOLDER_INGOT:
--    name: "&bThỏi Hàn"
--  SYNTHETIC_SAPPHIRE:
--    conditions:
--      match-name: true
--    name: "&bLưu Li Nhân Tạo"
--    lore:
--      - ""
--      - "&fVật phẩm này có thể được dùng"
--      - "&ftrong bàn chế tạo như Ngọc Lưu Li bình thường"
--  SYNTHETIC_DIAMOND:
--    name: "&bKim Cương Nhân Tạo"
--    lore:
--      - ""
--      - "&fVật phẩm này có thể được dùng"
--      - "&ftrong bàn chế tạo như Kim Cương bình thường"
--  RAW_CARBONADO:
--    name: "&bCarbonado Thô"
--  NICKEL_INGOT:
--    name: "&bThỏi Nickel"
--  COBALT_INGOT:
--    name: "&9Thỏi Cobalt"
--  CARBONADO:
--    name: "&b&lCarbonado"
--    lore:
--      - ""
--      - "&7&o\"Kim Cương Đen\""
--  FERROSILICON:
--    name: "&bFerrosilicon"
--  IRON_DUST:
--    name: "&6Bụi Sắt"
--  GOLD_DUST:
--    name: "&6Bụi Vàng"
--  COPPER_DUST:
--    name: "&6Bụi Đồng"
--  TIN_DUST:
--    name: "&6Bụi Thiếc"
--  SILVER_DUST:
--    name: "&6Bụi Bạc"
--  LEAD_DUST:
--    name: "&6Bụi Chì"
--  ALUMINUM_DUST:
--    name: "&6Bụi Nhôm"
--  ZINC_DUST:
--    name: "&6Bụi Kẽm"
--  MAGNESIUM_DUST:
--    name: "&6Bụi Magnesium"
--  COPPER_INGOT:
--    name: "&bThỏi Đồng"
--  TIN_INGOT:
--    name: "&bThỏi Thiếc"
--  SILVER_INGOT:
--    name: "&bThỏi Bạc"
--  LEAD_INGOT:
--    name: "&bThỏi Chì"
--  ALUMINUM_INGOT:
--    name: "&bThỏi Nhôm"
--  ZINC_INGOT:
--    name: "&bThỏi Kẽm"
--  MAGNESIUM_INGOT:
--    name: "&bThỏi Magnesium"
--  SULFATE:
--    name: "&bSulfate"
--  CARBON:
--    name: "&eCarbon"
--  COMPRESSED_CARBON:
--    name: "&cCarbon Nén"
--  CARBON_CHUNK:
--    name: "&4Tảng Carbon"
--  GOLD_24K:
--    name: "&fThỏi Vàng &7(24-Carat)"
--  GOLD_22K:
--    name: "&fThỏi Vàng &7(22-Carat)"
--  GOLD_20K:
--    name: "&fThỏi Vàng &7(20-Carat)"
--  GOLD_18K:
--    name: "&fThỏi Vàng &7(18-Carat)"
--  GOLD_16K:
--    name: "&fThỏi Vàng &7(16-Carat)"
--  GOLD_14K:
--    name: "&fThỏi Vàng &7(14-Carat)"
--  GOLD_12K:
--    name: "&fThỏi Vàng &7(12-Carat)"
--  GOLD_10K:
--    name: "&fThỏi Vàng &7(10-Carat)"
--  GOLD_8K:
--    name: "&fThỏi Vàng &7(8-Carat)"
--  GOLD_6K:
--    name: "&fThỏi Vàng &7(6-Carat)"
--  GOLD_4K:
--    name: "&fThỏi Vàng &7(4-Carat)"
--  SILICON:
--    name: "&6Silicon"
--  GILDED_IRON:
--    name: "&6&lThỏi Sắt Mạ Vàng"
--  SYNTHETIC_EMERALD:
--    name: "&bLục Bảo Nhân Tạo"
--    lore:
--      - ""
--      - "&fVật phẩm này có thể được dùng"
--      - "&6để trao đổi với Dân Làng"
--  URANIUM:
--    conditions:
--      match-lore: true
--    name: "&4Uranium"
--    lore:
--      - ""
--      - "%sftrlore_Radioactive_High%"
--      - "%sftrlore_HazmatSuitRequired%"
--  REDSTONE_ALLOY:
--    name: "&cThỏi Hợp Kim Đá Đỏ"
--  MAGNESIUM_SALT:
--    conditions:
--      match-lore: true
--    name: "&cMuối Magnesium"
--    lore:
--      - ""
--      - "&7Một loại nhiên liệu được"
--      - "&7dùng bởi Máy Phát Điện chạy bằng Magnesium"
--  BUCKET_OF_OIL:
--    name: "&fXô Dầu"
--  BUCKET_OF_FUEL:
--    name: "&fXô Nhiên Liệu"
--  NETHER_ICE:
--    name: "&eBăng Địa Ngục"
--    lore:
--      - ""
--      - "%sftrlore_Radioactive_Moderate%"
--      - "%sftrlore_HazmatSuitRequired%"
--  BLISTERING_INGOT:
--    name: "&6Thỏi Blistering &7(33%)"
--    lore:
--      - ""
--      - "%sftrlore_Radioactive_High%"
--      - "%sftrlore_HazmatSuitRequired%"
--  BLISTERING_INGOT_2:
--    name: "&6Thỏi Blistering &7(66%)"
--    lore:
--      - ""
--      - "%sftrlore_Radioactive_VeryHigh%"
--      - "%sftrlore_HazmatSuitRequired%"
--  BLISTERING_INGOT_3:
--    name: "&6Thỏi Blistering"
--    lore:
--      - ""
--      - "%sftrlore_Radioactive_VeryHigh%"
--      - "%sftrlore_HazmatSuitRequired%"
--  ENRICHED_NETHER_ICE:
--    name: "&eBăng Địa Ngục Cường Hóa"
--    lore:
--      - ""
--      - "%sftrlore_Radioactive_VeryHigh%"
--      - "%sftrlore_HazmatSuitRequired%"
--  NEPTUNIUM:
--    conditions:
--      match-lore: true
--    name: "&aNeptunium"
--    lore:
--      - ""
--      - "%sftrlore_Radioactive_High%"
--      - "%sftrlore_HazmatSuitRequired%"
--  PLUTONIUM:
--    conditions:
--      match-lore: true
--    name: "&7Plutonium"
--    lore:
--      - ""
--      - "%sftrlore_Radioactive_VeryHigh%"
--      - "%sftrlore_HazmatSuitRequired%"
--  BOOSTED_URANIUM:
--    conditions:
--      match-lore: true
--    name: "&2Uranium Cường Hóa"
--    lore:
--      - ""
--      - "%sftrlore_Radioactive_VeryHigh%"
--      - "%sftrlore_HazmatSuitRequired%"
-diff --git a/src/main/resources/translations/vi/slimefun/secret-items.yml b/src/main/resources/translations/vi/slimefun/secret-items.yml
-deleted file mode 100644
-index 8e77c42..0000000
---- a/src/main/resources/translations/vi/slimefun/secret-items.yml
-+++ /dev/null
-@@ -1,13 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Vật Phẩm Slimefun Bí Mật
--translations:
--  DEBUG_FISH:
--    conditions:
--      force-load: true
--    name: "&3Con cá này bao nhiêu?"
--    lore:
--      - ""
--      - "&eChuột phải &fvào bất kỳ Khối nào để xem BlockData"
--      - "&eChuột phải &fđể phá hủy khối đó"
--      - "&eShift + Chuột trái &fvào bất kỳ Khối nào để xóa BlockData"
--      - "&eShift + Chuột phải &fđể đặt một Placeholder Block"
-diff --git a/src/main/resources/translations/vi/slimefun/talismans-1.yml b/src/main/resources/translations/vi/slimefun/talismans-1.yml
-deleted file mode 100644
-index cab38f0..0000000
---- a/src/main/resources/translations/vi/slimefun/talismans-1.yml
-+++ /dev/null
-@@ -1,142 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Bùa Hộ Mệnh (Bậc I)
--translations:
--  ANVIL_TALISMAN:
--    name: "&aBùa Thợ Rèn"
--    lore:
--      - ""
--      - "&fMỗi lá bùa hộ mệnh có thể ngăn chặn"
--      - "&f1 công cụ bị phá vỡ, nhưng sau đó 1 lá bùa sẽ"
--      - "&fbị tiêu thụ"
--      - ""
--      - "&4&lCẢNH BÁO:"
--      - "&4Bùa hộ mệnh này không hoạt động với"
--      - "&4các Công cụ quá mạnh mẽ"
--      - "&4do sự phức tạp của chúng"
--  MINER_TALISMAN:
--    name: "&aBùa Thợ Mỏ"
--    lore:
--      - ""
--      - "&fKhi bạn có Lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có"
--      - "&ftỉ lệ 20% nhân đôi"
--      - "&ftất cả Quặng bạn khai thác"
--  FARMER_TALISMAN:
--    name: "&aBùa Nhà Nông"
--    lore:
--      - ""
--      - "&fKhi bạn có Lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có"
--      - "&ftỉ lệ 20% nhân đôi"
--      - "&ftất cả nông sản bạn thu hoạch"
--  HUNTER_TALISMAN:
--    name: "&aBùa Thợ Săn"
--    lore:
--      - ""
--      - "&fKhi bạn có Lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có"
--      - "&ftỉ lệ 20% nhân đôi"
--      - "&fvật phẩm từ Mob rơi ra"
--  LAVA_TALISMAN:
--    name: "&aBùa Dung Nham"
--    lore:
--      - ""
--      - "&fKhi bạn có Lá bùa này"
--      - "&ftrong túi đồ của bạn, nó sẽ"
--      - "&fcho bạn hiệu ứng Kháng Lửa"
--      - "&fngay khi bạn chạm vào dung nham"
--      - "&fnhưng sau đó 1 lá bùa sẽ bị tiêu thụ"
--  WATER_TALISMAN:
--    name: "&aBùa Thợ Lặn"
--    lore:
--      - ""
--      - "&fKhi bạn có Lá bùa này"
--      - "&ftrong túi đồ của bạn, nó sẽ"
--      - "&fcho bạn hiệu ứng"
--      - "&fThở dưới nước"
--      - "&fngay khi bạn bắt đầu chết đuối"
--      - "&fnhưng sau đó 1 lá bùa sẽ bị tiêu thụ"
--  ANGEL_TALISMAN:
--    name: "&aBùa Thiên Thần"
--    lore:
--      - ""
--      - "&fKhi bạn có Lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có"
--      - "&tỉ lệ 75% giúp bạn"
--      - "&fkhông nhận sát thương rơi"
--  FIRE_TALISMAN:
--    name: "&aBùa Cứu Hỏa"
--    lore:
--      - ""
--      - "&fKhi bạn có Lá bùa này"
--      - "&ftrong túi đồ của bạn, nó sẽ"
--      - "&fcho bạn hiệu ứng Kháng Lửa"
--      - "&fngay khi bạn bắt đầu cháy"
--      - "&fnhưng sau đó 1 lá bùa sẽ bị tiêu thụ"
--  MAGICIAN_TALISMAN:
--    name: "&aBùa Ảo Thuật"
--    lore:
--      - ""
--      - "&fKhi bạn có Lá bùa này"
--      - "&ftrong túi đồ của bạn, nó cho"
--      - "&fbạn thêm 80% may mắn khi phù phép"
--      - "&fCó tỉ lệ nhận thêm một phù phép"
--  TRAVELLER_TALISMAN:
--    name: "&aBùa Lãng Du"
--    lore:
--      - ""
--      - "&fKhi bạn có Lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có"
--      - "&ftỉ lệ 60% cho bạn hiệu ứng Chạy Nhanh"
--      - "&fmỗi lần bạn bắt đầu chạy"
--  WARRIOR_TALISMAN:
--    name: "&aBùa Chiến Binh"
--    lore:
--      - ""
--      - "&fKhi bạn có Lá bùa này"
--      - "&ftrong túi đồ của bạn, nó cho"
--      - "&fbạn hiệu ứng Sức Mạnh III khi bạn bị đánh"
--      - "&fnhưng sau đó 1 lá bùa sẽ bị tiêu thụ"
--  KNIGHT_TALISMAN:
--    name: "&aBùa Kị Sĩ"
--    lore:
--      - ""
--      - "&fKhi bạn có Lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có"
--      - "&ftỉ lệ 30% cho bạn 5 giây hiệu ứng Hồi Phục"
--      - "&fkhi bạn bị đánh"
--      - "&fnhưng sau đó 1 lá bùa sẽ bị tiêu thụ"
--  CAVEMAN_TALISMAN:
--    name: "&aBùa Tối Cổ"
--    lore:
--      - ""
--      - "&fKhi bạn có Lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có"
--      - "&ftỉ lệ 50% cho bạn hiệu ứng Đào Nhanh"
--      - "&fmỗi khi bạn đào quặng bất kì"
--  WISE_TALISMAN:
--    name: "&aBùa Thông Thái"
--    lore:
--      - ""
--      - "&fKhi bạn có Lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có"
--      - "&ftỉ lệ 20% nhân đôi"
--      - "&fmọi kinh nghiệm bạn nhận được"
--  WHIRLWIND_TALISMAN:
--    name: "&aBùa Lốc Xoáy"
--    lore:
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có"
--      - "&ftỉ lệ 60% phản lại vật được bắn về phía bạn"
--      - "&e&oChỉ khi ném Đinh Ba mới có thể xuyên qua"
--      - "&e&olớp bảo vệ này"
--  WIZARD_TALISMAN:
--    name: "&aBùa Phù Thủy"
--    lore:
--      - ""
--      - "&fKhi bạn có Lá bùa này"
--      - "&ftrong túi đồ của bạn, nó cho"
--      - "&fphép bạn nhận được phù phép Gia Tài IV/V"
--      - "&fnhưng có tỉ lệ giảm cấp độ"
--      - "&fcủa các phù phép khác trong vật phẩm"
-diff --git a/src/main/resources/translations/vi/slimefun/talismans-2.yml b/src/main/resources/translations/vi/slimefun/talismans-2.yml
-deleted file mode 100644
-index 27ee83a..0000000
---- a/src/main/resources/translations/vi/slimefun/talismans-2.yml
-+++ /dev/null
-@@ -1,158 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Bùa Hộ Mệnh Ender (Bậc II)
--translations:
--  ENDER_ANVIL_TALISMAN:
--    name: "&5Bùa Thợ Rèn Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fMỗi lá bùa hộ mệnh có thể ngăn chặn"
--      - "&f1 Công cụ khi bị phá vỡ, nhưng sau đó sẽ"
--      - "&fbị tiêu thụ"
--      - ""
--      - "&4&lCẢNH BÁO:"
--      - "&4Bùa hộ mệnh này không hoạt động với"
--      - "&4các công cụ quá mạnh mẽ"
--      - "&4do sự phức tạp của chúng"
--  ENDER_MINER_TALISMAN:
--    name: "&5Bùa Thợ mỏ Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong kho đồ của bạn, nó có"
--      - "&f20% tỉ lệ tăng gấp đôi"
--      - "&ftất cả quặng bạn khai thác"
--  ENDER_FARMER_TALISMAN:
--    name: "&5Bùa Nhà Nông Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong kho đồ của bạn, nó có"
--      - "&f20% tỉ lệ tăng gấp đôi"
--      - "&fnông sản bạn thu hoạch"
--  ENDER_HUNTER_TALISMAN:
--    name: "&5Bùa Thợ săn Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có"
--      - "&f20% tỉ lệ gấp đôi"
--      - "&fvật phẩm mà Mob rơi ra"
--  ENDER_LAVA_TALISMAN:
--    name: "&5Bùa Dung Nham Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong túi đồ của bạn, nó sẽ"
--      - "&fcho bạn hiệu ứng Kháng Lửa"
--      - "&fngay khi bạn chạm vào dung nham"
--      - "&fnhưng sau đó 1 lá bùa sẽ bị tiêu thụ"
--  ENDER_WATER_TALISMAN:
--    name: "&5Bùa Thợ Lặn Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong túi đồ của bạn, nó sẽ"
--      - "&fcho bạn khả năng"
--      - "&fThở Dưới Nước"
--      - "&fngay khi bạn bắt đầu chết đuối"
--      - "&fnhưng sau đó 1 lá bùa sẽ bị tiêu thụ"
--  ENDER_ANGEL_TALISMAN:
--    name: "&5Bùa Thiên Thần Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có"
--      - "&ftỉ lệ 75% giúp bạn"
--      - "&fkhông nhận sát thương rơi"
--  ENDER_FIRE_TALISMAN:
--    name: "&5Bùa Cứu Hỏa Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có bùa này"
--      - "&ftrong túi đồ của bạn, nó sẽ"
--      - "&fcho bạn hiệu ứng Kháng Lửa"
--      - "&fngay khi bạn bắt đầu cháy"
--      - "&fnhưng sau đó 1 lá bùa sẽ bị tiêu thụ"
--  ENDER_MAGICIAN_TALISMAN:
--    name: "&5Bùa Ảo Thuật Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong túi đồ của bạn, nó cho"
--      - "&fbạn thêm 80% may mắn khi phù phép"
--      - "&fCó tỉ lệ nhận thêm một phù phép"
--  ENDER_TRAVELLER_TALISMAN:
--    name: "&5Bùa Lãng Du Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có"
--      - "&ftỉ lệ 60% cho bạn hiệu ứng Chạy Nhanh"
--      - "&fmỗi lần bạn bắt đầu chạy"
--  ENDER_WARRIOR_TALISMAN:
--    name: "&5Bùa Chiến Binh Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong túi đồ của bạn, nó cho"
--      - "&fbạn hiệu ứng Sức Mạnh III khi bạn bị đánh"
--      - "&fnhưng sau đó 1 lá bùa sẽ bị tiêu thụ"
--  ENDER_KNIGHT_TALISMAN:
--    name: "&5Bùa Kị Sĩ Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có"
--      - "&ftỉ lệ 30% cho bạn 5 giây hiệu ứng Hồi Phục"
--      - "&fkhi bạn bị đánh"
--      - "&fnhưng sau đó 1 lá bùa sẽ bị tiêu thụ"
--  ENDER_CAVEMAN_TALISMAN:
--    name: "&5Bùa Tối Cổ Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có"
--      - "&ftỉ lệ 50% cho bạn hiệu ứng Đào Nhanh"
--      - "&fmỗi khi bạn đào quặng bất kì"
--  ENDER_WISE_TALISMAN:
--    name: "&5Bùa Thông Thái Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có tỉ lệ"
--      - "&f20% nhân đôi"
--      - "&fmọi kinh nghiệm bạn nhận được"
--  ENDER_WHIRLWIND_TALISMAN:
--    name: "&5Bùa Lốc Xoáy Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong túi đồ của bạn, nó có tỉ lệ"
--      - "&f60% phản lại vật được bắn về phía bạn"
--      - "&e&oChỉ khi ném Đinh Ba mới có thể xuyên qua"
--      - "&e&olớp bảo vệ này"
--  ENDER_WIZARD_TALISMAN:
--    name: "&5Bùa Phù Thủy Ender"
--    lore:
--      - "&7&oPha trộn với Ender"
--      - ""
--      - "&fKhi bạn có lá bùa này"
--      - "&ftrong túi đồ của bạn, nó cho"
--      - "&fphép bạn nhận được phù phép Gia Tài IV/V"
--      - "&fnhưng có tỉ lệ giảm cấp độ"
--      - "&fcủa các phù phép khác trong vật phẩm"
-diff --git a/src/main/resources/translations/vi/slimefun/technical-components.yml b/src/main/resources/translations/vi/slimefun/technical-components.yml
-deleted file mode 100644
-index 09f274e..0000000
---- a/src/main/resources/translations/vi/slimefun/technical-components.yml
-+++ /dev/null
-@@ -1,68 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Những Thành Phần Kỹ Thuật Slimefun
--translations:
--  BASIC_CIRCUIT_BOARD:
--    name: "&bBảng Mạch Cơ Bản"
--  ADVANCED_CIRCUIT_BOARD:
--    name: "&bBảng Mạch Cải Tiến"
--  BATTERY:
--    name: "&6Pin"
--  STEEL_THRUSTER:
--    name: "&7&lĐộng Cơ Phản Lực Thép"
--  POWER_CRYSTAL:
--    name: "&c&lTinh Thể Năng Lượng"
--  SOLAR_PANEL:
--    name: "&9Pin Quang Điện"
--    lore:
--      - ""
--      - "&7Thành phần quan trọng trong việc"
--      - "&7chế Tạo &bPin Năng Lượng Mặt Trời"
--  REINFORCED_CLOTH:
--    name: "&bVải Gia Cố"
--    lore:
--      - ""
--      - "&fVải này đã được gia cố"
--      - "&fbằng &bChì &fđể chống lại"
--      - "&fcác chất phóng xạ"
--  MAGNET:
--    name: "&cNam Châm"
--  ELECTRO_MAGNET:
--    name: "&cNam Châm Điện"
--  ELECTRIC_MOTOR:
--    name: "&cĐộng Cơ Điện"
--  HEATING_COIL:
--    conditions:
--      match-name: true
--    name: "&cCuộn Dây Tạo Nhiệt"
--  COPPER_WIRE:
--    name: "&6Dây Đồng"
--    lore:
--      - ""
--      - "&6Thành phần quan trọng trong các mô-đun điện"
--  HARDENED_GLASS:
--    name: "&7Kính Gia Cố"
--    lore:
--      - ""
--      - "&fChịu được các vụ nổ"
--  COOLING_UNIT:
--    name: "&bBộ Phận Làm Mát"
--  WITHER_PROOF_OBSIDIAN:
--    name: "&5Hắc Diện Thạch Chống Wither"
--    lore:
--      - ""
--      - "&fChịu được các vụ nổ"
--      - "&fChịu được các vụ nổ từ Wither"
--  PLASTIC_SHEET:
--    name: "&fTấm Nhựa"
--  ANDROID_MEMORY_CORE:
--    name: "&bLõi Bộ Nhớ Người Máy"
--  WITHER_PROOF_GLASS:
--    name: "&5Kính Chống Wither"
--    lore:
--      - ""
--      - "&fChịu được các vụ nổ"
--      - "&fChịu được các vụ nổ từ Wither"
--  REACTOR_COLLANT_CELL:
--    name: "&bThanh Làm Mát Lò Phản Ứng"
--  NETHER_ICE_COOLANT_CELL:
--    name: "&6Thanh Băng Địa Ngục Làm Mát"
-diff --git a/src/main/resources/translations/vi/slimefun/technical-gadgets.yml b/src/main/resources/translations/vi/slimefun/technical-gadgets.yml
-deleted file mode 100644
-index e9140dd..0000000
---- a/src/main/resources/translations/vi/slimefun/technical-gadgets.yml
-+++ /dev/null
-@@ -1,178 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Tiện Ích Kỹ Thuật Slimefun
--translations:
--  DURALUMIN_JETPACK:
--    name: "&9Jetpack Điện &7- &eI"
--    lore-overrides:
--      2: "%sftrlore_Material_Duralumin%"
--      4: "&8\u21E8 &7Lực đẩy: &c0.35"
--      6: "%sftrlore_CrouchToUse%"
--  SOLDER_JETPACK:
--    name: "&9Jetpack Điện &7- &eII"
--    lore-overrides:
--      2: "%sftrlore_Material_Solder%"
--      4: "&8\u21E8 &7Lực đẩy: &c0.4"
--      6: "%sftrlore_CrouchToUse%"
--  BILLON_JETPACK:
--    name: "&9Jetpack Điện &7- &eIII"
--    lore-overrides:
--      2: "%sftrlore_Material_Billon%"
--      4: "&8\u21E8 &7Lực đẩy: &c0.45"
--      6: "%sftrlore_CrouchToUse%"
--  STEEL_JETPACK:
--    conditions:
--      match-name: true
--    name: "&9Jetpack Điện &7- &eIV"
--    lore-overrides:
--      2: "%sftrlore_Material_Steel%"
--      4: "&8\u21E8 &7Lực đẩy: &c0.5"
--      6: "%sftrlore_CrouchToUse%"
--  DAMASCUS_STEEL_JETPACK:
--    name: "&9Jetpack Điện &7- &eV"
--    lore-overrides:
--      2: "%sftrlore_Material_DamascusSteel%"
--      4: "&8\u21E8 &7Lực đẩy: &c0.55"
--      6: "%sftrlore_CrouchToUse%"
--  REINFORCED_ALLOY_JETPACK:
--    name: "&9Jetpack Điện &7- &eVI"
--    lore-overrides:
--      2: "%sftrlore_Material_ReinforcedAlloy%"
--      4: "&8\u21E8 &7Lực đẩy: &c0.6"
--      6: "%sftrlore_CrouchToUse%"
--  CARBONADO_JETPACK:
--    name: "&9Jetpack Điện &7- &eVII"
--    lore-overrides:
--      2: "%sftrlore_Material_Carbonado%"
--      4: "&8\u21E8 &7Lực đẩy: &c0.7"
--      6: "%sftrlore_CrouchToUse%"
--  ARMORED_JETPACK:
--    name: "&9Jetpack Bọc Thép"
--    lore-overrides:
--      1: ""
--      2: "%sftrlore_Material_Steel%"
--      4: "&8\u21E8 &7Lực đẩy: &c0.5"
--      6: "%sftrlore_CrouchToUse%"
--  PARACHUTE:
--    name: "&f&lCái Dù Bay"
--    lore:
--      - ""
--      - "%sftrlore_CrouchToUse%"
--  HOLOGRAM_PROJECTOR:
--    name: "&bMáy Chiếu Hologram"
--    lore:
--      - ""
--      - "&7Chiếu một Hologram có thể chỉnh sửa"
--  DURALUMIN_MULTI_TOOL:
--    name: "&9Công Cụ Đa Năng &7- &eI"
--    lore-overrides:
--      2: "%sftrlore_Material_Duralumin%"
--      4: "%sftrlore_RightClickToUse%"
--      5: "%sftrlore_MultiTool%"
--  SOLDER_MULTI_TOOL:
--    name: "&9Công Cụ Đa Năng &7- &eII"
--    lore-overrides:
--      2: "%sftrlore_Material_Solder%"
--      4: "%sftrlore_RightClickToUse%"
--      5: "%sftrlore_MultiTool%"
--  BILLON_MULTI_TOOL:
--    name: "&9Công Cụ Đa Năng &7- &eIII"
--    lore-overrides:
--      2: "%sftrlore_Material_Billon%"
--      4: "%sftrlore_RightClickToUse%"
--      5: "%sftrlore_MultiTool%"
--  STEEL_MULTI_TOOL:
--    name: "&9Công Cụ Đa Năng &7- &eIV"
--    lore-overrides:
--      2: "%sftrlore_Material_Steel%"
--      4: "%sftrlore_RightClickToUse%"
--      5: "%sftrlore_MultiTool%"
--  DAMASCUS_STEEL_MULTI_TOOL:
--    name: "&9Công Cụ Đa Năng &7- &eV"
--    lore-overrides:
--      2: "%sftrlore_Material_DamascusSteel%"
--      4: "%sftrlore_RightClickToUse%"
--      5: "%sftrlore_MultiTool%"
--  REINFORCED_ALLOY_MULTI_TOOL:
--    name: "&9Công Cụ Đa Năng &7- &eVI"
--    lore-overrides:
--      2: "%sftrlore_Material_ReinforcedAlloy%"
--      4: "%sftrlore_RightClickToUse%"
--      5: "%sftrlore_MultiTool%"
--  CARBONADO_MULTI_TOOL:
--    name: "&9Công Cụ Đa Năng &7- &eVII"
--    lore-overrides:
--      2: "%sftrlore_Material_Carbonado%"
--      4: "%sftrlore_RightClickToUse%"
--      5: "%sftrlore_MultiTool%"
--  SOLAR_HELMET:
--    name: "&bMũ Năng Lượng Mặt Trời"
--    lore:
--      - ""
--      - "&a&oSạc vật phẩm đang cầm và Giáp"
--  NIGHT_VISION_GOGGLES:
--    name: "&aKính Nhìn Đêm"
--    lore:
--      - ""
--      - "&9+ Nhìn Trong Bóng Tối"
--  DURALUMIN_JETBOOTS:
--    name: "&9Giày Phản Lực &7- &eI"
--    lore-overrides:
--      2: "%sftrlore_Material_Duralumin%"
--      4: "%sftrlore_Speed_0.35%"
--      5: "&8\u21E8 &7Độ Chính xác: &c50%"
--      7: "%sftrlore_CrouchToUse%"
--  SOLDER_JETBOOTS:
--    name: "&9Giày Phản Lực &7- &eII"
--    lore-overrides:
--      2: "%sftrlore_Material_Solder%"
--      4: "%sftrlore_Speed_0.4%"
--      5: "&8\u21E8 &7Độ Chính xác: &660%"
--      7: "%sftrlore_CrouchToUse%"
--  BILLON_JETBOOTS:
--    name: "&9Giày Phản Lực &7- &eIII"
--    lore-overrides:
--      2: "%sftrlore_Material_Billon%"
--      4: "%sftrlore_Speed_0.45%"
--      5: "&8\u21E8 &7Độ Chính xác: &665%"
--      7: "%sftrlore_CrouchToUse%"
--  STEEL_JETBOOTS:
--    name: "&9Giày Phản Lực &7- &eIV"
--    lore-overrides:
--      2: "%sftrlore_Material_Steel%"
--      4: "%sftrlore_Speed_0.5%"
--      5: "&8\u21E8 &7Độ Chính xác: &e70%"
--      7: "%sftrlore_CrouchToUse%"
--  DAMASCUS_STEEL_JETBOOTS:
--    name: "&9Giày Phản Lực &7- &eV"
--    lore-overrides:
--      2: "%sftrlore_Material_DamascusSteel%"
--      4: "%sftrlore_Speed_0.55%"
--      5: "&8\u21E8 &7Độ Chính xác: &a75%"
--      7: "%sftrlore_CrouchToUse%"
--  REINFORCED_ALLOY_JETBOOTS:
--    name: "&9Giày Phản Lực &7- &eVI"
--    lore-overrides:
--      2: "%sftrlore_Material_ReinforcedAlloy%"
--      4: "%sftrlore_Speed_0.6%"
--      5: "&8\u21E8 &7Độ Chính xác: &c80%"
--      7: "%sftrlore_CrouchToUse%"
--  CARBONADO_JETBOOTS:
--    name: "&9Giày Phản Lực &7- &eVII"
--    lore-overrides:
--      2: "%sftrlore_Material_Carbonado%"
--      4: "%sftrlore_Speed_0.7%"
--      5: "&8\u21E8 &7Độ Chính xác: &c99.9%"
--      7: "%sftrlore_CrouchToUse%"
--  ARMORED_JETBOOTS:
--    name: "&9Giày Phản Lực Bọc Thép"
--    lore-overrides:
--      2: "%sftrlore_Material_Steel%"
--      4: "%sftrlore_Speed_0.45%"
--      5: "&8\u21E8 &7Độ Chính xác: &e70%"
--      7: "%sftrlore_CrouchToUse%"
--  MULTIMETER:
--    name: "&eĐồng Hồ Vạn Năng"
--    lore:
--      - ""
--      - "&fĐo lượng lưu trữ"
--      - "&fĐiện trong một Block"
-diff --git a/src/main/resources/translations/vi/slimefun/tools.yml b/src/main/resources/translations/vi/slimefun/tools.yml
-deleted file mode 100644
-index 33be1e1..0000000
---- a/src/main/resources/translations/vi/slimefun/tools.yml
-+++ /dev/null
-@@ -1,82 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Công Cụ Slimefun
--translations:
--  GOLD_PAN:
--    name: "&6Sàng Vàng"
--    lore:
--      - ""
--      - "&eChuột phải&7 để lọc tài nguyên"
--      - "&7từ Sỏi"
--  NETHER_GOLD_PAN:
--    name: "&4Sàng Vàng Địa Ngục"
--    lore:
--      - ""
--      - "&eChuột phải&7 để lọc tài nguyên&"
--      - "&7từ Cát Linh Hồn"
--  GRAPPLING_HOOK:
--    name: "&6Móc Kéo"
--    lore:
--      - ""
--      - "%sftrlore_RightClickToUse%"
--  SMELTERS_PICKAXE:
--    conditions:
--      match-name: true
--    name: "&6Cúp Nung"
--    lore:
--      - "&c&lTự động nung khi đào"
--      - ""
--      - "&9Hoạt động với Gia Tài"
--  LUMBER_AXE:
--    name: "&6Rìu Đốn Cây"
--    lore:
--      - "&a&oMột chặt đổ nguyên cây"
--  PICKAXE_OF_CONTAINMENT:
--    name: "&cCúp Giam Cầm"
--    lore:
--      - ""
--      - "&9Có thể đào Lồng Spawn"
--  EXPLOSIVE_PICKAXE:
--    name: "&eCúp Nổ"
--    lore:
--      - ""
--      - "&fGiúp bạn đào nhiều"
--      - "&fkhối cùng lúc..."
--      - ""
--      - "&9Hoạt động với Gia Tài"
--  EXPLOSIVE_SHOVEL:
--    name: "&eXẻng Nổ"
--    lore:
--      - ""
--      - "&fGiúp bạn đào nhiều"
--      - "&fkhối đào được bằng xẻng cùng lúc..."
--  PICKAXE_OF_THE_SEEKER:
--    name: "&aCúp Tìm Kiếm"
--    lore:
--      - "&fLuôn dẫn bạn đến quặng gần nhất"
--      - "&fnhưng có tỉ lệ mất độ bền khi chỉ dẫn bạn"
--      - ""
--      - "&7&eChuột phải&7 để được chỉ dẫn đến quặng gần nhất"
--  COBALT_PICKAXE:
--    name: "&9Cúp Cobalt"
--  PICKAXE_OF_VEIN_MINING:
--    name: "&eCúp Vein Mine"
--    lore:
--      - ""
--      - "&fCho phép bạn đào"
--      - "&fhết một mạch quặng một lúc"
--  CLIMBING_PICK:
--    name: "&bCúp Leo Núi"
--    lore:
--      - ""
--      - "&fCho phép bạn leo lên những bề mặt nhất định"
--      - "&fbằng cách nhấp chuột phải"
--      - "&fÉp phù phép Hiệu Suất để"
--      - "&fleo nhanh hơn"
--  SOULBOUND_PICKAXE:
--    name: "&cCúp Soulbound"
--  SOULBOUND_AXE:
--    name: "&cRìu Soulbound"
--  SOULBOUND_SHOVEL:
--    name: "&cXẻng Soulbound"
--  SOULBOUND_HOE:
--    name: "&cCuốc Soulbound"
-diff --git a/src/main/resources/translations/vi/slimefun/ui.yml b/src/main/resources/translations/vi/slimefun/ui.yml
-deleted file mode 100644
-index 68ba30f..0000000
---- a/src/main/resources/translations/vi/slimefun/ui.yml
-+++ /dev/null
-@@ -1,16 +0,0 @@
--### These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Các mục Slimefun UI
--translations:
--  _UI_SEARCH:
--    conditions:
--      force-load: true
--    name: "&7Tìm kiếm..."
--    lore:
--      - ""
--      - "&7\u21E8 &bClick để tìm kiếm một vật phẩm"
--      - ""
--      - "&cMáy chủ của bạn đã được cài SlimefunTranslation,"
--      - "&ctìm kiếm sẽ không hoạt động chính xác với các vật phẩm đã được dịch."
--      - ""
--      - "&7Thay vào đó, hãy sử dụng &e/sftr search <query>"
--      - "&7để tìm kiếm một vật phẩm có tên đã được dịch."
-diff --git a/src/main/resources/translations/vi/slimefun/useful-items.yml b/src/main/resources/translations/vi/slimefun/useful-items.yml
-deleted file mode 100644
-index 22363ad..0000000
---- a/src/main/resources/translations/vi/slimefun/useful-items.yml
-+++ /dev/null
-@@ -1,110 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Vật Phẩm Slimefun Hữu Ích
--translations:
--  PORTABLE_CRAFTER:
--    name: "&6Bàn Chế Tạo Bỏ Túi"
--    lore:
--      - "&a&oChế tạo ở mọi nơi"
--      - ""
--      - "%sftrlore_RightClickToOpen%"
--  PORTABLE_DUSTBIN:
--    name: "&6Thùng Rác Bỏ Túi"
--    lore:
--      - "&fDọn dẹp túi đồ ở mọi nơi"
--      - ""
--      - "%sftrlore_RightClickToOpen%"
--  RAG:
--    name: "&cMảnh Vải"
--    lore:
--      - ""
--      - "&aCấp I - Dụng Cụ Y Tế"
--      - ""
--      - "&fPhục hồi 2 tim"
--      - "&fDập lửa"
--      - ""
--      - "%sftrlore_RightClickToUse%"
--  BANDAGE:
--    name: "&cBăng Gạc"
--    lore:
--      - ""
--      - "&aCấp II - Dụng Cụ Y Tế"
--      - ""
--      - "&fPhục hồi 4 tim"
--      - "&fDập lửa"
--      - ""
--      - "%sftrlore_RightClickToUse%"
--  SPLINT:
--    name: "&cNẹp"
--    lore:
--      - ""
--      - "&aCấp I - Dụng Cụ Y Tế"
--      - ""
--      - "&fPhục hồi 2 tim"
--      - ""
--      - "%sftrlore_RightClickToUse%"
--  VITAMINS:
--    name: "&cVitamin"
--    lore:
--      - ""
--      - "&aCấp III - Dụng Cụ Y Tế"
--      - ""
--      - "&fPhục hồi 4 tim"
--      - "&fDập lửa"
--      - "&fChữa Độc/Khô Héo/Nhiễm Phóng Xạ"
--      - ""
--      - "%sftrlore_RightClickToUse%"
--  MEDICINE:
--    name: "&cThuốc"
--    lore:
--      - ""
--      - "&aCấp III - Dụng Cụ Y Tế"
--      - ""
--      - "&fPhục hồi 4 tim"
--      - "&fDập lửa"
--      - "&fChữa Độc/Khô Héo/Nhiễm Phóng Xạ"
--  SMALL_BACKPACK:
--    name: "&eBa Lô Nhỏ"
--    lore-overrides:
--      2: "&7Kích Cỡ: &e9"
--      5: "%sftrlore_RightClickToOpen%"
--  MEDIUM_BACKPACK:
--    conditions:
--      match-name: true
--    name: "&eBa Lô"
--    lore-overrides:
--      2: "&7Kích Cỡ: &e18"
--      5: "%sftrlore_RightClickToOpen%"
--  LARGE_BACKPACK:
--    name: "&Ba Lô Lớn"
--    lore-overrides:
--      2: "&7Kích Cỡ: &e27"
--      5: "%sftrlore_RightClickToOpen%"
--  WOVEN_BACKPACK:
--    name: "&eBa Lô Vải Thoi"
--    lore-overrides:
--      2: "&7Kích Cỡ: &e36"
--      5: "%sftrlore_RightClickToOpen%"
--  GILDED_BACKPACK:
--    name: "&eBa Lô Mạ Vàng"
--    lore-overrides:
--      2: "&7Kích Cỡ: &e45"
--      5: "%sftrlore_RightClickToOpen%"
--  RADIANT_BACKPACK:
--    name: "&eBa Lô Lộng Lẫy"
--    lore-overrides:
--      2: "&7Kích Cỡ: &e54 (Rương đôi)"
--      5: "%sftrlore_RightClickToOpen%"
--  COOLER:
--    name: "&bThùng Ướp Lạnh"
--    lore-overrides:
--      1: "&fCho phép bạn chứa Nước Ép/Nước Sinh Tố"
--      2: "&fvà tự động ăn chúng khi bạn đói"
--      3: "&fvà khi bạn có vật phẩm này trong túi đồ của bạn"
--      5: "&7Kích Cỡ: &e27"
--      8: "%sftrlore_RightClickToOpen%"
--  TAPE_MEASURE:
--    name: "&6Thước Dây"
--    lore:
--      - ""
--      - "&eGiữ Shift & Chuột phải để đặt điểm bắt đầu đo"
--      - "&eChuột phải &7để đo"
-diff --git a/src/main/resources/translations/vi/slimefun/weapons.yml b/src/main/resources/translations/vi/slimefun/weapons.yml
-deleted file mode 100644
-index 4134023..0000000
---- a/src/main/resources/translations/vi/slimefun/weapons.yml
-+++ /dev/null
-@@ -1,48 +0,0 @@
--## These files are used by Crowdin to translate them into other languages, and will be provided by default.
--name: Vũ Khí Slimefun
--translations:
--  GRANDMAS_WALKING_STICK:
--    name: "&7Gậy Đi Bộ Bà Già"
--  GRANDPAS_WALKING_STICK:
--    name: "&7Gậy Đi Bộ Ông Già"
--  SWORD_OF_BEHEADING:
--    name: "&6Kiếm Xử Trảm"
--    lore:
--      - "&7Xử Trảm II"
--      - ""
--      - "&fCó tỉ lệ khi giết Mob sẽ rơi ra đầu của chúng"
--      - "&f(tỉ lệ cao hơn đối với Bộ Xương Khô Héo)"
--  BLADE_OF_VAMPIRES:
--    conditions:
--      match-name: true
--    name: "&4Đao Ma Cà Rồng"
--    lore:
--      - "&7Hút Máu I"
--      - ""
--      - "&fMỗi lần bạn tấn công cái gì đó"
--      - "&fsẽ có 45% cơ hội"
--      - "&fphục hồi 2 tim cho bản thân"
--  SEISMIC_AXE:
--    name: "&aRìu Địa Chấn"
--    lore:
--      - ""
--      - "&7&oMột cơn động đất bỏ túi..."
--      - ""
--      - "%sftrlore_RightClickToUse%"
--  SOULBOUND_SWORD:
--    name: "&cKiếm Soulbound"
--  SOULBOUND_TRIDENT:
--    name: "&cĐinh Ba Soulbound"
--  SOULBOUND_BOW:
--    name: "&cCung Soulbound"
--  EXPLOSIVE_BOW:
--    name: "&cCung Phát Nổ"
--    lore:
--      - "&fMọi mũi tên bắn ra sẽ"
--      - "&fhất tung kẻ địch lên không trung"
--  ICY_BOW:
--    name: "&bCung Băng Giá"
--    lore:
--      - "&fMọi mũi tên bắn ra sẽ"
--      - "&fngăn kẻ địch di chuyển"
--      - "&ftrong 2 giây"
 -- 
 2.44.0.windows.1
 

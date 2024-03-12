@@ -6,7 +6,7 @@ if ["%~1"]==["create"] (
 powershell ./scripts/editPatch.ps1 --create %~2
 )
 
-if ["%~1"]==["rebuild"] (
+if ["%~1"]==["recreate"] (
 powershell ./scripts/editPatch.ps1 %~2
 )
 

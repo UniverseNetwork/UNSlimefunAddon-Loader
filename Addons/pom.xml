@@ -32,6 +32,7 @@
         <module>SFCalc</module>
         <module>SfChunkInfo</module>
         <module>SlimefunTranslation</module>
+        <module>SlimeHUD</module>
         <module>SMG</module>
         <module>SoundMuffler</module>
     </modules>

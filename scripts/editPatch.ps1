@@ -20,7 +20,7 @@ function enableCommitSigningIfNeeded {
 }
 
 $dir=$args[0]
-$method="rebuild"
+$method="recreate"
 if ($dir -ne $null -and $dir.StartsWith("--")) {
     $method = $dir.Replace("--","")
     $dir = $args[1]
@@ -55,7 +55,7 @@ if ($dir) {
         git config --global commit.gpgsign false
     }
 
-    if ($method -eq "rebuild") {
+    if ($method -eq "recreate") {
         Write-Host "Rolling back $name..." -f yellow
         git reset --soft HEAD~1 | Write-Host -f magenta
     }

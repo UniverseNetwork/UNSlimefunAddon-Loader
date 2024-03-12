@@ -34,5 +34,6 @@ addons:
   sfcalc: true
   sfchunkinfo: true
   slimefuntranslation: true
+  slimehud: true
   smg: true
   soundmuffler: true

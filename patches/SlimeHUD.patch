@@ -1,0 +1,1994 @@
+From 299d382c2d1ff599c69d163a2f2b557e3e73fd4c Mon Sep 17 00:00:00 2001
+From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
+Date: Sun, 10 Mar 2024 14:47:15 +0700
+Subject: [PATCH] SlimeHUD
+
+---
+ pom.xml                                       | 118 +--------
+ .../sfa_loader/addons/slimehud/SlimeHUD.java  |  55 +++++
+ .../slimehud/command/SlimeHUDCommand.java     |  78 ++++++
+ .../slimehud/placeholder/PlaceholderHook.java |  12 +-
+ .../placeholder/PlaceholderManager.java       |  14 ++
+ .../translation/TranslationManager.java       |  26 +-
+ .../addons}/slimehud/util/HudBuilder.java     |  91 +++----
+ .../sfa_loader/addons/slimehud/util/Util.java | 229 ++++++++++++++++++
+ .../addons}/slimehud/waila/HudController.java | 129 ++++------
+ .../addons}/slimehud/waila/HudRequest.java    |   9 +-
+ .../addons}/slimehud/waila/PlayerWAILA.java   |  46 ++--
+ .../addons}/slimehud/waila/WAILAManager.java  |  55 ++---
+ .../addons/slimehud/waila/package-info.java   |   4 +
+ .../schntgaispock/slimehud/SlimeHUD.java      |  87 -------
+ .../slimehud/command/CommandManager.java      |  17 --
+ .../command/SlimeHUDCommandExecutor.java      |  78 ------
+ .../command/SlimeHUDTabCompleter.java         |  27 ---
+ .../placeholder/PlaceholderManager.java       |  16 --
+ .../schntgaispock/slimehud/util/Util.java     | 143 -----------
+ .../slimehud/waila/package-info.java          |   4 -
+ .../{ => addons-config/SlimeHUD}/config.yml   |   6 +-
+ .../{ => addons-config/SlimeHUD}/player.yml   |   0
+ src/main/resources/plugin.yml                 |  31 ---
+ .../slimehud/tests/UtilTests.java             |  64 -----
+ 24 files changed, 529 insertions(+), 810 deletions(-)
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimehud/SlimeHUD.java
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimehud/command/SlimeHUDCommand.java
+ rename src/main/java/{io/github/schntgaispock => id/universenetwork/sfa_loader/addons}/slimehud/placeholder/PlaceholderHook.java (79%)
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimehud/placeholder/PlaceholderManager.java
+ rename src/main/java/{io/github/schntgaispock => id/universenetwork/sfa_loader/addons}/slimehud/translation/TranslationManager.java (54%)
+ rename src/main/java/{io/github/schntgaispock => id/universenetwork/sfa_loader/addons}/slimehud/util/HudBuilder.java (74%)
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimehud/util/Util.java
+ rename src/main/java/{io/github/schntgaispock => id/universenetwork/sfa_loader/addons}/slimehud/waila/HudController.java (74%)
+ rename src/main/java/{io/github/schntgaispock => id/universenetwork/sfa_loader/addons}/slimehud/waila/HudRequest.java (87%)
+ rename src/main/java/{io/github/schntgaispock => id/universenetwork/sfa_loader/addons}/slimehud/waila/PlayerWAILA.java (85%)
+ rename src/main/java/{io/github/schntgaispock => id/universenetwork/sfa_loader/addons}/slimehud/waila/WAILAManager.java (76%)
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/package-info.java
+ delete mode 100644 src/main/java/io/github/schntgaispock/slimehud/SlimeHUD.java
+ delete mode 100644 src/main/java/io/github/schntgaispock/slimehud/command/CommandManager.java
+ delete mode 100644 src/main/java/io/github/schntgaispock/slimehud/command/SlimeHUDCommandExecutor.java
+ delete mode 100644 src/main/java/io/github/schntgaispock/slimehud/command/SlimeHUDTabCompleter.java
+ delete mode 100644 src/main/java/io/github/schntgaispock/slimehud/placeholder/PlaceholderManager.java
+ delete mode 100644 src/main/java/io/github/schntgaispock/slimehud/util/Util.java
+ delete mode 100644 src/main/java/io/github/schntgaispock/slimehud/waila/package-info.java
+ rename src/main/resources/{ => addons-config/SlimeHUD}/config.yml (89%)
+ rename src/main/resources/{ => addons-config/SlimeHUD}/player.yml (100%)
+ delete mode 100644 src/main/resources/plugin.yml
+ delete mode 100644 src/test/java/io/github/schntgaispock/slimehud/tests/UtilTests.java
+
+diff --git a/pom.xml b/pom.xml
+index 7c6c664..7226380 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -1,32 +1,23 @@
+-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+-
++<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
++
++    <parent>
++        <groupId>id.universenetwork.sfa_loader</groupId>
++        <artifactId>Addons</artifactId>
++        <version>UNOFFICIAL</version>
++    </parent>
++
+     <groupId>io.github.schntgaispock.slimehud</groupId>
+     <artifactId>SlimeHUD</artifactId>
+     <version>1.2.7</version>
+ 
+-    <properties>
+-        <maven.compiler.source>17</maven.compiler.source>
+-        <maven.compiler.target>17</maven.compiler.target>
+-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+-    </properties>
+-
+     <repositories>
+-        <repository>
+-            <id>paper-repo</id>
+-            <url>https://repo.destroystokyo.com/repository/maven-public/</url>
+-        </repository>
+-
+         <repository>
+             <id>spigot-repo</id>
+             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+         </repository>
+ 
+-        <repository>
+-            <id>jitpack.io</id>
+-            <url>https://jitpack.io</url>
+-        </repository>
+-
+         <repository>
+             <id>placeholderapi</id>
+             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+@@ -35,55 +26,7 @@
+ 
+     <build>
+         <finalName>${project.name} v${project.version}</finalName>
+-        <defaultGoal>clean package</defaultGoal>
+         <sourceDirectory>src/main/java</sourceDirectory>
+-
+-        <resources>
+-            <resource>
+-                <directory>src/main/resources</directory>
+-                <filtering>true</filtering>
+-                <includes>
+-                    <include>*</include>
+-                </includes>
+-            </resource>
+-        </resources>
+-
+-        <plugins>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-shade-plugin</artifactId>
+-                <version>3.3.0</version>
+-                <configuration>
+-                    <minimizeJar>true</minimizeJar>
+-                    <relocations>
+-                        <relocation>
+-                            <pattern>io.github.mooy1.infinitylib</pattern>
+-                            <shadedPattern>io.github.schntgaispock.infinitylib</shadedPattern>
+-                        </relocation>
+-                        <relocation>
+-                            <pattern>org.bstats</pattern>
+-                            <shadedPattern>io.github.schntgaispock.bstats</shadedPattern>
+-                        </relocation>
+-                    </relocations>
+-                    <filters>
+-                        <filter>
+-                            <artifact>*:*</artifact>
+-                            <excludes>
+-                                <exclude>META-INF/*</exclude>
+-                            </excludes>
+-                        </filter>
+-                    </filters>
+-                </configuration>
+-                <executions>
+-                    <execution>
+-                        <phase>package</phase>
+-                        <goals>
+-                            <goal>shade</goal>
+-                        </goals>
+-                    </execution>
+-                </executions>
+-            </plugin>
+-        </plugins>
+     </build>
+ 
+     <dependencies>
+@@ -94,26 +37,6 @@
+             <scope>provided</scope>
+         </dependency>
+ 
+-        <dependency>
+-            <groupId>com.github.Slimefun</groupId>
+-            <artifactId>Slimefun4</artifactId>
+-            <version>RC-36</version>
+-            <scope>provided</scope>
+-            <exclusions>
+-                <exclusion>
+-                    <groupId>io.github.baked-libs</groupId>
+-                    <artifactId>dough-api</artifactId>
+-                </exclusion>
+-            </exclusions>
+-        </dependency>
+-
+-        <dependency>
+-            <groupId>io.github.mooy1</groupId>
+-            <artifactId>InfinityLib</artifactId>
+-            <version>1.3.9</version>
+-            <scope>compile</scope>
+-        </dependency>
+-
+         <dependency>
+             <groupId>me.clip</groupId>
+             <artifactId>placeholderapi</artifactId>
+@@ -121,36 +44,17 @@
+             <scope>provided</scope>
+         </dependency>
+ 
+-        <dependency>
+-            <groupId>org.projectlombok</groupId>
+-            <artifactId>lombok</artifactId>
+-            <version>1.18.26</version>
+-        </dependency>
+-
+-        <dependency>
+-            <groupId>javax.annotation</groupId>
+-            <artifactId>javax.annotation-api</artifactId>
+-            <version>1.3.2</version>
+-            <scope>compile</scope>
+-        </dependency>
+-
+         <dependency>
+             <groupId>com.google.code.findbugs</groupId>
+             <artifactId>jsr305</artifactId>
+             <version>3.0.2</version>
+-        </dependency>
+-
+-        <dependency>
+-            <groupId>org.bstats</groupId>
+-            <artifactId>bstats-bukkit</artifactId>
+-            <version>3.0.0</version>
+-            <scope>compile</scope>
++            <scope>provided</scope>
+         </dependency>
+ 
+         <dependency>
+             <groupId>net.guizhanss</groupId>
+             <artifactId>SlimefunTranslation</artifactId>
+-            <version>81b930d5ad</version>
++            <version>UNOFFICIAL</version>
+             <scope>provided</scope>
+         </dependency>
+     </dependencies>
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/SlimeHUD.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/SlimeHUD.java
+new file mode 100644
+index 0000000..fdde978
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/SlimeHUD.java
+@@ -0,0 +1,55 @@
++package id.universenetwork.sfa_loader.addons.slimehud;
++
++import id.universenetwork.sfa_loader.addons.slimehud.command.SlimeHUDCommand;
++import id.universenetwork.sfa_loader.addons.slimehud.placeholder.PlaceholderManager;
++import id.universenetwork.sfa_loader.addons.slimehud.translation.TranslationManager;
++import id.universenetwork.sfa_loader.addons.slimehud.waila.HudController;
++import id.universenetwork.sfa_loader.addons.slimehud.waila.WAILAManager;
++import id.universenetwork.sfa_loader.annotations.AddonHooks;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
++import id.universenetwork.sfa_loader.managers.CommandManager;
++import id.universenetwork.sfa_loader.template.AddonTemplate;
++import id.universenetwork.sfa_loader.utils.LogUtils;
++import lombok.Getter;
++
++import java.io.File;
++
++@AddonHooks("SlimefunTranslation")
++public class SlimeHUD extends AddonTemplate {
++    @Getter
++    AddonConfig playerData;
++    static @Getter SlimeHUD instance;
++    private HudController hudController;
++    private TranslationManager translationManager;
++
++    @Override
++    public void onLoad() {
++        instance = this;
++
++        LogUtils.info("#=================================#");
++        LogUtils.info("#    SlimeHUD by SchnTgaiSpock    #");
++        LogUtils.info("#=================================#");
++
++        playerData = new AddonConfig(new File(getAddonFolder(), "player.yml"));
++
++        WAILAManager.setup();
++        CommandManager.register(new SlimeHUDCommand());
++        PlaceholderManager.setup();
++        hudController = new HudController();
++        translationManager = new TranslationManager();
++    }
++
++    @Override
++    public void onUnload() {
++        instance = null;
++        getPlayerData().save();
++    }
++
++    public static HudController getHudController() {
++        return instance.hudController;
++    }
++
++    public static TranslationManager getTranslationManager() {
++        return instance.translationManager;
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/command/SlimeHUDCommand.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/command/SlimeHUDCommand.java
+new file mode 100644
+index 0000000..9699d96
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/command/SlimeHUDCommand.java
+@@ -0,0 +1,78 @@
++package id.universenetwork.sfa_loader.addons.slimehud.command;
++
++import cloud.commandframework.annotations.Argument;
++import cloud.commandframework.annotations.CommandDescription;
++import cloud.commandframework.annotations.CommandMethod;
++import cloud.commandframework.annotations.suggestions.Suggestions;
++import cloud.commandframework.context.CommandContext;
++import id.universenetwork.sfa_loader.addons.slimehud.SlimeHUD;
++import id.universenetwork.sfa_loader.addons.slimehud.waila.PlayerWAILA;
++import id.universenetwork.sfa_loader.addons.slimehud.waila.WAILAManager;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import org.bukkit.command.CommandSender;
++import org.bukkit.entity.Player;
++
++import java.util.Collections;
++import java.util.List;
++import java.util.Map;
++import java.util.UUID;
++
++/**
++ * Functionality for the '/slimehud' command
++ */
++public class SlimeHUDCommand {
++    @CommandMethod("slimehud|sfhud|sfh [arg]")
++    @CommandDescription("/slimehud")
++    public void hudCommand(CommandSender sender, @Argument(value = "arg", suggestions = "arg") String arg) {
++        if (sender instanceof Player) {
++            Player player = (Player) sender;
++
++            if (arg == null) {
++                sendInfo(player);
++                return;
++            }
++
++            UUID uuid = player.getUniqueId();
++
++            // May add more to the command in the future
++            if (arg.equals("toggle")) {
++                if (!player.hasPermission("slimehud.togglewaila")) {
++                    player.sendMessage("§a§lSlimeHUD§7> §cYou don't have permission to toggle your WAILA HUD!");
++                    return;
++                }
++                if (SlimeHUD.getInstance().getConfig().getBoolean("waila.disabled", false)) {
++                    player.sendMessage("§a§lSlimeHUD§7> §cThe WAILA HUD is disabled!");
++                    return;
++                }
++                if (SlimeHUD.getInstance().getConfig().getList("waila.disabled-in", Collections.EMPTY_LIST).contains(player.getWorld().getName())) {
++                    player.sendMessage("§a§lSlimeHUD§7> §cThe WAILA HUD is disabled in this world!");
++                    return;
++                }
++                boolean wailaOn = SlimeHUD.getInstance().getPlayerData().getBoolean(uuid + ".waila", true);
++                SlimeHUD.getInstance().getPlayerData().set(uuid + ".waila", !wailaOn);
++
++                Map<UUID, PlayerWAILA> wailas = WAILAManager.getInstance().getWailas();
++                wailas.get(uuid).setPaused(wailaOn);
++
++                SlimeHUD.getInstance().getPlayerData().save();
++                player.sendMessage("§a§lSlimeHUD§7> HUD toggled " + (wailaOn ? "§coff" : "§aon"));
++            }
++        }
++    }
++
++    @Suggestions("arg")
++    public List<String> arg(CommandContext<CommandSender> sender, String context) {
++        return Collections.singletonList("toggle");
++    }
++
++    private void sendInfo(Player player) {
++        player.sendMessage(
++                "",
++                "§a§lSlimeHUD §7- §2Version " + AbstractAddon.getInstance().getDescription().getVersion(),
++                "§7------",
++                "§a§lWiki §7- §2https://schn.pages.dev/slimehud",
++                "§a§lIssues §7- §2https://github.com/SchnTgaiSpock/SlimeHUD/issues",
++                ""
++        );
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/github/schntgaispock/slimehud/placeholder/PlaceholderHook.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/placeholder/PlaceholderHook.java
+similarity index 79%
+rename from src/main/java/io/github/schntgaispock/slimehud/placeholder/PlaceholderHook.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimehud/placeholder/PlaceholderHook.java
+index 7009c86..43a6eb8 100644
+--- a/src/main/java/io/github/schntgaispock/slimehud/placeholder/PlaceholderHook.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/placeholder/PlaceholderHook.java
+@@ -1,6 +1,6 @@
+-package io.github.schntgaispock.slimehud.placeholder;
++package id.universenetwork.sfa_loader.addons.slimehud.placeholder;
+ 
+-import io.github.schntgaispock.slimehud.SlimeHUD;
++import id.universenetwork.sfa_loader.addons.slimehud.SlimeHUD;
+ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+ import org.bukkit.entity.Player;
+ 
+@@ -30,10 +30,8 @@ public class PlaceholderHook extends PlaceholderExpansion {
+ 
+     @Override
+     public @Nullable String onPlaceholderRequest(Player player, @Nonnull String params) {
+-        if (params.equalsIgnoreCase("toggle")) {
++        if (params.equalsIgnoreCase("toggle"))
+             return SlimeHUD.getInstance().getPlayerData().getString(player.getUniqueId() + ".waila", "true");
+-        } else {
+-            return null;
+-        }
++        else return null;
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/placeholder/PlaceholderManager.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/placeholder/PlaceholderManager.java
+new file mode 100644
+index 0000000..0059f68
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/placeholder/PlaceholderManager.java
+@@ -0,0 +1,14 @@
++package id.universenetwork.sfa_loader.addons.slimehud.placeholder;
++
++import id.universenetwork.sfa_loader.addons.slimehud.SlimeHUD;
++import id.universenetwork.sfa_loader.utils.LogUtils;
++import org.bukkit.Bukkit;
++
++public class PlaceholderManager {
++    public static void setup() {
++        if (SlimeHUD.getInstance().getConfig().getBoolean("options.placeholder-api-support", true)) {
++            if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) new PlaceholderHook().register();
++            else LogUtils.info("PlaceholderAPI is not installed and has been ignored.");
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/github/schntgaispock/slimehud/translation/TranslationManager.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/translation/TranslationManager.java
+similarity index 54%
+rename from src/main/java/io/github/schntgaispock/slimehud/translation/TranslationManager.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimehud/translation/TranslationManager.java
+index c64e281..1fdccad 100644
+--- a/src/main/java/io/github/schntgaispock/slimehud/translation/TranslationManager.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/translation/TranslationManager.java
+@@ -1,9 +1,10 @@
+-package io.github.schntgaispock.slimehud.translation;
++package id.universenetwork.sfa_loader.addons.slimehud.translation;
+ 
+-import io.github.schntgaispock.slimehud.SlimeHUD;
++import id.universenetwork.sfa_loader.AddonsLoader;
++import id.universenetwork.sfa_loader.addons.slimefuntranslation.api.SlimefunTranslationAPI;
++import id.universenetwork.sfa_loader.addons.slimehud.SlimeHUD;
++import id.universenetwork.sfa_loader.utils.LogUtils;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+-import net.guizhanss.slimefuntranslation.api.SlimefunTranslationAPI;
+-import org.bukkit.Bukkit;
+ import org.bukkit.entity.Player;
+ 
+ import javax.annotation.Nonnull;
+@@ -14,10 +15,9 @@ public class TranslationManager {
+ 
+     public TranslationManager() {
+         if (SlimeHUD.getInstance().getConfig().getBoolean("options.slimefun-translation-support", true)) {
+-            if (Bukkit.getPluginManager().getPlugin("SlimefunTranslation") != null) {
+-                translationEnabled = true;
+-            } else {
+-                SlimeHUD.getInstance().getLogger().info("SlimefunTranslation is not installed and has been ignored.");
++            if (AddonsLoader.isAddonLoaded("SlimefunTranslation")) translationEnabled = true;
++            else {
++                LogUtils.info("SlimefunTranslation is not installed and has been ignored.");
+                 translationEnabled = false;
+             }
+         }
+@@ -26,16 +26,14 @@ public class TranslationManager {
+     @Nonnull
+     @ParametersAreNonnullByDefault
+     public String getItemName(Player p, SlimefunItem sfItem) {
+-        if (!translationEnabled) {
+-            return sfItem.getItemName();
+-        }
+-        
++        if (!translationEnabled) return sfItem.getItemName();
++
+         try {
+             return SlimefunTranslationAPI.getItemName(SlimefunTranslationAPI.getUser(p), sfItem);
+         } catch (NoClassDefFoundError e) {
+-            SlimeHUD.getInstance().getLogger().info("Could not get item translation! Please update SlimefunTranslation");
++            LogUtils.info("Could not get item translation! Please update SlimefunTranslation");
+             translationEnabled = false;
+             return sfItem.getItemName();
+         }
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/github/schntgaispock/slimehud/util/HudBuilder.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/util/HudBuilder.java
+similarity index 74%
+rename from src/main/java/io/github/schntgaispock/slimehud/util/HudBuilder.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimehud/util/HudBuilder.java
+index 8d89ae4..0b890d5 100644
+--- a/src/main/java/io/github/schntgaispock/slimehud/util/HudBuilder.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/util/HudBuilder.java
+@@ -1,22 +1,20 @@
+-package io.github.schntgaispock.slimehud.util;
++package id.universenetwork.sfa_loader.addons.slimehud.util;
+ 
+-import java.text.NumberFormat;
++import lombok.experimental.UtilityClass;
+ 
+ import javax.annotation.Nonnull;
+-
+-import lombok.experimental.UtilityClass;
++import java.text.NumberFormat;
+ 
+ /**
+  * Utility class containing various formatting functions for your HUD text
+  */
+ @UtilityClass
+ public class HudBuilder {
+-
+     private static NumberFormat nf = NumberFormat.getInstance();
+ 
+     /**
+      * Formats stored energy
+-     * 
++     *
+      * @param energy Amount of stored energy
+      * @return The formatted text
+      */
+@@ -27,7 +25,7 @@ public class HudBuilder {
+ 
+     /**
+      * Formats stored energy and total energy
+-     * 
++     *
+      * @param energy Amount of stored energy
+      * @return The formatted text
+      */
+@@ -38,7 +36,7 @@ public class HudBuilder {
+ 
+     /**
+      * Formats energy generated (per tick)
+-     * 
++     *
+      * @param energy Energy generated per tick
+      * @return The formatted text
+      */
+@@ -49,7 +47,7 @@ public class HudBuilder {
+ 
+     /**
+      * Returns an 11-char progress bar made of "|"s
+-     * 
++     *
+      * @param progress Completed amount, should be less than {@code total}
+      * @param total    Total amount
+      * @return The formatted progress bar
+@@ -62,7 +60,7 @@ public class HudBuilder {
+ 
+     /**
+      * Returns an 11-char progress bar made of "|"s
+-     * 
++     *
+      * @param percentCompleted An integer between 0 and 100, inclusive
+      * @return The formatted progress bar
+      */
+@@ -76,31 +74,19 @@ public class HudBuilder {
+         StringBuffer progressBar = new StringBuffer();
+         if (percentCompleted > 0) {
+             char color = '2';
+-            if (percentCompleted < 15) {
+-                color = '4';
+-            } else if (percentCompleted < 30) {
+-                color = 'c';
+-            } else if (percentCompleted < 45) {
+-                color = '6';
+-            } else if (percentCompleted < 60) {
+-                color = 'e';
+-            } else if (percentCompleted < 75) {
+-                color = 'a';
+-            }
++            if (percentCompleted < 15) color = '4';
++            else if (percentCompleted < 30) color = 'c';
++            else if (percentCompleted < 45) color = '6';
++            else if (percentCompleted < 60) color = 'e';
++            else if (percentCompleted < 75) color = 'a';
+             // Magic numbers
+             int split = (percentCompleted + 4) / 10;
+             progressBar.append("&").append(color);
+-            for (int i = 0; i < split + 1; i++) {
+-                progressBar.append("|");
+-            }
++            for (int i = 0; i < split + 1; i++) progressBar.append("|");
+             progressBar.append("&7");
+-            for (int i = 0; i < 10 - split; i++) {
+-                progressBar.append("|");
+-            }
++            for (int i = 0; i < 10 - split; i++) progressBar.append("|");
+ 
+-        } else {
+-            progressBar.append("|||||||||||");
+-        }
++        } else progressBar.append("|||||||||||");
+ 
+         return progressBar.toString();
+     }
+@@ -108,7 +94,7 @@ public class HudBuilder {
+     /**
+      * Returns a fully-formatted 11-char progress bar made of "|"s. If you want to
+      * append or prepend text, you should use {@code HudBuilder.getProgressBar}
+-     * 
++     *
+      * @param progress Completed amount, should be less than {@code total}
+      * @param total    Total amount
+      * @return The formatted progress bar
+@@ -122,7 +108,7 @@ public class HudBuilder {
+     /**
+      * Returns a fully-formatted 11-char progress bar made of "|"s. If you want to
+      * append or prepend text, you should use {@code HudBuilder.getProgressBar}
+-     * 
++     *
+      * @param percentCompleted An integer between 0 and 100, inclusive
+      * @return The formatted progress bar
+      */
+@@ -141,52 +127,41 @@ public class HudBuilder {
+      *   <li>314159265358979 -> 314.15T</li>
+      * </ul>
+      * Numbers will always be rounded down
++     *
+      * @param n Number to shorten
+      * @return Shortened number
+      */
+     @Nonnull
+     @SuppressWarnings("null")
+     public static String getAbbreviatedNumber(long n) {
+-        String original = ""+n;
++        String original = "" + n;
+         int length = original.length() - (n < 0 ? 1 : 0);
+         String append = "";
+-        if (length < 4) {
+-            return original;
+-        } else if (length < 7) {
+-            append = "K";
+-        } else if (length < 10) {
+-            append = "M";
+-        } else if (length < 13) {
+-            append = "B";
+-        } else if (length < 16) {
+-            append = "T";
+-        } else if (length < 19) {
+-            append = "Qa";
+-        } else if (length < 22) {
+-            append = "Qi";
+-        }
++        if (length < 4) return original;
++        else if (length < 7) append = "K";
++        else if (length < 10) append = "M";
++        else if (length < 13) append = "B";
++        else if (length < 16) append = "T";
++        else if (length < 19) append = "Qa";
++        else if (length < 22) append = "Qi";
+ 
+         StringBuffer shortened = new StringBuffer();
+-        int leadingLength = ((length-1) % 3) + (n < 0 ? 2 : 1);
++        int leadingLength = ((length - 1) % 3) + (n < 0 ? 2 : 1);
+         int i;
+-        for (i = 0; i < leadingLength; i++) {
+-            shortened.append(original.charAt(i));
+-        }
++        for (i = 0; i < leadingLength; i++) shortened.append(original.charAt(i));
+         char dec1 = original.charAt(i);
+-        char dec2 = original.charAt(i+1);
++        char dec2 = original.charAt(i + 1);
+         boolean temp;
+         if ((temp = dec2 != '0') || dec1 != '0') {
+             shortened.append('.').append(dec1);
+-            if (temp) {
+-                shortened.append(dec2);
+-            }
++            if (temp) shortened.append(dec2);
+         }
+         return shortened.append(append).toString();
+-        
+     }
+ 
+     /**
+      * Adds commas to a number
++     *
+      * @param n No commas?
+      * @return Number with commas
+      */
+@@ -195,4 +170,4 @@ public class HudBuilder {
+     public static String getCommaNumber(long n) {
+         return HudBuilder.nf.format(n);
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/util/Util.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/util/Util.java
+new file mode 100644
+index 0000000..a16e28e
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/util/Util.java
+@@ -0,0 +1,229 @@
++package id.universenetwork.sfa_loader.addons.slimehud.util;
++
++import id.universenetwork.sfa_loader.utils.LogUtils;
++import lombok.Data;
++import lombok.experimental.UtilityClass;
++import net.md_5.bungee.api.ChatColor;
++import org.bukkit.boss.BarColor;
++
++import java.util.Collections;
++import java.util.HashMap;
++import java.util.Objects;
++import java.util.logging.Level;
++
++@UtilityClass
++public class Util {
++    @Data
++    private class RGB {
++        private final int red;
++        private final int green;
++        private final int blue;
++
++        public int[] asArray() {
++            return new int[]{red, green, blue};
++        }
++    }
++
++    private static final HashMap<RGB, BarColor> barColorRGBMap = new HashMap<>();
++    private static final HashMap<RGB, BarColor> savedBarColors = new HashMap<>();
++
++    static {
++        barColorRGBMap.put(new RGB(0x00, 0xb9, 0xec), BarColor.BLUE);
++        barColorRGBMap.put(new RGB(0x16, 0xb9, 0x00), BarColor.GREEN);
++        barColorRGBMap.put(new RGB(0xb9, 0x00, 0x90), BarColor.PINK);
++        barColorRGBMap.put(new RGB(0x61, 0x00, 0xb9), BarColor.PURPLE);
++        barColorRGBMap.put(new RGB(0xb9, 0x2a, 0x00), BarColor.RED);
++        barColorRGBMap.put(new RGB(0xff, 0xff, 0xff), BarColor.WHITE);
++        barColorRGBMap.put(new RGB(0xb9, 0xb9, 0x00), BarColor.YELLOW);
++    }
++
++    public static BarColor pickBarColorFromName(String name) {
++        char colorCode = name.trim().toLowerCase().startsWith("§") ? name.charAt(1) : ' ';
++        if (colorCode == 'x') try {
++            final String stripped = name.replace("§", "");
++            final int red = parseInt(stripped, 1, 3);
++            final int green = parseInt(stripped, 3, 5);
++            final int blue = parseInt(stripped, 5, 7);
++
++            final RGB rgb = new RGB(red, green, blue);
++
++            if (savedBarColors.containsKey(rgb)) return savedBarColors.get(rgb);
++
++            BarColor color = barColorRGBMap.get(Collections.min(barColorRGBMap.keySet(), (RGB a, RGB b) -> (errorSquared(a.asArray(), rgb.asArray()) < errorSquared(b.asArray(), rgb.asArray())) ? -1 : 1));
++
++            savedBarColors.put(rgb, color);
++            return color;
++        } catch (NumberFormatException e) {
++            return BarColor.WHITE;
++        }
++
++        switch (colorCode) {
++            case '4':
++            case 'c':
++                return BarColor.RED;
++            case '6':
++            case 'e':
++                return BarColor.YELLOW;
++            case '2':
++            case 'a':
++                return BarColor.GREEN;
++            case '3':
++            case 'b':
++                return BarColor.BLUE;
++            case '1':
++            case '5':
++            case '9':
++                return BarColor.PURPLE;
++            case 'd':
++                return BarColor.PINK;
++            default:
++                return BarColor.WHITE;
++        }
++    }
++
++    public static BarColor pickBarColorFromColor(String color) {
++        switch (color.trim()) {
++            case "red":
++            case "yellow":
++            case "green":
++            case "blue":
++            case "purple":
++            case "pink":
++            case "white":
++                return BarColor.valueOf(color.toUpperCase());
++
++            case "default":
++            case "inherit":
++                return BarColor.WHITE;
++
++            default:
++                LogUtils.log(Level.WARNING, "[SlimeHUD] Invalid bossbar color: " + color, "[SlimeHUD] Setting color to white...");
++                return BarColor.WHITE;
++        }
++    }
++
++    public static ChatColor getColorFromCargoChannel(int channel) {
++        switch (channel) {
++            case 2:
++                return ChatColor.GOLD;
++            case 3:
++                return ChatColor.BLUE; // No magenta
++            case 4:
++                return ChatColor.AQUA;
++            case 5:
++                return ChatColor.YELLOW;
++            case 6:
++                return ChatColor.GREEN;
++            case 7:
++                return ChatColor.LIGHT_PURPLE;
++            case 8:
++                return ChatColor.DARK_GRAY;
++            case 9:
++                return ChatColor.GRAY;
++            case 10:
++                return ChatColor.DARK_AQUA;
++            case 11:
++                return ChatColor.DARK_PURPLE;
++            case 12:
++                return ChatColor.DARK_BLUE;
++            case 13:
++                return ChatColor.RED; // No brown
++            case 14:
++                return ChatColor.DARK_GREEN;
++            case 15:
++                return ChatColor.DARK_RED;
++            case 16:
++                return ChatColor.BLACK;
++
++            default:
++                return ChatColor.WHITE;
++        }
++    }
++
++    public static int errorSquared(int[] a, int[] b) {
++        if (a.length != b.length) return Integer.MAX_VALUE;
++
++        int total = 0;
++        for (int i = 0; i < a.length; i++) total += (int) Math.pow(a[i] - b[i], 2);
++
++        return total;
++    }
++
++    /**
++     * Parses the {@link CharSequence} argument as a signed {@code int} in the
++     * specified {@code radix}, beginning at the specified {@code beginIndex}
++     * and extending to {@code endIndex - 1}.
++     *
++     * <p>The method does not take steps to guard against the
++     * {@code CharSequence} being mutated while parsing.
++     * <p>Modified from Java 9
++     *
++     * @param s          the {@code CharSequence} containing the {@code int}
++     *                   representation to be parsed
++     * @param beginIndex the beginning index, inclusive.
++     * @param endIndex   the ending index, exclusive.
++     * @return the signed {@code int} represented by the subsequence in
++     * the specified radix.
++     * @throws NullPointerException      if {@code s} is null.
++     * @throws IndexOutOfBoundsException if {@code beginIndex} is
++     *                                   negative, or if {@code beginIndex} is greater than
++     *                                   {@code endIndex} or if {@code endIndex} is greater than
++     *                                   {@code s.length()}.
++     * @throws NumberFormatException     if the {@code CharSequence} does not
++     *                                   contain a parsable {@code int} in the specified
++     *                                   {@code radix}, or if {@code radix} is either smaller than
++     *                                   {@link java.lang.Character#MIN_RADIX} or larger than
++     *                                   {@link java.lang.Character#MAX_RADIX}.
++     * @since 9
++     */
++    private int parseInt(CharSequence s, int beginIndex, int endIndex)
++            throws NumberFormatException {
++        Objects.requireNonNull(s);
++
++        if (beginIndex < 0 || beginIndex > endIndex || endIndex > s.length()) throw new IndexOutOfBoundsException();
++        if (16 < Character.MIN_RADIX) throw new NumberFormatException("radix " + 16 +
++                " less than Character.MIN_RADIX");
++        if (16 > Character.MAX_RADIX) throw new NumberFormatException("radix " + 16 +
++                " greater than Character.MAX_RADIX");
++
++        boolean negative = false;
++        int i = beginIndex;
++        int limit = -Integer.MAX_VALUE;
++
++        if (i < endIndex) {
++            char firstChar = s.charAt(i);
++            if (firstChar < '0') { // Possible leading "+" or "-"
++                if (firstChar == '-') {
++                    negative = true;
++                    limit = Integer.MIN_VALUE;
++                } else if (firstChar != '+') throw new NumberFormatException("Error at index "
++                        + (i - beginIndex) + " in: \""
++                        + s.subSequence(beginIndex, endIndex) + "\"");
++                i++;
++                // Cannot have lone "+" or "-"
++                if (i == endIndex) throw new NumberFormatException("Error at index "
++                        + (i - beginIndex) + " in: \""
++                        + s.subSequence(beginIndex, endIndex) + "\"");
++            }
++            int multmin = limit / 16;
++            int result = 0;
++            while (i < endIndex) {
++                // Accumulating negatively avoids surprises near MAX_VALUE
++                int digit = Character.digit(s.charAt(i), 16);
++                if (digit < 0 || result < multmin) throw new NumberFormatException("Error at index "
++                        + (i - beginIndex) + " in: \""
++                        + s.subSequence(beginIndex, endIndex) + "\"");
++                result *= 16;
++                if (result < limit + digit) throw new NumberFormatException("Error at index "
++                        + (i - beginIndex) + " in: \""
++                        + s.subSequence(beginIndex, endIndex) + "\"");
++                i++;
++                result -= digit;
++            }
++            return negative ? result : -result;
++        } else throw new NumberFormatException("For input string: \"" + s + "\"" +
++                (16 == 10 ?
++                        "" :
++                        " under radix " + 16));
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/github/schntgaispock/slimehud/waila/HudController.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/HudController.java
+similarity index 74%
+rename from src/main/java/io/github/schntgaispock/slimehud/waila/HudController.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/HudController.java
+index 3f2fa8d..58c3bcb 100644
+--- a/src/main/java/io/github/schntgaispock/slimehud/waila/HudController.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/HudController.java
+@@ -1,8 +1,8 @@
+-package io.github.schntgaispock.slimehud.waila;
++package id.universenetwork.sfa_loader.addons.slimehud.waila;
+ 
+-import io.github.schntgaispock.slimehud.SlimeHUD;
+-import io.github.schntgaispock.slimehud.util.HudBuilder;
+-import io.github.schntgaispock.slimehud.util.Util;
++import id.universenetwork.sfa_loader.addons.slimehud.SlimeHUD;
++import id.universenetwork.sfa_loader.addons.slimehud.util.HudBuilder;
++import id.universenetwork.sfa_loader.addons.slimehud.util.Util;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.api.network.Network;
+ import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
+@@ -29,7 +29,6 @@ import java.util.Set;
+ import java.util.function.Function;
+ 
+ public class HudController {
+-
+     // LinkedHashMaps preserve insertion order. Chances are, a MachineProcessHolder
+     // is also an EnergyNetComponent, but the machine info should take priority over
+     // energy info.
+@@ -59,9 +58,7 @@ public class HudController {
+ 
+     @Nonnull
+     private String processEnergyNode(@Nonnull HudRequest request) {
+-        if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.show-energy-size")) {
+-            return "";
+-        }
++        if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.show-energy-size")) return "";
+ 
+         Network en = EnergyNet.getNetworkFromLocation(request.getLocation());
+         int size = getNetworkSize(en);
+@@ -70,9 +67,7 @@ public class HudController {
+ 
+     @Nonnull
+     private String processCapacitor(@Nonnull HudRequest request) {
+-        if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.show-energy-stored")) {
+-            return "";
+-        }
++        if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.show-energy-stored")) return "";
+ 
+         EnergyNetComponent enc = (EnergyNetComponent) request.getSlimefunItem();
+         EnergyNetComponentType enct = enc.getEnergyComponentType();
+@@ -90,9 +85,7 @@ public class HudController {
+     private String processMachine(@Nonnull HudRequest request) {
+         StringBuilder hudText = new StringBuilder();
+ 
+-        if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.show-machine-progress")) {
+-            return "";
+-        }
++        if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.show-machine-progress")) return "";
+ 
+         MachineProcessHolder<MachineOperation> machine = (MachineProcessHolder<MachineOperation>) request
+                 .getSlimefunItem();
+@@ -100,20 +93,17 @@ public class HudController {
+ 
+         if (operation == null) {
+             hudText.append("&7| Idle");
+-            if (request.getSlimefunItem() instanceof EnergyNetComponent) {
++            if (request.getSlimefunItem() instanceof EnergyNetComponent)
+                 hudText.append(" ").append(processCapacitor(request));
+-            }
+             return hudText.toString();
+         }
+ 
+         int progress = operation.getProgress();
+         int total = operation.getTotalTicks();
+-        
++
+         hudText.append(HudBuilder.formatProgressBar(progress, total));
+-        
+-        if (request.getSlimefunItem() instanceof AGenerator) {
+-            hudText.append(" ").append(processGenerator(request));
+-        }
++
++        if (request.getSlimefunItem() instanceof AGenerator) hudText.append(" ").append(processGenerator(request));
+ 
+         return hudText.toString();
+     }
+@@ -122,21 +112,14 @@ public class HudController {
+     private String processGenerator(@Nonnull HudRequest request) {
+         StringBuilder hudText = new StringBuilder();
+ 
+-        if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.show-generator-generation")) {
+-            return "";
+-        }
++        if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.show-generator-generation")) return "";
+ 
+         AGenerator gen = (AGenerator) request.getSlimefunItem();
+         int generation = gen.getEnergyProduction();
+-        if (generation > 0) {
+-            hudText.append(HudBuilder.formatEnergyGenerated(generation));
+-        } else {
+-            hudText.append("&7| Not generating");
+-        }
++        if (generation > 0) hudText.append(HudBuilder.formatEnergyGenerated(generation));
++        else hudText.append("&7| Not generating");
+ 
+-        if (gen instanceof EnergyNetComponent) {
+-            hudText.append(" ").append(processCapacitor(request));
+-        }
++        if (gen instanceof EnergyNetComponent) hudText.append(" ").append(processCapacitor(request));
+ 
+         return hudText.toString();
+     }
+@@ -145,31 +128,22 @@ public class HudController {
+     private String processSolarGenerator(@Nonnull HudRequest request) {
+         StringBuilder hudText = new StringBuilder();
+ 
+-        if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.show-generator-generation")) {
+-            return "";
+-        }
++        if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.show-generator-generation")) return "";
+ 
+         SolarGenerator gen = (SolarGenerator) request.getSlimefunItem();
+-        // Solar Generators dont use any fuel, so it's ok to call getGeneratedOutput
++        // Solar Generators don't use any fuel, so it's ok to call getGeneratedOutput
+         int generation = gen.getGeneratedOutput(request.getLocation(), null);
+-        if (generation > 0) {
+-            hudText.append(HudBuilder.formatEnergyGenerated(generation));
+-        } else {
+-            hudText.append("&7| Not generating");
+-        }
++        if (generation > 0) hudText.append(HudBuilder.formatEnergyGenerated(generation));
++        else hudText.append("&7| Not generating");
+ 
+-        if (gen instanceof EnergyNetComponent) {
+-            hudText.append(" ").append(processCapacitor(request));
+-        }
++        if (gen instanceof EnergyNetComponent) hudText.append(" ").append(processCapacitor(request));
+ 
+         return hudText.toString();
+     }
+ 
+     @Nonnull
+     private String processCargoNode(@Nonnull HudRequest request) {
+-        if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.show-cargo-channel")) {
+-            return "";
+-        }
++        if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.show-cargo-channel")) return "";
+         CargoNode cn = (CargoNode) request.getSlimefunItem();
+         int channel = cn.getSelectedChannel(request.getLocation().getBlock()) + 1;
+         return "&7| Channel: " + Util.getColorFromCargoChannel(channel).toString() + channel;
+@@ -177,9 +151,7 @@ public class HudController {
+ 
+     @Nonnull
+     private String processCargoManagerConnector(@Nonnull HudRequest request) {
+-        if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.show-cargo-size")) {
+-            return "";
+-        }
++        if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.show-cargo-size")) return "";
+         Network cn = CargoNet.getNetworkFromLocation(request.getLocation());
+ 
+         int size = getNetworkSize(cn);
+@@ -187,23 +159,21 @@ public class HudController {
+     }
+ 
+     private int getNetworkSize(Network network) {
+-        if (network != null) {
+-            try {
+-                Field con = Network.class.getDeclaredField("connectorNodes");
+-                Field ter = Network.class.getDeclaredField("terminusNodes");
+-
+-                con.setAccessible(true);
+-                ter.setAccessible(true);
+-
+-                int conSize = ((Set<?>) con.get(network)).size();
+-                int terSize = ((Set<?>) ter.get(network)).size();
+-
+-                con.setAccessible(false);
+-                ter.setAccessible(false);
+-                return conSize + terSize + 1;
+-            } catch (NoSuchFieldException | IllegalAccessException e) {
+-                e.printStackTrace();
+-            }
++        if (network != null) try {
++            Field con = Network.class.getDeclaredField("connectorNodes");
++            Field ter = Network.class.getDeclaredField("terminusNodes");
++
++            con.setAccessible(true);
++            ter.setAccessible(true);
++
++            int conSize = ((Set<?>) con.get(network)).size();
++            int terSize = ((Set<?>) ter.get(network)).size();
++
++            con.setAccessible(false);
++            ter.setAccessible(false);
++            return conSize + terSize + 1;
++        } catch (NoSuchFieldException | IllegalAccessException e) {
++            e.printStackTrace();
+         }
+         return -1;
+     }
+@@ -212,26 +182,18 @@ public class HudController {
+     private Function<HudRequest, String> tryGetHandler(@Nonnull SlimefunItem slimefunItem) {
+         // First see if there is a custom handler from an addon (to allow overriding the
+         // default machine handler)
+-        for (Map.Entry<Class<?>, Function<HudRequest, String>> entry : customHandlers.entrySet()) {
+-            if (entry.getKey().isInstance(slimefunItem)) {
+-                return entry.getValue();
+-            }
+-        }
+-        for (Map.Entry<Class<?>, Function<HudRequest, String>> entry : defaultHandlers.entrySet()) {
+-            if (entry.getKey().isInstance(slimefunItem)) {
+-                return entry.getValue();
+-            }
+-        }
++        for (Map.Entry<Class<?>, Function<HudRequest, String>> entry : customHandlers.entrySet())
++            if (entry.getKey().isInstance(slimefunItem)) return entry.getValue();
++        for (Map.Entry<Class<?>, Function<HudRequest, String>> entry : defaultHandlers.entrySet())
++            if (entry.getKey().isInstance(slimefunItem)) return entry.getValue();
+         return null;
+     }
+ 
+     @Nonnull
+     public String processRequest(@Nonnull HudRequest request) {
+         Function<HudRequest, String> handler = tryGetHandler(request.getSlimefunItem());
+-        if (handler == null) {
+-            // No handler found, return empty string
+-            return "";
+-        } else {
++        if (handler == null) return ""; // No handler found, return empty string
++        else {
+             String ret = handler.apply(request);
+             return ret == null ? "" : ret;
+         }
+@@ -244,7 +206,7 @@ public class HudController {
+ 
+     /**
+      * Register a custom handler for when a player looks at a Slimefun Item
+-     * 
++     *
+      * @param clazz   The class extending {@code SlimefunItem}
+      * @param handler A function that takes a {@code HudRequest} and returns
+      *                formatted text to be displayed on the WAILA HUD
+@@ -253,5 +215,4 @@ public class HudController {
+     public void registerCustomHandler(Class<?> clazz, Function<HudRequest, String> handler) {
+         customHandlers.put(clazz, handler);
+     }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/github/schntgaispock/slimehud/waila/HudRequest.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/HudRequest.java
+similarity index 87%
+rename from src/main/java/io/github/schntgaispock/slimehud/waila/HudRequest.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/HudRequest.java
+index 5777f06..1af9369 100644
+--- a/src/main/java/io/github/schntgaispock/slimehud/waila/HudRequest.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/HudRequest.java
+@@ -1,14 +1,13 @@
+-package io.github.schntgaispock.slimehud.waila;
++package id.universenetwork.sfa_loader.addons.slimehud.waila;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import lombok.Getter;
+ import lombok.RequiredArgsConstructor;
+-
+-import javax.annotation.Nonnull;
+-
+ import org.bukkit.Location;
+ import org.bukkit.entity.Player;
+ 
++import javax.annotation.Nonnull;
++
+ 
+ @RequiredArgsConstructor
+ @Getter
+@@ -16,4 +15,4 @@ public class HudRequest {
+     private final @Nonnull SlimefunItem slimefunItem;
+     private final @Nonnull Location location;
+     private final @Nonnull Player player;
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/github/schntgaispock/slimehud/waila/PlayerWAILA.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/PlayerWAILA.java
+similarity index 85%
+rename from src/main/java/io/github/schntgaispock/slimehud/waila/PlayerWAILA.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/PlayerWAILA.java
+index 064a17b..e9c1675 100644
+--- a/src/main/java/io/github/schntgaispock/slimehud/waila/PlayerWAILA.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/PlayerWAILA.java
+@@ -1,7 +1,12 @@
+-package io.github.schntgaispock.slimehud.waila;
+-
+-import javax.annotation.Nonnull;
++package id.universenetwork.sfa_loader.addons.slimehud.waila;
+ 
++import id.universenetwork.sfa_loader.addons.slimehud.SlimeHUD;
++import id.universenetwork.sfa_loader.addons.slimehud.util.Util;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
++import lombok.Getter;
++import me.mrCookieSlime.Slimefun.api.BlockStorage;
++import net.md_5.bungee.api.ChatMessageType;
++import net.md_5.bungee.api.chat.TextComponent;
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+ import org.bukkit.Location;
+@@ -11,17 +16,11 @@ import org.bukkit.boss.BossBar;
+ import org.bukkit.entity.Player;
+ import org.bukkit.scheduler.BukkitRunnable;
+ 
+-import io.github.schntgaispock.slimehud.SlimeHUD;
+-import io.github.schntgaispock.slimehud.util.Util;
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+-import lombok.Getter;
+-import me.mrCookieSlime.Slimefun.api.BlockStorage;
+-import net.md_5.bungee.api.ChatMessageType;
+-import net.md_5.bungee.api.chat.TextComponent;
++import javax.annotation.Nonnull;
+ 
+ public class PlayerWAILA extends BukkitRunnable {
+-
+-    final private @Nonnull @Getter Player player;
++    final private @Nonnull
++    @Getter Player player;
+     final private @Getter BossBar WAILABar; // Bossbar
+     final private String WAILALocation;
+     final private boolean useAutoBossBarColor;
+@@ -47,7 +46,7 @@ public class PlayerWAILA extends BukkitRunnable {
+     /**
+      * Returns an empty string if not a Slimefun item. Otherwise returns the
+      * formatted item name
+-     * 
++     *
+      * @return Formatted item name or empty string
+      */
+     public String getFacing() {
+@@ -77,14 +76,10 @@ public class PlayerWAILA extends BukkitRunnable {
+      */
+     @Override
+     public void run() {
+-        if (isPaused()) {
+-            return;
+-        }
++        if (isPaused()) return;
+ 
+         String facing = getFacing();
+-        if (facing.equals(previousFacing)) {
+-            return; // Nothing changed, skip for now
+-        }
++        if (facing.equals(previousFacing)) return; // Nothing changed, skip for now
+ 
+         previousFacing = facing;
+         switch (WAILALocation) {
+@@ -92,25 +87,19 @@ public class PlayerWAILA extends BukkitRunnable {
+                 if (facing.equals("")) {
+                     WAILABar.setVisible(false);
+                     break;
+-                } else {
+-                    WAILABar.setVisible(true);
+-                }
++                } else WAILABar.setVisible(true);
+ 
+                 WAILABar.setTitle(keepTextColors ? facing : ChatColor.stripColor(facing));
+ 
+-                if (useAutoBossBarColor) {
+-                    WAILABar.setColor(Util.pickBarColorFromName(facing));
+-                }
++                if (useAutoBossBarColor) WAILABar.setColor(Util.pickBarColorFromName(facing));
+ 
+                 break;
+-
+             case "hotbar":
+                 getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(facing));
+                 break;
+             default:
+                 break;
+         }
+-
+     }
+ 
+     public void setPaused(boolean paused) {
+@@ -127,5 +116,4 @@ public class PlayerWAILA extends BukkitRunnable {
+     public int hashCode() {
+         return getPlayer().hashCode();
+     }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/github/schntgaispock/slimehud/waila/WAILAManager.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/WAILAManager.java
+similarity index 76%
+rename from src/main/java/io/github/schntgaispock/slimehud/waila/WAILAManager.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/WAILAManager.java
+index e9ec735..86a922a 100644
+--- a/src/main/java/io/github/schntgaispock/slimehud/waila/WAILAManager.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/WAILAManager.java
+@@ -1,13 +1,9 @@
+-package io.github.schntgaispock.slimehud.waila;
++package id.universenetwork.sfa_loader.addons.slimehud.waila;
+ 
+-import java.util.Collections;
+-import java.util.HashMap;
+-import java.util.Map;
+-import java.util.UUID;
+-
+-import javax.annotation.Nonnull;
+-
+-import org.bukkit.Bukkit;
++import id.universenetwork.sfa_loader.addons.slimehud.SlimeHUD;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import lombok.Getter;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.EventHandler;
+ import org.bukkit.event.Listener;
+@@ -15,20 +11,19 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
+ import org.bukkit.event.player.PlayerJoinEvent;
+ import org.bukkit.event.player.PlayerQuitEvent;
+ 
+-import io.github.schntgaispock.slimehud.SlimeHUD;
+-import lombok.Getter;
++import javax.annotation.Nonnull;
++import java.util.Collections;
++import java.util.HashMap;
++import java.util.Map;
++import java.util.UUID;
+ 
+ /**
+  * Keeps track of all the online players and their HUDs
+  */
+ public class WAILAManager implements Listener {
+-
+     private static WAILAManager instance;
+     private @Getter Map<UUID, PlayerWAILA> wailas = new HashMap<>();
+ 
+-    private WAILAManager() {
+-    }
+-
+     public static WAILAManager getInstance() {
+         if (instance == null)
+             instance = new WAILAManager();
+@@ -40,27 +35,23 @@ public class WAILAManager implements Listener {
+         if (!wailas.containsKey(player.getUniqueId())) {
+             waila = new PlayerWAILA(player);
+             waila.runTaskTimer(
+-                    SlimeHUD.getInstance(),
+-                    0l,
++                    AbstractAddon.getInstance(),
++                    0L,
+                     SlimeHUD.getInstance().getConfig().getLong("waila.tick-rate"));
+             wailas.put(player.getUniqueId(), waila);
+-        } else {
+-            waila = wailas.get(player.getUniqueId());
+-        }
++        } else waila = wailas.get(player.getUniqueId());
+         waila.setPaused(
+                 !SlimeHUD.getInstance().getPlayerData().getBoolean(player.getUniqueId().toString() + ".waila", true));
+     }
+ 
+     private void pauseWAILA(Player player) {
+         PlayerWAILA waila = wailas.get(player.getUniqueId());
+-        if (waila != null)
+-            waila.setPaused(true);
++        if (waila != null) waila.setPaused(true);
+     }
+ 
+     private void removeWAILA(Player player) {
+         PlayerWAILA waila = wailas.remove(player.getUniqueId());
+-        if (waila != null)
+-            waila.cancel();
++        if (waila != null) waila.cancel();
+     }
+ 
+     @EventHandler
+@@ -68,9 +59,7 @@ public class WAILAManager implements Listener {
+         Player player = e.getPlayer();
+         if (!SlimeHUD.getInstance().getConfig().getBoolean("waila.disabled", false) &&
+                 !SlimeHUD.getInstance().getConfig().getList("waila.disabled-in", Collections.EMPTY_LIST)
+-                        .contains(player.getWorld().getName())) {
+-            generateWAILA(player);
+-        }
++                        .contains(player.getWorld().getName())) generateWAILA(player);
+     }
+ 
+     @EventHandler
+@@ -82,15 +71,11 @@ public class WAILAManager implements Listener {
+     public void onPlayerChangeWorld(@Nonnull PlayerChangedWorldEvent e) {
+         Player player = e.getPlayer();
+         if (SlimeHUD.getInstance().getConfig().getList("waila.disabled-in", Collections.EMPTY_LIST)
+-                .contains(player.getWorld().getName())) {
+-            pauseWAILA(player);
+-        } else {
+-            generateWAILA(player);
+-        }
++                .contains(player.getWorld().getName())) pauseWAILA(player);
++        else generateWAILA(player);
+     }
+ 
+     public static void setup() {
+-        Bukkit.getPluginManager().registerEvents(getInstance(), SlimeHUD.getInstance());
++        Event.registerListeners(getInstance());
+     }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/package-info.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/package-info.java
+new file mode 100644
+index 0000000..c61d388
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/waila/package-info.java
+@@ -0,0 +1,4 @@
++/**
++ * Contains all relevant classes for the WAILA HUD
++ */
++package id.universenetwork.sfa_loader.addons.slimehud.waila;
+\ No newline at end of file
+diff --git a/src/main/java/io/github/schntgaispock/slimehud/SlimeHUD.java b/src/main/java/io/github/schntgaispock/slimehud/SlimeHUD.java
+deleted file mode 100644
+index 1aa3786..0000000
+--- a/src/main/java/io/github/schntgaispock/slimehud/SlimeHUD.java
++++ /dev/null
+@@ -1,87 +0,0 @@
+-package io.github.schntgaispock.slimehud;
+-
+-
+-import javax.annotation.Nonnull;
+-
+-import io.github.schntgaispock.slimehud.placeholder.PlaceholderManager;
+-import io.github.schntgaispock.slimehud.translation.TranslationManager;
+-import io.github.schntgaispock.slimehud.waila.HudController;
+-import org.bstats.bukkit.Metrics;
+-import org.bstats.charts.SimplePie;
+-import org.bukkit.NamespacedKey;
+-
+-import io.github.mooy1.infinitylib.core.AbstractAddon;
+-import io.github.mooy1.infinitylib.core.AddonConfig;
+-import io.github.schntgaispock.slimehud.command.CommandManager;
+-import io.github.schntgaispock.slimehud.waila.WAILAManager;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.BlobBuildUpdater;
+-import lombok.Getter;
+-
+-public class SlimeHUD extends AbstractAddon {
+-
+-    @Getter AddonConfig playerData;
+-    static @Getter SlimeHUD instance;
+-    private HudController hudController;
+-    private TranslationManager translationManager;
+-
+-    public SlimeHUD() {
+-        super("SchnTgaiSpock", "SlimeHUD", "master", "options.auto-update");
+-    }
+-
+-
+-    @Override
+-    public void enable() {
+-        instance = this;
+-
+-        getLogger().info("#=================================#");
+-        getLogger().info("#    SlimeHUD by SchnTgaiSpock    #");
+-        getLogger().info("#=================================#");
+-
+-        if (getConfig().getBoolean("options.auto-update")) {
+-            if (getDescription().getVersion().startsWith("Dev - ")) {
+-                new BlobBuildUpdater(this, getFile(), "SlimeHUD", "Dev").start();
+-            } else {
+-                getLogger().info("This is an unofficial build of SlimeHUD, so auto updates are disabled!");
+-                getLogger().info("You can download the official build here: https://blob.build/project/SlimeHUD");
+-            }
+-        }
+-
+-        final Metrics metrics = new Metrics(this, 15883);
+-        metrics.addCustomChart(
+-            new SimplePie("disabled", () -> {
+-                return "" + getConfig().getBoolean("waila.disabled");
+-            })
+-        );
+-        metrics.addCustomChart(
+-            new SimplePie("waila_location", () -> {
+-                return getConfig().getString("waila.location");
+-            })
+-        );
+-
+-        playerData = new AddonConfig("player.yml");
+-
+-        WAILAManager.setup();
+-        CommandManager.setup();
+-        PlaceholderManager.setup();
+-        hudController = new HudController();
+-        translationManager = new TranslationManager();
+-    }
+-
+-    @Override
+-    public void disable() {
+-        instance = null;
+-        getPlayerData().save();
+-    }
+-
+-    public static HudController getHudController() {
+-        return instance.hudController;
+-    }
+-
+-    public static TranslationManager getTranslationManager() {
+-        return instance.translationManager;
+-    }
+-
+-    public static NamespacedKey newNamespacedKey(@Nonnull String name) {
+-        return new NamespacedKey(SlimeHUD.getInstance(), name);
+-    }
+-}
+diff --git a/src/main/java/io/github/schntgaispock/slimehud/command/CommandManager.java b/src/main/java/io/github/schntgaispock/slimehud/command/CommandManager.java
+deleted file mode 100644
+index b0fb255..0000000
+--- a/src/main/java/io/github/schntgaispock/slimehud/command/CommandManager.java
++++ /dev/null
+@@ -1,17 +0,0 @@
+-package io.github.schntgaispock.slimehud.command;
+-
+-import io.github.schntgaispock.slimehud.SlimeHUD;
+-
+-/**
+- * Does all the necessary prep work for commands to work
+- */
+-public class CommandManager {
+-    
+-    public static void setup() {
+-        
+-        SlimeHUD.getInstance().getCommand("slimehud").setExecutor(new SlimeHUDCommandExecutor());
+-        SlimeHUD.getInstance().getCommand("slimehud").setTabCompleter(new SlimeHUDTabCompleter());
+-
+-    }
+-
+-}
+diff --git a/src/main/java/io/github/schntgaispock/slimehud/command/SlimeHUDCommandExecutor.java b/src/main/java/io/github/schntgaispock/slimehud/command/SlimeHUDCommandExecutor.java
+deleted file mode 100644
+index 5bfeeab..0000000
+--- a/src/main/java/io/github/schntgaispock/slimehud/command/SlimeHUDCommandExecutor.java
++++ /dev/null
+@@ -1,78 +0,0 @@
+-package io.github.schntgaispock.slimehud.command;
+-
+-import java.util.Collections;
+-import java.util.Map;
+-import java.util.UUID;
+-
+-import org.bukkit.command.Command;
+-import org.bukkit.command.CommandExecutor;
+-import org.bukkit.command.CommandSender;
+-import org.bukkit.entity.Player;
+-
+-import io.github.schntgaispock.slimehud.SlimeHUD;
+-import io.github.schntgaispock.slimehud.waila.PlayerWAILA;
+-import io.github.schntgaispock.slimehud.waila.WAILAManager;
+-
+-/**
+- * Functionality for the '/slimehud'command
+- */
+-public class SlimeHUDCommandExecutor implements CommandExecutor {
+-
+-    @Override
+-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+-
+-        if (sender instanceof Player) {
+-            Player player = (Player) sender;
+-
+-            if (args.length == 0) {
+-                sendInfo(player);
+-                return true;
+-            }
+-
+-            UUID uuid = player.getUniqueId();
+-
+-            // May add more to the command in the future
+-            switch (args[0]) {
+-                case "toggle":
+-                    if (!player.hasPermission("slimehud.togglewaila")) {
+-                        player.sendMessage("§a§lSlimeHUD§7> §cYou don't have permission to toggle your WAILA HUD!");
+-                        return true;
+-                    }
+-                    if (SlimeHUD.getInstance().getConfig().getBoolean("waila.disabled", false)) {
+-                        player.sendMessage("§a§lSlimeHUD§7> §cThe WAILA HUD is disabled!");
+-                        return true;
+-                    }
+-                    if (SlimeHUD.getInstance().getConfig().getList("waila.disabled-in", Collections.EMPTY_LIST).contains(player.getWorld().getName())) {
+-                        player.sendMessage("§a§lSlimeHUD§7> §cThe WAILA HUD is disabled in this world!");
+-                        return true;
+-                    }
+-                    boolean wailaOn = SlimeHUD.getInstance().getPlayerData().getBoolean(uuid + ".waila", true);
+-                    SlimeHUD.getInstance().getPlayerData().set(uuid + ".waila", !wailaOn);
+-
+-                    Map<UUID, PlayerWAILA> wailas = WAILAManager.getInstance().getWailas();
+-                    wailas.get(uuid).setPaused(wailaOn);
+-
+-                    SlimeHUD.getInstance().getPlayerData().save();
+-                    player.sendMessage("§a§lSlimeHUD§7> HUD toggled " + (wailaOn ? "§coff" : "§aon"));
+-                    return true;
+-            
+-                default:
+-                    break;
+-            }
+-        }
+-
+-        return false;
+-    }
+-
+-    private void sendInfo(Player player) {
+-        player.sendMessage(
+-            "",
+-            "§a§lSlimeHUD §7- §2Version " + SlimeHUD.getInstance().getPluginVersion(),
+-            "§7------",
+-            "§a§lWiki §7- §2https://schn.pages.dev/slimehud",
+-            "§a§lIssues §7- §2https://github.com/SchnTgaiSpock/SlimeHUD/issues",
+-            ""
+-        );
+-    }
+-    
+-}
+diff --git a/src/main/java/io/github/schntgaispock/slimehud/command/SlimeHUDTabCompleter.java b/src/main/java/io/github/schntgaispock/slimehud/command/SlimeHUDTabCompleter.java
+deleted file mode 100644
+index d1f5009..0000000
+--- a/src/main/java/io/github/schntgaispock/slimehud/command/SlimeHUDTabCompleter.java
++++ /dev/null
+@@ -1,27 +0,0 @@
+-package io.github.schntgaispock.slimehud.command;
+-
+-import java.util.ArrayList;
+-import java.util.List;
+-
+-import org.bukkit.command.Command;
+-import org.bukkit.command.CommandSender;
+-import org.bukkit.command.TabCompleter;
+-
+-/**
+- * Tab completion for the '/slimehud' command
+- */
+-public class SlimeHUDTabCompleter implements TabCompleter {
+-
+-    @Override
+-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+-        List<String> hints = new ArrayList<>();
+-        
+-        if (args.length == 1) {
+-            hints.add("toggle");
+-            return hints;
+-        }
+-
+-        return hints;
+-    }
+-    
+-}
+diff --git a/src/main/java/io/github/schntgaispock/slimehud/placeholder/PlaceholderManager.java b/src/main/java/io/github/schntgaispock/slimehud/placeholder/PlaceholderManager.java
+deleted file mode 100644
+index 085b515..0000000
+--- a/src/main/java/io/github/schntgaispock/slimehud/placeholder/PlaceholderManager.java
++++ /dev/null
+@@ -1,16 +0,0 @@
+-package io.github.schntgaispock.slimehud.placeholder;
+-
+-import io.github.schntgaispock.slimehud.SlimeHUD;
+-import org.bukkit.Bukkit;
+-
+-public class PlaceholderManager {
+-    public static void setup() {
+-        if (SlimeHUD.getInstance().getConfig().getBoolean("options.placeholder-api-support", true)) {
+-            if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+-                new PlaceholderHook().register();
+-            } else {
+-                SlimeHUD.getInstance().getLogger().info("PlaceholderAPI is not installed and has been ignored.");
+-            }
+-        }
+-    }
+-}
+diff --git a/src/main/java/io/github/schntgaispock/slimehud/util/Util.java b/src/main/java/io/github/schntgaispock/slimehud/util/Util.java
+deleted file mode 100644
+index 23a7619..0000000
+--- a/src/main/java/io/github/schntgaispock/slimehud/util/Util.java
++++ /dev/null
+@@ -1,143 +0,0 @@
+-package io.github.schntgaispock.slimehud.util;
+-
+-import java.util.Collections;
+-import java.util.HashMap;
+-import java.util.logging.Level;
+-
+-import org.bukkit.boss.BarColor;
+-
+-import io.github.schntgaispock.slimehud.SlimeHUD;
+-import lombok.Data;
+-import lombok.experimental.UtilityClass;
+-import net.md_5.bungee.api.ChatColor;
+-
+-@UtilityClass
+-public class Util {
+-    @Data
+-    private class RGB {
+-        private final int red;
+-        private final int green;
+-        private final int blue;
+-
+-        public int[] asArray() {
+-            return new int[] {red, green, blue};
+-        }
+-    }
+-
+-    private static HashMap<RGB, BarColor> barColorRGBMap = new HashMap<>();
+-    private static HashMap<RGB, BarColor> savedBarColors = new HashMap<>();
+-
+-    static {
+-        barColorRGBMap.put(new RGB(0x00, 0xb9, 0xec), BarColor.BLUE);
+-        barColorRGBMap.put(new RGB(0x16, 0xb9, 0x00), BarColor.GREEN);
+-        barColorRGBMap.put(new RGB(0xb9, 0x00, 0x90), BarColor.PINK);
+-        barColorRGBMap.put(new RGB(0x61, 0x00, 0xb9), BarColor.PURPLE);
+-        barColorRGBMap.put(new RGB(0xb9, 0x2a, 0x00), BarColor.RED);
+-        barColorRGBMap.put(new RGB(0xff, 0xff, 0xff), BarColor.WHITE);
+-        barColorRGBMap.put(new RGB(0xb9, 0xb9, 0x00), BarColor.YELLOW);
+-    }
+-    
+-    public static BarColor pickBarColorFromName(String name) {
+-        char colorCode = name.trim().toLowerCase().startsWith("§") ? name.charAt(1) : ' ';
+-        if (colorCode == 'x') {
+-            try {
+-                final String stripped = name.replace("§", "");
+-                final int red = Integer.parseInt(stripped, 1, 3, 16);
+-                final int green = Integer.parseInt(stripped, 3, 5, 16);
+-                final int blue = Integer.parseInt(stripped, 5, 7, 16);
+-
+-                final RGB rgb = new RGB(red, green, blue);
+-
+-                if (savedBarColors.containsKey(rgb)) {
+-                    return savedBarColors.get(rgb);
+-                } 
+-
+-                BarColor color = barColorRGBMap.get(Collections.min(barColorRGBMap.keySet(), (RGB a, RGB b) -> {
+-                    return (errorSquared(a.asArray(), rgb.asArray()) < errorSquared(b.asArray(), rgb.asArray())) ? -1 : 1;
+-                }));
+-
+-                savedBarColors.put(rgb, color);
+-                return color;
+-
+-            } catch (NumberFormatException e) {
+-                return BarColor.WHITE;
+-            }
+-        }
+-
+-        return switch (colorCode) {
+-            case '4', 'c' ->  BarColor.RED;
+-            case '6', 'e' -> BarColor.YELLOW;
+-            case '2', 'a' -> BarColor.GREEN;
+-            case '3', 'b' -> BarColor.BLUE;
+-            case '1', '5', '9' -> BarColor.PURPLE;
+-            case 'd' -> BarColor.PINK;
+-            default -> BarColor.WHITE;
+-        };
+-    }
+-
+-    public static BarColor pickBarColorFromColor(String color) {
+-        switch (color.trim()) {
+-            case "red", "yellow", "green", "blue", "purple", "pink", "white":
+-                return BarColor.valueOf(color.toUpperCase());
+-
+-            case "default", "inherit":
+-                return BarColor.WHITE;
+-        
+-            default:
+-                SlimeHUD.log(Level.WARNING, "[SlimeHUD] Invalid bossbar color: " + color, "[SlimeHUD] Setting color to white...");
+-                return BarColor.WHITE;
+-        }
+-    }
+-
+-    public static ChatColor getColorFromCargoChannel(int channel) {
+-        switch (channel) {
+-            case 1:
+-                return ChatColor.WHITE;
+-            case 2:
+-                return ChatColor.GOLD;
+-            case 3:
+-                return ChatColor.BLUE; // No magenta
+-            case 4:
+-                return ChatColor.AQUA;
+-            case 5:
+-                return ChatColor.YELLOW;
+-            case 6:
+-                return ChatColor.GREEN;
+-            case 7:
+-                return ChatColor.LIGHT_PURPLE;
+-            case 8:
+-                return ChatColor.DARK_GRAY;
+-            case 9:
+-                return ChatColor.GRAY;
+-            case 10:
+-                return ChatColor.DARK_AQUA;
+-            case 11:
+-                return ChatColor.DARK_PURPLE;
+-            case 12:
+-                return ChatColor.DARK_BLUE;
+-            case 13:
+-                return ChatColor.RED; // No brown
+-            case 14:
+-                return ChatColor.DARK_GREEN;
+-            case 15:
+-                return ChatColor.DARK_RED;
+-            case 16:
+-                return ChatColor.BLACK;
+-        
+-            default:
+-                return ChatColor.WHITE;
+-        }
+-    }
+-
+-    public static int errorSquared(int[] a, int[] b) {
+-        if (a.length != b.length) return Integer.MAX_VALUE;
+-
+-        int total = 0;
+-        for (int i = 0; i < a.length; i++) {
+-            total += (int) Math.pow(a[i] - b[i], 2);
+-        }
+-
+-        return total;
+-    }
+-
+-}
+diff --git a/src/main/java/io/github/schntgaispock/slimehud/waila/package-info.java b/src/main/java/io/github/schntgaispock/slimehud/waila/package-info.java
+deleted file mode 100644
+index 5951aaa..0000000
+--- a/src/main/java/io/github/schntgaispock/slimehud/waila/package-info.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-/**
+- * Contains all relevant classes for the WAILA HUD
+- */
+-package io.github.schntgaispock.slimehud.waila;
+\ No newline at end of file
+diff --git a/src/main/resources/config.yml b/src/main/resources/addons-config/SlimeHUD/config.yml
+similarity index 89%
+rename from src/main/resources/config.yml
+rename to src/main/resources/addons-config/SlimeHUD/config.yml
+index 7a92da5..c2e59bf 100644
+--- a/src/main/resources/config.yml
++++ b/src/main/resources/addons-config/SlimeHUD/config.yml
+@@ -1,7 +1,5 @@
+ options:
+ 
+-  auto-update: true
+-
+   # Use PlaceholderAPI to get the player's toggle status
+   placeholder-api-support: true
+ 
+@@ -15,12 +13,12 @@ waila:
+   disabled: false
+ 
+   # List of worlds that the WAILA is disabled in
+-  disabled-in: []
++  disabled-in: [ ]
+ 
+   # Can be 'bossbar' or 'hotbar'
+   location: bossbar
+ 
+-  # Whether or not to keep colors and format of the text. If set to false, defaults to white.
++  # Whether to keep colors and format of the text. If set to false, defaults to white.
+   use-original-colors: true
+ 
+   # The color of the bossbar. Must be a valid color in 'snake_case'.
+diff --git a/src/main/resources/player.yml b/src/main/resources/addons-config/SlimeHUD/player.yml
+similarity index 100%
+rename from src/main/resources/player.yml
+rename to src/main/resources/addons-config/SlimeHUD/player.yml
+diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
+deleted file mode 100644
+index bd0617c..0000000
+--- a/src/main/resources/plugin.yml
++++ /dev/null
+@@ -1,31 +0,0 @@
+-name: SlimeHUD
+-
+-author: SchnTgaiSpock
+-
+-description: A utility addon that adds a toggleable WAILA (What Am I Looking At) HUD for placed Slimefun items.
+-
+-main: io.github.schntgaispock.slimehud.SlimeHUD
+-
+-website: https://github.com/SchnTgaiSpock/SlimeHUD
+-
+-version: ${project.version}
+-
+-api-version: 1.14
+-
+-depend:
+-- Slimefun
+-
+-softdepend:
+-- PlaceholderAPI
+-- SlimefunTranslation
+-
+-commands:
+-  slimehud:
+-    description: /slimehud
+-    aliases: [sfhud, sfh]
+-    usage: Press [tab] for usage hints
+-
+-permissions:
+-  slimehud.togglewaila:
+-    description: Able to toggle the WAILA HUD
+-    default: true
+\ No newline at end of file
+diff --git a/src/test/java/io/github/schntgaispock/slimehud/tests/UtilTests.java b/src/test/java/io/github/schntgaispock/slimehud/tests/UtilTests.java
+deleted file mode 100644
+index 10faac1..0000000
+--- a/src/test/java/io/github/schntgaispock/slimehud/tests/UtilTests.java
++++ /dev/null
+@@ -1,64 +0,0 @@
+-package io.github.schntgaispock.slimehud.tests;
+-
+-import java.util.LinkedHashMap;
+-import java.util.Map;
+-
+-import io.github.schntgaispock.slimehud.util.HudBuilder;
+-import io.github.schntgaispock.slimehud.util.Util;
+-
+-/**
+- * Some really jank tests
+- */
+-public class UtilTests {
+-    public static void main(String[] args) {
+-        Map<Long, String> numberTestCases1 = new LinkedHashMap<>();
+-        numberTestCases1.put(1l, "1");
+-        numberTestCases1.put(23l, "23");
+-        numberTestCases1.put(456l, "456");
+-        numberTestCases1.put(7890l, "7.89K");
+-        numberTestCases1.put(12345l, "12.34K");
+-        numberTestCases1.put(678901l, "678.9K");
+-        numberTestCases1.put(2345678l, "2.34M");
+-        numberTestCases1.put(90123456l, "90.12M");
+-        numberTestCases1.put(789012345l, "789.01M");
+-        numberTestCases1.put(6789012345l, "6.78B");
+-        numberTestCases1.put(67890123456l, "67.89B");
+-        numberTestCases1.put(789012345678l, "789.01B");
+-        numberTestCases1.put(9012345678901l, "9.01T");
+-        numberTestCases1.put(23456789012345l, "23.45T");
+-        numberTestCases1.put(678901234567890l, "678.9T");
+-        numberTestCases1.put(1234567890123456l, "1.23Qa");
+-        numberTestCases1.put(78901234567890123l, "78.9Qa");
+-        numberTestCases1.put(456789012345678901l, "456.78Qa");
+-        numberTestCases1.put(2345678901234567890l, "2.34Qi");
+-        numberTestCases1.put(-1l, "-1");
+-        numberTestCases1.put(-23l, "-23");
+-        numberTestCases1.put(-456l, "-456");
+-        numberTestCases1.put(-7890l, "-7.89K");
+-        numberTestCases1.put(-12345l, "-12.34K");
+-        numberTestCases1.put(-678901l, "-678.9K");
+-        numberTestCases1.put(-2345678l, "-2.34M");
+-        numberTestCases1.put(-90123456l, "-90.12M");
+-        numberTestCases1.put(-789012345l, "-789.01M");
+-        numberTestCases1.put(-6789012345l, "-6.78B");
+-        numberTestCases1.put(-67890123456l, "-67.89B");
+-        numberTestCases1.put(-789012345678l, "-789.01B");
+-        numberTestCases1.put(-9012345678901l, "-9.01T");
+-        numberTestCases1.put(-23456789012345l, "-23.45T");
+-        numberTestCases1.put(-678901234567890l, "-678.9T");
+-        numberTestCases1.put(-1234567890123456l, "-1.23Qa");
+-        numberTestCases1.put(-78901234567890123l, "-78.9Qa");
+-        numberTestCases1.put(-456789012345678901l, "-456.78Qa");
+-        numberTestCases1.put(-2345678901234567890l, "-2.34Qi");
+-
+-        for (Map.Entry<Long, String> entry : numberTestCases1.entrySet()) {
+-            String result = HudBuilder.getAbbreviatedNumber(entry.getKey());
+-            boolean passed = result.equals(entry.getValue());
+-            System.out.println("[" + (passed ? "PASSED" : "FAILED") + "] Test Case: " +
+-                entry.getKey() + "; expected " + entry.getValue() + "; got " + result);
+-        }
+-
+-        System.out.println(Util.pickBarColorFromName("§#b9b900"));
+-        System.out.println(Util.pickBarColorFromName("§#b9b9b5"));
+-    }
+-}
+-- 
+2.44.0.windows.1
+

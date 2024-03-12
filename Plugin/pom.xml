@@ -175,6 +175,11 @@
             <version>UNOFFICIAL</version>
         </dependency>
         <dependency>
+            <groupId>io.github.schntgaispock.slimehud</groupId>
+            <artifactId>SlimeHUD</artifactId>
+            <version>1.2.7</version>
+        </dependency>
+        <dependency>
             <groupId>me.waleks</groupId>
             <artifactId>SimpleMaterialGenerators</artifactId>
             <version>1.0.0</version>

@@ -80,6 +80,7 @@ if ($args[0]) {
         applyPatch Addons/SFCalc
         applyPatch Addons/SfChunkInfo
         applyPatch Addons/SlimefunTranslation
+        applyPatch Addons/SlimeHUD
         applyPatch Addons/SMG
         applyPatch Addons/SoundMuffler
 
