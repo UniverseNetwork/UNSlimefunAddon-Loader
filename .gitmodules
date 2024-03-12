@@ -53,6 +53,9 @@
 [submodule "SfChunkInfo"]
     path = Addons/SfChunkInfo
     url = https://github.com/FN-FAL113/SfChunkInfo
+[submodule "SlimeCustomizer"]
+	path = Addons/SlimeCustomizer
+	url = https://github.com/NCBPFluffyBear/SlimeCustomizer
 [submodule "SlimefunTranslation"]
 	path = Addons/SlimefunTranslation
 	url = https://github.com/ybw0014/SlimefunTranslation

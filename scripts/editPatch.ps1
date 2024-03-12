@@ -21,7 +21,7 @@ function enableCommitSigningIfNeeded {
 
 $dir=$args[0]
 $method="recreate"
-if ($dir -ne $null -and $dir.StartsWith("--")) {
+if ($dir -and $dir.StartsWith("--")) {
     $method = $dir.Replace("--","")
     $dir = $args[1]
 }

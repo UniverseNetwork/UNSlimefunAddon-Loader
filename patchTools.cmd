@@ -2,6 +2,10 @@
 
 if ["%~1"]==[""] (goto noarg)
 
+if ["%~1"]==["init"] (
+powershell ./scripts/initRepository.ps1 %~2 %~3 %~4
+)
+
 if ["%~1"]==["create"] (
 powershell ./scripts/editPatch.ps1 --create %~2
 )
@@ -33,13 +37,13 @@ echo SFALoader patch tool command.
 echo View below for details of the available commands.
 echo.
 echo Commands:
-echo   * create  - Create a patch
-echo   * rebuild - Rebuild a patch
-echo   * fetch   - Fetch a repository and perform a soft-reset on
-echo               the repository before the merge is performed
-echo   * merge   - Merge the repository with a previously created
-echo               patch after the fetch and soft-reset are performed
-echo   * patch   - Apply the patch(es) to SFALoader
-echo   * check   - Check(s) the addon(s)/library repository upstream
+echo   * create    - Create a patch
+echo   * recreate  - Recreate a patch
+echo   * fetch     - Fetch a repository and perform a soft-reset on
+echo                 the repository before the merge is performed
+echo   * merge     - Merge the repository with a previously created
+echo                 patch after the fetch and soft-reset are performed
+echo   * patch     - Apply the patch(es) to SFALoader
+echo   * check     - Check(s) the addon(s)/library repository upstream
 
 :end
