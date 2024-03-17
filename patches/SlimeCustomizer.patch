@@ -1,0 +1,4064 @@
+From e3cec35709ddefee8b59c30e6b31089b70da4556 Mon Sep 17 00:00:00 2001
+From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
+Date: Sun, 17 Mar 2024 07:38:10 +0700
+Subject: [PATCH] SlimeCustomizer
+
+---
+ pom.xml                                       |  99 +----
+ .../addons}/slimecustomizer/Events.java       |  59 +--
+ .../addons/slimecustomizer/Links.java         |  19 +
+ .../addons}/slimecustomizer/Registry.java     |  10 +-
+ .../addons/slimecustomizer/SCCommand.java     | 259 +++++++++++
+ .../slimecustomizer/SlimeCustomizer.java      | 108 +++++
+ .../addons}/slimecustomizer/Utils.java        | 216 ++++------
+ .../objects/CustomGenerator.java              |  25 +-
+ .../objects/CustomMachine.java                |  42 +-
+ .../objects/CustomPassiveMachine.java         |  12 +-
+ .../slimecustomizer/objects/CustomSCItem.java |   9 +-
+ .../objects/CustomSolarGenerator.java         |  26 +-
+ .../objects/NPCustomSCItem.java               |   6 +-
+ .../slimecustomizer/objects/SCAGenerator.java |  82 ++--
+ .../slimecustomizer/objects/SCMachine.java    | 140 +++---
+ .../slimecustomizer/objects/SCMenu.java       |  43 +-
+ .../slimecustomizer/objects/SCMobDrop.java    |  11 +-
+ .../objects/SCNotPlaceable.java               |   4 +
+ .../WindowsExplorerStringComparator.java      |  76 ++++
+ .../registration/Categories.java              |  39 +-
+ .../registration/Generators.java              |  91 ++--
+ .../slimecustomizer/registration/Items.java   |  70 ++-
+ .../registration/Machines.java                | 114 +++--
+ .../registration/MobDrops.java                |  51 +--
+ .../registration/SolarGenerators.java         |  50 +--
+ .../ncbpfluffybear/slimecustomizer/Links.java |  19 -
+ .../slimecustomizer/SCTabCompleter.java       | 102 -----
+ .../slimecustomizer/SlimeCustomizer.java      | 403 ------------------
+ .../objects/SCNotPlaceable.java               |   4 -
+ .../WindowsExplorerStringComparator.java      | 114 -----
+ .../SlimeCustomizer}/categories.yml           |   0
+ .../SlimeCustomizer}/generators.yml           |   0
+ .../SlimeCustomizer}/items.yml                |   0
+ .../SlimeCustomizer}/machines.yml             |   0
+ .../SlimeCustomizer}/mob-drops.yml            |   0
+ .../SlimeCustomizer}/solar-generators.yml     |   0
+ src/main/resources/config.yml                 |   2 -
+ src/main/resources/plugin.yml                 |  93 ----
+ 38 files changed, 916 insertions(+), 1482 deletions(-)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/Events.java (72%)
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Links.java
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/Registry.java (52%)
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SCCommand.java
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SlimeCustomizer.java
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/Utils.java (58%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/objects/CustomGenerator.java (85%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/objects/CustomMachine.java (76%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/objects/CustomPassiveMachine.java (97%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/objects/CustomSCItem.java (92%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/objects/CustomSolarGenerator.java (76%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/objects/NPCustomSCItem.java (87%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/objects/SCAGenerator.java (83%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/objects/SCMachine.java (68%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/objects/SCMenu.java (77%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/objects/SCMobDrop.java (94%)
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCNotPlaceable.java
+ create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/WindowsExplorerStringComparator.java
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/registration/Categories.java (81%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/registration/Generators.java (70%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/registration/Items.java (64%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/registration/Machines.java (71%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/registration/MobDrops.java (77%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/registration/SolarGenerators.java (68%)
+ delete mode 100644 src/main/java/io/ncbpfluffybear/slimecustomizer/Links.java
+ delete mode 100644 src/main/java/io/ncbpfluffybear/slimecustomizer/SCTabCompleter.java
+ delete mode 100644 src/main/java/io/ncbpfluffybear/slimecustomizer/SlimeCustomizer.java
+ delete mode 100644 src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCNotPlaceable.java
+ delete mode 100644 src/main/java/io/ncbpfluffybear/slimecustomizer/objects/WindowsExplorerStringComparator.java
+ rename src/main/resources/{ => addons-config/SlimeCustomizer}/categories.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimeCustomizer}/generators.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimeCustomizer}/items.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimeCustomizer}/machines.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimeCustomizer}/mob-drops.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimeCustomizer}/solar-generators.yml (100%)
+ delete mode 100644 src/main/resources/config.yml
+ delete mode 100644 src/main/resources/plugin.yml
+
+diff --git a/pom.xml b/pom.xml
+index 22cbfc3..f8f39b4 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -1,88 +1,27 @@
+ <project xmlns="http://maven.apache.org/POM/4.0.0"
+-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+-
++         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
++
++    <parent>
++        <groupId>id.universenetwork.sfa_loader</groupId>
++        <artifactId>Addons</artifactId>
++        <version>UNOFFICIAL</version>
++    </parent>
++
+     <groupId>io.ncbpfluffybear</groupId>
+     <artifactId>SlimeCustomizer</artifactId>
+     <version>1.0.0</version>
+ 
+-    <properties>
+-        <maven.compiler.source>1.8</maven.compiler.source>
+-        <maven.compiler.target>1.8</maven.compiler.target>
+-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+-    </properties>
+-
+     <repositories>
+-        <repository>
+-            <id>paper-repo</id>
+-            <url>https://repo.destroystokyo.com/repository/maven-public/</url>
+-        </repository>
+-
+         <repository>
+             <id>spigot-repo</id>
+             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+         </repository>
+-
+-        <repository>
+-            <id>jitpack.io</id>
+-            <url>https://jitpack.io</url>
+-        </repository>
+-
+-        <repository>
+-            <id>bstats-repo</id>
+-            <url>https://repo.codemc.org/repository/maven-public</url>
+-        </repository>
+     </repositories>
+ 
+     <build>
+         <finalName>${project.name} v${project.version}</finalName>
+-        <defaultGoal>clean package</defaultGoal>
+-        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+-
+-        <resources>
+-            <resource>
+-                <directory>${basedir}/src/main/resources</directory>
+-                <filtering>true</filtering>
+-                <includes>
+-                    <include>*</include>
+-                </includes>
+-            </resource>
+-        </resources>
+-
+-        <plugins>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-shade-plugin</artifactId>
+-                <version>3.2.4</version>
+-                <configuration>
+-                    <relocations>
+-                        <relocation>
+-                            <pattern>org.bstats</pattern>
+-                            <shadedPattern>io.ncbpfluffybear.slimecustomizer.bstats</shadedPattern>
+-                            <excludes>
+-                                <exclude>META-INF/*.MF</exclude>
+-                            </excludes>
+-                        </relocation>
+-                        <relocation>
+-                            <pattern>dev.j3fftw.extrautils</pattern>
+-                            <shadedPattern>io.ncbpfluffybear.slimecustomizer.extrautils</shadedPattern>
+-                            <excludes>
+-                                <exclude>META-INF/*.MF</exclude>
+-                            </excludes>
+-                        </relocation>
+-                    </relocations>
+-                </configuration>
+-                <executions>
+-                    <execution>
+-                        <phase>package</phase>
+-                        <goals>
+-                            <goal>shade</goal>
+-                        </goals>
+-                    </execution>
+-                </executions>
+-            </plugin>
+-        </plugins>
+     </build>
+ 
+     <dependencies>
+@@ -93,30 +32,10 @@
+             <scope>provided</scope>
+         </dependency>
+ 
+-        <dependency>
+-            <groupId>com.github.Slimefun</groupId>
+-            <artifactId>Slimefun4</artifactId>
+-            <version>RC-32</version>
+-            <scope>provided</scope>
+-        </dependency>
+-
+         <dependency>
+             <groupId>com.github.Slimefun-Addon-Community</groupId>
+             <artifactId>ExtraUtils</artifactId>
+             <version>73e76ac06c</version>
+-        </dependency>
+-
+-        <dependency>
+-            <groupId>org.bstats</groupId>
+-            <artifactId>bstats-bukkit</artifactId>
+-            <version>2.2.1</version>
+-            <scope>compile</scope>
+-        </dependency>
+-
+-        <dependency>
+-            <groupId>org.projectlombok</groupId>
+-            <artifactId>lombok</artifactId>
+-            <version>1.18.20</version>
+             <scope>provided</scope>
+         </dependency>
+     </dependencies>
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/Events.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Events.java
+similarity index 72%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/Events.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Events.java
+index 43de0c9..1ec5ded 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/Events.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Events.java
+@@ -1,13 +1,13 @@
+-package io.ncbpfluffybear.slimecustomizer;
++package id.universenetwork.sfa_loader.addons.slimecustomizer;
+ 
++import id.universenetwork.sfa_loader.addons.slimecustomizer.objects.SCMenu;
++import id.universenetwork.sfa_loader.addons.slimecustomizer.objects.SCNotPlaceable;
+ import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+ import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunGuide;
+ import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+-import io.ncbpfluffybear.slimecustomizer.objects.SCMenu;
+-import io.ncbpfluffybear.slimecustomizer.objects.SCNotPlaceable;
+ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
+ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
+ import org.bukkit.NamespacedKey;
+@@ -15,7 +15,6 @@ import org.bukkit.Sound;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.EventHandler;
+ import org.bukkit.event.Listener;
+-import org.bukkit.event.block.BlockPlaceEvent;
+ import org.bukkit.event.inventory.InventoryClickEvent;
+ import org.bukkit.inventory.Inventory;
+ import org.bukkit.inventory.ItemStack;
+@@ -32,9 +31,6 @@ import java.util.Optional;
+  * @author NCBPFluffyBear
+  */
+ public class Events implements Listener {
+-
+-    public Events() {}
+-
+     private static final int MACHINE_GUIDE_DISPLAY_SLOT = 16;
+     private static final int MACHINE_RECIPE_DISPLAY_SLOT = 4;
+     private static final int MENU_SIZE = 54;
+@@ -45,40 +41,32 @@ public class Events implements Listener {
+     private static final int[] OUTPUT_SLOTS = {33, 34};
+ 
+     private static final NamespacedKey SF_KEY = new NamespacedKey(Slimefun.getPlugin(Slimefun.class),
+-        "slimefun_item");
++            "slimefun_item");
+ 
+     @EventHandler
+     public void onDualRecipeClick(InventoryClickEvent e) {
+         ItemStack clickedItem = e.getCurrentItem();
+         Inventory inventory = e.getClickedInventory();
+ 
+-        if (inventory == null) {
+-            return;
+-        }
++        if (inventory == null) return;
+ 
+         ItemStack backButton = inventory.getItem(0);
+ 
+-        if (clickedItem == null || backButton == null) {
+-            return;
+-        }
++        if (clickedItem == null || backButton == null) return;
+ 
+         PersistentDataContainer pdc = backButton.getItemMeta().getPersistentDataContainer();
+ 
+         if (!pdc.has(SF_KEY, PersistentDataType.STRING) || !pdc.get(SF_KEY, PersistentDataType.STRING).equals(
+-            "_UI_BACK")
+-            || !Utils.isKeyed(clickedItem)) {
+-            return;
+-        }
++                "_UI_BACK")
++                || !Utils.isKeyed(clickedItem)) return;
+ 
+         // At this point, it has been confirmed that the player clicked a dual input or output item and is in a sf guide
+         Player p = (Player) e.getWhoClicked();
+         SlimefunItem machine = SlimefunItem.getByItem(e.getClickedInventory().getItem(MACHINE_GUIDE_DISPLAY_SLOT));
+         SCMenu menu = new SCMenu(Slimefun.getLocalization().getMessage(p, "guide" +
+-            ".title.main"));
++                ".title.main"));
+         SurvivalSlimefunGuide guide = new SurvivalSlimefunGuide(false, false);
+-        if (!(machine instanceof AContainer)) {
+-            return;
+-        }
++        if (!(machine instanceof AContainer)) return;
+ 
+         List<MachineRecipe> recipes = ((AContainer) machine).getMachineRecipes();
+         int index = Utils.getItemKey(clickedItem);
+@@ -87,18 +75,10 @@ public class Events implements Listener {
+         menu.setSize(MENU_SIZE);
+         menu.addBackButton(guide, p, PlayerProfile.find(p).get());
+         menu.replaceExistingItem(MACHINE_RECIPE_DISPLAY_SLOT, machine.getItem());
+-        for (int i : INPUT_BORDER) {
+-            menu.replaceExistingItem(i, ChestMenuUtils.getInputSlotTexture());
+-        }
+-        for (int i : OUTPUT_BORDER) {
+-            menu.replaceExistingItem(i, ChestMenuUtils.getOutputSlotTexture());
+-        }
+-        for (ItemStack item : recipes.get(index).getInput()) {
+-            menu.pushItem(item, INPUT_SLOTS);
+-        }
+-        for (ItemStack item : recipes.get(index).getOutput()) {
+-            menu.pushItem(item, OUTPUT_SLOTS);
+-        }
++        for (int i : INPUT_BORDER) menu.replaceExistingItem(i, ChestMenuUtils.getInputSlotTexture());
++        for (int i : OUTPUT_BORDER) menu.replaceExistingItem(i, ChestMenuUtils.getOutputSlotTexture());
++        for (ItemStack item : recipes.get(index).getInput()) menu.pushItem(item, INPUT_SLOTS);
++        for (ItemStack item : recipes.get(index).getOutput()) menu.pushItem(item, OUTPUT_SLOTS);
+ 
+         menu.setBackgroundNonClickable(true);
+         menu.setPlayerInventoryClickable(false);
+@@ -110,13 +90,8 @@ public class Events implements Listener {
+     private void onSCNonPlaceablePlace(PlayerRightClickEvent e) {
+         Optional<SlimefunItem> optSFItem = e.getSlimefunItem();
+ 
+-        if (!optSFItem.isPresent()) {
+-            return;
+-        }
++        if (!optSFItem.isPresent()) return;
+ 
+-        if (optSFItem.get() instanceof SCNotPlaceable) {
+-            e.cancel();
+-        }
++        if (optSFItem.get() instanceof SCNotPlaceable) e.cancel();
+     }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Links.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Links.java
+new file mode 100644
+index 0000000..acb06b1
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Links.java
+@@ -0,0 +1,19 @@
++package id.universenetwork.sfa_loader.addons.slimecustomizer;
++
++import lombok.experimental.UtilityClass;
++
++/**
++ * This class stores the carious GitHub links
++ * used throughout the addon
++ *
++ * @author NCBPFluffyBear
++ */
++@UtilityClass
++public class Links {
++    private final String PREFIX = "https://github.com/NCBPFluffyBear/SlimeCustomizer#";
++
++    public final String USING_CUSTOM_ITEMS = PREFIX + "using-custom-items";
++    public final String COMMANDS = PREFIX + "commands";
++    public final String ADDING_YOUR_MACHINE = PREFIX + "adding-your-machine";
++    public final String ADDING_YOUR_ITEM = PREFIX + "adding-your-item";
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/Registry.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Registry.java
+similarity index 52%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/Registry.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Registry.java
+index 918e576..687968a 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/Registry.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Registry.java
+@@ -1,8 +1,9 @@
+-package io.ncbpfluffybear.slimecustomizer;
++package id.universenetwork.sfa_loader.addons.slimecustomizer;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
++import lombok.experimental.UtilityClass;
+ import org.bukkit.inventory.ItemStack;
+ 
+ import java.util.HashMap;
+@@ -13,7 +14,8 @@ import java.util.Map;
+  *
+  * @author ybw0014
+  */
+-public final class Registry {
+-    public static final Map<ItemStack[], Pair<RecipeType, String>> existingRecipes = new HashMap<>();
+-    public static final Map<String, ItemGroup> allItemGroups = new HashMap<>();
++@UtilityClass
++public class Registry {
++    public final Map<ItemStack[], Pair<RecipeType, String>> existingRecipes = new HashMap<>();
++    public final Map<String, ItemGroup> allItemGroups = new HashMap<>();
+ }
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SCCommand.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SCCommand.java
+new file mode 100644
+index 0000000..1c3e519
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SCCommand.java
+@@ -0,0 +1,259 @@
++package id.universenetwork.sfa_loader.addons.slimecustomizer;
++
++import cloud.commandframework.annotations.Argument;
++import cloud.commandframework.annotations.CommandMethod;
++import cloud.commandframework.annotations.CommandPermission;
++import cloud.commandframework.annotations.specifier.Range;
++import cloud.commandframework.annotations.suggestions.Suggestions;
++import cloud.commandframework.context.CommandContext;
++import id.universenetwork.sfa_loader.addons.slimecustomizer.objects.*;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
++import id.universenetwork.sfa_loader.utils.LogUtils;
++import id.universenetwork.sfa_loader.utils.TextUtils;
++import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
++import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
++import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
++import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
++import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
++import lombok.SneakyThrows;
++import org.bukkit.Bukkit;
++import org.bukkit.Material;
++import org.bukkit.command.CommandSender;
++import org.bukkit.entity.Player;
++import org.bukkit.inventory.ItemStack;
++import org.bukkit.inventory.meta.ItemMeta;
++
++import java.io.File;
++import java.util.*;
++import java.util.stream.Collectors;
++
++@SuppressWarnings("unused")
++public class SCCommand {
++    @SneakyThrows
++    @CommandMethod("slimecustomizer|sc saveitem")
++    @CommandPermission("slimecustomizer.admin")
++    public void saveItemCmd(final CommandSender sender) {
++        if (!(sender instanceof Player)) return;
++        Player p = (Player) sender;
++        int id = 0;
++        File itemFile = new File(SlimeCustomizer.getInstance().getAddonFolder(), "saveditems/" + id + ".yml");
++        while (itemFile.exists()) {
++            id++;
++            itemFile = new File(SlimeCustomizer.getInstance().getAddonFolder(), "saveditems/" + id + ".yml");
++        }
++
++        if (!itemFile.createNewFile()) LogUtils.severe("Failed to create config for item " + id);
++
++        AddonConfig itemFileConfig = new AddonConfig(new File(SlimeCustomizer.getInstance().getAddonFolder(), "saveditems/" + id + ".yml"), false);
++        itemFileConfig.set("item", p.getInventory().getItemInMainHand());
++        itemFileConfig.save();
++        Utils.send(p, "&eYour item has been saved to " + itemFile.getPath() + ". Please refer to " +
++                "&9" + Links.USING_CUSTOM_ITEMS);
++    }
++
++    @CommandMethod("slimecustomizer|sc give <player> <scItem> [amount]")
++    @CommandPermission("slimecustomizer.admin")
++    public void giveCmd(final CommandSender sender,
++                        final @Argument(value = "player", suggestions = "playerList") String name,
++                        final @Argument(value = "scItem", suggestions = "scItemList") String item,
++                        final @Argument(value = "amount", suggestions = "amountList", defaultValue = "1") @Range(min = "1") int amount) {
++        Player target = Bukkit.getPlayer(name);
++        if (target == null) {
++            Utils.send(sender, "&cThat player could not be found!");
++            return;
++        }
++
++        SlimefunItem sfItem = SlimefunItem.getById(item.toUpperCase());
++        if (sfItem == null) {
++            Utils.send(sender, "&cThat Slimefun item could not be found!");
++            return;
++        }
++
++        target.getInventory().addItem(new CustomItemStack(sfItem.getRecipeOutput(), amount));
++        Utils.send(sender, "&bYou have given " + target.getName() + " &a" + amount + " &7\"&b" + sfItem.getItemName() + "&7\"");
++    }
++
++    @Suggestions("playerList")
++    public List<String> playerList(CommandContext<CommandSender> sender, String context) {
++        return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
++    }
++
++    @Suggestions("scItemList")
++    public List<String> scItemList(CommandContext<CommandSender> sender, String context) {
++        return Slimefun.getRegistry().getEnabledSlimefunItems().stream()
++                .filter(i -> i instanceof CustomSCItem || i instanceof CustomGenerator || i instanceof CustomMachine)
++                .map(SlimefunItem::getId).collect(Collectors.toList());
++    }
++
++    @Suggestions("amountList")
++    public List<Integer> amountList(CommandContext<CommandSender> sender, String context) {
++        return Arrays.asList(1, 2, 4, 8, 16, 32, 64);
++    }
++
++    @CommandMethod("slimecustomizer|sc getsaveditem gui")
++    @CommandPermission("slimecustomizer.admin")
++    public void getSavedItemGUICmd(final CommandSender sender) {
++        if (!(sender instanceof Player)) {
++            Utils.send(sender, "&4This command can only be executed in game");
++            return;
++        }
++
++        Player p = (Player) sender;
++        List<Pair<String, ItemStack>> items = new ArrayList<>();
++        items.add(new Pair<>(null, null));
++
++        String[] fileNames = SlimeCustomizer.itemsFolder.list();
++        if (fileNames != null) {
++            for (int i = 0; i < fileNames.length; i++) fileNames[i] = fileNames[i].replace(".yml", "");
++
++            Arrays.sort(fileNames, new WindowsExplorerStringComparator());
++
++            for (String id : fileNames) items.add(new Pair<>(id, Utils.retrieveSavedItem(id, 1, false)));
++
++            int page = 1;
++            SCMenu menu = new SCMenu("&a&lSaved Items");
++            menu.setSize(54);
++            populateMenu(menu, items, page, p);
++            menu.setPlayerInventoryClickable(false);
++            menu.setBackgroundNonClickable(false);
++            menu.open(p);
++        }
++    }
++
++    /**
++     * Populates the saveditem gui. 45 items per page.
++     *
++     * @param menu  the SCMenu to populate
++     * @param items the List of items
++     * @param page  the page number
++     * @param p     the player that will be viewing this menu
++     */
++    private void populateMenu(SCMenu menu, List<Pair<String, ItemStack>> items, int page, Player p) {
++        for (int i = 45; i < 54; i++) menu.replaceExistingItem(i, ChestMenuUtils.getBackground());
++
++        menu.wipe(0, 44, true);
++
++        for (int i = 0; i < 45; i++) {
++            int itemIndex = i + 1 + (page - 1) * 45;
++            ItemStack item = getItemOrNull(items, itemIndex);
++            if (item != null) {
++                ItemMeta im = item.getItemMeta();
++                if (im == null) {
++                    Utils.notify("An item has no metadata! Is it corrupted? " + items.get(itemIndex).getFirstValue());
++                    continue;
++                }
++                List<String> lore = im.getLore();
++
++                if (lore == null)
++                    lore = new ArrayList<>(Arrays.asList("", TextUtils.translateColor("&bID: " + items.get(itemIndex).getFirstValue()),
++                            TextUtils.translateColor("&a> Click to get this item")));
++                else
++                    lore.addAll(new ArrayList<>(Arrays.asList("", TextUtils.translateColor("&bID: " + items.get(itemIndex).getFirstValue()),
++                            TextUtils.translateColor("&a> Click to get this item"))));
++
++                im.setLore(lore);
++                item.setItemMeta(im);
++                menu.replaceExistingItem(i, item);
++                menu.addMenuClickHandler(i, (pl, s, is, action) -> {
++                    HashMap<Integer, ItemStack> leftovers = p.getInventory().addItem(getItemOrNull(items, itemIndex));
++                    for (ItemStack leftover : leftovers.values()) p.getWorld().dropItem(p.getLocation(), leftover);
++                    return false;
++                });
++            }
++        }
++
++        if (page != 1) {
++            menu.replaceExistingItem(46, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&aPrevious Page"));
++            menu.addMenuClickHandler(46, (pl, s, is, action) -> {
++                populateMenu(menu, items, page - 1, p);
++                return false;
++            });
++        }
++
++        if (getItemOrNull(items, 45 * page) != null) {
++            menu.replaceExistingItem(52, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&aNext Page"));
++            menu.addMenuClickHandler(52, (pl, s, is, action) -> {
++                populateMenu(menu, items, page + 1, p);
++                return false;
++            });
++        }
++    }
++
++    private ItemStack getItemOrNull(List<Pair<String, ItemStack>> items, int index) {
++        ItemStack item;
++        try {
++            item = items.get(index).getSecondValue().clone();
++        } catch (IndexOutOfBoundsException e) {
++            item = null;
++        }
++        return item;
++    }
++
++    @CommandMethod("slimecustomizer|sc getsaveditem <item> <player> [amount]")
++    @CommandPermission("slimecustomizer.admin")
++    public void getSavedItemCmd(final CommandSender sender,
++                                final @Argument(value = "item", suggestions = "savedItemList") String id,
++                                final @Argument(value = "player", suggestions = "playerList") String player,
++                                final @Argument(value = "amount", suggestions = "amountList", defaultValue = "1") @Range(min = "1") int amount) {
++        Player target = Bukkit.getPlayer(player);
++        if (target == null) {
++            Utils.send(sender, "&cThat player could not be found!");
++            return;
++        }
++
++        ItemStack item = Utils.retrieveSavedItem(id, amount, false);
++        if (item != null) {
++            HashMap<Integer, ItemStack> leftovers = target.getInventory().addItem(item);
++            for (ItemStack leftover : leftovers.values()) target.getWorld().dropItem(target.getLocation(), leftover);
++
++            Utils.send(sender, "&bYou have given " + target.getName() + " &a" + amount + " &bof &7\"&a" +
++                    id + "&7\"");
++        } else Utils.send(sender, "&cThat saveditem could not be found!");
++    }
++
++    @Suggestions("savedItemList")
++    public List<String> savedItemList(CommandContext<CommandSender> sender, String context) {
++        String[] fileNames = SlimeCustomizer.itemsFolder.list();
++        if (fileNames != null) {
++            for (int i = 0; i < fileNames.length; i++) fileNames[i] = fileNames[i].replace(".yml", "");
++            Arrays.sort(fileNames, new WindowsExplorerStringComparator());
++            return new ArrayList<>(Arrays.asList(fileNames));
++        }
++        return Collections.emptyList();
++    }
++
++    @CommandMethod("slimecustomizer|sc categories")
++    @CommandPermission("slimecustomizer.admin")
++    public void categoriesCmd(final CommandSender sender) {
++        if (!(sender instanceof Player)) return;
++        Player p = (Player) sender;
++
++        SCMenu menu = new SCMenu("&6Category Namespace Guide");
++        menu.setSize(54);
++        int slot = 0;
++        for (ItemGroup group : Slimefun.getRegistry().getAllItemGroups()) {
++            ItemStack catItem = group.getItem(p).clone();
++            ItemMeta catMeta = catItem.getItemMeta();
++            List<String> catLore = catMeta.getLore();
++
++            catLore.set(catLore.size() - 1, TextUtils.translateColor(
++                    "&6ID: " + group.getKey().getNamespace() + ":" + group.getKey().getKey())
++            ); // Replaces the "Click to Open" line
++            catMeta.setLore(catLore);
++            catItem.setItemMeta(catMeta);
++            menu.replaceExistingItem(slot, catItem);
++            menu.addMenuClickHandler(slot, ChestMenuUtils.getEmptyClickHandler());
++            slot++;
++        }
++
++        menu.setPlayerInventoryClickable(false);
++        menu.setBackgroundNonClickable(true);
++        menu.open(p);
++    }
++
++    @CommandMethod("slimecustomizer|sc")
++    public void mainCmd(CommandSender sender) {
++        Utils.send(sender, "&eAll commands can be found at &9" + Links.COMMANDS);
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SlimeCustomizer.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SlimeCustomizer.java
+new file mode 100644
+index 0000000..ed221c0
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SlimeCustomizer.java
+@@ -0,0 +1,108 @@
++package id.universenetwork.sfa_loader.addons.slimecustomizer;
++
++import id.universenetwork.sfa_loader.addons.slimecustomizer.registration.*;
++import id.universenetwork.sfa_loader.annotations.AddonLibrary;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
++import id.universenetwork.sfa_loader.managers.CommandManager;
++import id.universenetwork.sfa_loader.template.AddonTemplate;
++import id.universenetwork.sfa_loader.utils.LogUtils;
++import lombok.Getter;
++import org.bukkit.ChatColor;
++
++import java.io.File;
++import java.io.IOException;
++import java.nio.file.Files;
++import java.util.logging.Level;
++
++/**
++ * This used to be a smol boi. Now it has grown.
++ *
++ * @author NCBPFluffyBear
++ */
++@AddonLibrary(
++        groupId = "com{}github{}Slimefun-Addon-Community",
++        artifactId = "extrautils",
++        version = "73e76ac"
++)
++public class SlimeCustomizer extends AddonTemplate {
++    @Getter
++    public static SlimeCustomizer instance;
++    public static File itemsFolder;
++
++    @Override
++    public void onLoad() {
++        instance = this;
++        itemsFolder = new File(getAddonFolder(), "saveditems");
++
++        /* File generation */
++        final File categoriesFile = new File(getAddonFolder(), "categories.yml");
++        copyFile(categoriesFile, "categories");
++
++        final File itemsFile = new File(getAddonFolder(), "items.yml");
++        copyFile(itemsFile, "items");
++
++        final File mobDropsFile = new File(getAddonFolder(), "mob-drops.yml");
++        copyFile(mobDropsFile, "mob-drops");
++
++
++        final File machinesFile = new File(getAddonFolder(), "machines.yml");
++        copyFile(machinesFile, "machines");
++
++
++        final File generatorsFile = new File(getAddonFolder(), "generators.yml");
++        copyFile(generatorsFile, "generators");
++
++
++        final File solarGeneratorsFile = new File(getAddonFolder(), "solar-generators.yml");
++        copyFile(solarGeneratorsFile, "solar-generators");
++
++
++        /*
++        final File passiveMachinesFile = new File(getAddonFolder(), "passive-machines.yml");
++        if (!passiveMachinesFile.exists()) {
++            try {
++                Files.copy(this.getClass().getResourceAsStream("/passive-machines.yml"), passiveMachinesFile.toPath());
++            } catch (IOException e) {
++                getInstance().getLogger().log(Level.SEVERE, "Failed to copy default passive-machines.yml file", e);
++            }
++        }
++
++         */
++
++        if (!itemsFolder.exists()) {
++            try {
++                Files.createDirectory(itemsFolder.toPath());
++            } catch (IOException e) {
++                LogUtils.log(Level.SEVERE, "Failed to create saveditems folder", e);
++            }
++        }
++
++        AddonConfig categories = new AddonConfig(categoriesFile);
++        AddonConfig items = new AddonConfig(itemsFile);
++        AddonConfig machines = new AddonConfig(machinesFile);
++        AddonConfig generators = new AddonConfig(generatorsFile);
++        AddonConfig solarGenerators = new AddonConfig(solarGeneratorsFile);
++        AddonConfig passiveMachines = new AddonConfig(new File(getAddonFolder(), "passive-machines.yml"), false);
++        AddonConfig mobDrops = new AddonConfig(mobDropsFile);
++
++        CommandManager.register(new SCCommand());
++
++        LogUtils.info("[SlimeCustomizer] " + ChatColor.BLUE + "Setting up custom stuff...");
++        if (!Categories.register(categories)) return;
++        if (!Items.register(items)) return;
++        if (!Machines.register(machines)) return;
++        if (!Generators.register(generators)) return;
++        if (!SolarGenerators.register(solarGenerators)) return;
++        if (!MobDrops.register(mobDrops)) return;
++        Event.registerListeners(new Events());
++    }
++
++    private void copyFile(File file, String name) {
++        if (!file.exists()) try {
++            Files.copy(getClass().getResourceAsStream(name + ".yml"), file.toPath());
++        } catch (IOException e) {
++            LogUtils.log(Level.SEVERE, "Failed to copy default " + name + ".yml file", e);
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/Utils.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Utils.java
+similarity index 58%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/Utils.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Utils.java
+index de4123f..48833cc 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/Utils.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Utils.java
+@@ -1,14 +1,19 @@
+-package io.ncbpfluffybear.slimecustomizer;
++package id.universenetwork.sfa_loader.addons.slimecustomizer;
+ 
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
++import id.universenetwork.sfa_loader.utils.LogUtils;
++import id.universenetwork.sfa_loader.utils.TextUtils;
++import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+-import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
++import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
++import lombok.experimental.UtilityClass;
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+ import org.bukkit.Material;
+@@ -32,21 +37,21 @@ import java.util.logging.Level;
+  *
+  * @author NCBPFluffyBear
+  */
++@UtilityClass
+ public class Utils {
+-
+-    private static final NamespacedKey SCKEY = new NamespacedKey(SlimeCustomizer.getInstance(), "slimecustomizer_item");
+-    private static final List<RecipeType> STACK_LIMITED_MACHINES = new ArrayList<>(Arrays.asList(
+-        RecipeType.ENHANCED_CRAFTING_TABLE,
+-        RecipeType.ARMOR_FORGE,
+-        RecipeType.PRESSURE_CHAMBER,
+-        RecipeType.MAGIC_WORKBENCH
++    private final NamespacedKey SCKEY = AbstractAddon.createKey("slimecustomizer_item");
++    private final List<RecipeType> STACK_LIMITED_MACHINES = new ArrayList<>(Arrays.asList(
++            RecipeType.ENHANCED_CRAFTING_TABLE,
++            RecipeType.ARMOR_FORGE,
++            RecipeType.PRESSURE_CHAMBER,
++            RecipeType.MAGIC_WORKBENCH
+     ));
+ 
+-    public static void send(CommandSender s, String msg) {
+-        s.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&l[&aSlimeCustomizer&a&l]&7 " + msg));
++    public void send(CommandSender s, String msg) {
++        TextUtils.send(s, "&a&l[&aSlimeCustomizer&a&l]&7 " + msg);
+     }
+ 
+-    public static boolean checkPermission(Player p, String permission) {
++    public boolean checkPermission(Player p, String permission) {
+         if (!p.hasPermission(permission)) {
+             Utils.send(p, "&cYou do not have permission to use this command!");
+             return false;
+@@ -55,44 +60,37 @@ public class Utils {
+         return true;
+     }
+ 
+-    public static String color(String str) {
+-        return ChatColor.translateAlternateColorCodes('&', str);
+-    }
+-
+-    public static void notify(String reason) {
+-        Bukkit.getConsoleSender().sendMessage("[SlimeCustomizer] " + ChatColor.GREEN + reason);
++    public void notify(String reason) {
++        LogUtils.info("[SlimeCustomizer] " + ChatColor.GREEN + reason);
+     }
+ 
+-    public static void disable(String reason) {
+-        Bukkit.getLogger().log(Level.SEVERE, "[SlimeCustomizer] " + reason);
+-        Bukkit.getPluginManager().disablePlugin(SlimeCustomizer.getInstance());
++    public void disable(String reason) {
++        LogUtils.log(Level.SEVERE, "[SlimeCustomizer] " + reason);
+     }
+ 
+-    public static boolean checkFitsStackSize(ItemStack item, String slot, String machineKey, String recipeKey) {
++    public boolean checkFitsStackSize(ItemStack item, String slot, String machineKey, String recipeKey) {
+         if (item.getAmount() > item.getMaxStackSize()) {
+             disable("The " + slot + "ingredient for recipe" + recipeKey + " for " + machineKey
+-                + " has a max stack size of " + item.getMaxStackSize() + "!");
++                    + " has a max stack size of " + item.getMaxStackSize() + "!");
+             return false;
+         }
+         return true;
+     }
+ 
+ 
+-    public static List<String> colorList(List<String> plainList) {
++    public List<String> colorList(List<String> plainList) {
+         List<String> coloredList = new ArrayList<>();
+-        for (String s : plainList) {
+-            coloredList.add(ChatColor.translateAlternateColorCodes('&', s));
+-        }
++        for (String s : plainList) coloredList.add(ChatColor.translateAlternateColorCodes('&', s));
+ 
+         return coloredList;
+     }
+ 
+-    public static ItemStack[] buildCraftingRecipe(Config file, String key, RecipeType recipeType) {
++    public ItemStack[] buildCraftingRecipe(AddonConfig file, String key, RecipeType recipeType) {
+         ItemStack[] recipe = new ItemStack[9];
+         for (int i = 0; i < 9; i++) {
+             String path = key + ".crafting-recipe";
+             int configIndex = i + 1;
+-            // Shift recipe index up 1 so it's easier for the user to read config
++            // Shift recipe index up 1, so it's easier for the user to read config
+             String type = file.getString(path + "." + configIndex + ".type").toUpperCase();
+             String material = file.getString(path + "." + configIndex + ".id").toUpperCase();
+             int amount;
+@@ -100,43 +98,37 @@ public class Utils {
+             try {
+                 amount = Integer.parseInt(file.getString(path + "." + configIndex + ".amount"));
+             } catch (NumberFormatException e) {
+-                Utils.disable("Crafting recipe item " + configIndex + " for " + key + " must be a positive " +
+-                    "integer!");
++                disable("Crafting recipe item " + configIndex + " for " + key + " must be a positive " +
++                        "integer!");
+                 return null;
+             }
+ 
+             // Only certain multiblock machines can use stack sizes larger than 1
+             if (STACK_LIMITED_MACHINES.contains(recipeType) && amount > 1) {
+                 disable(recipeType.getKey().getKey().toUpperCase() + " can not use items with a greater stack size than 1!" +
+-                    " Please change the crafting-recipe-type or crafting-recipe.#.amount for " + key + ".");
++                        " Please change the crafting-recipe-type or crafting-recipe.#.amount for " + key + ".");
+                 return null;
+             }
+ 
+-            if (type.equalsIgnoreCase("NONE")) {
+-                recipe[i] = null;
+-            } else if (type.equalsIgnoreCase("VANILLA")) {
++            if (type.equalsIgnoreCase("NONE")) recipe[i] = null;
++            else if (type.equalsIgnoreCase("VANILLA")) {
+                 Material vanillaMat = Material.getMaterial(material);
+                 if (vanillaMat == null) {
+-                    Utils.disable("Crafting ingredient " + configIndex + " for " + key + " is not a valid " +
+-                        "vanilla ID!");
++                    disable("Crafting ingredient " + configIndex + " for " + key + " is not a valid " +
++                            "vanilla ID!");
+                     return null;
+-                } else {
+-                    recipe[i] = new ItemStack(vanillaMat, amount);
+-                }
++                } else recipe[i] = new ItemStack(vanillaMat, amount);
+             } else if (type.equalsIgnoreCase("SLIMEFUN")) {
+                 SlimefunItem sfMat = SlimefunItem.getById(material);
+                 if (sfMat == null) {
+-                    Utils.disable("Crafting ingredient " + configIndex + " for " + key
+-                        + " is not a valid Slimefun ID!");
++                    disable("Crafting ingredient " + configIndex + " for " + key
++                            + " is not a valid Slimefun ID!");
+                     return null;
+-                } else {
+-                    recipe[i] = new CustomItemStack(sfMat.getItem().clone(), amount);
+-                }
+-            } else if (type.equalsIgnoreCase("SAVEDITEM")) {
+-                recipe[i] = retrieveSavedItem(material, amount, true);
+-            } else {
+-                Utils.disable("Crafting ingredient " + configIndex + " for " + key
+-                    + " can only have a type of VANILLA, SLIMEFUN, SAVEDITEM, or NONE!");
++                } else recipe[i] = new CustomItemStack(sfMat.getItem().clone(), amount);
++            } else if (type.equalsIgnoreCase("SAVEDITEM")) recipe[i] = retrieveSavedItem(material, amount, true);
++            else {
++                disable("Crafting ingredient " + configIndex + " for " + key
++                        + " can only have a type of VANILLA, SLIMEFUN, SAVEDITEM, or NONE!");
+                 return null;
+             }
+         }
+@@ -145,25 +137,21 @@ public class Utils {
+ 
+         Registry.existingRecipes.forEach((itemStacks, recipeTypePair) -> {
+             if (Arrays.equals(itemStacks, recipe) && recipeType == recipeTypePair.getFirstValue()) {
+-                Utils.disable("The crafting recipe for " + key + " is already being used for "
+-                    + recipeTypePair.getSecondValue());
++                disable("The crafting recipe for " + key + " is already being used for "
++                        + recipeTypePair.getSecondValue());
+                 invalid.set(true);
+             }
+         });
+ 
+-        if (invalid.get()) {
+-            return null;
+-        }
++        if (invalid.get()) return null;
+ 
+-        if (!(recipeType == RecipeType.NULL)) {
+-            Registry.existingRecipes.put(recipe, new Pair<>(recipeType, key));
+-        }
++        if (!(recipeType == RecipeType.NULL)) Registry.existingRecipes.put(recipe, new Pair<>(recipeType, key));
+         return recipe;
+     }
+ 
+-    public static ItemStack getBlockFromConfig(String key, String materialString) {
++    public ItemStack getBlockFromConfig(String key, String materialString) {
+         if (materialString == null) {
+-            Utils.disable("The material for " + key + " could not be found!");
++            disable("The material for " + key + " could not be found!");
+             return null;
+         }
+ 
+@@ -171,65 +159,56 @@ public class Utils {
+         Material material = Material.getMaterial(materialString);
+ 
+         if ((material == null || !material.isBlock()) && !materialString.startsWith("SKULL")) {
+-            Utils.disable("The block-type for " + key + " MUST be a block!");
++            disable("The block-type for " + key + " MUST be a block!");
+             return null;
+-        } else if (material != null && material.isBlock()) {
+-            block = new ItemStack(material);
+-        } else if (materialString.startsWith("SKULL")) {
++        } else if (material != null && material.isBlock()) block = new ItemStack(material);
++        else if (materialString.startsWith("SKULL"))
+             block = SlimefunUtils.getCustomHead(materialString.replace("SKULL", ""));
+-        }
+ 
+         return block;
+     }
+ 
+-    public static void updateLoreFormat(Config config, String key, String machineType) {
++    public void updateLoreFormat(AddonConfig config, String key, String machineType) {
+         String path = key + "." + machineType + "-lore";
+         if (config.getStringList(path).toString().equals("[]")) {
+             Bukkit.getLogger().log(Level.WARNING, "Your " + key + " was reformatted to use the new lore system!" +
+-                "Read " + Links.ADDING_YOUR_ITEM + " to learn how to use multiline lore!");
++                    "Read " + Links.ADDING_YOUR_ITEM + " to learn how to use multiline lore!");
+ 
+             String lore = config.getString(path);
+-            config.setValue(path, new ArrayList<>(Collections.singleton(lore)));
++            config.set(path, new ArrayList<>(Collections.singleton(lore)));
+             config.save();
+         }
+     }
+ 
+-    public static void updateCraftingRecipeFormat(Config config, String key) {
++    public void updateCraftingRecipeFormat(AddonConfig config, String key) {
+         String path = key + ".crafting-recipe";
+         for (int i = 0; i < 9; i++) {
+             int recipeIndex = i + 1;
+-            if (config.getString(path + "." + recipeIndex + ".amount") == null) {
+-                config.setValue(path + "." + recipeIndex + ".amount", 1);
+-            }
++            if (config.getString(path + "." + recipeIndex + ".amount") == null)
++                config.set(path + "." + recipeIndex + ".amount", 1);
+         }
+ 
+-        if (config.getString(key + ".crafting-recipe-type") == null) {
+-            config.setValue(key + ".crafting-recipe-type", "ENHANCED_CRAFTING_TABLE");
+-        }
++        if (config.getString(key + ".crafting-recipe-type") == null)
++            config.set(key + ".crafting-recipe-type", "ENHANCED_CRAFTING_TABLE");
+ 
+         config.save();
+     }
+ 
+-    public static void updateCategoryFormat(Config config, String key) {
++    public void updateCategoryFormat(AddonConfig config, String key) {
+         String path = key + ".category";
+ 
+-        if (config.getString(path) == null) {
+-            config.setValue(path, "slime_customizer");
+-        }
++        if (config.getString(path) == null) config.set(path, "slime_customizer");
+ 
+         config.save();
+     }
+ 
+-    public static void updateInputAndOutputFormat(Config config, String key) {
++    public void updateInputAndOutputFormat(AddonConfig config, String key) {
+         String path = key + ".recipes";
+         for (String recipe : config.getKeys(path)) {
+             for (int i = 0; i < 2; i++) {
+                 String transportType;
+-                if (i == 0) {
+-                    transportType = "input";
+-                } else {
+-                    transportType = "output";
+-                }
++                if (i == 0) transportType = "input";
++                else transportType = "output";
+ 
+                 String transportPath = path + "." + recipe + "." + transportType;
+ 
+@@ -237,23 +216,23 @@ public class Utils {
+                 if (config.getString(transportPath + ".1") == null) {
+ 
+                     // Move old values to their new sublocations
+-                    config.setValue(transportPath + ".1.type", config.getString(transportPath + ".type"));
+-                    config.setValue(transportPath + ".1.id", config.getString(transportPath + ".id"));
+-                    config.setValue(transportPath + ".1.amount", config.getInt(transportPath + ".amount"));
++                    config.set(transportPath + ".1.type", config.getString(transportPath + ".type"));
++                    config.set(transportPath + ".1.id", config.getString(transportPath + ".id"));
++                    config.set(transportPath + ".1.amount", config.getInt(transportPath + ".amount"));
+ 
+                     // Delete old value keys
+-                    config.setValue(transportPath + ".type", null);
+-                    config.setValue(transportPath + ".id", null);
+-                    config.setValue(transportPath + ".amount", null);
++                    config.set(transportPath + ".type", null);
++                    config.set(transportPath + ".id", null);
++                    config.set(transportPath + ".amount", null);
+ 
+                     // Add the second input/output keys
+-                    config.setValue(transportPath + ".2.type", "NONE");
+-                    config.setValue(transportPath + ".2.id", "N/A");
+-                    config.setValue(transportPath + ".2.amount", 1);
++                    config.set(transportPath + ".2.type", "NONE");
++                    config.set(transportPath + ".2.id", "N/A");
++                    config.set(transportPath + ".2.amount", 1);
+ 
+                     Bukkit.getLogger().log(Level.WARNING, "Your " + key + " was reformatted to use the new " +
+                             "input/output system! " +
+-                        "Read " + Links.ADDING_YOUR_MACHINE + " to learn what this new format does!");
++                            "Read " + Links.ADDING_YOUR_MACHINE + " to learn what this new format does!");
+                 }
+             }
+         }
+@@ -261,12 +240,10 @@ public class Utils {
+         config.save();
+     }
+ 
+-    public static void updatePlaceableOption(Config config, String key) {
+-        if (config.getValue(key + ".placeable") != null) {
+-            return;
+-        }
++    public void updatePlaceableOption(AddonConfig config, String key) {
++        if (config.get(key + ".placeable") != null) return;
+ 
+-        config.setValue(key + ".placeable", false);
++        config.set(key + ".placeable", false);
+         Bukkit.getLogger().log(Level.WARNING, "Your " + key + " was reformatted to have a placeable option! " +
+                 "Read " + Links.ADDING_YOUR_ITEM + " to learn what this new option does!");
+         Bukkit.getLogger().log(Level.SEVERE, "This option is false by default, so if you have a block you need " +
+@@ -274,12 +251,11 @@ public class Utils {
+         config.save();
+     }
+ 
+-    public static ItemStack retrieveSavedItem(String id, int amount, boolean disableIfNull) {
+-        File serializedItemFile = new File(SlimeCustomizer.getInstance().getDataFolder(), "saveditems/" + id + ".yml");
++    public ItemStack retrieveSavedItem(String id, int amount, boolean disableIfNull) {
++        File serializedItemFile = new File(SlimeCustomizer.getInstance().getAddonFolder(), "saveditems/" + id + ".yml");
+         if (!serializedItemFile.exists()) {
+-            if (disableIfNull) {
++            if (disableIfNull)
+                 disable(id + " could not be found in your saveditems folder! Make sure the file is a yml file!");
+-            }
+             return null;
+         } else {
+             ItemStack item = new Config(serializedItemFile.getPath()).getItem("item");
+@@ -288,9 +264,9 @@ public class Utils {
+         }
+     }
+ 
+-    public static RecipeType getRecipeType(String str, String key) {
++    public RecipeType getRecipeType(String str, String key) {
+         if (str == null) {
+-            disable("The crafting-recipe-type for " + key + " has to be a multiblock machine!" );
++            disable("The crafting-recipe-type for " + key + " has to be a multiblock machine!");
+             return null;
+         }
+         switch (str) {
+@@ -298,7 +274,7 @@ public class Utils {
+                 return null;
+             case "ENCHANTED_CRAFTING_TABLE":
+                 Bukkit.getLogger().log(Level.WARNING, "Hey buddy, it's the ENHANCED crafting table, not ENCHANTED. " +
+-                    "Don't worry, I know what you mean. But you should probably fix that.");
++                        "Don't worry, I know what you mean. But you should probably fix that.");
+                 return RecipeType.ENHANCED_CRAFTING_TABLE;
+             case "ENHANCED_CRAFTING_TABLE":
+                 return RecipeType.ENHANCED_CRAFTING_TABLE;
+@@ -321,35 +297,32 @@ public class Utils {
+         }
+     }
+ 
+-    public static ItemGroup getCategory(String str, String key) {
++    public ItemGroup getCategory(String str, String key) {
+         if (str.startsWith("existing:")) { // Add an item to a category from another addon/core sf
+             String[] existingCat = str.substring(9).split(":");
+             if (existingCat.length != 2) {
+                 disable("The category for " + key + " has a format issue. Ex: existing:slimefun:misc");
+                 return null;
+             }
+-            for (ItemGroup itemGroup : Slimefun.getRegistry().getAllItemGroups()) {
+-                if (itemGroup.getKey().getNamespace().equals(existingCat[0]) && itemGroup.getKey().getKey().equals(existingCat[1])) {
++            for (ItemGroup itemGroup : Slimefun.getRegistry().getAllItemGroups())
++                if (itemGroup.getKey().getNamespace().equals(existingCat[0]) && itemGroup.getKey().getKey().equals(existingCat[1]))
+                     return itemGroup;
+-                }
+-            }
+ 
+             disable(existingCat[0] + ":" + existingCat[1] + " is not a valid existing category for " + key + "!");
+             return null;
+         }
+ 
+         ItemGroup category = Registry.allItemGroups.get(str); // Add an item to a SC created category
+-        if (category == null || category instanceof NestedItemGroup) {
++        if (category == null || category instanceof NestedItemGroup)
+             disable(str + " is not a valid category for " + key + "!");
+-        }
+         return category;
+     }
+ 
+-    public static String capitalize(String str) {
++    public String capitalize(String str) {
+         return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+     }
+ 
+-    public static String toOrdinal(int i) {
++    public String toOrdinal(int i) {
+         switch (i) {
+             default:
+                 return "ERR";
+@@ -360,19 +333,18 @@ public class Utils {
+         }
+     }
+ 
+-    public static ItemStack keyItem(ItemStack item, int i) {
++    public ItemStack keyItem(ItemStack item, int i) {
+         ItemMeta meta = item.getItemMeta();
+         meta.getPersistentDataContainer().set(SCKEY, PersistentDataType.INTEGER, i);
+         item.setItemMeta(meta);
+         return item;
+     }
+ 
+-    public static boolean isKeyed(ItemStack item) {
++    public boolean isKeyed(ItemStack item) {
+         return item.getItemMeta().getPersistentDataContainer().has(SCKEY, PersistentDataType.INTEGER);
+     }
+ 
+-    public static int getItemKey(ItemStack item) {
++    public int getItemKey(ItemStack item) {
+         return item.getItemMeta().getPersistentDataContainer().get(SCKEY, PersistentDataType.INTEGER);
+     }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomGenerator.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomGenerator.java
+similarity index 85%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomGenerator.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomGenerator.java
+index e37c853..7199e9b 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomGenerator.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomGenerator.java
+@@ -1,13 +1,13 @@
+-package io.ncbpfluffybear.slimecustomizer.objects;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.objects;
+ 
+ import dev.j3fftw.extrautils.utils.LoreBuilderDynamic;
+ import dev.j3fftw.extrautils.utils.Utils;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AGenerator;
+ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+ import org.bukkit.Material;
+ import org.bukkit.inventory.ItemStack;
+ 
+@@ -21,7 +21,6 @@ import java.util.List;
+  * @author NCBPFluffyBear
+  */
+ public class CustomGenerator extends SCAGenerator {
+-
+     private final ItemStack progressItem;
+     private final int energyProduction;
+     private final int energyBuffer;
+@@ -50,13 +49,9 @@ public class CustomGenerator extends SCAGenerator {
+ 
+     @Override
+     protected void registerDefaultFuelTypes() {
+-        if (customRecipes == null) {
+-            return;
+-        }
++        if (customRecipes == null) return;
+ 
+-        for (MachineFuel fuel : customRecipes) {
+-            registerFuel(fuel);
+-        }
++        for (MachineFuel fuel : customRecipes) registerFuel(fuel);
+     }
+ 
+     @Override
+@@ -81,16 +76,10 @@ public class CustomGenerator extends SCAGenerator {
+                     "&8\u21E8 &e\u26A1 &7" + fuel.getTicks() * getEnergyProduction() + " J in total"
+             );
+             displayRecipes.add(customInput);
+-            if (fuel.getOutput() != null) {
+-                displayRecipes.add(fuel.getOutput());
+-            } else {
+-                displayRecipes.add(new CustomItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "&7No Output"));
+-            }
+-
++            if (fuel.getOutput() != null) displayRecipes.add(fuel.getOutput());
++            else displayRecipes.add(new CustomItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "&7No Output"));
+         }
+ 
+         return displayRecipes;
+     }
+-
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomMachine.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomMachine.java
+similarity index 76%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomMachine.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomMachine.java
+index 7c7872f..52c9b2f 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomMachine.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomMachine.java
+@@ -1,14 +1,14 @@
+-package io.ncbpfluffybear.slimecustomizer.objects;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.objects;
+ 
++import id.universenetwork.sfa_loader.addons.slimecustomizer.Utils;
++import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+-import io.ncbpfluffybear.slimecustomizer.Utils;
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
++import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
+ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+ import org.bukkit.Material;
+ import org.bukkit.inventory.ItemStack;
+ 
+@@ -24,11 +24,10 @@ import java.util.List;
+  * @author NCBPFluffyBear
+  */
+ public class CustomMachine extends AContainer implements RecipeDisplayItem {
+-
+     public static final ItemStack MULTI_INPUT_ITEM = new CustomItemStack(
+-        Material.LIME_STAINED_GLASS_PANE, "&aMultiple Inputs", "", "&7> Click to view the items");
++            Material.LIME_STAINED_GLASS_PANE, "&aMultiple Inputs", "", "&7> Click to view the items");
+     public static final ItemStack MULTI_OUTPUT_ITEM = new CustomItemStack(
+-        Material.LIME_STAINED_GLASS_PANE, "&aMultiple Outputs", "", "&7> Click to view the items");
++            Material.LIME_STAINED_GLASS_PANE, "&aMultiple Outputs", "", "&7> Click to view the items");
+ 
+     private final String id;
+     private final ItemStack progressItem;
+@@ -75,14 +74,11 @@ public class CustomMachine extends AContainer implements RecipeDisplayItem {
+ 
+     @Override
+     protected void registerDefaultRecipes() {
+-        if (customRecipes == null) {
+-            return;
+-        }
++        if (customRecipes == null) return;
+ 
+         customRecipes.forEach((recipe, time) ->
+-            registerRecipe(time, recipe.getFirstValue().clone(), recipe.getSecondValue().clone())
++                registerRecipe(time, recipe.getFirstValue().clone(), recipe.getSecondValue().clone())
+         );
+-
+     }
+ 
+     @Override
+@@ -91,17 +87,11 @@ public class CustomMachine extends AContainer implements RecipeDisplayItem {
+ 
+         for (int i = 0; i < recipes.size(); i++) {
+             MachineRecipe recipe = recipes.get(i);
+-            if (recipe.getInput().length == 2) {
+-                displayRecipes.add(Utils.keyItem(MULTI_INPUT_ITEM.clone(), i));
+-            } else {
+-                displayRecipes.add(recipe.getInput()[0]);
+-            }
+-
+-            if (recipe.getOutput().length == 2) {
+-                displayRecipes.add(Utils.keyItem(MULTI_OUTPUT_ITEM.clone(), i));
+-            } else {
+-                displayRecipes.add(recipe.getOutput()[0]);
+-            }
++            if (recipe.getInput().length == 2) displayRecipes.add(Utils.keyItem(MULTI_INPUT_ITEM.clone(), i));
++            else displayRecipes.add(recipe.getInput()[0]);
++
++            if (recipe.getOutput().length == 2) displayRecipes.add(Utils.keyItem(MULTI_OUTPUT_ITEM.clone(), i));
++            else displayRecipes.add(recipe.getOutput()[0]);
+         }
+ 
+         return displayRecipes;
+@@ -111,4 +101,4 @@ public class CustomMachine extends AContainer implements RecipeDisplayItem {
+     public String getMachineIdentifier() {
+         return id;
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomPassiveMachine.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomPassiveMachine.java
+similarity index 97%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomPassiveMachine.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomPassiveMachine.java
+index 4966dce..2977fac 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomPassiveMachine.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomPassiveMachine.java
+@@ -1,13 +1,13 @@
+-package io.ncbpfluffybear.slimecustomizer.objects;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.objects;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
+ import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
+ import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+ import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
+ import org.bukkit.block.Block;
+@@ -17,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
+ import java.util.List;
+ 
+ public class CustomPassiveMachine extends SlimefunItem implements EnergyNetComponent {
+-
+     private final String name;
+     private final int capacity;
+     private final List<ItemStack> products;
+@@ -31,10 +30,8 @@ public class CustomPassiveMachine extends SlimefunItem implements EnergyNetCompo
+         this.products = products;
+ 
+         new BlockMenuPreset(getId(), name) {
+-
+             @Override
+             public void init() {
+-
+             }
+ 
+             @Override
+@@ -65,7 +62,6 @@ public class CustomPassiveMachine extends SlimefunItem implements EnergyNetCompo
+     }
+ 
+     protected void tick(Block b, SlimefunItem item) {
+-
+     }
+ 
+     @Override
+@@ -77,4 +73,4 @@ public class CustomPassiveMachine extends SlimefunItem implements EnergyNetCompo
+     public int getCapacity() {
+         return 0;
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomSCItem.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomSCItem.java
+similarity index 92%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomSCItem.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomSCItem.java
+index ab99691..2b4c982 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomSCItem.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomSCItem.java
+@@ -1,9 +1,9 @@
+-package io.ncbpfluffybear.slimecustomizer.objects;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.objects;
+ 
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import org.bukkit.inventory.ItemStack;
+ 
+ /**
+@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
+  * @author NCBPFluffyBear
+  */
+ public class CustomSCItem extends SlimefunItem {
+-
+     public CustomSCItem(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, ItemStack output) {
+         super(category, item, recipeType, recipe, output);
+     }
+@@ -21,4 +20,4 @@ public class CustomSCItem extends SlimefunItem {
+     public CustomSCItem(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+         super(category, item, recipeType, recipe);
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomSolarGenerator.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomSolarGenerator.java
+similarity index 76%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomSolarGenerator.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomSolarGenerator.java
+index 28fca71..02496aa 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/CustomSolarGenerator.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/CustomSolarGenerator.java
+@@ -1,10 +1,10 @@
+-package io.ncbpfluffybear.slimecustomizer.objects;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.objects;
+ 
+-import io.github.thebusybiscuit.slimefun4.implementation.items.electric.generators.SolarGenerator;
+-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++import io.github.thebusybiscuit.slimefun4.implementation.items.electric.generators.SolarGenerator;
++import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
+ import org.bukkit.Location;
+ import org.bukkit.World;
+ import org.bukkit.inventory.ItemStack;
+@@ -17,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
+  * @author TheBusyBiscuit
+  */
+ public class CustomSolarGenerator extends SolarGenerator {
+-
+     public CustomSolarGenerator(ItemGroup category, int dayEnergy, int nightEnergy, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+         super(category, dayEnergy, nightEnergy, item, recipeType, recipe);
+     }
+@@ -26,20 +25,16 @@ public class CustomSolarGenerator extends SolarGenerator {
+     public int getGeneratedOutput(Location l, Config data) {
+         World world = l.getWorld();
+ 
+-        if (world.getEnvironment() != World.Environment.NORMAL) {
+-            return 0;
+-        } else {
++        if (world.getEnvironment() != World.Environment.NORMAL) return 0;
++        else {
+             boolean isDaytime = isDaytime(world);
+ 
+             // Performance optimization for daytime-only solar generators
+-            if (!isDaytime && getNightEnergy() < 1) {
++            if (!isDaytime && getNightEnergy() < 1) return 0;
++            else if (!world.isChunkLoaded(l.getBlockX() >> 4, l.getBlockZ() >> 4)
++                    || l.getBlock().getRelative(0, 1, 0).getLightFromSky() < 15) {
+                 return 0;
+-            } else if (!world.isChunkLoaded(l.getBlockX() >> 4, l.getBlockZ() >> 4)
+-                || l.getBlock().getRelative(0, 1, 0).getLightFromSky() < 15) {
+-                return 0;
+-            } else {
+-                return isDaytime ? getDayEnergy() : getNightEnergy();
+-            }
++            } else return isDaytime ? getDayEnergy() : getNightEnergy();
+         }
+     }
+ 
+@@ -47,5 +42,4 @@ public class CustomSolarGenerator extends SolarGenerator {
+         long time = world.getTime();
+         return !world.hasStorm() && !world.isThundering() && (time < 12300 || time > 23850);
+     }
+-
+ }
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/NPCustomSCItem.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/NPCustomSCItem.java
+similarity index 87%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/objects/NPCustomSCItem.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/NPCustomSCItem.java
+index bfb513c..e99d41a 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/NPCustomSCItem.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/NPCustomSCItem.java
+@@ -1,10 +1,9 @@
+-package io.ncbpfluffybear.slimecustomizer.objects;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.objects;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+-import io.github.thebusybiscuit.slimefun4.core.attributes.NotPlaceable;
+ import org.bukkit.inventory.ItemStack;
+ 
+ /**
+@@ -14,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
+  * @author NCBPFluffyBear
+  */
+ public class NPCustomSCItem extends SlimefunItem implements SCNotPlaceable {
+-
+     public NPCustomSCItem(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, ItemStack output) {
+         super(category, item, recipeType, recipe, output);
+     }
+@@ -22,4 +20,4 @@ public class NPCustomSCItem extends SlimefunItem implements SCNotPlaceable {
+     public NPCustomSCItem(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+         super(category, item, recipeType, recipe);
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCAGenerator.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCAGenerator.java
+similarity index 83%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCAGenerator.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCAGenerator.java
+index 5555836..6a21cdb 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCAGenerator.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCAGenerator.java
+@@ -1,7 +1,10 @@
+-package io.ncbpfluffybear.slimecustomizer.objects;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.objects;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
++import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemState;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import io.github.thebusybiscuit.slimefun4.core.attributes.MachineProcessHolder;
+ import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
+ import io.github.thebusybiscuit.slimefun4.core.machines.MachineProcessor;
+@@ -10,6 +13,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+ import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
+ import io.github.thebusybiscuit.slimefun4.implementation.items.electric.AbstractEnergyProvider;
+ import io.github.thebusybiscuit.slimefun4.implementation.operations.FuelOperation;
++import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
+ import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+ import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+@@ -17,15 +21,11 @@ import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
+ import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
+ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
+ import me.mrCookieSlime.Slimefun.api.BlockStorage;
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+ import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Location;
+ import org.bukkit.Material;
+@@ -46,9 +46,9 @@ import java.util.Map;
+ 
+ @SuppressWarnings("deprecation")
+ public abstract class SCAGenerator extends AbstractEnergyProvider implements MachineProcessHolder<FuelOperation> {
+-    private static final int[] border = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 13, 31, 36, 37, 38, 39, 40, 41, 42, 43, 44 };
+-    private static final int[] border_in = { 9, 10, 11, 12, 18, 21, 27, 28, 29, 30 };
+-    private static final int[] border_out = { 14, 15, 16, 17, 23, 26, 32, 33, 34, 35 };
++    private static final int[] border = {0, 1, 2, 3, 4, 5, 6, 7, 8, 13, 31, 36, 37, 38, 39, 40, 41, 42, 43, 44};
++    private static final int[] border_in = {9, 10, 11, 12, 18, 21, 27, 28, 29, 30};
++    private static final int[] border_out = {14, 15, 16, 17, 23, 26, 32, 33, 34, 35};
+ 
+     private final MachineProcessor<FuelOperation> processor = new MachineProcessor<>(this);
+ 
+@@ -61,7 +61,6 @@ public abstract class SCAGenerator extends AbstractEnergyProvider implements Mac
+         processor.setProgressBar(getProgressBar());
+ 
+         new BlockMenuPreset(item.getItemId(), getInventoryTitle()) {
+-
+             @Override
+             public void init() {
+                 constructMenu(this);
+@@ -74,11 +73,8 @@ public abstract class SCAGenerator extends AbstractEnergyProvider implements Mac
+ 
+             @Override
+             public int[] getSlotsAccessedByItemTransport(ItemTransportFlow flow) {
+-                if (flow == ItemTransportFlow.INSERT) {
+-                    return getInputSlots();
+-                } else {
+-                    return getOutputSlots();
+-                }
++                if (flow == ItemTransportFlow.INSERT) return getInputSlots();
++                else return getOutputSlots();
+             }
+         };
+ 
+@@ -93,7 +89,6 @@ public abstract class SCAGenerator extends AbstractEnergyProvider implements Mac
+ 
+     protected BlockBreakHandler onBlockBreak() {
+         return new SimpleBlockBreakHandler() {
+-
+             @Override
+             public void onBlockBreak(Block b) {
+                 BlockMenu inv = BlockStorage.getInventory(b);
+@@ -109,21 +104,16 @@ public abstract class SCAGenerator extends AbstractEnergyProvider implements Mac
+     }
+ 
+     private void constructMenu(BlockMenuPreset preset) {
+-        for (int i : border) {
+-            preset.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
+-        }
++        for (int i : border) preset.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
+ 
+-        for (int i : border_in) {
++        for (int i : border_in)
+             preset.addItem(i, ChestMenuUtils.getInputSlotTexture(), ChestMenuUtils.getEmptyClickHandler());
+-        }
+ 
+-        for (int i : border_out) {
++        for (int i : border_out)
+             preset.addItem(i, ChestMenuUtils.getOutputSlotTexture(), ChestMenuUtils.getEmptyClickHandler());
+-        }
+ 
+-        for (int i : getOutputSlots()) {
++        for (int i : getOutputSlots())
+             preset.addMenuClickHandler(i, new ChestMenu.AdvancedMenuClickHandler() {
+-
+                 @Override
+                 public boolean onClick(Player p, int slot, ItemStack cursor, ClickAction action) {
+                     return false;
+@@ -136,19 +126,18 @@ public abstract class SCAGenerator extends AbstractEnergyProvider implements Mac
+                     return cursor.getType() == Material.AIR;
+                 }
+             });
+-        }
+ 
+         preset.addItem(22, new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, " "), ChestMenuUtils.getEmptyClickHandler());
+     }
+ 
+     @Override
+     public int[] getInputSlots() {
+-        return new int[] { 19, 20 };
++        return new int[]{19, 20};
+     }
+ 
+     @Override
+     public int[] getOutputSlots() {
+-        return new int[] { 24, 25 };
++        return new int[]{24, 25};
+     }
+ 
+     @Override
+@@ -176,13 +165,9 @@ public abstract class SCAGenerator extends AbstractEnergyProvider implements Mac
+             } else {
+                 ItemStack fuel = operation.getIngredient();
+ 
+-                if (isBucket(fuel)) {
+-                    inv.pushItem(new ItemStack(Material.BUCKET), getOutputSlots());
+-                }
++                if (isBucket(fuel)) inv.pushItem(new ItemStack(Material.BUCKET), getOutputSlots());
+ 
+-                if (operation.getResult() != null) {
+-                    inv.pushItem(operation.getResult().clone(), getOutputSlots());
+-                }
++                if (operation.getResult() != null) inv.pushItem(operation.getResult().clone(), getOutputSlots());
+ 
+                 inv.replaceExistingItem(22, new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, " "));
+ 
+@@ -194,9 +179,8 @@ public abstract class SCAGenerator extends AbstractEnergyProvider implements Mac
+             MachineFuel fuel = findRecipe(inv, found);
+ 
+             if (fuel != null) {
+-                for (Map.Entry<Integer, Integer> entry : found.entrySet()) {
++                for (Map.Entry<Integer, Integer> entry : found.entrySet())
+                     inv.consumeItem(entry.getKey(), entry.getValue());
+-                }
+ 
+                 processor.startOperation(l, new FuelOperation(fuel));
+             }
+@@ -206,23 +190,19 @@ public abstract class SCAGenerator extends AbstractEnergyProvider implements Mac
+     }
+ 
+     private boolean isBucket(ItemStack item) {
+-        if (item == null) {
+-            return false;
+-        }
++        if (item == null) return false;
+ 
+         ItemStackWrapper wrapper = ItemStackWrapper.wrap(item);
+         return item.getType() == Material.LAVA_BUCKET || SlimefunUtils.isItemSimilar(wrapper, SlimefunItems.FUEL_BUCKET, true) || SlimefunUtils.isItemSimilar(wrapper, SlimefunItems.OIL_BUCKET, true);
+     }
+ 
+     private MachineFuel findRecipe(BlockMenu menu, Map<Integer, Integer> found) {
+-        for (MachineFuel fuel : fuelTypes) {
+-            for (int slot : getInputSlots()) {
++        for (MachineFuel fuel : fuelTypes)
++            for (int slot : getInputSlots())
+                 if (fuel.test(menu.getItemInSlot(slot))) {
+                     found.put(slot, fuel.getInput().getAmount());
+                     return fuel;
+                 }
+-            }
+-        }
+ 
+         return null;
+     }
+@@ -251,9 +231,7 @@ public abstract class SCAGenerator extends AbstractEnergyProvider implements Mac
+      * This method <strong>must</strong> be called before registering the item
+      * and only before registering.
+      *
+-     * @param capacity
+-     *            The amount of energy this machine can store
+-     *
++     * @param capacity The amount of energy this machine can store
+      * @return This method will return the current instance of {@link SCAGenerator}, so that can be chained.
+      */
+     public final SCAGenerator setCapacity(int capacity) {
+@@ -262,17 +240,13 @@ public abstract class SCAGenerator extends AbstractEnergyProvider implements Mac
+         if (getState() == ItemState.UNREGISTERED) {
+             this.energyCapacity = capacity;
+             return this;
+-        } else {
+-            throw new IllegalStateException("You cannot modify the capacity after the Item was registered.");
+-        }
++        } else throw new IllegalStateException("You cannot modify the capacity after the Item was registered.");
+     }
+ 
+     /**
+      * This method sets the energy produced by this machine per tick.
+      *
+-     * @param energyProduced
+-     *            The energy produced per tick
+-     *
++     * @param energyProduced The energy produced per tick
+      * @return This method will return the current instance of {@link SCAGenerator}, so that can be chained.
+      */
+     public final SCAGenerator setEnergyProduction(int energyProduced) {
+@@ -296,8 +270,6 @@ public abstract class SCAGenerator extends AbstractEnergyProvider implements Mac
+             warn("Make sure to call '" + getClass().getSimpleName() + "#setEnergyProduction(...)' before registering!");
+         }
+ 
+-        if (getCapacity() >= 0 && getEnergyProduction() > 0) {
+-            super.register(addon);
+-        }
++        if (getCapacity() >= 0 && getEnergyProduction() > 0) super.register(addon);
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCMachine.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCMachine.java
+similarity index 68%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCMachine.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCMachine.java
+index dccc5a1..a04d4f9 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCMachine.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCMachine.java
+@@ -1,11 +1,12 @@
+-package io.ncbpfluffybear.slimecustomizer.objects;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.objects;
+ 
+ import dev.j3fftw.extrautils.utils.LoreBuilderDynamic;
+-import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+-import io.ncbpfluffybear.slimecustomizer.Utils;
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++import id.universenetwork.sfa_loader.addons.slimecustomizer.Utils;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
++import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
++import lombok.Getter;
+ import org.bukkit.Material;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.inventory.meta.ItemMeta;
+@@ -22,24 +23,49 @@ import java.util.stream.Stream;
+  * @author NCBPFluffyBear
+  */
+ public class SCMachine {
+-
+-    private final Config config;
++    private final AddonConfig config;
+     private final String key;
++    @Getter
+     private boolean valid = true;
+ 
+     private final String materialString;
++    @Getter
+     private final Material progressItem;
+     private final String machineType;
+     private ItemStack block;
++    /**
++     * Returns the energy consumption
++     * Only relevant for machines
++     *
++     * @return energyConsumption the energy consumption
++     */
++    @Getter
+     private int energyConsumption = 0;
++    /**
++     * Returns the energy production
++     * Only relevant for generators
++     *
++     * @return energyProduction the energy production
++     */
++    @Getter
+     private int energyProduction = 0;
++    /**
++     * Returns the energy buffer
++     * Relevant for both generators and machines
++     *
++     * @return energyBuffer the energy buffer
++     */
++    @Getter
+     private int energyBuffer = 0;
++    @Getter
+     private final ItemStack[] recipe;
++    @Getter
+     private final RecipeType recipeType;
++    @Getter
+     private SlimefunItemStack machineStack;
+ 
+ 
+-    public SCMachine(Config config, String key, String machineType) {
++    public SCMachine(AddonConfig config, String key, String machineType) {
+         this.config = config;
+         this.key = key;
+         materialString = config.getString(key + ".block-type").toUpperCase();
+@@ -50,27 +76,23 @@ public class SCMachine {
+         Utils.updateCraftingRecipeFormat(config, key);
+         Utils.updateCategoryFormat(config, key);
+         recipeType = Utils.getRecipeType(config.getString(key + ".crafting-recipe-type"), key);
+-        if (recipeType == null) {valid = false;}
++        if (recipeType == null) valid = false;
+         recipe = Utils.buildCraftingRecipe(config, key, recipeType);
+-        if (recipe == null) {valid = false;}
++        if (recipe == null) valid = false;
+         buildMachineStack();
+     }
+ 
+     private void validateMachineSettings() {
+         /* Machine block type */
+         Material material = Material.getMaterial(materialString);
+-        if ((material == null || !material.isBlock()) && !materialString.startsWith("SKULL")) {
++        if ((material == null || !material.isBlock()) && !materialString.startsWith("SKULL"))
+             Utils.disable("The block-type for " + key + " MUST be a block!");
+-        } else if (material != null && material.isBlock()) {
+-            block = new ItemStack(material);
+-        } else if (materialString.startsWith("SKULL")) {
++        else if (material != null && material.isBlock()) block = new ItemStack(material);
++        else if (materialString.startsWith("SKULL"))
+             block = SlimefunUtils.getCustomHead(materialString.replace("SKULL", ""));
+-        }
+ 
+         /* Progress bar type */
+-        if (progressItem == null) {
+-            Utils.disable("The progress-bar-item for " + key + " is not a valid vanilla ID!");
+-        }
++        if (progressItem == null) Utils.disable("The progress-bar-item for " + key + " is not a valid vanilla ID!");
+ 
+         if (machineType.equalsIgnoreCase("machine")) {
+             /* Energy consumption and Energy buffer */
+@@ -81,9 +103,8 @@ public class SCMachine {
+                 Utils.disable("The energy-consumption and energy-buffer for " + key + " must be a positive integer!");
+             }
+ 
+-            if (energyConsumption < 0 || energyBuffer < 0) {
++            if (energyConsumption < 0 || energyBuffer < 0)
+                 Utils.disable("The energy-consumption and energy-buffer for " + key + " must be a positive integer!");
+-            }
+ 
+         } else if (machineType.equalsIgnoreCase("generator")) {
+             /* Energy production and Energy buffer */
+@@ -94,11 +115,9 @@ public class SCMachine {
+                 Utils.disable("The energy-consumption and energy-buffer for " + key + " must be a positive integer!");
+             }
+ 
+-            if (energyProduction < 0 || energyBuffer < 0) {
++            if (energyProduction < 0 || energyBuffer < 0)
+                 Utils.disable("The energy-production and energy-buffer for " + key + " must be a positive integer!");
+-            }
+         }
+-
+     }
+ 
+     private void buildMachineStack() {
+@@ -107,10 +126,10 @@ public class SCMachine {
+ 
+         // Building lore
+         List<String> itemLore = Utils.colorList(Stream.concat(
+-            config.getStringList(key + "." + machineType + "-lore").stream(),
+-            new ArrayList<>(Arrays.asList("", getMachineTag(),
+-                LoreBuilderDynamic.powerBuffer(energyBuffer),
+-                LoreBuilderDynamic.powerPerTick(getEnergyExchange()))).stream()
++                config.getStringList(key + "." + machineType + "-lore").stream(),
++                new ArrayList<>(Arrays.asList("", getMachineTag(),
++                        LoreBuilderDynamic.powerBuffer(energyBuffer),
++                        LoreBuilderDynamic.powerPerTick(getEnergyExchange()))).stream()
+         ).collect(Collectors.toList()));
+ 
+         // Two types of tempStacks for and without skull textures
+@@ -123,11 +142,8 @@ public class SCMachine {
+     }
+ 
+     private String getMachineTag() {
+-        if (machineType.equalsIgnoreCase("machine")) {
+-            return "&b" + Utils.capitalize(machineType);
+-        } else if (machineType.equalsIgnoreCase("generator")) {
+-            return "&a" + Utils.capitalize(machineType);
+-        }
++        if (machineType.equalsIgnoreCase("machine")) return "&b" + Utils.capitalize(machineType);
++        else if (machineType.equalsIgnoreCase("generator")) return "&a" + Utils.capitalize(machineType);
+ 
+         return null;
+     }
+@@ -139,63 +155,9 @@ public class SCMachine {
+      * @return energy the energy generated or consumed
+      */
+     private int getEnergyExchange() {
+-        if (machineType.equalsIgnoreCase("machine")) {
+-            return energyConsumption;
+-        } else if (machineType.equalsIgnoreCase("generator")) {
+-            return energyProduction;
+-        }
++        if (machineType.equalsIgnoreCase("machine")) return energyConsumption;
++        else if (machineType.equalsIgnoreCase("generator")) return energyProduction;
+ 
+         return 0;
+     }
+-
+-    public Material getProgressItem() {
+-        return progressItem;
+-    }
+-
+-    /**
+-     * Returns the energy production
+-     * Only relevant for generators
+-     *
+-     * @return energyProduction the energy production
+-     */
+-    public int getEnergyProduction() {
+-        return energyProduction;
+-    }
+-
+-    /**
+-     * Returns the energy consumption
+-     * Only relevant for machines
+-     *
+-     * @return energyConsumption the energy consumption
+-     */
+-    public int getEnergyConsumption() {
+-        return energyConsumption;
+-    }
+-
+-    /**
+-     * Returns the energy buffer
+-     * Relevant for both generators and machines
+-     *
+-     * @return energyBuffer the energy buffer
+-     */
+-    public int getEnergyBuffer() {
+-        return energyBuffer;
+-    }
+-
+-    public ItemStack[] getRecipe() {
+-        return recipe;
+-    }
+-
+-    public SlimefunItemStack getMachineStack() {
+-        return machineStack;
+-    }
+-
+-    public RecipeType getRecipeType() {
+-        return recipeType;
+-    }
+-
+-    public boolean isValid() {
+-        return valid;
+-    }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCMenu.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCMenu.java
+similarity index 77%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCMenu.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCMenu.java
+index 89672bd..d2b3fff 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCMenu.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCMenu.java
+@@ -1,14 +1,14 @@
+-package io.ncbpfluffybear.slimecustomizer.objects;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.objects;
+ 
+ import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+ import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
+ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+ import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunGuide;
++import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
+ import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+ import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
+ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+ import org.bukkit.ChatColor;
+ import org.bukkit.Material;
+ import org.bukkit.entity.Player;
+@@ -21,7 +21,6 @@ import org.bukkit.inventory.ItemStack;
+  * @author NCBPFluffyBear
+  */
+ public class SCMenu extends ChestMenu {
+-
+     private static final int BACK_BUTTON_SLOT = 0;
+ 
+     public SCMenu(String title) {
+@@ -35,14 +34,10 @@ public class SCMenu extends ChestMenu {
+             this.replaceExistingItem(BACK_BUTTON_SLOT, new CustomItemStack(ChestMenuUtils.getBackButton(p, "", "&fLeft Click: &7Go back to previous Page", "&fShift + left Click: &7Go back to Main Menu")));
+ 
+             this.addMenuClickHandler(BACK_BUTTON_SLOT, (pl, s, ic, action) -> {
+-                if (!action.isRightClicked() && action.isShiftClicked()) {
+-                    guide.openMainMenu(profile, 1);
+-                } else {
+-                    history.openLastEntry(guide);
+-                }
++                if (!action.isRightClicked() && action.isShiftClicked()) guide.openMainMenu(profile, 1);
++                else history.openLastEntry(guide);
+                 return false;
+             });
+-
+         } else {
+             this.replaceExistingItem(BACK_BUTTON_SLOT, new CustomItemStack(ChestMenuUtils.getBackButton(p, "", ChatColor.GRAY + Slimefun.getLocalization().getMessage(p, "guide.back.guide"))));
+             this.addMenuClickHandler(BACK_BUTTON_SLOT, (pl, s, is, action) -> {
+@@ -54,12 +49,8 @@ public class SCMenu extends ChestMenu {
+ 
+     public void setBackgroundNonClickable(boolean addBackground) {
+         for (int i = 0; i < toInventory().getSize(); i++) {
+-            if (!hasClickHandler(i)) {
+-                addMenuClickHandler(i, (pl, s, is, action) -> false);
+-            }
+-            if (addBackground && getItemInSlot(i) == null) {
+-                replaceExistingItem(i, ChestMenuUtils.getBackground());
+-            }
++            if (!hasClickHandler(i)) addMenuClickHandler(i, (pl, s, is, action) -> false);
++            if (addBackground && getItemInSlot(i) == null) replaceExistingItem(i, ChestMenuUtils.getBackground());
+         }
+     }
+ 
+@@ -67,24 +58,19 @@ public class SCMenu extends ChestMenu {
+         for (int i = start; i <= finish; i++) {
+             replaceExistingItem(i, null);
+ 
+-            if (blockClicks) {
+-                addMenuClickHandler(i, (pl, s, is, action) -> false);
+-            }
++            if (blockClicks) addMenuClickHandler(i, (pl, s, is, action) -> false);
+         }
+     }
+ 
+     public ItemStack pushItem(ItemStack item, int... slots) {
+-        if (item == null || item.getType() == Material.AIR) {
++        if (item == null || item.getType() == Material.AIR)
+             throw new IllegalArgumentException("Cannot push null or AIR");
+-        }
+ 
+         ItemStackWrapper wrapper = null;
+         int amount = item.getAmount();
+ 
+         for (int slot : slots) {
+-            if (amount <= 0) {
+-                break;
+-            }
++            if (amount <= 0) break;
+ 
+             ItemStack stack = getItemInSlot(slot);
+ 
+@@ -94,9 +80,7 @@ public class SCMenu extends ChestMenu {
+             } else {
+                 int maxStackSize = Math.min(stack.getMaxStackSize(), toInventory().getMaxStackSize());
+                 if (stack.getAmount() < maxStackSize) {
+-                    if (wrapper == null) {
+-                        wrapper = ItemStackWrapper.wrap(item);
+-                    }
++                    if (wrapper == null) wrapper = ItemStackWrapper.wrap(item);
+ 
+                     if (ItemUtils.canStack(wrapper, stack)) {
+                         amount -= (maxStackSize - stack.getAmount());
+@@ -107,11 +91,8 @@ public class SCMenu extends ChestMenu {
+             }
+         }
+ 
+-        if (amount > 0) {
+-            return new CustomItemStack(item, amount);
+-        } else {
+-            return null;
+-        }
++        if (amount > 0) return new CustomItemStack(item, amount);
++        else return null;
+     }
+ 
+     public boolean hasClickHandler(int slot) {
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCMobDrop.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCMobDrop.java
+similarity index 94%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCMobDrop.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCMobDrop.java
+index fd5acee..aba9c71 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCMobDrop.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCMobDrop.java
+@@ -1,10 +1,10 @@
+-package io.ncbpfluffybear.slimecustomizer.objects;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.objects;
+ 
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+-import io.github.thebusybiscuit.slimefun4.core.attributes.RandomMobDrop;
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
++import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++import io.github.thebusybiscuit.slimefun4.core.attributes.RandomMobDrop;
+ import org.bukkit.inventory.ItemStack;
+ 
+ /**
+@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
+  * with a constructor parameter for a chance value.
+  */
+ public class SCMobDrop extends SlimefunItem implements RandomMobDrop {
+-
+     private final int chance;
+ 
+     public SCMobDrop(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, int chance) {
+@@ -31,4 +30,4 @@ public class SCMobDrop extends SlimefunItem implements RandomMobDrop {
+     public int getMobDropChance() {
+         return chance;
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCNotPlaceable.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCNotPlaceable.java
+new file mode 100644
+index 0000000..8021f42
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/SCNotPlaceable.java
+@@ -0,0 +1,4 @@
++package id.universenetwork.sfa_loader.addons.slimecustomizer.objects;
++
++public interface SCNotPlaceable {
++}
+\ No newline at end of file
+diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/WindowsExplorerStringComparator.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/WindowsExplorerStringComparator.java
+new file mode 100644
+index 0000000..34c5262
+--- /dev/null
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/objects/WindowsExplorerStringComparator.java
+@@ -0,0 +1,76 @@
++package id.universenetwork.sfa_loader.addons.slimecustomizer.objects;
++
++import java.util.Comparator;
++
++public class WindowsExplorerStringComparator implements Comparator<String> {
++    private String str1, str2;
++    private int pos1, pos2, len1, len2;
++
++    public int compare(String s1, String s2) {
++        str1 = s1;
++        str2 = s2;
++        len1 = str1.length();
++        len2 = str2.length();
++        pos1 = pos2 = 0;
++
++        int result = 0;
++        while (result == 0 && pos1 < len1 && pos2 < len2) {
++            char ch1 = str1.charAt(pos1);
++            char ch2 = str2.charAt(pos2);
++
++            if (Character.isDigit(ch1)) result = Character.isDigit(ch2) ? compareNumbers() : -1;
++            else if (Character.isLetter(ch1)) result = Character.isLetter(ch2) ? compareOther(true) : 1;
++            else result = Character.isDigit(ch2) ? 1
++                        : Character.isLetter(ch2) ? -1
++                        : compareOther(false);
++
++            pos1++;
++            pos2++;
++        }
++
++        return result == 0 ? len1 - len2 : result;
++    }
++
++    private int compareNumbers() {
++        int end1 = pos1 + 1;
++        while (end1 < len1 && Character.isDigit(str1.charAt(end1))) end1++;
++        int fullLen1 = end1 - pos1;
++        while (pos1 < end1 && str1.charAt(pos1) == '0') pos1++;
++
++        int end2 = pos2 + 1;
++        while (end2 < len2 && Character.isDigit(str2.charAt(end2))) end2++;
++        int fullLen2 = end2 - pos2;
++        while (pos2 < end2 && str2.charAt(pos2) == '0') pos2++;
++
++        int delta = (end1 - pos1) - (end2 - pos2);
++        if (delta != 0) return delta;
++
++        while (pos1 < end1 && pos2 < end2) {
++            delta = str1.charAt(pos1++) - str2.charAt(pos2++);
++            if (delta != 0) return delta;
++        }
++
++        pos1--;
++        pos2--;
++
++        return fullLen2 - fullLen1;
++    }
++
++    private int compareOther(boolean isLetters) {
++        char ch1 = str1.charAt(pos1);
++        char ch2 = str2.charAt(pos2);
++
++        if (ch1 == ch2) return 0;
++
++        if (isLetters) {
++            ch1 = Character.toUpperCase(ch1);
++            ch2 = Character.toUpperCase(ch2);
++            if (ch1 != ch2) {
++                ch1 = Character.toLowerCase(ch1);
++                ch2 = Character.toLowerCase(ch2);
++            }
++        }
++
++        return ch1 - ch2;
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/registration/Categories.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/Categories.java
+similarity index 81%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/registration/Categories.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/Categories.java
+index e05290d..5140f88 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/registration/Categories.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/Categories.java
+@@ -1,16 +1,16 @@
+-package io.ncbpfluffybear.slimecustomizer.registration;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.registration;
+ 
++import id.universenetwork.sfa_loader.addons.slimecustomizer.Registry;
++import id.universenetwork.sfa_loader.addons.slimecustomizer.Utils;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.groups.LockedItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.groups.SeasonalItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.groups.SubItemGroup;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+ import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+-import io.ncbpfluffybear.slimecustomizer.Registry;
+-import io.ncbpfluffybear.slimecustomizer.SlimeCustomizer;
+-import io.ncbpfluffybear.slimecustomizer.Utils;
+ import org.bukkit.Material;
+ import org.bukkit.NamespacedKey;
+ import org.bukkit.inventory.ItemStack;
+@@ -28,8 +28,7 @@ import java.util.Locale;
+  * @author ybw0014
+  */
+ public class Categories {
+-
+-    public static boolean register(Config categories) {
++    public static boolean register(AddonConfig categories) {
+         if (categories.getKeys().isEmpty()) {
+             Utils.disable("No categories were found! Please add and use a category from categories.yml");
+             return false;
+@@ -44,10 +43,10 @@ public class Categories {
+             Material material = Material.getMaterial(materialString);
+             ItemStack item = null;
+ 
+-            // update type
++            // Update type
+             if (type == null) {
+                 type = "normal";
+-                categories.setValue(categoryKey + ".type", type);
++                categories.set(categoryKey + ".type", type);
+                 categories.save();
+             }
+ 
+@@ -55,11 +54,9 @@ public class Categories {
+             if ((material == null && !materialString.startsWith("SKULL"))) {
+                 Utils.disable("The category-item for " + categoryKey + " is invalid!");
+                 return false;
+-            } else if (material != null) {
+-                item = new ItemStack(material);
+-            } else if (materialString.startsWith("SKULL")) {
++            } else if (material != null) item = new ItemStack(material);
++            else if (materialString.startsWith("SKULL"))
+                 item = SlimefunUtils.getCustomHead(materialString.replace("SKULL", ""));
+-            }
+             item = new CustomItemStack(item, name);
+ 
+             if (Registry.allItemGroups.containsKey(itemGroupKey)) {
+@@ -68,7 +65,7 @@ public class Categories {
+             }
+ 
+             ItemGroup tempCategory;
+-            NamespacedKey key = new NamespacedKey(SlimeCustomizer.getInstance(), itemGroupKey);
++            NamespacedKey key = AbstractAddon.createKey(itemGroupKey);
+             int tier;
+             try {
+                 tier = Integer.parseInt(tierStr);
+@@ -76,9 +73,8 @@ public class Categories {
+                 tier = 3;
+             }
+ 
+-            if (type.equalsIgnoreCase("nested")) {
+-                tempCategory = new NestedItemGroup(key, item, tier);
+-            } else if (type.equalsIgnoreCase("sub")) {
++            if (type.equalsIgnoreCase("nested")) tempCategory = new NestedItemGroup(key, item, tier);
++            else if (type.equalsIgnoreCase("sub")) {
+                 String parent = categories.getString(categoryKey + ".parent");
+                 if (parent == null) {
+                     Utils.disable("The category " + categoryKey + " has invalid parent group!");
+@@ -108,9 +104,8 @@ public class Categories {
+                 List<String> parents = categories.getStringList(categoryKey + ".parents");
+                 NamespacedKey[] parentKeys = new NamespacedKey[parents.size()];
+                 int i = 0;
+-                for (String parent : parents) {
+-                    parentKeys[i++] = NamespacedKey.fromString(parent, SlimeCustomizer.getInstance());
+-                }
++                for (String parent : parents)
++                    parentKeys[i++] = NamespacedKey.fromString(parent, AbstractAddon.getInstance());
+ 
+                 tempCategory = new LockedItemGroup(key, item, tier, parentKeys);
+             } else {
+@@ -120,10 +115,8 @@ public class Categories {
+ 
+             Registry.allItemGroups.put(categoryKey, tempCategory);
+             Utils.notify("Category " + categoryKey + " (" + type + ") has been registered!");
+-
+         }
+ 
+         return true;
+     }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/registration/Generators.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/Generators.java
+similarity index 70%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/registration/Generators.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/Generators.java
+index a8a14e7..de2692d 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/registration/Generators.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/Generators.java
+@@ -1,19 +1,19 @@
+-package io.ncbpfluffybear.slimecustomizer.registration;
+-
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+-import io.ncbpfluffybear.slimecustomizer.SlimeCustomizer;
+-import io.ncbpfluffybear.slimecustomizer.Utils;
+-import io.ncbpfluffybear.slimecustomizer.objects.CustomGenerator;
+-import io.ncbpfluffybear.slimecustomizer.objects.SCMachine;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.registration;
++
++import id.universenetwork.sfa_loader.addons.slimecustomizer.Utils;
++import id.universenetwork.sfa_loader.addons.slimecustomizer.objects.CustomGenerator;
++import id.universenetwork.sfa_loader.addons.slimecustomizer.objects.SCMachine;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.utils.LogUtils;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
++import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
+ import org.bukkit.Material;
+ import org.bukkit.inventory.ItemStack;
+ 
+ import java.util.ArrayList;
+ import java.util.List;
+-import java.util.logging.Level;
+ 
+ /**
+  * {@link Generators} registers the generators
+@@ -22,20 +22,17 @@ import java.util.logging.Level;
+  * @author NCBPFluffyBear
+  */
+ public class Generators {
+-
+-    public static boolean register(Config generators) {
++    public static boolean register(AddonConfig generators) {
+         for (String generatorKey : generators.getKeys()) {
+-            if (generatorKey.equals("EXAMPLE_GENERATOR")) {
+-                SlimeCustomizer.getInstance().getLogger().log(Level.WARNING, "Your generators.yml file still contains" +
++            if (generatorKey.equals("EXAMPLE_GENERATOR")) LogUtils.warning("Your generators.yml file still contains" +
+                     " the example generator! " +
+-                    "Did you forget to set up the plugin?");
+-            }
++                    "Did you forget to set up the addon?");
+ 
+             SCMachine generator = new SCMachine(generators, generatorKey, "generator");
+-            if (!generator.isValid()) {return false;}
++            if (!generator.isValid()) return false;
+ 
+             ItemGroup category = Utils.getCategory(generators.getString(generatorKey + ".category"), generatorKey);
+-            if (category == null) {return false;}
++            if (category == null) return false;
+ 
+             /* Generator recipes */
+             List<MachineFuel> customRecipe = new ArrayList<>();
+@@ -51,13 +48,13 @@ public class Generators {
+                     time = Integer.parseInt(generators.getString(path + ".time-in-seconds"));
+                 } catch (NumberFormatException e) {
+                     Utils.disable("The time-in-seconds for recipe " + recipeKey + " for " + generatorKey
+-                        + " must be a positive integer!");
++                            + " must be a positive integer!");
+                     return false;
+                 }
+ 
+                 if (time < 0) {
+                     Utils.disable("The time-in-seconds for recipe " + recipeKey + " for " + generatorKey
+-                        + " must be a positive integer!");
++                            + " must be a positive integer!");
+                     return false;
+                 }
+ 
+@@ -65,11 +62,8 @@ public class Generators {
+ 
+                     // Run this 2 times for input/output
+                     String slot;
+-                    if (i == 0) {
+-                        slot = "input";
+-                    } else {
+-                        slot = "output";
+-                    }
++                    if (i == 0) slot = "input";
++                    else slot = "output";
+ 
+                     String type = generators.getString(path + "." + slot + ".type").toUpperCase();
+                     String material = generators.getString(path + "." + slot + ".id").toUpperCase();
+@@ -78,23 +72,21 @@ public class Generators {
+                     /* Validate amount */
+                     if (i == 0 && type.equalsIgnoreCase("NONE")) {
+                         Utils.disable("The the input type for recipe " + recipeKey + " for " + generatorKey
+-                            + " can only be VANILLA or SLIMEFUN!");
++                                + " can only be VANILLA or SLIMEFUN!");
+                         return false;
+                     }
+ 
+-                    if (i == 0 || !type.equalsIgnoreCase("NONE")) {
+-                        try {
+-                            amount = Integer.parseInt(generators.getString(path + "." + slot + ".amount"));
+-                        } catch (NumberFormatException e) {
+-                            Utils.disable("The amount of " + slot + "s for recipe " + recipeKey + " for " + generatorKey
++                    if (i == 0 || !type.equalsIgnoreCase("NONE")) try {
++                        amount = Integer.parseInt(generators.getString(path + "." + slot + ".amount"));
++                    } catch (NumberFormatException e) {
++                        Utils.disable("The amount of " + slot + "s for recipe " + recipeKey + " for " + generatorKey
+                                 + " must be a positive integer!");
+-                            return false;
+-                        }
++                        return false;
+                     }
+ 
+                     if (amount < 0) {
+                         Utils.disable("The amount of " + slot + "s for recipe " + recipeKey + " for " + generatorKey
+-                            + " must be a positive integer!");
++                                + " must be a positive integer!");
+                         return false;
+                     }
+ 
+@@ -102,70 +94,69 @@ public class Generators {
+                         Material vanillaMat = Material.getMaterial(material);
+                         if (vanillaMat == null) {
+                             Utils.disable("The " + slot + "ingredient for recipe" + recipeKey + " for " + generatorKey
+-                                + " is not a valid vanilla ID!");
++                                    + " is not a valid vanilla ID!");
+                             return false;
+                         } else {
+                             if (i == 0) {
+                                 input = new ItemStack(vanillaMat);
+                                 input.setAmount(amount);
+-                                if (!Utils.checkFitsStackSize(input, slot, generatorKey, recipeKey)) {return false;}
++                                if (!Utils.checkFitsStackSize(input, slot, generatorKey, recipeKey)) return false;
+                             } else {
+                                 output = new ItemStack(vanillaMat);
+                                 output.setAmount(amount);
+-                                if (!Utils.checkFitsStackSize(output, slot, generatorKey, recipeKey)) {return false;}
++                                if (!Utils.checkFitsStackSize(output, slot, generatorKey, recipeKey)) return false;
+                             }
+                         }
+                     } else if (type.equalsIgnoreCase("SLIMEFUN")) {
+                         SlimefunItem sfMat = SlimefunItem.getById(material);
+                         if (sfMat == null) {
+                             Utils.disable("The " + slot + " ingredient for recipe" + recipeKey + " for " + generatorKey
+-                                + " is not a valid Slimefun ID!");
++                                    + " is not a valid Slimefun ID!");
+                             return false;
+                         } else {
+                             if (i == 0) {
+                                 input = sfMat.getItem().clone();
+                                 input.setAmount(amount);
+-                                if (!Utils.checkFitsStackSize(input, slot, generatorKey, recipeKey)) {return false;}
++                                if (!Utils.checkFitsStackSize(input, slot, generatorKey, recipeKey)) return false;
+                             } else {
+                                 output = sfMat.getItem().clone();
+                                 output.setAmount(amount);
+-                                if (!Utils.checkFitsStackSize(output, slot, generatorKey, recipeKey)) {return false;}
++                                if (!Utils.checkFitsStackSize(output, slot, generatorKey, recipeKey)) return false;
+                             }
+                         }
+                     } else if (type.equalsIgnoreCase("SAVEDITEM")) {
+                         ItemStack savedItem = Utils.retrieveSavedItem(material, amount, true);
+-                        if (savedItem == null) {return false;}
++                        if (savedItem == null) return false;
+                         if (i == 0) {
+                             input = savedItem.clone();
+-                            if (!Utils.checkFitsStackSize(input, slot, generatorKey, recipeKey)) {return false;}
++                            if (!Utils.checkFitsStackSize(input, slot, generatorKey, recipeKey)) return false;
+                         } else {
+                             output = savedItem.clone();
+-                            if (!Utils.checkFitsStackSize(output, slot, generatorKey, recipeKey)) {return false;}
++                            if (!Utils.checkFitsStackSize(output, slot, generatorKey, recipeKey)) return false;
+                         }
+                     } else if (i == 0) {
+                         Utils.disable("The " + slot + " ingredient type for recipe" + recipeKey + " for " + generatorKey
+-                            + " can only be VANILLA, SLIMEFUN, or SAVEDITEM!");
++                                + " can only be VANILLA, SLIMEFUN, or SAVEDITEM!");
+                         return false;
+                     } else if (!type.equalsIgnoreCase("NONE")) {
+                         Utils.disable("The " + slot + " ingredient type for recipe" + recipeKey + " for " + generatorKey
+-                            + " can only be VANILLA, SLIMEFUN, SAVEDITEM, or NONE!");
++                                + " can only be VANILLA, SLIMEFUN, SAVEDITEM, or NONE!");
+                         return false;
+                     }
+                 }
+ 
+                 customRecipe.add(new MachineFuel(time, input, output));
+-
+             }
+ 
+             new CustomGenerator(category, generator.getMachineStack(),
+-                generator.getRecipeType(), generator.getRecipe(),
+-                generator.getProgressItem(), generator.getEnergyProduction(),
+-                generator.getEnergyBuffer(), customRecipe
+-            ).register(SlimeCustomizer.getInstance());
++                    generator.getRecipeType(), generator.getRecipe(),
++                    generator.getProgressItem(), generator.getEnergyProduction(),
++                    generator.getEnergyBuffer(), customRecipe
++            ).register(SlimefunAddonInstance.getSFAInstance());
+ 
+             Utils.notify("Generator " + generatorKey + " has been registered!");
+         }
+ 
+         return true;
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/registration/Items.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/Items.java
+similarity index 64%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/registration/Items.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/Items.java
+index 574e784..75cd692 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/registration/Items.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/Items.java
+@@ -1,20 +1,20 @@
+-package io.ncbpfluffybear.slimecustomizer.registration;
+-
+-import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+-import io.ncbpfluffybear.slimecustomizer.SlimeCustomizer;
+-import io.ncbpfluffybear.slimecustomizer.Utils;
+-import io.ncbpfluffybear.slimecustomizer.objects.CustomSCItem;
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.registration;
++
++import id.universenetwork.sfa_loader.addons.slimecustomizer.Utils;
++import id.universenetwork.sfa_loader.addons.slimecustomizer.objects.CustomSCItem;
++import id.universenetwork.sfa_loader.addons.slimecustomizer.objects.NPCustomSCItem;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.utils.LogUtils;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
+-import io.ncbpfluffybear.slimecustomizer.objects.NPCustomSCItem;
++import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+ import org.bukkit.Material;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.inventory.meta.ItemMeta;
+ 
+ import java.util.List;
+-import java.util.logging.Level;
+ 
+ /**
+  * {@link Items} registers the items
+@@ -23,13 +23,11 @@ import java.util.logging.Level;
+  * @author NCBPFluffyBear
+  */
+ public class Items {
+-
+-    public static boolean register(Config items) {
++    public static boolean register(AddonConfig items) {
+         for (String itemKey : items.getKeys()) {
+-            if (itemKey.equals("EXAMPLE_ITEM")) {
+-                SlimeCustomizer.getInstance().getLogger().log(Level.WARNING, "Your items.yml file still contains the example item! " +
+-                    "Did you forget to set up the plugin?");
+-            }
++            if (itemKey.equals("EXAMPLE_ITEM"))
++                LogUtils.warning("Your items.yml file still contains the example item! " +
++                        "Did you forget to set up the addon?");
+ 
+             // Update config for new "placeable" option
+             Utils.updatePlaceableOption(items, itemKey);
+@@ -42,7 +40,7 @@ public class Items {
+             boolean placeable = items.getBoolean(itemKey + ".placeable");
+ 
+             ItemGroup category = Utils.getCategory(items.getString(itemKey + ".category"), itemKey);
+-            if (category == null) {return false;}
++            if (category == null) return false;
+ 
+             try {
+                 amount = Integer.parseInt(items.getString(itemKey + ".item-amount"));
+@@ -52,18 +50,15 @@ public class Items {
+             }
+ 
+             if (itemType.equalsIgnoreCase("CUSTOM")) {
+-
+                 Material material = Material.getMaterial(materialString);
+ 
+                 /* Item material type */
+                 if ((material == null && !materialString.startsWith("SKULL"))) {
+                     Utils.disable("The item-id for " + itemKey + " is invalid!");
+                     return false;
+-                } else if (material != null) {
+-                    item = new ItemStack(material);
+-                } else if (materialString.startsWith("SKULL")) {
++                } else if (material != null) item = new ItemStack(material);
++                else if (materialString.startsWith("SKULL"))
+                     item = SlimefunUtils.getCustomHead(materialString.replace("SKULL", ""));
+-                }
+ 
+                 item.setAmount(amount);
+ 
+@@ -78,7 +73,7 @@ public class Items {
+                 tempStack.setItemMeta(tempMeta);
+             } else if (itemType.equalsIgnoreCase("SAVEDITEM")) {
+                 item = Utils.retrieveSavedItem(materialString, amount, true);
+-                if (item == null) {return false;}
++                if (item == null) return false;
+ 
+                 tempStack = new SlimefunItemStack(itemKey, item);
+             } else {
+@@ -90,30 +85,24 @@ public class Items {
+             RecipeType recipeType = Utils.getRecipeType(recipeTypeString, itemKey);
+             if (recipeType == null) {
+                 Utils.disable("The crafting-recipe-type for " + itemKey + " is not valid! Refer to the wiki to see" +
+-                    " acceptable inputs.");
++                        " acceptable inputs.");
+                 return false;
+             }
+ 
+             /* Crafting recipe */
+             ItemStack[] recipe = Utils.buildCraftingRecipe(items, itemKey, recipeType);
+-            if (recipe == null) {return false;}
++            if (recipe == null) return false;
+ 
+             if (placeable) {
+-                if (itemType.equalsIgnoreCase("CUSTOM")) {
+-                    new CustomSCItem(category, tempStack, recipeType, recipe
+-                    ).register(SlimeCustomizer.getInstance());
+-                } else {
+-                    new CustomSCItem(category, tempStack, recipeType, recipe, item
+-                    ).register(SlimeCustomizer.getInstance());
+-                }
++                if (itemType.equalsIgnoreCase("CUSTOM")) new CustomSCItem(category, tempStack, recipeType, recipe
++                ).register(SlimefunAddonInstance.getSFAInstance());
++                else new CustomSCItem(category, tempStack, recipeType, recipe, item
++                ).register(SlimefunAddonInstance.getSFAInstance());
+             } else {
+-                if (itemType.equalsIgnoreCase("CUSTOM")) {
+-                    new NPCustomSCItem(category, tempStack, recipeType, recipe
+-                    ).register(SlimeCustomizer.getInstance());
+-                } else {
+-                    new NPCustomSCItem(category, tempStack, recipeType, recipe, item
+-                    ).register(SlimeCustomizer.getInstance());
+-                }
++                if (itemType.equalsIgnoreCase("CUSTOM")) new NPCustomSCItem(category, tempStack, recipeType, recipe
++                ).register(SlimefunAddonInstance.getSFAInstance());
++                else new NPCustomSCItem(category, tempStack, recipeType, recipe, item
++                ).register(SlimefunAddonInstance.getSFAInstance());
+             }
+ 
+             Utils.notify("Item " + itemKey + " has been registered!");
+@@ -121,5 +110,4 @@ public class Items {
+ 
+         return true;
+     }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/registration/Machines.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/Machines.java
+similarity index 71%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/registration/Machines.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/Machines.java
+index 488e653..5f16bf3 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/registration/Machines.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/Machines.java
+@@ -1,18 +1,18 @@
+-package io.ncbpfluffybear.slimecustomizer.registration;
+-
++package id.universenetwork.sfa_loader.addons.slimecustomizer.registration;
++
++import id.universenetwork.sfa_loader.addons.slimecustomizer.Utils;
++import id.universenetwork.sfa_loader.addons.slimecustomizer.objects.CustomMachine;
++import id.universenetwork.sfa_loader.addons.slimecustomizer.objects.SCMachine;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.utils.LogUtils;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+-import io.ncbpfluffybear.slimecustomizer.SlimeCustomizer;
+-import io.ncbpfluffybear.slimecustomizer.Utils;
+-import io.ncbpfluffybear.slimecustomizer.objects.CustomMachine;
+-import io.ncbpfluffybear.slimecustomizer.objects.SCMachine;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
+ import org.bukkit.Material;
+ import org.bukkit.inventory.ItemStack;
+ 
+ import java.util.HashMap;
+-import java.util.logging.Level;
+ 
+ /**
+  * {@link Machines} registers the machines
+@@ -22,18 +22,18 @@ import java.util.logging.Level;
+  */
+ public class Machines {
+ 
+-    public static boolean register(Config machines) {
++    public static boolean register(AddonConfig machines) {
+         for (String machineKey : machines.getKeys()) {
+             if (machineKey.equals("EXAMPLE_MACHINE")) {
+-                SlimeCustomizer.getInstance().getLogger().log(Level.WARNING, "Your machines.yml file still contains " +
+-                    "the example machine! Did you forget to set up the plugin?");
++                LogUtils.warning("Your machines.yml file still contains " +
++                        "the example machine! Did you forget to set up the addon?");
+             }
+ 
+             SCMachine machine = new SCMachine(machines, machineKey, "machine");
+-            if (!machine.isValid()) {return false;}
++            if (!machine.isValid()) return false;
+ 
+             ItemGroup category = Utils.getCategory(machines.getString(machineKey + ".category"), machineKey);
+-            if (category == null) {return false;}
++            if (category == null) return false;
+ 
+             // Update to new dual input/output system
+             Utils.updateInputAndOutputFormat(machines, machineKey);
+@@ -54,28 +54,23 @@ public class Machines {
+                     speed = Integer.parseInt(machines.getString(path + ".speed-in-seconds"));
+                 } catch (NumberFormatException e) {
+                     Utils.disable("The speed-in-seconds for recipe " + recipeKey + " for " + machineKey
+-                        + " must be a positive integer!");
++                            + " must be a positive integer!");
+                     return false;
+                 }
+ 
+                 if (speed < 0) {
+                     Utils.disable("The speed-in-seconds for recipe " + recipeKey + " for " + machineKey
+-                        + " must be a positive integer!");
++                            + " must be a positive integer!");
+                     return false;
+                 }
+ 
+                 for (int i = 0; i < 2; i++) {
+-
+                     // Run this 2 times for input/output
+                     String slot;
+-                    if (i == 0) {
+-                        slot = "input";
+-                    } else {
+-                        slot = "output";
+-                    }
++                    if (i == 0) slot = "input";
++                    else slot = "output";
+ 
+                     for (int transIndex = 1; transIndex < 3; transIndex++) {
+-
+                         String type = machines.getString(path + "." + slot + "." + transIndex + ".type").toUpperCase();
+                         String material = machines.getString(path + "." + slot + "." + transIndex + ".id").toUpperCase();
+                         int amount;
+@@ -85,13 +80,13 @@ public class Machines {
+                             amount = Integer.parseInt(machines.getString(path + "." + slot + "." + transIndex + ".amount"));
+                         } catch (NumberFormatException e) {
+                             Utils.disable("The amount of " + slot + "s in " + slot + " number " + transIndex
+-                                + " for recipe " + recipeKey + " for " + machineKey + " must be a positive integer!");
++                                    + " for recipe " + recipeKey + " for " + machineKey + " must be a positive integer!");
+                             return false;
+                         }
+ 
+                         if (amount < 0) {
+                             Utils.disable("The amount of " + slot + "s in " + slot + " number " + transIndex
+-                                + " for recipe " + recipeKey + " for " + machineKey + " must be a positive integer!");
++                                    + " for recipe " + recipeKey + " for " + machineKey + " must be a positive integer!");
+                             return false;
+                         }
+ 
+@@ -99,29 +94,33 @@ public class Machines {
+                             Material vanillaMat = Material.getMaterial(material);
+                             if (vanillaMat == null) {
+                                 Utils.disable("The " + Utils.toOrdinal(transIndex) + " " + slot + "ingredient for recipe " + recipeKey + " for " + machineKey
+-                                    + " is not a valid vanilla ID!");
++                                        + " is not a valid vanilla ID!");
+                                 return false;
+                             } else {
+                                 if (i == 0) {
+                                     if (transIndex == 1) {
+                                         input1 = new ItemStack(vanillaMat);
+                                         input1.setAmount(amount);
+-                                        if (!Utils.checkFitsStackSize(input1, slot, machineKey, recipeKey)) {return false;}
++                                        if (!Utils.checkFitsStackSize(input1, slot, machineKey, recipeKey))
++                                            return false;
+                                     } else {
+                                         input2 = new ItemStack(vanillaMat);
+                                         input2.setAmount(amount);
+-                                        if (!Utils.checkFitsStackSize(input2, slot, machineKey, recipeKey)) {return false;}
++                                        if (!Utils.checkFitsStackSize(input2, slot, machineKey, recipeKey))
++                                            return false;
+                                     }
+ 
+                                 } else {
+                                     if (transIndex == 1) {
+                                         output1 = new ItemStack(vanillaMat);
+                                         output1.setAmount(amount);
+-                                        if (!Utils.checkFitsStackSize(output1, slot, machineKey, recipeKey)) {return false;}
++                                        if (!Utils.checkFitsStackSize(output1, slot, machineKey, recipeKey))
++                                            return false;
+                                     } else {
+                                         output2 = new ItemStack(vanillaMat);
+                                         output2.setAmount(amount);
+-                                        if (!Utils.checkFitsStackSize(output2, slot, machineKey, recipeKey)) {return false;}
++                                        if (!Utils.checkFitsStackSize(output2, slot, machineKey, recipeKey))
++                                            return false;
+                                     }
+                                 }
+                             }
+@@ -129,58 +128,60 @@ public class Machines {
+                             SlimefunItem sfMat = SlimefunItem.getById(material);
+                             if (sfMat == null) {
+                                 Utils.disable("The " + Utils.toOrdinal(transIndex) + " " + slot + " ingredient for recipe " + recipeKey + " for " + machineKey
+-                                    + " is not a valid Slimefun ID!");
++                                        + " is not a valid Slimefun ID!");
+                             } else {
+                                 if (i == 0) {
+                                     if (transIndex == 1) {
+                                         input1 = sfMat.getItem().clone();
+                                         input1.setAmount(amount);
+-                                        if (!Utils.checkFitsStackSize(input1, slot, machineKey, recipeKey)) {return false;}
++                                        if (!Utils.checkFitsStackSize(input1, slot, machineKey, recipeKey))
++                                            return false;
+                                     } else {
+                                         input2 = sfMat.getItem().clone();
+                                         input2.setAmount(amount);
+-                                        if (!Utils.checkFitsStackSize(input2, slot, machineKey, recipeKey)) {return false;}
++                                        if (!Utils.checkFitsStackSize(input2, slot, machineKey, recipeKey))
++                                            return false;
+                                     }
+ 
+                                 } else {
+                                     if (transIndex == 1) {
+                                         output1 = sfMat.getItem().clone();
+                                         output1.setAmount(amount);
+-                                        if (!Utils.checkFitsStackSize(output1, slot, machineKey, recipeKey)) {return false;}
++                                        if (!Utils.checkFitsStackSize(output1, slot, machineKey, recipeKey))
++                                            return false;
+                                     } else {
+                                         output2 = sfMat.getItem().clone();
+                                         output2.setAmount(amount);
+-                                        if (!Utils.checkFitsStackSize(output2, slot, machineKey, recipeKey)) {return false;}
++                                        if (!Utils.checkFitsStackSize(output2, slot, machineKey, recipeKey))
++                                            return false;
+                                     }
+                                 }
+                             }
+                         } else if (type.equalsIgnoreCase("SAVEDITEM")) {
+                             ItemStack savedItem = Utils.retrieveSavedItem(material, amount, true);
+-                            if (savedItem == null) {return false;}
++                            if (savedItem == null) return false;
+                             if (i == 0) {
+                                 if (transIndex == 1) {
+                                     input1 = savedItem.clone();
+-                                    if (!Utils.checkFitsStackSize(input1, slot, machineKey, recipeKey)) {return false;}
++                                    if (!Utils.checkFitsStackSize(input1, slot, machineKey, recipeKey)) return false;
+                                 } else {
+                                     input2 = savedItem.clone();
+-                                    if (!Utils.checkFitsStackSize(input2, slot, machineKey, recipeKey)) {return false;}
++                                    if (!Utils.checkFitsStackSize(input2, slot, machineKey, recipeKey)) return false;
+                                 }
+-
+                             } else {
+                                 if (transIndex == 1) {
+                                     output1 = savedItem.clone();
+                                     output1.setAmount(amount);
+-                                    if (!Utils.checkFitsStackSize(output1, slot, machineKey, recipeKey)) {return false;}
++                                    if (!Utils.checkFitsStackSize(output1, slot, machineKey, recipeKey)) return false;
+                                 } else {
+                                     output2 = savedItem.clone();
+                                     output2.setAmount(amount);
+-                                    if (!Utils.checkFitsStackSize(output2, slot, machineKey, recipeKey)) {return false;}
++                                    if (!Utils.checkFitsStackSize(output2, slot, machineKey, recipeKey)) return false;
+                                 }
+                             }
+-                        } else if (!(type.equalsIgnoreCase("NONE") && transIndex == 2)) {
++                        } else if (!(type.equalsIgnoreCase("NONE") && transIndex == 2))
+                             Utils.disable("The ingredient type for recipe " + recipeKey + " for " + machineKey
+-                                + " can only be VANILLA, SLIMEFUN, or SAVEDITEM for the 1st " + slot + " and VANILLA, SLIMEFUN, SAVEDITEM, or NONE for the 2nd " + slot + "!");
+-                        }
++                                    + " can only be VANILLA, SLIMEFUN, or SAVEDITEM for the 1st " + slot + " and VANILLA, SLIMEFUN, SAVEDITEM, or NONE for the 2nd " + slot + "!");
+                     }
+                 }
+ 
+@@ -189,32 +190,23 @@ public class Machines {
+                 ItemStack[] inputs;
+                 ItemStack[] outputs;
+ 
+-                if (input2 == null) {
+-                    inputs = new ItemStack[] {input1};
+-                } else {
+-                    inputs = new ItemStack[] {input1, input2};
+-                }
++                if (input2 == null) inputs = new ItemStack[]{input1};
++                else inputs = new ItemStack[]{input1, input2};
+ 
+-                if (output2 == null) {
+-                    outputs = new ItemStack[] {output1};
+-                } else {
+-                    outputs = new ItemStack[] {output1, output2};
+-                }
++                if (output2 == null) outputs = new ItemStack[]{output1};
++                else outputs = new ItemStack[]{output1, output2};
+                 customRecipe.put(new Pair<>(inputs, outputs), speed);
+-
+             }
+ 
+             new CustomMachine(category, machine.getMachineStack(),
+-                machine.getRecipeType(),
+-                machine.getRecipe(),
+-                machineKey, machine.getProgressItem(), machine.getEnergyConsumption(), machine.getEnergyBuffer(),
+-                customRecipe).register(SlimeCustomizer.getInstance());
++                    machine.getRecipeType(),
++                    machine.getRecipe(),
++                    machineKey, machine.getProgressItem(), machine.getEnergyConsumption(), machine.getEnergyBuffer(),
++                    customRecipe).register(SlimefunAddonInstance.getSFAInstance());
+ 
+             Utils.notify("Machine " + machineKey + " has been registered!");
+-
+         }
+ 
+         return true;
+     }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/registration/MobDrops.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/MobDrops.java
+similarity index 77%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/registration/MobDrops.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/MobDrops.java
+index 94163b8..002ff1b 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/registration/MobDrops.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/MobDrops.java
+@@ -1,21 +1,21 @@
+-package io.ncbpfluffybear.slimecustomizer.registration;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.registration;
+ 
+-import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+-import io.ncbpfluffybear.slimecustomizer.SlimeCustomizer;
+-import io.ncbpfluffybear.slimecustomizer.Utils;
+-import io.ncbpfluffybear.slimecustomizer.objects.SCMobDrop;
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++import id.universenetwork.sfa_loader.addons.slimecustomizer.Utils;
++import id.universenetwork.sfa_loader.addons.slimecustomizer.objects.SCMobDrop;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.utils.LogUtils;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
++import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
++import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+ import org.bukkit.Material;
+ import org.bukkit.entity.EntityType;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.inventory.meta.ItemMeta;
+ 
+ import java.util.List;
+-import java.util.logging.Level;
+ 
+ /**
+  * {@link MobDrops} registers the mob drops
+@@ -24,13 +24,11 @@ import java.util.logging.Level;
+  * @author NCBPFluffyBear
+  */
+ public class MobDrops {
+-
+-    public static boolean register(Config drops) {
++    public static boolean register(AddonConfig drops) {
+         for (String dropKey : drops.getKeys()) {
+-            if (dropKey.equals("EXAMPLE_DROP")) {
+-                SlimeCustomizer.getInstance().getLogger().log(Level.WARNING, "Your mob-drops.yml file still contains the example mob drop! " +
+-                    "Did you forget to set up the plugin?");
+-            }
++            if (dropKey.equals("EXAMPLE_DROP"))
++                LogUtils.warning("Your mob-drops.yml file still contains the example mob drop! " +
++                        "Did you forget to set up the addon?");
+ 
+             String itemType = drops.getString(dropKey + ".item-type");
+             String materialString = drops.getString(dropKey + ".item-id").toUpperCase();
+@@ -40,7 +38,7 @@ public class MobDrops {
+             int chance;
+ 
+             ItemGroup category = Utils.getCategory(drops.getString(dropKey + ".category"), dropKey);
+-            if (category == null) {return false;}
++            if (category == null) return false;
+ 
+             try {
+                 amount = Integer.parseInt(drops.getString(dropKey + ".item-amount"));
+@@ -69,11 +67,9 @@ public class MobDrops {
+                 if (material == null && !materialString.startsWith("SKULL")) {
+                     Utils.disable("The item-id for " + dropKey + " is invalid!");
+                     return false;
+-                } else if (material != null) {
+-                    item = new ItemStack(material);
+-                } else if (materialString.startsWith("SKULL")) {
++                } else if (material != null) item = new ItemStack(material);
++                else if (materialString.startsWith("SKULL"))
+                     item = SlimefunUtils.getCustomHead(materialString.replace("SKULL", ""));
+-                }
+ 
+                 item.setAmount(amount);
+ 
+@@ -88,7 +84,7 @@ public class MobDrops {
+                 tempStack.setItemMeta(tempMeta);
+             } else if (itemType.equalsIgnoreCase("SAVEDITEM")) {
+                 item = Utils.retrieveSavedItem(materialString, amount, true);
+-                if (item == null) {return false;}
++                if (item == null) return false;
+ 
+                 tempStack = new SlimefunItemStack(dropKey, item);
+             } else {
+@@ -118,24 +114,21 @@ public class MobDrops {
+             }
+ 
+             /* Crafting recipe */
+-            ItemStack[] recipe = new ItemStack[] {
++            ItemStack[] recipe = new ItemStack[]{
+                     null, null, null,
+                     null, new CustomItemStack(eggMaterial, "&b" + Utils.capitalize(mobType), "&7Kill a "
+                     + Utils.capitalize(mobType))
+             };
+ 
+-            if (itemType.equalsIgnoreCase("CUSTOM")) {
++            if (itemType.equalsIgnoreCase("CUSTOM"))
+                 new SCMobDrop(category, tempStack, RecipeType.MOB_DROP, recipe, chance
+-                ).register(SlimeCustomizer.getInstance());
+-            } else {
+-                new SCMobDrop(category, tempStack, RecipeType.MOB_DROP, recipe, item, chance
+-                ).register(SlimeCustomizer.getInstance());
+-            }
++                ).register(SlimefunAddonInstance.getSFAInstance());
++            else new SCMobDrop(category, tempStack, RecipeType.MOB_DROP, recipe, item, chance
++            ).register(SlimefunAddonInstance.getSFAInstance());
+ 
+             Utils.notify("Mob drop " + dropKey + " has been registered!");
+         }
+ 
+         return true;
+     }
+-
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/registration/SolarGenerators.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/SolarGenerators.java
+similarity index 68%
+rename from src/main/java/io/ncbpfluffybear/slimecustomizer/registration/SolarGenerators.java
+rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/SolarGenerators.java
+index 9745736..f443f1a 100644
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/registration/SolarGenerators.java
++++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/registration/SolarGenerators.java
+@@ -1,20 +1,20 @@
+-package io.ncbpfluffybear.slimecustomizer.registration;
++package id.universenetwork.sfa_loader.addons.slimecustomizer.registration;
+ 
+ import dev.j3fftw.extrautils.utils.LoreBuilderDynamic;
+-import io.ncbpfluffybear.slimecustomizer.SlimeCustomizer;
+-import io.ncbpfluffybear.slimecustomizer.Utils;
+-import io.ncbpfluffybear.slimecustomizer.objects.CustomSolarGenerator;
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
++import id.universenetwork.sfa_loader.addons.slimecustomizer.Utils;
++import id.universenetwork.sfa_loader.addons.slimecustomizer.objects.CustomSolarGenerator;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
++import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
++import id.universenetwork.sfa_loader.utils.LogUtils;
+ import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
++import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.inventory.meta.ItemMeta;
+ 
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.List;
+-import java.util.logging.Level;
+ import java.util.stream.Collectors;
+ import java.util.stream.Stream;
+ 
+@@ -25,14 +25,12 @@ import java.util.stream.Stream;
+  * @author NCBPFluffyBear
+  */
+ public class SolarGenerators {
+-
+-    public static boolean register(Config generators) {
++    public static boolean register(AddonConfig generators) {
+         for (String generatorKey : generators.getKeys()) {
+-            if (generatorKey.equals("EXAMPLE_SOLAR_GENERATOR")) {
+-                SlimeCustomizer.getInstance().getLogger().log(Level.WARNING, "Your solar-generators.yml file still contains" +
+-                    " the example solar generator! " +
+-                    "Did you forget to set up the plugin?");
+-            }
++            if (generatorKey.equals("EXAMPLE_SOLAR_GENERATOR"))
++                LogUtils.warning("Your solar-generators.yml file still contains" +
++                        " the example solar generator! " +
++                        "Did you forget to set up the addon?");
+ 
+             int dayEnergy;
+             int nightEnergy;
+@@ -40,7 +38,7 @@ public class SolarGenerators {
+             SlimefunItemStack tempStack;
+ 
+             ItemGroup category = Utils.getCategory(generators.getString(generatorKey + ".category"), generatorKey);
+-            if (category == null) {return false;}
++            if (category == null) return false;
+ 
+             // Day time energy rate
+             try {
+@@ -60,28 +58,30 @@ public class SolarGenerators {
+ 
+             // Item material
+             item = Utils.getBlockFromConfig(generatorKey, generators.getString(generatorKey + ".block-type"));
+-            if (item == null) {return false;}
++            if (item == null) return false;
+ 
+             // Crafting recipe type
+             String recipeTypeString = generators.getString(generatorKey + ".crafting-recipe-type").toUpperCase();
+             RecipeType recipeType = Utils.getRecipeType(recipeTypeString, generatorKey);
+             if (recipeType == null) {
+                 Utils.disable("The crafting-recipe-type for " + generatorKey + " is not valid! Refer to the wiki to see" +
+-                    " acceptable inputs.");
++                        " acceptable inputs.");
+                 return false;
+             }
+ 
+             // Crafting recipe
+             ItemStack[] recipe = Utils.buildCraftingRecipe(generators, generatorKey, recipeType);
+-            if (recipe == null) {return false;}
++            if (recipe == null) {
++                return false;
++            }
+ 
+             // Building lore
+             List<String> itemLore = Utils.colorList(Stream.concat(
+-                generators.getStringList(generatorKey + "." + "generator-lore").stream(),
+-                new ArrayList<>(Arrays.asList("", "&eSolar Generator",
+-                    LoreBuilderDynamic.powerPerTick(dayEnergy) + " &7(Day)",
+-                    LoreBuilderDynamic.powerPerTick(nightEnergy) + " &7(Night)"
+-                )).stream()
++                    generators.getStringList(generatorKey + "." + "generator-lore").stream(),
++                    new ArrayList<>(Arrays.asList("", "&eSolar Generator",
++                            LoreBuilderDynamic.powerPerTick(dayEnergy) + " &7(Day)",
++                            LoreBuilderDynamic.powerPerTick(nightEnergy) + " &7(Night)"
++                    )).stream()
+             ).collect(Collectors.toList()));
+ 
+             tempStack = new SlimefunItemStack(generatorKey, item, generators.getString(generatorKey + ".generator-name"));
+@@ -92,11 +92,11 @@ public class SolarGenerators {
+             tempStack.setItemMeta(tempMeta);
+ 
+             new CustomSolarGenerator(category, dayEnergy, nightEnergy, tempStack, recipeType, recipe
+-            ).register(SlimeCustomizer.getInstance());
++            ).register(SlimefunAddonInstance.getSFAInstance());
+ 
+             Utils.notify("Generator " + generatorKey + " has been registered!");
+         }
+ 
+         return true;
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/Links.java b/src/main/java/io/ncbpfluffybear/slimecustomizer/Links.java
+deleted file mode 100644
+index 535b962..0000000
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/Links.java
++++ /dev/null
+@@ -1,19 +0,0 @@
+-package io.ncbpfluffybear.slimecustomizer;
+-
+-/**
+- * This class stores the carious GitHub links
+- * used throughout the addon
+- *
+- * @author NCBPFluffyBear
+- */
+-public class Links {
+-
+-    private static final String PREFIX = "https://github.com/NCBPFluffyBear/SlimeCustomizer#";
+-
+-    public static final String USING_CUSTOM_ITEMS = PREFIX + "using-custom-items";
+-    public static final String COMMANDS = PREFIX + "commands";
+-    public static final String ADDING_YOUR_MACHINE = PREFIX + "adding-your-machine";
+-    public static final String ADDING_YOUR_ITEM = PREFIX + "adding-your-item";
+-
+-
+-}
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/SCTabCompleter.java b/src/main/java/io/ncbpfluffybear/slimecustomizer/SCTabCompleter.java
+deleted file mode 100644
+index a49f9ab..0000000
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/SCTabCompleter.java
++++ /dev/null
+@@ -1,102 +0,0 @@
+-package io.ncbpfluffybear.slimecustomizer;
+-
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+-import io.ncbpfluffybear.slimecustomizer.objects.CustomGenerator;
+-import io.ncbpfluffybear.slimecustomizer.objects.CustomMachine;
+-import io.ncbpfluffybear.slimecustomizer.objects.CustomSCItem;
+-import io.ncbpfluffybear.slimecustomizer.objects.WindowsExplorerStringComparator;
+-import org.bukkit.Bukkit;
+-import org.bukkit.command.Command;
+-import org.bukkit.command.CommandSender;
+-import org.bukkit.command.TabCompleter;
+-import org.bukkit.entity.Player;
+-
+-import java.util.ArrayList;
+-import java.util.Arrays;
+-import java.util.Collections;
+-import java.util.LinkedList;
+-import java.util.List;
+-
+-/**
+- * The {@link SCTabCompleter} serves as a {@link TabCompleter}
+- * for SlimeCustomizer related commands.
+- *
+- * @author NCBPFluffyBear
+- */
+-public class SCTabCompleter implements TabCompleter {
+-    @Override
+-    public List<String> onTabComplete (CommandSender sender, Command cmd, String label, String[] args){
+-        List<String> options = new LinkedList<>();
+-
+-        if (sender instanceof Player) {
+-            Player player = (Player) sender;
+-
+-            if (args.length == 1) {
+-
+-                if (player.hasPermission("slimecustomizer.admin")) {
+-                    options.add("saveitem");
+-                    options.add("give");
+-                    options.add("getsaveditem");
+-                    options.add("categories");
+-                }
+-            } else if (args[0].equals("give") && player.hasPermission("slimecustomizer.admin")) {
+-                switch (args.length) {
+-                    case 2:
+-                        options.addAll(getOnlinePlayers());
+-                        break;
+-                    case 3:
+-                        options.addAll(getSCItems());
+-                        break;
+-                    case 4:
+-                        Collections.addAll(options, "1", "2", "4", "8", "16", "32", "64");
+-                }
+-            } else if (args[0].equals("getsaveditem") && player.hasPermission("slimecustomizer.admin")) {
+-                if (args.length == 2) {
+-                    options.add("gui");
+-
+-                    String[] fileNames = SlimeCustomizer.itemsFolder.list();
+-                    if (fileNames != null) {
+-                        for (int i = 0; i < fileNames.length; i++) {
+-                            fileNames[i] = fileNames[i].replace(".yml", "");
+-                        }
+-                        Arrays.sort(fileNames, new WindowsExplorerStringComparator());
+-                        options.addAll(Arrays.asList(fileNames));
+-                    }
+-
+-                } else if (!args[1].equals("gui")) {
+-                    if (args.length == 3) {
+-                        options.addAll(getOnlinePlayers());
+-                    } else if (args.length == 4) {
+-                        Collections.addAll(options, "1", "2", "4", "8", "16", "32", "64");
+-                    }
+-                }
+-            }
+-        }
+-        return options;
+-    }
+-
+-    private List<String> getSCItems() {
+-        List<SlimefunItem> items = Slimefun.getRegistry().getEnabledSlimefunItems();
+-        List<String> list = new ArrayList<>(items.size());
+-
+-        for (SlimefunItem item : items) {
+-            if (item instanceof CustomSCItem
+-                || item instanceof CustomGenerator
+-                || item instanceof CustomMachine) {
+-                list.add(item.getId());
+-            }
+-        }
+-
+-        return list;
+-    }
+-
+-    private List<String> getOnlinePlayers() {
+-        List<String> players = new ArrayList<>();
+-        for (Player p : Bukkit.getOnlinePlayers()) {
+-            players.add(p.getName());
+-        }
+-
+-        return players;
+-    }
+-}
+\ No newline at end of file
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/SlimeCustomizer.java b/src/main/java/io/ncbpfluffybear/slimecustomizer/SlimeCustomizer.java
+deleted file mode 100644
+index 5423f89..0000000
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/SlimeCustomizer.java
++++ /dev/null
+@@ -1,403 +0,0 @@
+-package io.ncbpfluffybear.slimecustomizer;
+-
+-import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.GitHubBuildsUpdater;
+-import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+-import io.ncbpfluffybear.slimecustomizer.objects.SCMenu;
+-import io.ncbpfluffybear.slimecustomizer.objects.WindowsExplorerStringComparator;
+-import io.ncbpfluffybear.slimecustomizer.registration.Categories;
+-import io.ncbpfluffybear.slimecustomizer.registration.Generators;
+-import io.ncbpfluffybear.slimecustomizer.registration.Items;
+-import io.ncbpfluffybear.slimecustomizer.registration.Machines;
+-import io.ncbpfluffybear.slimecustomizer.registration.MobDrops;
+-import io.ncbpfluffybear.slimecustomizer.registration.SolarGenerators;
+-import lombok.SneakyThrows;
+-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
+-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+-import org.bstats.bukkit.Metrics;
+-import org.bukkit.Bukkit;
+-import org.bukkit.ChatColor;
+-import org.bukkit.Material;
+-import org.bukkit.command.Command;
+-import org.bukkit.command.CommandSender;
+-import org.bukkit.entity.Player;
+-import org.bukkit.inventory.ItemStack;
+-import org.bukkit.inventory.meta.ItemMeta;
+-import org.bukkit.plugin.java.JavaPlugin;
+-
+-import java.io.File;
+-import java.io.IOException;
+-import java.nio.file.Files;
+-import java.util.ArrayList;
+-import java.util.Arrays;
+-import java.util.HashMap;
+-import java.util.List;
+-import java.util.logging.Level;
+-
+-/**
+- * This used to be a smol boi. Now it has grown.
+- *
+- * @author NCBPFluffyBear
+- */
+-public class SlimeCustomizer extends JavaPlugin implements SlimefunAddon {
+-
+-    public static SlimeCustomizer instance;
+-    public static File itemsFolder;
+-
+-    @Override
+-    public void onEnable() {
+-
+-        instance = this;
+-        itemsFolder = new File(this.getDataFolder(), "saveditems");
+-
+-        // Read something from your config.yml
+-        Config cfg = new Config(this);
+-
+-        if (cfg.getBoolean("options.auto-update") && getDescription().getVersion().startsWith("DEV - ")) {
+-            new GitHubBuildsUpdater(this, getFile(), "NCBPFluffyBear/SlimeCustomizer/master/").start();
+-        }
+-
+-        final Metrics metrics = new Metrics(this, 9841);
+-
+-        /* File generation */
+-        final File categoriesFile = new File(getInstance().getDataFolder(), "categories.yml");
+-        copyFile(categoriesFile, "categories");
+-
+-        final File itemsFile = new File(getInstance().getDataFolder(), "items.yml");
+-        copyFile(itemsFile, "items");
+-
+-        final File mobDropsFile = new File(getInstance().getDataFolder(), "mob-drops.yml");
+-        copyFile(mobDropsFile, "mob-drops");
+-
+-
+-        final File machinesFile = new File(getInstance().getDataFolder(), "machines.yml");
+-        copyFile(machinesFile, "machines");
+-
+-
+-        final File generatorsFile = new File(getInstance().getDataFolder(), "generators.yml");
+-        copyFile(generatorsFile, "generators");
+-
+-
+-        final File solarGeneratorsFile = new File(getInstance().getDataFolder(), "solar-generators.yml");
+-        copyFile(solarGeneratorsFile, "solar-generators");
+-
+-
+-        /*
+-        final File passiveMachinesFile = new File(getInstance().getDataFolder(), "passive-machines.yml");
+-        if (!passiveMachinesFile.exists()) {
+-            try {
+-                Files.copy(this.getClass().getResourceAsStream("/passive-machines.yml"), passiveMachinesFile.toPath());
+-            } catch (IOException e) {
+-                getInstance().getLogger().log(Level.SEVERE, "Failed to copy default passive-machines.yml file", e);
+-            }
+-        }
+-
+-         */
+-
+-        if (!itemsFolder.exists()) {
+-            try {
+-                Files.createDirectory(itemsFolder.toPath());
+-            } catch (IOException e) {
+-                getInstance().getLogger().log(Level.SEVERE, "Failed to create saveditems folder", e);
+-            }
+-        }
+-
+-        Config categories = new Config(this, "categories.yml");
+-        Config items = new Config(this, "items.yml");
+-        Config machines = new Config(this, "machines.yml");
+-        Config generators = new Config(this, "generators.yml");
+-        Config solarGenerators = new Config(this, "solar-generators.yml");
+-        Config passiveMachines = new Config(this, "passive-machines.yml");
+-        Config mobDrops = new Config(this, "mob-drops.yml");
+-
+-        this.getCommand("slimecustomizer").setTabCompleter(new SCTabCompleter());
+-
+-        Bukkit.getConsoleSender().sendMessage("[SlimeCustomizer] " + ChatColor.BLUE + "Setting up custom stuff...");
+-        if (!Categories.register(categories)) {return;}
+-        if (!Items.register(items)) {return;}
+-        if (!Machines.register(machines)) {return;}
+-        if (!Generators.register(generators)) {return;}
+-        if (!SolarGenerators.register(solarGenerators)) {return;}
+-        if (!MobDrops.register(mobDrops)) {return;}
+-        Bukkit.getPluginManager().registerEvents(new Events(), instance);
+-    }
+-
+-    @SneakyThrows
+-    @Override
+-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+-        if (sender instanceof Player && args[0].equals("saveitem")) {
+-            Player p = (Player) sender;
+-            if (!Utils.checkPermission(p, "slimecustomizer.admin")) {
+-                return true;
+-            }
+-            int id = 0;
+-            File itemFile = new File(getInstance().getDataFolder().getPath() + "/saveditems", id + ".yml");
+-            while (itemFile.exists()) {
+-                id++;
+-                itemFile = new File(getInstance().getDataFolder().getPath() + "/saveditems", id + ".yml");
+-            }
+-
+-            if (!itemFile.createNewFile()) {
+-                getInstance().getLogger().log(Level.SEVERE, "Failed to create config for item " + id);
+-            }
+-
+-            Config itemFileConfig = new Config(this, "saveditems/" + id + ".yml");
+-            itemFileConfig.setValue("item", p.getInventory().getItemInMainHand());
+-            itemFileConfig.save();
+-            Utils.send(p, "&eYour item has been saved to " + itemFile.getPath() + ". Please refer to " +
+-                "&9" + Links.USING_CUSTOM_ITEMS);
+-
+-        } else if (args[0].equals("give") && args.length > 2) {
+-            if (sender instanceof Player && !Utils.checkPermission((Player) sender, "slimecustomizer.admin")) {
+-                return true;
+-            }
+-
+-            Player target = Bukkit.getPlayer(args[1]);
+-            if (target == null) {
+-                Utils.send(sender, "&cThat player could not be found!");
+-                return true;
+-            }
+-
+-            SlimefunItem sfItem = SlimefunItem.getById(args[2].toUpperCase());
+-            if (sfItem == null) {
+-                Utils.send(sender, "&cThat Slimefun item could not be found!");
+-                return true;
+-            }
+-
+-            int amount;
+-
+-            if (args[3] != null) {
+-
+-                try {
+-                    amount = Integer.parseInt(args[3]);
+-                } catch (NumberFormatException ignored) {
+-                    amount = 1;
+-                }
+-            } else {
+-                amount = 1;
+-            }
+-
+-            giveItems(sender, target, sfItem, amount);
+-
+-        } else if (args[0].equals("getsaveditem") && args.length > 1) {
+-
+-            if (sender instanceof Player && !Utils.checkPermission((Player) sender, "slimecustomizer.admin")) {
+-                return true;
+-            }
+-
+-            if (args[1].equals("gui")) {
+-
+-                if (!(sender instanceof Player)) {
+-                    Utils.send(sender, "&4This command can only be executed in game");
+-                    return true;
+-                }
+-
+-                Player p = (Player) sender;
+-                List<Pair<String, ItemStack>> items = new ArrayList<>();
+-                items.add(new Pair<>(null, null));
+-
+-                String[] fileNames = itemsFolder.list();
+-                if (fileNames != null) {
+-                    for (int i = 0; i < fileNames.length; i++) {
+-                        fileNames[i] = fileNames[i].replace(".yml", "");
+-                    }
+-
+-                    Arrays.sort(fileNames, new WindowsExplorerStringComparator());
+-
+-                    for (String id : fileNames) {
+-                        items.add(new Pair<>(id, Utils.retrieveSavedItem(id, 1, false)));
+-                    }
+-
+-                    int page = 1;
+-                    SCMenu menu = new SCMenu("&a&lSaved Items");
+-                    menu.setSize(54);
+-                    populateMenu(menu, items, page, p);
+-                    menu.setPlayerInventoryClickable(false);
+-                    menu.setBackgroundNonClickable(false);
+-                    menu.open(p);
+-
+-                }
+-
+-            } else {
+-                if (args.length < 4) {
+-                    Utils.send(sender, "&c/sc getsaveditem gui | <item_id> <player_name> <amount>");
+-                    return true;
+-                }
+-
+-                String savedID = args[1];
+-
+-                Player target = Bukkit.getPlayer(args[2]);
+-                if (target == null) {
+-                    Utils.send(sender, "&cThat player could not be found!");
+-                    return true;
+-                }
+-
+-                int amount;
+-
+-                try {
+-                    amount = Integer.parseInt(args[3]);
+-                } catch (NumberFormatException ignored) {
+-                    amount = 1;
+-                }
+-                
+-                ItemStack item = Utils.retrieveSavedItem(savedID, amount, false);
+-                if (item != null) {
+-                    HashMap<Integer, ItemStack> leftovers = target.getInventory().addItem(item);
+-                    for (ItemStack leftover : leftovers.values()) {
+-                        target.getWorld().dropItem(target.getLocation(), leftover);
+-                    }
+-
+-                    Utils.send(sender, "&bYou have given " + target.getName() + " &a" + amount + " &bof &7\"&a" +
+-                            savedID + "&7\"");
+-                } else {
+-                    Utils.send(sender, "&cThat saveditem could not be found!");
+-                }
+-            }
+-        } else if (sender instanceof Player && args[0].equals("categories")) {
+-            Player p = (Player) sender;
+-            if (!Utils.checkPermission(p, "slimecustomizer.admin")) {
+-                return true;
+-            }
+-
+-            SCMenu menu = new SCMenu("&6Category Namespace Guide");
+-            menu.setSize(54);
+-            int slot = 0;
+-            for (ItemGroup group : Slimefun.getRegistry().getAllItemGroups()) {
+-                ItemStack catItem = group.getItem(p).clone();
+-                ItemMeta catMeta = catItem.getItemMeta();
+-                List<String> catLore = catMeta.getLore();
+-
+-                catLore.set(catLore.size() - 1, Utils.color(
+-                        "&6ID: " + group.getKey().getNamespace() + ":" + group.getKey().getKey())
+-                ); // Replaces the "Click to Open" line
+-                catMeta.setLore(catLore);
+-                catItem.setItemMeta(catMeta);
+-                menu.replaceExistingItem(slot, catItem);
+-                menu.addMenuClickHandler(slot, ChestMenuUtils.getEmptyClickHandler());
+-                slot++;
+-            }
+-
+-            menu.setPlayerInventoryClickable(false);
+-            menu.setBackgroundNonClickable(true);
+-            menu.open(p);
+-        } else {
+-            Utils.send(sender, "&eAll commands can be found at &9" + Links.COMMANDS);
+-        }
+-
+-        return true;
+-    }
+-
+-    /**
+-     * Populates the saveditem gui. 45 items per page.
+-     * @param menu the SCMenu to populate
+-     * @param items the List of items
+-     * @param page the page number
+-     * @param p the player that will be viewing this menu
+-     */
+-    private void populateMenu(SCMenu menu, List<Pair<String, ItemStack>> items, int page, Player p) {
+-        for (int i = 45; i < 54; i++) {
+-            menu.replaceExistingItem(i, ChestMenuUtils.getBackground());
+-        }
+-
+-        menu.wipe(0, 44, true);
+-
+-        for (int i = 0; i < 45; i++) {
+-            int itemIndex = i + 1 + (page - 1) * 45;
+-            ItemStack item = getItemOrNull(items, itemIndex);
+-            if (item != null) {
+-                ItemMeta im = item.getItemMeta();
+-                if (im == null) {
+-                    Utils.notify("An item has no metadata! Is it corrupted? " + items.get(itemIndex).getFirstValue());
+-                    continue;
+-                }
+-                List<String> lore = im.getLore();
+-
+-                if (lore == null) {
+-                    lore = new ArrayList<>(Arrays.asList("", Utils.color("&bID: " + items.get(itemIndex).getFirstValue()),
+-                        Utils.color("&a> Click to get this item")));
+-                } else {
+-                    lore.addAll(new ArrayList<>(Arrays.asList("", Utils.color("&bID: " + items.get(itemIndex).getFirstValue()),
+-                        Utils.color("&a> Click to get this item"))));
+-                }
+-
+-                im.setLore(lore);
+-                item.setItemMeta(im);
+-                menu.replaceExistingItem(i, item);
+-                menu.addMenuClickHandler(i, (pl, s, is, action) -> {
+-                    HashMap<Integer, ItemStack> leftovers = p.getInventory().addItem(getItemOrNull(items, itemIndex));
+-                    for (ItemStack leftover : leftovers.values()) {
+-                        p.getWorld().dropItem(p.getLocation(), leftover);
+-                    }
+-                    return false;
+-                });
+-            }
+-        }
+-
+-        if (page != 1) {
+-            menu.replaceExistingItem(46, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&aPrevious Page"));
+-            menu.addMenuClickHandler(46, (pl, s, is, action) -> {
+-                populateMenu(menu, items, page - 1, p);
+-                return false;
+-            });
+-        }
+-
+-        if (getItemOrNull(items, 45 * page) != null) {
+-            menu.replaceExistingItem(52, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&aNext Page"));
+-            menu.addMenuClickHandler(52, (pl, s, is, action) -> {
+-                populateMenu(menu, items, page + 1, p);
+-                return false;
+-            });
+-        }
+-
+-    }
+-
+-    private ItemStack getItemOrNull(List<Pair<String, ItemStack>> items, int index) {
+-        ItemStack item;
+-        try {
+-            item = items.get(index).getSecondValue().clone();
+-        } catch (IndexOutOfBoundsException e) {
+-            item = null;
+-        }
+-        return item;
+-    }
+-
+-    private void giveItems(CommandSender s, Player p, SlimefunItem sfItem, int amount) {
+-        p.getInventory().addItem(new CustomItemStack(sfItem.getRecipeOutput(), amount));
+-        Utils.send(s, "&bYou have given " + p.getName() + " &a" + amount + " &7\"&b" + sfItem.getItemName() + "&7\"");
+-    }
+-
+-    private void copyFile(File file, String name) {
+-        if (!file.exists()) {
+-            try {
+-                Files.copy(this.getClass().getResourceAsStream("/"+ name + ".yml"), file.toPath());
+-            } catch (IOException e) {
+-                getInstance().getLogger().log(Level.SEVERE, "Failed to copy default " + name + ".yml file", e);
+-            }
+-        }
+-    }
+-
+-    @Override
+-    public void onDisable() {
+-        // Logic for disabling the plugin...
+-    }
+-
+-    @Override
+-    public String getBugTrackerURL() {
+-        return "https://github.com/NCBPFluffyBear/SlimeCustomizer/issues";
+-    }
+-
+-    @Override
+-    public JavaPlugin getJavaPlugin() {
+-        return this;
+-    }
+-
+-    public static SlimeCustomizer getInstance() {
+-        return instance;
+-    }
+-
+-}
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCNotPlaceable.java b/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCNotPlaceable.java
+deleted file mode 100644
+index 4c5f3d7..0000000
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/SCNotPlaceable.java
++++ /dev/null
+@@ -1,4 +0,0 @@
+-package io.ncbpfluffybear.slimecustomizer.objects;
+-
+-public interface SCNotPlaceable {
+-}
+diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/WindowsExplorerStringComparator.java b/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/WindowsExplorerStringComparator.java
+deleted file mode 100644
+index 29ae6b7..0000000
+--- a/src/main/java/io/ncbpfluffybear/slimecustomizer/objects/WindowsExplorerStringComparator.java
++++ /dev/null
+@@ -1,114 +0,0 @@
+-package io.ncbpfluffybear.slimecustomizer.objects;
+-
+-import java.util.Comparator;
+-
+-public class WindowsExplorerStringComparator implements Comparator<String>
+-{
+-    private String str1, str2;
+-    private int pos1, pos2, len1, len2;
+-
+-    public int compare(String s1, String s2)
+-    {
+-        str1 = s1;
+-        str2 = s2;
+-        len1 = str1.length();
+-        len2 = str2.length();
+-        pos1 = pos2 = 0;
+-
+-        int result = 0;
+-        while (result == 0 && pos1 < len1 && pos2 < len2)
+-        {
+-            char ch1 = str1.charAt(pos1);
+-            char ch2 = str2.charAt(pos2);
+-
+-            if (Character.isDigit(ch1))
+-            {
+-                result = Character.isDigit(ch2) ? compareNumbers() : -1;
+-            }
+-            else if (Character.isLetter(ch1))
+-            {
+-                result = Character.isLetter(ch2) ? compareOther(true) : 1;
+-            }
+-            else
+-            {
+-                result = Character.isDigit(ch2) ? 1
+-                    : Character.isLetter(ch2) ? -1
+-                    : compareOther(false);
+-            }
+-
+-            pos1++;
+-            pos2++;
+-        }
+-
+-        return result == 0 ? len1 - len2 : result;
+-    }
+-
+-    private int compareNumbers()
+-    {
+-        int end1 = pos1 + 1;
+-        while (end1 < len1 && Character.isDigit(str1.charAt(end1)))
+-        {
+-            end1++;
+-        }
+-        int fullLen1 = end1 - pos1;
+-        while (pos1 < end1 && str1.charAt(pos1) == '0')
+-        {
+-            pos1++;
+-        }
+-
+-        int end2 = pos2 + 1;
+-        while (end2 < len2 && Character.isDigit(str2.charAt(end2)))
+-        {
+-            end2++;
+-        }
+-        int fullLen2 = end2 - pos2;
+-        while (pos2 < end2 && str2.charAt(pos2) == '0')
+-        {
+-            pos2++;
+-        }
+-
+-        int delta = (end1 - pos1) - (end2 - pos2);
+-        if (delta != 0)
+-        {
+-            return delta;
+-        }
+-
+-        while (pos1 < end1 && pos2 < end2)
+-        {
+-            delta = str1.charAt(pos1++) - str2.charAt(pos2++);
+-            if (delta != 0)
+-            {
+-                return delta;
+-            }
+-        }
+-
+-        pos1--;
+-        pos2--;
+-
+-        return fullLen2 - fullLen1;
+-    }
+-
+-    private int compareOther(boolean isLetters)
+-    {
+-        char ch1 = str1.charAt(pos1);
+-        char ch2 = str2.charAt(pos2);
+-
+-        if (ch1 == ch2)
+-        {
+-            return 0;
+-        }
+-
+-        if (isLetters)
+-        {
+-            ch1 = Character.toUpperCase(ch1);
+-            ch2 = Character.toUpperCase(ch2);
+-            if (ch1 != ch2)
+-            {
+-                ch1 = Character.toLowerCase(ch1);
+-                ch2 = Character.toLowerCase(ch2);
+-            }
+-        }
+-
+-        return ch1 - ch2;
+-    }
+-}
+diff --git a/src/main/resources/categories.yml b/src/main/resources/addons-config/SlimeCustomizer/categories.yml
+similarity index 100%
+rename from src/main/resources/categories.yml
+rename to src/main/resources/addons-config/SlimeCustomizer/categories.yml
+diff --git a/src/main/resources/generators.yml b/src/main/resources/addons-config/SlimeCustomizer/generators.yml
+similarity index 100%
+rename from src/main/resources/generators.yml
+rename to src/main/resources/addons-config/SlimeCustomizer/generators.yml
+diff --git a/src/main/resources/items.yml b/src/main/resources/addons-config/SlimeCustomizer/items.yml
+similarity index 100%
+rename from src/main/resources/items.yml
+rename to src/main/resources/addons-config/SlimeCustomizer/items.yml
+diff --git a/src/main/resources/machines.yml b/src/main/resources/addons-config/SlimeCustomizer/machines.yml
+similarity index 100%
+rename from src/main/resources/machines.yml
+rename to src/main/resources/addons-config/SlimeCustomizer/machines.yml
+diff --git a/src/main/resources/mob-drops.yml b/src/main/resources/addons-config/SlimeCustomizer/mob-drops.yml
+similarity index 100%
+rename from src/main/resources/mob-drops.yml
+rename to src/main/resources/addons-config/SlimeCustomizer/mob-drops.yml
+diff --git a/src/main/resources/solar-generators.yml b/src/main/resources/addons-config/SlimeCustomizer/solar-generators.yml
+similarity index 100%
+rename from src/main/resources/solar-generators.yml
+rename to src/main/resources/addons-config/SlimeCustomizer/solar-generators.yml
+diff --git a/src/main/resources/config.yml b/src/main/resources/config.yml
+deleted file mode 100644
+index e9bcdf9..0000000
+--- a/src/main/resources/config.yml
++++ /dev/null
+@@ -1,2 +0,0 @@
+-options:
+-  auto-update: true
+\ No newline at end of file
+diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
+deleted file mode 100644
+index 3a073bf..0000000
+--- a/src/main/resources/plugin.yml
++++ /dev/null
+@@ -1,93 +0,0 @@
+-## CHANGE this to the name of your plugin.
+-name: SlimeCustomizer
+-
+-## CHANGE this to your username.
+-author: NCBPFluffyBear
+-
+-## CHANGE this to a meaninful but short description of your plugin.
+-description: A Slimefun4 addon that allows the creation of items through simple configuration files
+-
+-## CHANGE this to the path of the class that extends JavaPlugin.
+-main: io.ncbpfluffybear.slimecustomizer.SlimeCustomizer
+-
+-## You can change this to link to your website or repository. You can also remove this line if you want to.
+-website: https://github.com/NCBPFluffyBear/SlimeCustomizer
+-
+-## This is required and marks Slimefun as a plugin dependency.
+-depend: [Slimefun]
+-softdepend:
+-  - ChestTerminal
+-  - ColoredEnderChests
+-  - DyedBackpacks
+-  - EcoPower
+-  - ElectricSpawners
+-  - ExoticGarden
+-  - ExtraGear
+-  - ExtraHeads
+-  - HotbarPets
+-  - luckyblocks-sf
+-  - PrivateStorage
+-  - SlimefunOreChunks
+-  - SlimyTreeTaps
+-  - SoulJars
+-  - CommandOverride
+-  - CS-CoreLib
+-  - EmeraldEnchants2
+-  - QuickMarket
+-  - QuickSell
+-  - RankPrefixPlus
+-  - LiteXpansion
+-  - MobCapturer
+-  - SoundMuffler
+-  - ExtraTools
+-  - TranscEndence
+-  - Liquid
+-  - SFCalc
+-  - SlimefunWarfare
+-  - Slimy-Power-Suits
+-  - FluffyMachines
+-  - SlimyRepair
+-  - InfinityExpansion
+-  - FoxyMachines
+-  - GlobalWarming
+-  - DynaTech
+-  - GeneticChickengineering
+-  - HeadLimiter
+-  - SlimeXpansion
+-  - Barrels
+-  - ClayTech
+-  - FNAmplifications
+-  - SMG
+-  - EMC2
+-  - Simple-Storage
+-  - AlchimiaVitae
+-  - SlimeTinker
+-  - PotionExpansion
+-  - FlowerPower
+-  - Galactifun
+-  - Element-Manipulation
+-  - CrystamaeHistoria
+-  - DankTech2
+-  - Networks
+-  - VillagerUtil
+-  - MissileWarfare
+-  - SensibleToolbox
+-  - RelicsOfCthonia
+-  - Supreme
+-
+-  ## This value is automatically replaced by the version specified in your pom.xml file, do not change this.
+-version: ${project.version}
+-
+-## This is the minimum minecraft version required to run your plugin.
+-api-version: 1.16
+-
+-commands:
+-  slimecustomizer:
+-    description: SlimeCustomizer Command
+-    usage: /<command>
+-    aliases: [sc]
+-
+-permissions:
+-  slimecustomizer.admin:
+-    description: Give access to SlimeCustomizer admin commands
+-    default: op
+-- 
+2.44.0.windows.1
+

@@ -1,6 +1,6 @@
-From ae8400ebd0ea521a20247118be96248227aa5d6f Mon Sep 17 00:00:00 2001
+From 642c83a427d3bbbc721bbc5b6084487f077c11fc Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Fri, 8 Mar 2024 21:23:25 +0700
+Date: Sat, 16 Mar 2024 21:59:22 +0700
 Subject: [PATCH] InfinityGuizhanLib-Standalone
 
 ---
@@ -68,7 +68,7 @@ Subject: [PATCH] InfinityGuizhanLib-Standalone
  .../minecraft/utils/TestItemUtil.java         |  55 ---
  .../libraries}/guizhanlib/common/Event.java   |  10 +-
  .../slimefun/addon/AbstractAddon.java         | 133 +------
- .../slimefun/addon/AddonConfig.java           | 106 +++++-
+ .../slimefun/addon/AddonConfig.java           | 129 ++++++-
  .../slimefun/addon/Environment.java           |   2 +-
  .../slimefun/addon/PathBuilder.java           |   2 +-
  .../guizhanlib/slimefun/addon/Scheduler.java  |   7 +-
@@ -112,7 +112,7 @@ Subject: [PATCH] InfinityGuizhanLib-Standalone
  .../guizhanlib/updater/UpdaterTask.java       | 283 ---------------
  .../guizhanlib/updater/package-info.java      |   4 -
  pom.xml                                       | 207 +----------
- 108 files changed, 247 insertions(+), 2200 deletions(-)
+ 108 files changed, 270 insertions(+), 2200 deletions(-)
  rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/common/Cooldown.java (94%)
  rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/common/PersistentType.java (99%)
  rename GuizhanLib-common/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/common/RateLimit.java (97%)
@@ -175,7 +175,7 @@ Subject: [PATCH] InfinityGuizhanLib-Standalone
  delete mode 100644 GuizhanLib-minecraft/src/test/java/net/guizhanss/guzihanlib/minecraft/utils/TestItemUtil.java
  rename {GuizhanLib-common/src/main/java/net/guizhanss => GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries}/guizhanlib/common/Event.java (78%)
  rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/AbstractAddon.java (58%)
- rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/AddonConfig.java (63%)
+ rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/AddonConfig.java (59%)
  rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/Environment.java (83%)
  rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/PathBuilder.java (94%)
  rename GuizhanLib-slimefun/src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/libraries}/guizhanlib/slimefun/addon/Scheduler.java (88%)
@@ -1857,13 +1857,13 @@ index 7587e48..53213e2 100644
       * Get the {@link AddonConfig}
       *
 diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/AddonConfig.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/AddonConfig.java
-similarity index 63%
+similarity index 59%
 rename from GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/AddonConfig.java
 rename to GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/AddonConfig.java
-index 1b64fe2..66ecf1e 100644
+index 1b64fe2..18a6522 100644
 --- a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/AddonConfig.java
 +++ b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/AddonConfig.java
-@@ -1,19 +1,20 @@
+@@ -1,19 +1,21 @@
 -package net.guizhanss.guizhanlib.slimefun.addon;
 -
 -import net.guizhanss.guizhanlib.utils.StringUtil;
@@ -1875,6 +1875,7 @@ index 1b64fe2..66ecf1e 100644
 +import org.bukkit.Location;
 +import org.bukkit.Sound;
 +import org.bukkit.World;
++import org.bukkit.configuration.ConfigurationSection;
  import org.bukkit.configuration.file.YamlConfiguration;
 +import org.bukkit.inventory.Inventory;
  
@@ -1894,7 +1895,7 @@ index 1b64fe2..66ecf1e 100644
  
  /**
   * Represent an extended {@link YamlConfiguration} from addon.
-@@ -30,14 +31,31 @@ public final class AddonConfig extends YamlConfiguration {
+@@ -30,14 +32,31 @@ public final class AddonConfig extends YamlConfiguration {
      private final File file;
  
      public AddonConfig(@Nonnull String path) {
@@ -1930,7 +1931,7 @@ index 1b64fe2..66ecf1e 100644
      }
  
      public int getInt(@Nonnull String path, int min, int max) {
-@@ -88,6 +106,13 @@ public final class AddonConfig extends YamlConfiguration {
+@@ -88,6 +107,13 @@ public final class AddonConfig extends YamlConfiguration {
          }
      }
  
@@ -1944,7 +1945,7 @@ index 1b64fe2..66ecf1e 100644
      public void setDefault(@Nonnull String path, @Nullable Object obj) {
          if (!contains(path)) {
              set(path, obj);
-@@ -225,4 +250,57 @@ public final class AddonConfig extends YamlConfiguration {
+@@ -225,4 +251,79 @@ public final class AddonConfig extends YamlConfiguration {
  
          return yamlBuilder.toString();
      }
@@ -2000,6 +2001,28 @@ index 1b64fe2..66ecf1e 100644
 +        } else {
 +            super.set(path, value);
 +        }
++    }
++
++    /**
++     * Returns all paths in this Config
++     *
++     * @return All paths in this Config
++     */
++    @Nonnull
++    public Set<String> getKeys() {
++        return getKeys(false);
++    }
++
++    /**
++     * Returns all sub-paths in this Config
++     *
++     * @param path The path in the Config File
++     * @return All sub-paths of the specified path
++     */
++    @Nonnull
++    public Set<String> getKeys(@Nonnull String path) {
++        ConfigurationSection section = getConfigurationSection(path);
++        return section == null ? new HashSet<>() : section.getKeys(false);
 +    }
  }
 diff --git a/GuizhanLib-slimefun/src/main/java/net/guizhanss/guizhanlib/slimefun/addon/Environment.java b/GuizhanLib-slimefun/src/main/java/id/universenetwork/sfa_loader/libraries/guizhanlib/slimefun/addon/Environment.java

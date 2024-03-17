@@ -31,6 +31,7 @@
         <module>PrivateStorage</module>
         <module>SFCalc</module>
         <module>SfChunkInfo</module>
+        <module>SlimeCustomizer</module>
         <module>SlimefunTranslation</module>
         <module>SlimeHUD</module>
         <module>SMG</module>

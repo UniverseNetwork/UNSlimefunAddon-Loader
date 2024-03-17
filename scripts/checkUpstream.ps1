@@ -58,6 +58,7 @@ if ($args[0]) {
         checkUpstream Addons/PrivateStorage
         checkUpstream Addons/SFCalc
         checkUpstream Addons/SfChunkInfo
+        checkUpstream Addons/SlimeCustomizer
         checkUpstream Addons/SlimefunTranslation
         checkUpstream Addons/SMG
         checkUpstream Addons/SoundMuffler

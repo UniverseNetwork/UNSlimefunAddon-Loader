@@ -170,6 +170,11 @@
             <version>Unoffical-1.6.1</version>
         </dependency>
         <dependency>
+            <groupId>io.ncbpfluffybear</groupId>
+            <artifactId>SlimeCustomizer</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>net.guizhanss</groupId>
             <artifactId>SlimefunTranslation</artifactId>
             <version>UNOFFICIAL</version>
