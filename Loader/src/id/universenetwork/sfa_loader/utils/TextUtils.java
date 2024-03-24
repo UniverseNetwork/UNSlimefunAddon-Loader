@@ -1,6 +1,7 @@
 package id.universenetwork.sfa_loader.utils;
 
 import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
+import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
@@ -11,6 +12,13 @@ import java.util.Arrays;
 
 @UtilityClass
 public class TextUtils {
+    /**
+     * Send multiple messages to {@link SpecialCommandSender} with prefix and translated color codes
+     */
+    public void send(SpecialCommandSender sender, String... txt) {
+        send(sender.getSender(), txt);
+    }
+
     /**
      * Send multiple messages to {@link CommandSender} with prefix and translated color codes
      */

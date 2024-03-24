@@ -1,18 +1,18 @@
-From 52926a7b6873d7bb62a2296ee142b65a8bcca9f3 Mon Sep 17 00:00:00 2001
+From 7926072e38ea9eaf82f6414200b814ec7ab8873f Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 25 Feb 2024 08:40:58 +0700
+Date: Sun, 24 Mar 2024 11:41:52 +0700
 Subject: [PATCH] SfChunkInfo
 
 ---
  pom.xml                                       | 114 +----
  .../addons/sfchunkinfo/SfChunkInfo.java       |  19 +
- .../sfchunkinfo/commands/ScanChunk.java       | 434 ++++++++----------
+ .../sfchunkinfo/commands/ScanChunk.java       | 435 ++++++++----------
  .../me/fnfal113/sfchunkinfo/SfChunkInfo.java  |  55 ---
  src/main/resources/config.yml                 |   3 -
  src/main/resources/plugin.yml                 |  18 -
- 6 files changed, 225 insertions(+), 418 deletions(-)
+ 6 files changed, 226 insertions(+), 418 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/sfchunkinfo/SfChunkInfo.java
- rename src/main/java/{me/fnfal113 => id/universenetwork/sfa_loader/addons}/sfchunkinfo/commands/ScanChunk.java (52%)
+ rename src/main/java/{me/fnfal113 => id/universenetwork/sfa_loader/addons}/sfchunkinfo/commands/ScanChunk.java (50%)
  delete mode 100644 src/main/java/me/fnfal113/sfchunkinfo/SfChunkInfo.java
  delete mode 100644 src/main/resources/config.yml
  delete mode 100644 src/main/resources/plugin.yml
@@ -195,13 +195,13 @@ index 0000000..da91da5
 +}
 \ No newline at end of file
 diff --git a/src/main/java/me/fnfal113/sfchunkinfo/commands/ScanChunk.java b/src/main/java/id/universenetwork/sfa_loader/addons/sfchunkinfo/commands/ScanChunk.java
-similarity index 52%
+similarity index 50%
 rename from src/main/java/me/fnfal113/sfchunkinfo/commands/ScanChunk.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/sfchunkinfo/commands/ScanChunk.java
-index 5a330d5..208c29c 100644
+index 5a330d5..85f5079 100644
 --- a/src/main/java/me/fnfal113/sfchunkinfo/commands/ScanChunk.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfchunkinfo/commands/ScanChunk.java
-@@ -1,236 +1,200 @@
+@@ -1,236 +1,201 @@
 -package me.fnfal113.sfchunkinfo.commands;
 -
 -import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -439,11 +439,7 @@ index 5a330d5..208c29c 100644
 -    }
 +package id.universenetwork.sfa_loader.addons.sfchunkinfo.commands;
 +
-+import cloud.commandframework.annotations.Argument;
-+import cloud.commandframework.annotations.CommandMethod;
-+import cloud.commandframework.annotations.CommandPermission;
-+import cloud.commandframework.annotations.suggestions.Suggestions;
-+import cloud.commandframework.context.CommandContext;
++import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 +import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 +import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
@@ -454,38 +450,43 @@ index 5a330d5..208c29c 100644
 +import net.md_5.bungee.api.chat.hover.content.Text;
 +import org.bukkit.*;
 +import org.bukkit.block.Block;
-+import org.bukkit.command.CommandSender;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.entity.Player;
++import org.incendo.cloud.annotations.Argument;
++import org.incendo.cloud.annotations.Command;
++import org.incendo.cloud.annotations.Permission;
++import org.incendo.cloud.annotations.suggestion.Suggestions;
++import org.incendo.cloud.context.CommandContext;
 +
 +import java.util.*;
 +import java.util.stream.Collectors;
 +
++@SuppressWarnings("unused")
 +public class ScanChunk {
 +    private final Map<String, Integer> AMOUNT = new HashMap<>();
 +    private final Map<String, String> INFO = new HashMap<>();
 +    private final Map<String, Double> TIMINGS = new HashMap<>();
 +    private final Map<String, Integer> POWER = new HashMap<>();
 +
-+    @CommandMethod("sfchunkinfo")
-+    @CommandPermission("sfchunkinfo.scan")
-+    public void scanCmd(final CommandSender sender) {
-+        if (sender instanceof Player) {
-+            Player p = (Player) sender;
++    @Command("sfchunkinfo")
++    @Permission("sfchunkinfo.scan")
++    public void scanCmd(final SpecialCommandSender sender) {
++        if (sender.isPlayer()) {
++            Player p = sender.getPlayer();
 +            Chunk chunk = p.getLocation().getChunk();
 +
 +            getAmount(chunk, p);
 +        }
 +    }
 +
-+    @CommandMethod("sfchunkinfo <player>")
-+    @CommandPermission("sfchunkinfo.scan.others")
-+    public void scanOthersCmd(final CommandSender sender,
++    @Command("sfchunkinfo <player>")
++    @Permission("sfchunkinfo.scan.others")
++    public void scanOthersCmd(final SpecialCommandSender sender,
 +                              final @Argument(value = "player", suggestions = "players") String name) {
 +        Player target = Bukkit.getPlayer(name);
 +
 +        if (target == null) {
-+            sender.sendMessage(ChatColor.RED + "Player should not be null nor offline!");
++            sender.sendMessage("&cPlayer should not be null nor offline!");
 +
 +            return;
 +        }
@@ -516,18 +517,18 @@ index 5a330d5..208c29c 100644
 +        sendResults(player);
 +    }
 +
-+    public void getAmountOthers(Chunk chunk, Player player, CommandSender sender) {
++    public void getAmountOthers(Chunk chunk, Player player, SpecialCommandSender sender) {
 +        scanChunk(chunk);
 +
-+        sender.sendMessage(ChatColor.GOLD + "# of Slimefun blocks on " + ChatColor.WHITE + player.getName() + ChatColor.GOLD + " chunk:", "");
++        sender.sendMessage("&6# of Slimefun blocks on &f" + player.getName() + " &6chunk:", "");
 +
 +        if (AMOUNT.isEmpty()) {
-+            sender.sendMessage(ChatColor.YELLOW + "No Slimefun blocks on " + ChatColor.WHITE + player.getName() + ChatColor.GOLD + " chunk");
++            sender.sendMessage("&eNo Slimefun blocks on &f" + player.getName() + " &6chunk");
 +
 +            return;
 +        }
 +
-+        sendResults(sender);
++        sendResults(sender.getPlayer());
 +    }
 +
 +    public void scanChunk(Chunk chunk) {
@@ -565,14 +566,14 @@ index 5a330d5..208c29c 100644
 +            POWER.put(sfItem.getItemName(), POWER.getOrDefault(sfItem.getItemName(), 0) + demand);
 +    }
 +
-+    public void sendResults(CommandSender sender) {
++    public void sendResults(Player player) {
 +        AMOUNT.entrySet().stream()
 +                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-+                .forEachOrdered(e -> sender.sendMessage(e.getKey() + ": " + ChatColor.GREEN + e.getValue()));
++                .forEachOrdered(e -> player.sendMessage(e.getKey() + ": &a" + e.getValue()));
 +
-+        sender.spigot().sendMessage(hoverInfo(INFO));
-+        sender.spigot().sendMessage(hoverInfoTimings(TIMINGS));
-+        sender.spigot().sendMessage(hoverInfoPower(POWER));
++        player.spigot().sendMessage(hoverInfo(INFO));
++        player.spigot().sendMessage(hoverInfoTimings(TIMINGS));
++        player.spigot().sendMessage(hoverInfoPower(POWER));
 +
 +        AMOUNT.clear();
 +        INFO.clear();
@@ -633,7 +634,7 @@ index 5a330d5..208c29c 100644
 +    }
 +
 +    @Suggestions("players")
-+    public List<String> player(CommandContext<CommandSender> sender, String context) {
++    public List<String> player(CommandContext<SpecialCommandSender> sender, String context) {
 +        return Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).filter(s -> s.startsWith(context)).collect(Collectors.toList());
 +    }
  }

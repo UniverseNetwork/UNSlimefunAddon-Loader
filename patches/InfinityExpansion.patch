@@ -1,6 +1,6 @@
-From 7d94f6369456093b7803ec42a97ac1a23806b21f Mon Sep 17 00:00:00 2001
+From bd4bc4413e675b8ab7f87ed635e65bcb30b916bc Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Fri, 8 Mar 2024 21:27:27 +0700
+Date: Sun, 24 Mar 2024 11:41:00 +0700
 Subject: [PATCH] InfinityExpansion
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] InfinityExpansion
  .../infinityexpansion/InfinityExpansion.java  |  72 ++++
  .../infinityexpansion/categories/Groups.java  |  24 +-
  .../categories/InfinityGroup.java             | 188 ++++------
- .../commands/GiveRecipe.java                  |  57 ++++
+ .../commands/GiveRecipe.java                  |  54 +++
  .../infinityexpansion/commands/PrintItem.java |  31 ++
  .../infinityexpansion/commands/SetData.java   | 104 ++++++
  .../infinityexpansion/items/Researches.java   |  29 +-
@@ -63,7 +63,7 @@ Subject: [PATCH] InfinityExpansion
  .../InfinityExpansion}/config.yml             |  10 +-
  src/main/resources/plugin.yml                 |  27 --
  .../TestInfinityExpansion.java                |  28 --
- 59 files changed, 1921 insertions(+), 2800 deletions(-)
+ 59 files changed, 1918 insertions(+), 2800 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/InfinityExpansion.java
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/Groups.java (69%)
  rename src/main/java/{io/github/mooy1 => id/universenetwork/sfa_loader/addons}/infinityexpansion/categories/InfinityGroup.java (74%)
@@ -770,62 +770,59 @@ index 0311375..3d3b4f4 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/commands/GiveRecipe.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/commands/GiveRecipe.java
 new file mode 100644
-index 0000000..9041778
+index 0000000..157187f
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/commands/GiveRecipe.java
-@@ -0,0 +1,57 @@
+@@ -0,0 +1,54 @@
 +package id.universenetwork.sfa_loader.addons.infinityexpansion.commands;
 +
-+import cloud.commandframework.annotations.Argument;
-+import cloud.commandframework.annotations.CommandDescription;
-+import cloud.commandframework.annotations.CommandMethod;
-+import cloud.commandframework.annotations.CommandPermission;
-+import cloud.commandframework.annotations.suggestions.Suggestions;
-+import cloud.commandframework.context.CommandContext;
++import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 +import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 +import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
 +import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 +import org.bukkit.ChatColor;
-+import org.bukkit.command.CommandSender;
-+import org.bukkit.entity.Player;
 +import org.bukkit.inventory.ItemStack;
++import org.incendo.cloud.annotations.Argument;
++import org.incendo.cloud.annotations.Command;
++import org.incendo.cloud.annotations.CommandDescription;
++import org.incendo.cloud.annotations.Permission;
++import org.incendo.cloud.annotations.suggestion.Suggestions;
++import org.incendo.cloud.context.CommandContext;
 +
 +import java.util.ArrayList;
 +import java.util.List;
 +
 +@SuppressWarnings("unused")
 +public final class GiveRecipe {
-+    @CommandMethod("infinityexpansion|ie|ix|infinity giverecipe <id>")
-+    @CommandPermission("infinityexpansion.giverecipe")
++    @Command("infinityexpansion|ie|ix|infinity giverecipe <id>")
++    @Permission("infinityexpansion.giverecipe")
 +    @CommandDescription("Gives all the items in a Slimefun item recipe")
-+    public void cmdGiveRecipe(final CommandSender sender,
++    public void cmdGiveRecipe(final SpecialCommandSender sender,
 +                              final @Argument(value = "id", suggestions = "idList") String id) {
-+        if (!(sender instanceof Player)) {
-+            sender.sendMessage("Only players can use this!");
++        if (!sender.isPlayer()) {
++            sender.getSender().sendMessage("Only players can use this!");
 +            return;
 +        }
 +
 +        SlimefunItem sfItem = SlimefunItem.getById(id.toUpperCase());
 +
 +        if (sfItem == null || sfItem instanceof MultiBlockMachine || sfItem.getRecipeType() == RecipeType.GEO_MINER) {
-+            sender.sendMessage(ChatColor.RED + "Invalid Slimefun item!");
++            sender.getSender().sendMessage(ChatColor.RED + "Invalid Slimefun item!");
 +            return;
 +        }
 +
-+        sender.sendMessage(ChatColor.GREEN + "Gave recipe for " + sfItem.getItemName());
-+
-+        Player p = (Player) sender;
++        sender.getSender().sendMessage(ChatColor.GREEN + "Gave recipe for " + sfItem.getItemName());
 +
 +        List<ItemStack> recipe = new ArrayList<>();
 +
 +        for (ItemStack e : sfItem.getRecipe()) if (e != null) recipe.add(e);
 +
-+        p.getInventory().addItem(recipe.toArray(new ItemStack[0]));
++        sender.getPlayer().getInventory().addItem(recipe.toArray(new ItemStack[0]));
 +    }
 +
 +    @Suggestions("idList")
-+    public List<String> idList(CommandContext<CommandSender> sender, String context) {
++    public List<String> idList(CommandContext<SpecialCommandSender> sender, String context) {
 +        List<String> tabs = new ArrayList<>();
 +        for (SlimefunItem item : Slimefun.getRegistry().getEnabledSlimefunItems()) tabs.add(item.getId());
 +        return tabs;
@@ -834,30 +831,30 @@ index 0000000..9041778
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/commands/PrintItem.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/commands/PrintItem.java
 new file mode 100644
-index 0000000..4270b46
+index 0000000..66b2959
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/commands/PrintItem.java
 @@ -0,0 +1,31 @@
 +package id.universenetwork.sfa_loader.addons.infinityexpansion.commands;
 +
-+import cloud.commandframework.annotations.CommandDescription;
-+import cloud.commandframework.annotations.CommandMethod;
-+import cloud.commandframework.annotations.CommandPermission;
++import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
 +import org.bukkit.ChatColor;
 +import org.bukkit.Material;
-+import org.bukkit.command.CommandSender;
 +import org.bukkit.entity.Player;
 +import org.bukkit.inventory.ItemStack;
++import org.incendo.cloud.annotations.Command;
++import org.incendo.cloud.annotations.CommandDescription;
++import org.incendo.cloud.annotations.Permission;
 +
 +@SuppressWarnings("unused")
 +public final class PrintItem {
-+    @CommandMethod("infinityexpansion|ie|ix|infinity printitem")
-+    @CommandPermission("infinityexpansion.printitem")
++    @Command("infinityexpansion|ie|ix|infinity printitem")
++    @Permission("infinityexpansion.printitem")
 +    @CommandDescription("Prints the internal data of an item for debugging purposes")
-+    public void cmdPrintItem(final CommandSender sender) {
-+        if (!(sender instanceof Player)) return;
++    public void cmdPrintItem(final SpecialCommandSender sender) {
++        if (!sender.isPlayer()) return;
 +
-+        Player p = (Player) sender;
++        Player p = sender.getPlayer();
 +
 +        ItemStack item = p.getInventory().getItemInMainHand();
 +
@@ -872,45 +869,45 @@ index 0000000..4270b46
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/commands/SetData.java b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/commands/SetData.java
 new file mode 100644
-index 0000000..49d9bf7
+index 0000000..2156732
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/infinityexpansion/commands/SetData.java
 @@ -0,0 +1,104 @@
 +package id.universenetwork.sfa_loader.addons.infinityexpansion.commands;
 +
-+import cloud.commandframework.annotations.Argument;
-+import cloud.commandframework.annotations.CommandDescription;
-+import cloud.commandframework.annotations.CommandMethod;
-+import cloud.commandframework.annotations.CommandPermission;
-+import cloud.commandframework.annotations.suggestions.Suggestions;
-+import cloud.commandframework.context.CommandContext;
 +import id.universenetwork.sfa_loader.addons.infinityexpansion.items.storage.StorageUnit;
++import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 +import me.mrCookieSlime.Slimefun.api.BlockStorage;
 +import org.bukkit.ChatColor;
 +import org.bukkit.FluidCollisionMode;
 +import org.bukkit.Material;
 +import org.bukkit.block.Block;
-+import org.bukkit.command.CommandSender;
 +import org.bukkit.entity.Player;
++import org.incendo.cloud.annotations.Argument;
++import org.incendo.cloud.annotations.Command;
++import org.incendo.cloud.annotations.CommandDescription;
++import org.incendo.cloud.annotations.Permission;
++import org.incendo.cloud.annotations.suggestion.Suggestions;
++import org.incendo.cloud.context.CommandContext;
 +
 +import java.util.ArrayList;
 +import java.util.List;
 +
 +@SuppressWarnings("unused")
 +public final class SetData {
-+    @CommandMethod("infinityexpansion|ie|ix|infinity setdata <key> <value>")
-+    @CommandPermission("infinityexpansion.setdata")
++    @Command("infinityexpansion|ie|ix|infinity setdata <key> <value>")
++    @Permission("infinityexpansion.setdata")
 +    @CommandDescription("Set slimefun block data of the block you are looking at")
-+    public void cmdSetData(final CommandSender sender,
++    public void cmdSetData(final SpecialCommandSender sender,
 +                           final @Argument(value = "key", suggestions = "keyList") String key,
 +                           final @Argument(value = "value", suggestions = "valueList") String value) {
-+        if (!(sender instanceof Player)) {
-+            sender.sendMessage("Only players can use this!");
++        if (!sender.isPlayer()) {
++            sender.getSender().sendMessage("Only players can use this!");
 +            return;
 +        }
 +
-+        Player p = (Player) sender;
++        Player p = sender.getPlayer();
 +
 +        Block target = p.getTargetBlockExact(8, FluidCollisionMode.NEVER);
 +
@@ -943,22 +940,22 @@ index 0000000..49d9bf7
 +        if (unit instanceof StorageUnit) ((StorageUnit) unit).reloadCache(target);
 +    }
 +
-+    @Suggestions(value = "keyList")
-+    public List<String> keyList(CommandContext<CommandSender> sender, String context) {
-+        return parseArgs(sender.getSender(), context, true);
++    @Suggestions("keyList")
++    public List<String> keyList(CommandContext<SpecialCommandSender> sender, String context) {
++        return parseArgs(sender.sender(), context, true);
 +    }
 +
-+    @Suggestions(value = "valueList")
-+    public List<String> valueList(CommandContext<CommandSender> sender, String context) {
-+        return parseArgs(sender.getSender(), context, false);
++    @Suggestions("valueList")
++    public List<String> valueList(CommandContext<SpecialCommandSender> sender, String context) {
++        return parseArgs(sender.sender(), context, false);
 +    }
 +
-+    private List<String> parseArgs(CommandSender sender, String context, boolean isKey) {
++    private List<String> parseArgs(SpecialCommandSender sender, String context, boolean isKey) {
 +        final List<String> list = new ArrayList<>();
 +
-+        if (!(sender instanceof Player)) return list;
++        if (!sender.isPlayer()) return list;
 +
-+        Player p = (Player) sender;
++        Player p = sender.getPlayer();
 +
 +        Block target = p.getTargetBlockExact(8, FluidCollisionMode.NEVER);
 +

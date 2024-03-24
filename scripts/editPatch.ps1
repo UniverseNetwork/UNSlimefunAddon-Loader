@@ -35,7 +35,9 @@ if ($dir) {
     $name=Split-Path $dir -Leaf
     Set-Location "$basedir/$dir"
 
-    $branch=(git remote show origin | Select-String -Pattern "HEAD branch:").ToString().Split(":")[1].Trim(" ")
+    if (-not ($method -eq "recreate")) {
+        $branch = (git remote show origin | Select-String -Pattern "HEAD branch:").ToString().Split(":")[1].Trim(" ")
+    }
 
     if ($method -eq "fetch") {
         Write-Host "Fetching & Rolling back $name..." -f yellow

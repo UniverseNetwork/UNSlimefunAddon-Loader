@@ -1,19 +1,18 @@
 package id.universenetwork.sfa_loader.command;
 
-import cloud.commandframework.annotations.Argument;
-import cloud.commandframework.annotations.CommandDescription;
-import cloud.commandframework.annotations.CommandMethod;
-import cloud.commandframework.annotations.CommandPermission;
-import cloud.commandframework.annotations.suggestions.Suggestions;
-import cloud.commandframework.context.CommandContext;
+
 import id.universenetwork.sfa_loader.AddonsLoader;
 import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
+import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
 import id.universenetwork.sfa_loader.template.AddonTemplate;
 import id.universenetwork.sfa_loader.utils.LogUtils;
 import id.universenetwork.sfa_loader.utils.TextUtils;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.incendo.cloud.annotations.*;
+import org.incendo.cloud.annotations.exception.ExceptionHandler;
+import org.incendo.cloud.annotations.suggestion.Suggestions;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.exception.NoPermissionException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,17 +21,17 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public final class MainCommand {
-    @CommandMethod("slimefunaddon-loader|sfa-loader|sfal|sfa")
+    @Command(value = "slimefunaddon-loader|sfa-loader|sfal|sfa")
     @CommandDescription("Main command of SlimefunAddon-Loader")
-    public void cmd(final CommandSender sender) {
-        TextUtils.sendCentered(sender,
+    public void cmd(final SpecialCommandSender sender) {
+        TextUtils.sendCentered(sender.getSender(),
                 "", "&aSF&dAddon &bLoader &6v" + AbstractAddon.getInstance().getDescription().getVersion(),
                 "&dMade By &bARVIN&a3108 &cI&fD &dfor &bUniverse&eNetwork", "");
     }
 
-    @CommandMethod("slimefunaddon-loader|sfa-loader|sfal|sfa reload-config all")
-    @CommandPermission("sfaloader.command.reload.all")
-    public void cmdReloadAll(final CommandSender sender) {
+    @Command("slimefunaddon-loader|sfa-loader|sfal|sfa reload-config all")
+    @Permission("sfaloader.command.reload.all")
+    public void cmdReloadAll(final SpecialCommandSender sender) {
         LogUtils.info("&eReloading all configuration files...");
         AbstractAddon.getAddonConfig().reload();
         Set<AddonTemplate> loadedAddon = AddonsLoader.getLoadedAddons();
@@ -40,26 +39,25 @@ public final class MainCommand {
             AddonConfig config = addon.getConfig();
             if (config != null) config.reload();
         }
-        if (sender instanceof Player) TextUtils.send(sender,
+        if (sender.isPlayer()) TextUtils.send(sender,
                 "%p% &aAll configuration files have been reloaded!");
         LogUtils.info("&aAll configuration files have been reloaded!");
     }
 
-    @CommandMethod("slimefunaddon-loader|sfa-loader|sfal|sfa reload-config plugin")
-    @CommandPermission("sfaloader.command.reload.plugin")
-    public void cmdReloadPlugin(final CommandSender sender) {
+    @Command("slimefunaddon-loader|sfa-loader|sfal|sfa reload-config plugin")
+    @Permission("sfaloader.command.reload.plugin")
+    public void cmdReloadPlugin(final SpecialCommandSender sender) {
         LogUtils.info("&eReloading plugin configuration files...");
         AbstractAddon.getAddonConfig().reload();
-        if (sender instanceof Player) TextUtils.send(sender,
+        if (sender.isPlayer()) TextUtils.send(sender,
                 "%p% &aPlugin configuration files have been reloaded!");
         LogUtils.info("&aPlugin configuration files have been reloaded!");
     }
 
-    @CommandMethod("slimefunaddon-loader|sfa-loader|sfal|sfa reload-config addons [addon]")
-    @CommandPermission("sfaloader.command.reload.addons")
-    public void cmdReloadPlugin(final CommandSender sender,
-                                final @Argument(value = "addon", defaultValue = "all",
-                                        suggestions = "enabledAddonsList") String addonName) {
+    @Command("slimefunaddon-loader|sfa-loader|sfal|sfa reload-config addons [addon]")
+    @Permission("sfaloader.command.reload.addons")
+    public void cmdReloadPlugin(final SpecialCommandSender sender,
+                                final @Argument(value = "addon", suggestions = "enabledAddonsList") @Default("all") String addonName) {
         final Set<AddonTemplate> loadedAddon = AddonsLoader.getLoadedAddons();
         if (addonName.equals("all")) {
             LogUtils.info("&eReloading all addons configuration files...");
@@ -67,7 +65,7 @@ public final class MainCommand {
                 AddonConfig config = addon.getConfig();
                 if (config != null) config.reload();
             }
-            if (sender instanceof Player) TextUtils.send(sender,
+            if (sender.isPlayer()) TextUtils.send(sender.getSender(),
                     "%p% &aAll addons configuration files have been reloaded!");
             LogUtils.info("&aAll addons configuration files have been reloaded!");
         } else if (AddonsLoader.isAddonLoaded(addonName)) {
@@ -84,7 +82,7 @@ public final class MainCommand {
                 LogUtils.info("&eReloading the &d" + addon.getClass().getSimpleName() +
                         " &eaddon configuration file...");
                 cfg.reload();
-                if (sender instanceof Player) TextUtils.send(sender, "%p% &d" + addon.getClass()
+                if (sender.isPlayer()) TextUtils.send(sender, "%p% &d" + addon.getClass()
                         .getSimpleName() + " &aaddon configuration file have been reloaded!");
                 LogUtils.info("&d" + addon.getClass().getSimpleName() +
                         " &aaddon configuration file have been reloaded!");
@@ -93,11 +91,16 @@ public final class MainCommand {
     }
 
     @Suggestions("enabledAddonsList")
-    public List<String> enabledAddonsList(CommandContext<CommandSender> sender, String context) {
+    public List<String> enabledAddonsList(CommandContext<SpecialCommandSender> sender, String context) {
         final List<String> list = new ArrayList<>();
-        final Set<AddonTemplate> addons = AddonsLoader.getLoadedAddons();
-        for (AddonTemplate addon : addons)
+        for (AddonTemplate addon : AddonsLoader.getLoadedAddons())
             if (addon.getConfig() != null) list.add(addon.getClass().getSimpleName());
         return list;
+    }
+
+    @ExceptionHandler(NoPermissionException.class)
+    public void handleNoPerm(SpecialCommandSender sender) {
+        LogUtils.warning("Someone tried illegal actions!");
+        sender.sendMessage(AbstractAddon.getAddonConfig().getString("plugin-settings.no-perm"));
     }
 }

@@ -1,13 +1,13 @@
-From 52043747ea6a7d7440ad3aaad07af9d4f1a0ff6a Mon Sep 17 00:00:00 2001
+From 9fc5a7b1fda70be218c0e43fd17e273d7e864c00 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Mon, 4 Mar 2024 09:20:14 +0700
+Date: Sun, 24 Mar 2024 11:41:16 +0700
 Subject: [PATCH] SFCalc
 
 ---
  README.md                                     | 10 +-
  pom.xml                                       | 86 ++----------------
- .../sfa_loader/addons/sfcalc/CalcCommand.java | 22 +++++
- .../sfa_loader/addons}/sfcalc/Calculator.java | 74 +++++++--------
+ .../sfa_loader/addons/sfcalc/CalcCommand.java | 23 +++++
+ .../sfa_loader/addons}/sfcalc/Calculator.java | 85 ++++++++---------
  .../addons/sfcalc/NeededCommand.java          | 67 ++++++++++++++
  .../sfa_loader/addons}/sfcalc/SFCalc.java     | 62 ++++---------
  .../addons}/sfcalc/StringRegistry.java        | 26 ++----
@@ -15,9 +15,9 @@ Subject: [PATCH] SFCalc
  .../github/seggan/sfcalc/SFCalcMetrics.java   | 54 -----------
  .../{ => addons-config/SFCalc}/config.yml     |  2 -
  src/main/resources/plugin.yml                 | 13 ---
- 11 files changed, 164 insertions(+), 343 deletions(-)
+ 11 files changed, 171 insertions(+), 348 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/CalcCommand.java
- rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/Calculator.java (66%)
+ rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/Calculator.java (61%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java
  rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/SFCalc.java (50%)
  rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/StringRegistry.java (79%)
@@ -203,17 +203,18 @@ index 7ce30c7..9fc1a64 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/CalcCommand.java b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/CalcCommand.java
 new file mode 100644
-index 0000000..161800f
+index 0000000..2d2527e
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/CalcCommand.java
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,23 @@
 +package id.universenetwork.sfa_loader.addons.sfcalc;
 +
-+import cloud.commandframework.annotations.Argument;
-+import cloud.commandframework.annotations.CommandDescription;
-+import cloud.commandframework.annotations.CommandMethod;
-+import cloud.commandframework.annotations.specifier.Range;
-+import org.bukkit.command.CommandSender;
++import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
++import org.incendo.cloud.annotation.specifier.Range;
++import org.incendo.cloud.annotations.Argument;
++import org.incendo.cloud.annotations.Command;
++import org.incendo.cloud.annotations.CommandDescription;
++import org.incendo.cloud.annotations.Default;
 +
 +@SuppressWarnings("unused")
 +public class CalcCommand extends NeededCommand {
@@ -221,31 +222,32 @@ index 0000000..161800f
 +        super(ins);
 +    }
 +
-+    @CommandMethod("sfcalc|sfc calc <item> [amount]")
++    @Command("sfcalc|sfc calc <item> [amount]")
 +    @CommandDescription("Calculates the resources needed for a given item")
-+    public void cmdCalc(final CommandSender sender,
++    public void cmdCalc(final SpecialCommandSender sender,
 +                        final @Argument(value = "item", suggestions = "itemlist") String reqItem,
-+                        final @Argument(value = "amount", defaultValue = "1") @Range(min = "1") long amount) {
++                        final @Argument("amount") @Default("1") @Range(min = "1") long amount) {
 +        execute(sender, reqItem, amount, false);
 +    }
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/github/seggan/sfcalc/Calculator.java b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/Calculator.java
-similarity index 66%
+similarity index 61%
 rename from src/main/java/io/github/seggan/sfcalc/Calculator.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/Calculator.java
-index b0e328c..55cc49e 100644
+index b0e328c..f3e0ade 100644
 --- a/src/main/java/io/github/seggan/sfcalc/Calculator.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/Calculator.java
-@@ -1,5 +1,6 @@
+@@ -1,5 +1,7 @@
 -package io.github.seggan.sfcalc;
 +package id.universenetwork.sfa_loader.addons.sfcalc;
  
 +import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
++import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
  import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
-@@ -13,8 +14,6 @@ import javax.annotation.Nonnull;
+@@ -13,8 +15,6 @@ import javax.annotation.Nonnull;
  import javax.annotation.Nullable;
  import java.util.*;
  
@@ -254,7 +256,7 @@ index b0e328c..55cc49e 100644
  /**
   * The main class for the calculator
   *
-@@ -22,34 +21,31 @@ import static io.github.seggan.sfcalc.StringRegistry.format;
+@@ -22,34 +22,31 @@ import static io.github.seggan.sfcalc.StringRegistry.format;
   * @author TheBusyBiscuit
   */
  public class Calculator {
@@ -274,12 +276,14 @@ index b0e328c..55cc49e 100644
 -     * @param item the Slimefun item to calculate
 +     * @param item   the Slimefun item to calculate
       * @param amount the amount to calculate for
-      * @param needed whether it should print out how many are needed. Requires {@code sender instanceof Player}
+-     * @param needed whether it should print out how many are needed. Requires {@code sender instanceof Player}
 -     * to be {@code true}
++     * @param needed whether it should print out how many are needed. Requires {@code sender.isPlayer()}
 +     *               to be {@code true}
       */
-     public void printResults(@Nonnull CommandSender sender, @Nonnull SlimefunItem item, long amount, boolean needed) {
+-    public void printResults(@Nonnull CommandSender sender, @Nonnull SlimefunItem item, long amount, boolean needed) {
 -        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
++    public void printResults(@Nonnull SpecialCommandSender sender, @Nonnull SlimefunItem item, long amount, boolean needed) {
 +        Bukkit.getScheduler().runTaskAsynchronously(AbstractAddon.getInstance(), () -> {
              Map<ItemStack, Long> results = calculate(item, amount);
  
@@ -298,7 +302,18 @@ index b0e328c..55cc49e 100644
  
              sender.sendMessage(header);
  
-@@ -67,12 +63,10 @@ public class Calculator {
+@@ -57,8 +54,8 @@ public class Calculator {
+             List<Map.Entry<ItemStack, Long>> entries = new ArrayList<>(results.entrySet());
+             entries.sort(Comparator.comparingLong(Map.Entry::getValue));
+ 
+-            if (needed && sender instanceof Player) {
+-                Map<ItemStack, Long> inv = getInventoryAsItemList((Player) sender);
++            if (needed && sender.isPlayer()) {
++                Map<ItemStack, Long> inv = getInventoryAsItemList(sender.getPlayer());
+ 
+                 for (Map.Entry<ItemStack, Long> entry : entries) {
+                     long inInventory = inv.getOrDefault(entry.getKey(), 0L);
+@@ -67,12 +64,10 @@ public class Calculator {
                      if (a < 0) a = 0;
                      String parsedAmount;
                      int maxStackSize = entry.getKey().getMaxStackSize();
@@ -311,11 +326,11 @@ index b0e328c..55cc49e 100644
 +                    if (a <= maxStackSize) parsedAmount = Long.toString(a);
 +                    else
 +                        parsedAmount = StringRegistry.format(registry.getStackString(), a, (long) Math.floor((double) a / maxStackSize), maxStackSize, a % maxStackSize);
-+                    sender.sendMessage(StringRegistry.format(registry.getNeededString(), getBasicName(entry.getKey()), parsedAmount));
++                    sender.getSender().sendMessage(StringRegistry.format(registry.getNeededString(), getBasicName(entry.getKey()), parsedAmount));
                  }
              } else {
                  for (Map.Entry<ItemStack, Long> entry : entries) {
-@@ -80,12 +74,10 @@ public class Calculator {
+@@ -80,12 +75,10 @@ public class Calculator {
                      if (originalValues <= 0) continue;
                      String parsedAmount;
                      int maxStackSize = entry.getKey().getMaxStackSize();
@@ -328,11 +343,11 @@ index b0e328c..55cc49e 100644
 +                    if (originalValues <= maxStackSize) parsedAmount = Long.toString(originalValues);
 +                    else
 +                        parsedAmount = StringRegistry.format(registry.getStackString(), originalValues, (long) Math.floor(originalValues / (float) maxStackSize), maxStackSize, originalValues % maxStackSize);
-+                    sender.sendMessage(StringRegistry.format(registry.getAmountString(), getBasicName(entry.getKey()), parsedAmount));
++                    sender.getSender().sendMessage(StringRegistry.format(registry.getAmountString(), getBasicName(entry.getKey()), parsedAmount));
                  }
              }
          });
-@@ -97,9 +89,7 @@ public class Calculator {
+@@ -97,9 +90,7 @@ public class Calculator {
  
          for (ItemStack item : player.getInventory().getContents()) {
              // if the Item is null or air, it will return null too
@@ -343,7 +358,7 @@ index b0e328c..55cc49e 100644
              add(inv, item, item.getAmount());
          }
  
-@@ -110,10 +100,10 @@ public class Calculator {
+@@ -110,16 +101,16 @@ public class Calculator {
      public Map<ItemStack, Long> calculate(@Nonnull SlimefunItem parent, long amount) {
  
          Map<ItemStack, Long> result = new HashMap<>();
@@ -352,13 +367,20 @@ index b0e328c..55cc49e 100644
 -		int multiplier = parent.getRecipeOutput().getAmount();
 -		long operations = (amount + multiplier - 1) / multiplier; //ceiling(needed/multiplier) but abusing fast ints
 +
-+        // uncraft the material first to bypass the blacklist
++        // Uncraft the material first to bypass the blacklist
 +        int multiplier = parent.getRecipeOutput().getAmount();
 +        long operations = (amount + multiplier - 1) / multiplier; //ceiling(needed/multiplier) but abusing fast ints
          for (ItemStack item : parent.getRecipe()) {
              if (item == null) continue;
              add(result, item, item.getAmount() * operations);
-@@ -144,17 +134,15 @@ public class Calculator {
+         }
+ 
+-        //uncraft submaterials
++        // Uncraft submaterials
+         SlimefunItemStack next = getNextItem(result);
+         while (next != null) {
+             multiplier = next.getItem().getRecipeOutput().getAmount();
+@@ -144,17 +135,15 @@ public class Calculator {
       */
      @Nullable
      private SlimefunItemStack getNextItem(Map<ItemStack, Long> map) {
@@ -382,7 +404,7 @@ index b0e328c..55cc49e 100644
          return null;
      }
  
-@@ -168,4 +156,4 @@ public class Calculator {
+@@ -168,4 +157,4 @@ public class Calculator {
      private String getBasicName(ItemStack stack) {
          return ChatColor.stripColor(ItemUtils.getItemName(stack));
      }
@@ -391,22 +413,22 @@ index b0e328c..55cc49e 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java
 new file mode 100644
-index 0000000..ba964bf
+index 0000000..9436475
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java
 @@ -0,0 +1,67 @@
 +package id.universenetwork.sfa_loader.addons.sfcalc;
 +
-+import cloud.commandframework.annotations.Argument;
-+import cloud.commandframework.annotations.CommandDescription;
-+import cloud.commandframework.annotations.CommandMethod;
-+import cloud.commandframework.annotations.specifier.Range;
-+import cloud.commandframework.annotations.suggestions.Suggestions;
-+import cloud.commandframework.context.CommandContext;
++import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
 +import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 +import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-+import org.bukkit.command.CommandSender;
-+import org.bukkit.entity.Player;
++import org.incendo.cloud.annotation.specifier.Range;
++import org.incendo.cloud.annotations.Argument;
++import org.incendo.cloud.annotations.Command;
++import org.incendo.cloud.annotations.CommandDescription;
++import org.incendo.cloud.annotations.Default;
++import org.incendo.cloud.annotations.suggestion.Suggestions;
++import org.incendo.cloud.context.CommandContext;
 +
 +import java.util.*;
 +
@@ -419,11 +441,11 @@ index 0000000..ba964bf
 +        this.instance = ins;
 +    }
 +
-+    protected void execute(CommandSender sender, String reqItem, long amount, boolean needed) {
++    protected void execute(SpecialCommandSender sender, String reqItem, long amount, boolean needed) {
 +        SFCalc.REPORTER.executeOrElseReport(() -> {
 +            StringRegistry registry = instance.getStringRegistry();
 +
-+            if (!(sender instanceof Player) && needed) {
++            if (!sender.isPlayer() && needed) {
 +                sender.sendMessage(StringRegistry.format(registry.getNotAPlayerString()));
 +                return;
 +            }
@@ -439,16 +461,16 @@ index 0000000..ba964bf
 +        });
 +    }
 +
-+    @CommandMethod("sfcalc|sfc needed <item> [amount]")
++    @Command("sfcalc|sfc needed <item> [amount]")
 +    @CommandDescription("Tells you how much more resources are needed")
-+    public void cmdNeeded(final CommandSender sender,
++    public void cmdNeeded(final SpecialCommandSender sender,
 +                          final @Argument(value = "item", suggestions = "itemlist") String reqItem,
-+                          final @Argument(value = "amount", defaultValue = "1") @Range(min = "1") long amount) {
++                          final @Argument("amount") @Default("1") @Range(min = "1") long amount) {
 +        execute(sender, reqItem, amount, true);
 +    }
 +
-+    @Suggestions(value = "itemList")
-+    public List<String> itemList(CommandContext<CommandSender> sender, String context) {
++    @Suggestions("itemList")
++    public List<String> itemList(CommandContext<SpecialCommandSender> sender, String context) {
 +        List<String> tabs = new ArrayList<>();
 +
 +        SFCalc.REPORTER.executeOrElseReport(() -> {

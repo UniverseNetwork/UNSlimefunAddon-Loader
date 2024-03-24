@@ -1,48 +1,44 @@
 package id.universenetwork.sfa_loader.managers;
 
-import cloud.commandframework.CommandTree;
-import cloud.commandframework.annotations.AnnotationParser;
-import cloud.commandframework.arguments.parser.ParserParameters;
-import cloud.commandframework.arguments.parser.StandardParameters;
-import cloud.commandframework.bukkit.CloudBukkitCapabilities;
-import cloud.commandframework.exceptions.NoPermissionException;
-import cloud.commandframework.execution.CommandExecutionCoordinator;
-import cloud.commandframework.meta.CommandMeta;
-import cloud.commandframework.paper.PaperCommandManager;
+
 import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
+import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
 import id.universenetwork.sfa_loader.utils.LogUtils;
-import id.universenetwork.sfa_loader.utils.TextUtils;
 import lombok.experimental.UtilityClass;
 import org.bukkit.command.CommandSender;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.annotations.AnnotationParser;
+import org.incendo.cloud.annotations.BuilderDecorator;
+import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
+import org.incendo.cloud.description.CommandDescription;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.paper.PaperCommandManager;
 
-import java.util.function.Function;
 import java.util.logging.Level;
 
 @UtilityClass
 public class CommandManager {
     private boolean initialized = false;
-    private AnnotationParser<CommandSender> parser;
+    private AnnotationParser<SpecialCommandSender> parser;
 
     public void init() {
         if (initialized) throw new IllegalStateException("Command Manager is already initialized!");
         LogUtils.info("&eInitializing Command Manager...");
         try {
-            Function<CommandTree<CommandSender>, CommandExecutionCoordinator<CommandSender>>
-                    executionCoordinatorFunction = CommandExecutionCoordinator.simpleCoordinator();
-            Function<CommandSender, CommandSender> mapperFunction = Function.identity();
-            PaperCommandManager<CommandSender> manager = new PaperCommandManager<>(
-                    AbstractAddon.getInstance(), executionCoordinatorFunction, mapperFunction, mapperFunction);
-            Function<ParserParameters, CommandMeta> commandMetaFunction = param -> CommandMeta.simple()
-                    .with(CommandMeta.DESCRIPTION, param.get(
-                            StandardParameters.DESCRIPTION, "No description"))
-                    .build();
-            parser = new AnnotationParser<>(manager, CommandSender.class, commandMetaFunction);
+            ExecutionCoordinator<SpecialCommandSender> executionCoordinator = ExecutionCoordinator.simpleCoordinator();
+            SenderMapper<CommandSender, SpecialCommandSender> senderMapper = SenderMapper.create(
+                    SpecialCommandSender::new,
+                    SpecialCommandSender::getSender
+            );
+            PaperCommandManager<SpecialCommandSender> manager = new PaperCommandManager<>(
+                    AbstractAddon.getInstance(), executionCoordinator, senderMapper);
+            parser = new AnnotationParser<>(manager, SpecialCommandSender.class);
             if (manager.hasCapability(CloudBukkitCapabilities.BRIGADIER)) manager.registerBrigadier();
             if (manager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION))
                 manager.registerAsynchronousCompletions();
-            manager.registerExceptionHandler(NoPermissionException.class, (sender, e) ->
-                    TextUtils.send(sender, AbstractAddon.getAddonConfig()
-                            .getString("plugin-settings.no-perm")));
+            parser.registerBuilderDecorator(
+                    BuilderDecorator.defaultDescription(CommandDescription.commandDescription("No description"))
+            );
             LogUtils.info("&aCommand Manager has been initialized!");
             initialized = true;
         } catch (Exception e) {

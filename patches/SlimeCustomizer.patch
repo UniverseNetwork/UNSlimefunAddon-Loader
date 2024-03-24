@@ -1,6 +1,6 @@
-From e3cec35709ddefee8b59c30e6b31089b70da4556 Mon Sep 17 00:00:00 2001
+From 91704fd62a5f44eb579b89a84fcbfdcf764ccd3a Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 17 Mar 2024 07:38:10 +0700
+Date: Sun, 24 Mar 2024 11:45:07 +0700
 Subject: [PATCH] SlimeCustomizer
 
 ---
@@ -8,9 +8,9 @@ Subject: [PATCH] SlimeCustomizer
  .../addons}/slimecustomizer/Events.java       |  59 +--
  .../addons/slimecustomizer/Links.java         |  19 +
  .../addons}/slimecustomizer/Registry.java     |  10 +-
- .../addons/slimecustomizer/SCCommand.java     | 259 +++++++++++
+ .../addons/slimecustomizer/SCCommand.java     | 326 ++++++++++++++
  .../slimecustomizer/SlimeCustomizer.java      | 108 +++++
- .../addons}/slimecustomizer/Utils.java        | 216 ++++------
+ .../addons}/slimecustomizer/Utils.java        | 226 ++++------
  .../objects/CustomGenerator.java              |  25 +-
  .../objects/CustomMachine.java                |  42 +-
  .../objects/CustomPassiveMachine.java         |  12 +-
@@ -42,13 +42,13 @@ Subject: [PATCH] SlimeCustomizer
  .../SlimeCustomizer}/solar-generators.yml     |   0
  src/main/resources/config.yml                 |   2 -
  src/main/resources/plugin.yml                 |  93 ----
- 38 files changed, 916 insertions(+), 1482 deletions(-)
+ 38 files changed, 983 insertions(+), 1492 deletions(-)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/Events.java (72%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Links.java
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/Registry.java (52%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SCCommand.java
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SlimeCustomizer.java
- rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/Utils.java (58%)
+ rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/Utils.java (56%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/objects/CustomGenerator.java (85%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/objects/CustomMachine.java (76%)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/objects/CustomPassiveMachine.java (97%)
@@ -403,20 +403,15 @@ index 918e576..687968a 100644
  }
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SCCommand.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SCCommand.java
 new file mode 100644
-index 0000000..1c3e519
+index 0000000..618df5e
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SCCommand.java
-@@ -0,0 +1,259 @@
+@@ -0,0 +1,326 @@
 +package id.universenetwork.sfa_loader.addons.slimecustomizer;
 +
-+import cloud.commandframework.annotations.Argument;
-+import cloud.commandframework.annotations.CommandMethod;
-+import cloud.commandframework.annotations.CommandPermission;
-+import cloud.commandframework.annotations.specifier.Range;
-+import cloud.commandframework.annotations.suggestions.Suggestions;
-+import cloud.commandframework.context.CommandContext;
 +import id.universenetwork.sfa_loader.addons.slimecustomizer.objects.*;
 +import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
++import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
 +import id.universenetwork.sfa_loader.utils.LogUtils;
 +import id.universenetwork.sfa_loader.utils.TextUtils;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
@@ -428,10 +423,18 @@ index 0000000..1c3e519
 +import lombok.SneakyThrows;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Material;
-+import org.bukkit.command.CommandSender;
 +import org.bukkit.entity.Player;
 +import org.bukkit.inventory.ItemStack;
 +import org.bukkit.inventory.meta.ItemMeta;
++import org.incendo.cloud.annotation.specifier.Range;
++import org.incendo.cloud.annotations.Argument;
++import org.incendo.cloud.annotations.Command;
++import org.incendo.cloud.annotations.Default;
++import org.incendo.cloud.annotations.Permission;
++import org.incendo.cloud.annotations.exception.ExceptionHandler;
++import org.incendo.cloud.annotations.suggestion.Suggestions;
++import org.incendo.cloud.context.CommandContext;
++import org.incendo.cloud.exception.NoPermissionException;
 +
 +import java.io.File;
 +import java.util.*;
@@ -440,11 +443,10 @@ index 0000000..1c3e519
 +@SuppressWarnings("unused")
 +public class SCCommand {
 +    @SneakyThrows
-+    @CommandMethod("slimecustomizer|sc saveitem")
-+    @CommandPermission("slimecustomizer.admin")
-+    public void saveItemCmd(final CommandSender sender) {
-+        if (!(sender instanceof Player)) return;
-+        Player p = (Player) sender;
++    @Command("slimecustomizer|sc saveitem")
++    @Permission("slimecustomizer.admin")
++    public void saveItemCmd(final SpecialCommandSender sender) {
++        if (!sender.isPlayer()) return;
 +        int id = 0;
 +        File itemFile = new File(SlimeCustomizer.getInstance().getAddonFolder(), "saveditems/" + id + ".yml");
 +        while (itemFile.exists()) {
@@ -455,18 +457,18 @@ index 0000000..1c3e519
 +        if (!itemFile.createNewFile()) LogUtils.severe("Failed to create config for item " + id);
 +
 +        AddonConfig itemFileConfig = new AddonConfig(new File(SlimeCustomizer.getInstance().getAddonFolder(), "saveditems/" + id + ".yml"), false);
-+        itemFileConfig.set("item", p.getInventory().getItemInMainHand());
++        itemFileConfig.set("item", sender.getPlayer().getInventory().getItemInMainHand());
 +        itemFileConfig.save();
-+        Utils.send(p, "&eYour item has been saved to " + itemFile.getPath() + ". Please refer to " +
++        Utils.send(sender, "&eYour item has been saved to " + itemFile.getPath() + ". Please refer to " +
 +                "&9" + Links.USING_CUSTOM_ITEMS);
 +    }
 +
-+    @CommandMethod("slimecustomizer|sc give <player> <scItem> [amount]")
-+    @CommandPermission("slimecustomizer.admin")
-+    public void giveCmd(final CommandSender sender,
++    @Command("slimecustomizer|sc give <player> <scItem> [amount]")
++    @Permission("slimecustomizer.admin")
++    public void giveCmd(final SpecialCommandSender sender,
 +                        final @Argument(value = "player", suggestions = "playerList") String name,
 +                        final @Argument(value = "scItem", suggestions = "scItemList") String item,
-+                        final @Argument(value = "amount", suggestions = "amountList", defaultValue = "1") @Range(min = "1") int amount) {
++                        final @Argument("amount") @Default("1") @Range(min = "1") int amount) {
 +        Player target = Bukkit.getPlayer(name);
 +        if (target == null) {
 +            Utils.send(sender, "&cThat player could not be found!");
@@ -484,31 +486,26 @@ index 0000000..1c3e519
 +    }
 +
 +    @Suggestions("playerList")
-+    public List<String> playerList(CommandContext<CommandSender> sender, String context) {
++    public List<String> playerList(CommandContext<SpecialCommandSender> sender, String context) {
 +        return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
 +    }
 +
 +    @Suggestions("scItemList")
-+    public List<String> scItemList(CommandContext<CommandSender> sender, String context) {
++    public List<String> scItemList(CommandContext<SpecialCommandSender> sender, String context) {
 +        return Slimefun.getRegistry().getEnabledSlimefunItems().stream()
 +                .filter(i -> i instanceof CustomSCItem || i instanceof CustomGenerator || i instanceof CustomMachine)
 +                .map(SlimefunItem::getId).collect(Collectors.toList());
 +    }
 +
-+    @Suggestions("amountList")
-+    public List<Integer> amountList(CommandContext<CommandSender> sender, String context) {
-+        return Arrays.asList(1, 2, 4, 8, 16, 32, 64);
-+    }
-+
-+    @CommandMethod("slimecustomizer|sc getsaveditem gui")
-+    @CommandPermission("slimecustomizer.admin")
-+    public void getSavedItemGUICmd(final CommandSender sender) {
-+        if (!(sender instanceof Player)) {
++    @Command("slimecustomizer|sc getsaveditem gui")
++    @Permission("slimecustomizer.admin")
++    public void getSavedItemGUICmd(final SpecialCommandSender sender) {
++        if (!sender.isPlayer()) {
 +            Utils.send(sender, "&4This command can only be executed in game");
 +            return;
 +        }
 +
-+        Player p = (Player) sender;
++        Player p = sender.getPlayer();
 +        List<Pair<String, ItemStack>> items = new ArrayList<>();
 +        items.add(new Pair<>(null, null));
 +
@@ -589,6 +586,59 @@ index 0000000..1c3e519
 +        }
 +    }
 +
++    /**
++     * Populates the saveditem gui. 45 items per page.
++     *
++     * @param menu   the SCMenu to populate
++     * @param groups the List of groups
++     * @param page   the page number
++     * @param p      the player that will be viewing this menu
++     */
++    private void populateMenu2(SCMenu menu, List<ItemGroup> groups, int page, Player p) {
++        for (int i = 45; i < 54; i++) menu.replaceExistingItem(i, ChestMenuUtils.getBackground());
++
++        menu.wipe(0, 44, true);
++
++        for (int i = 0; i < 45; i++) {
++            int groupIndex = i + 1 + (page - 1) * 45;
++            ItemGroup group = getGroupOrNull(groups, groupIndex);
++            if (group != null) {
++                ItemStack item = group.getItem(p).clone();
++                ItemMeta im = item.getItemMeta();
++                if (im == null) {
++                    Utils.notify("An item has no metadata! Is it corrupted? " + item);
++                    continue;
++                }
++                List<String> lore = im.getLore();
++
++                lore.set(lore.size() - 1, TextUtils.translateColor(
++                        "&6ID: " + group.getKey().getNamespace() + ":" + group.getKey().getKey())
++                );
++
++                im.setLore(lore);
++                item.setItemMeta(im);
++                menu.replaceExistingItem(i, item);
++                menu.addMenuClickHandler(i, ChestMenuUtils.getEmptyClickHandler());
++            }
++        }
++
++        if (page != 1) {
++            menu.replaceExistingItem(46, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&aPrevious Page"));
++            menu.addMenuClickHandler(46, (pl, s, is, action) -> {
++                populateMenu2(menu, groups, page - 1, p);
++                return false;
++            });
++        }
++
++        if (groups.get(45 * page) != null) {
++            menu.replaceExistingItem(52, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&aNext Page"));
++            menu.addMenuClickHandler(52, (pl, s, is, action) -> {
++                populateMenu2(menu, groups, page + 1, p);
++                return false;
++            });
++        }
++    }
++
 +    private ItemStack getItemOrNull(List<Pair<String, ItemStack>> items, int index) {
 +        ItemStack item;
 +        try {
@@ -599,12 +649,22 @@ index 0000000..1c3e519
 +        return item;
 +    }
 +
-+    @CommandMethod("slimecustomizer|sc getsaveditem <item> <player> [amount]")
-+    @CommandPermission("slimecustomizer.admin")
-+    public void getSavedItemCmd(final CommandSender sender,
++    private ItemGroup getGroupOrNull(List<ItemGroup> items, int index) {
++        ItemGroup item;
++        try {
++            item = items.get(index);
++        } catch (IndexOutOfBoundsException e) {
++            item = null;
++        }
++        return item;
++    }
++
++    @Command("slimecustomizer|sc getsaveditem <item> <player> [amount]")
++    @Permission("slimecustomizer.admin")
++    public void getSavedItemCmd(final SpecialCommandSender sender,
 +                                final @Argument(value = "item", suggestions = "savedItemList") String id,
 +                                final @Argument(value = "player", suggestions = "playerList") String player,
-+                                final @Argument(value = "amount", suggestions = "amountList", defaultValue = "1") @Range(min = "1") int amount) {
++                                final @Argument("amount") @Default("1") @Range(min = "1") int amount) {
 +        Player target = Bukkit.getPlayer(player);
 +        if (target == null) {
 +            Utils.send(sender, "&cThat player could not be found!");
@@ -622,7 +682,7 @@ index 0000000..1c3e519
 +    }
 +
 +    @Suggestions("savedItemList")
-+    public List<String> savedItemList(CommandContext<CommandSender> sender, String context) {
++    public List<String> savedItemList(CommandContext<SpecialCommandSender> sender, String context) {
 +        String[] fileNames = SlimeCustomizer.itemsFolder.list();
 +        if (fileNames != null) {
 +            for (int i = 0; i < fileNames.length; i++) fileNames[i] = fileNames[i].replace(".yml", "");
@@ -632,16 +692,18 @@ index 0000000..1c3e519
 +        return Collections.emptyList();
 +    }
 +
-+    @CommandMethod("slimecustomizer|sc categories")
-+    @CommandPermission("slimecustomizer.admin")
-+    public void categoriesCmd(final CommandSender sender) {
-+        if (!(sender instanceof Player)) return;
-+        Player p = (Player) sender;
++    @Command("slimecustomizer|sc categories")
++    @Permission("slimecustomizer.admin")
++    public void categoriesCmd(final SpecialCommandSender sender) {
++        if (!sender.isPlayer()) return;
++        Player p = sender.getPlayer();
 +
++        List<ItemGroup> groups = Slimefun.getRegistry().getAllItemGroups();
 +        SCMenu menu = new SCMenu("&6Category Namespace Guide");
 +        menu.setSize(54);
-+        int slot = 0;
-+        for (ItemGroup group : Slimefun.getRegistry().getAllItemGroups()) {
++        int i = 0;
++        if (groups.size() >= 54) populateMenu2(menu, groups, i, p);
++        else for (ItemGroup group : groups) {
 +            ItemStack catItem = group.getItem(p).clone();
 +            ItemMeta catMeta = catItem.getItemMeta();
 +            List<String> catLore = catMeta.getLore();
@@ -651,9 +713,9 @@ index 0000000..1c3e519
 +            ); // Replaces the "Click to Open" line
 +            catMeta.setLore(catLore);
 +            catItem.setItemMeta(catMeta);
-+            menu.replaceExistingItem(slot, catItem);
-+            menu.addMenuClickHandler(slot, ChestMenuUtils.getEmptyClickHandler());
-+            slot++;
++            menu.replaceExistingItem(i, catItem);
++            menu.addMenuClickHandler(i, ChestMenuUtils.getEmptyClickHandler());
++            i++;
 +        }
 +
 +        menu.setPlayerInventoryClickable(false);
@@ -661,9 +723,14 @@ index 0000000..1c3e519
 +        menu.open(p);
 +    }
 +
-+    @CommandMethod("slimecustomizer|sc")
-+    public void mainCmd(CommandSender sender) {
++    @Command("slimecustomizer|sc")
++    public void mainCmd(final SpecialCommandSender sender) {
 +        Utils.send(sender, "&eAll commands can be found at &9" + Links.COMMANDS);
++    }
++
++    @ExceptionHandler(NoPermissionException.class)
++    public void handleNoPerm(SpecialCommandSender sender) {
++        sender.sendMessage("&cYou do not have permission to use this command!");
 +    }
 +}
 \ No newline at end of file
@@ -783,18 +850,19 @@ index 0000000..ed221c0
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/ncbpfluffybear/slimecustomizer/Utils.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Utils.java
-similarity index 58%
+similarity index 56%
 rename from src/main/java/io/ncbpfluffybear/slimecustomizer/Utils.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Utils.java
-index de4123f..48833cc 100644
+index de4123f..645cce7 100644
 --- a/src/main/java/io/ncbpfluffybear/slimecustomizer/Utils.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Utils.java
-@@ -1,14 +1,19 @@
+@@ -1,20 +1,24 @@
 -package io.ncbpfluffybear.slimecustomizer;
 +package id.universenetwork.sfa_loader.addons.slimecustomizer;
  
 +import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 +import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
++import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
 +import id.universenetwork.sfa_loader.utils.LogUtils;
 +import id.universenetwork.sfa_loader.utils.TextUtils;
 +import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
@@ -812,7 +880,13 @@ index de4123f..48833cc 100644
  import org.bukkit.Bukkit;
  import org.bukkit.ChatColor;
  import org.bukkit.Material;
-@@ -32,21 +37,21 @@ import java.util.logging.Level;
+ import org.bukkit.NamespacedKey;
+-import org.bukkit.command.CommandSender;
+-import org.bukkit.entity.Player;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.inventory.meta.ItemMeta;
+ import org.bukkit.persistence.PersistentDataType;
+@@ -32,67 +36,51 @@ import java.util.logging.Level;
   *
   * @author NCBPFluffyBear
   */
@@ -835,36 +909,36 @@ index de4123f..48833cc 100644
  
 -    public static void send(CommandSender s, String msg) {
 -        s.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&l[&aSlimeCustomizer&a&l]&7 " + msg));
-+    public void send(CommandSender s, String msg) {
++    public void send(SpecialCommandSender s, String msg) {
 +        TextUtils.send(s, "&a&l[&aSlimeCustomizer&a&l]&7 " + msg);
      }
  
 -    public static boolean checkPermission(Player p, String permission) {
-+    public boolean checkPermission(Player p, String permission) {
-         if (!p.hasPermission(permission)) {
-             Utils.send(p, "&cYou do not have permission to use this command!");
-             return false;
-@@ -55,44 +60,37 @@ public class Utils {
-         return true;
-     }
- 
--    public static String color(String str) {
--        return ChatColor.translateAlternateColorCodes('&', str);
+-        if (!p.hasPermission(permission)) {
+-            Utils.send(p, "&cYou do not have permission to use this command!");
+-            return false;
+-        }
+-
+-        return true;
 -    }
 -
--    public static void notify(String reason) {
--        Bukkit.getConsoleSender().sendMessage("[SlimeCustomizer] " + ChatColor.GREEN + reason);
+-    public static String color(String str) {
+-        return ChatColor.translateAlternateColorCodes('&', str);
 +    public void notify(String reason) {
 +        LogUtils.info("[SlimeCustomizer] " + ChatColor.GREEN + reason);
+     }
+ 
+-    public static void notify(String reason) {
+-        Bukkit.getConsoleSender().sendMessage("[SlimeCustomizer] " + ChatColor.GREEN + reason);
++    public void disable(String reason) {
++        LogUtils.log(Level.SEVERE, "[SlimeCustomizer] " + reason);
      }
  
 -    public static void disable(String reason) {
 -        Bukkit.getLogger().log(Level.SEVERE, "[SlimeCustomizer] " + reason);
 -        Bukkit.getPluginManager().disablePlugin(SlimeCustomizer.getInstance());
-+    public void disable(String reason) {
-+        LogUtils.log(Level.SEVERE, "[SlimeCustomizer] " + reason);
-     }
- 
+-    }
+-
 -    public static boolean checkFitsStackSize(ItemStack item, String slot, String machineKey, String recipeKey) {
 +    public boolean checkFitsStackSize(ItemStack item, String slot, String machineKey, String recipeKey) {
          if (item.getAmount() > item.getMaxStackSize()) {
@@ -899,7 +973,7 @@ index de4123f..48833cc 100644
              String type = file.getString(path + "." + configIndex + ".type").toUpperCase();
              String material = file.getString(path + "." + configIndex + ".id").toUpperCase();
              int amount;
-@@ -100,43 +98,37 @@ public class Utils {
+@@ -100,43 +88,37 @@ public class Utils {
              try {
                  amount = Integer.parseInt(file.getString(path + "." + configIndex + ".amount"));
              } catch (NumberFormatException e) {
@@ -958,7 +1032,7 @@ index de4123f..48833cc 100644
                  return null;
              }
          }
-@@ -145,25 +137,21 @@ public class Utils {
+@@ -145,25 +127,21 @@ public class Utils {
  
          Registry.existingRecipes.forEach((itemStacks, recipeTypePair) -> {
              if (Arrays.equals(itemStacks, recipe) && recipeType == recipeTypePair.getFirstValue()) {
@@ -990,7 +1064,7 @@ index de4123f..48833cc 100644
              return null;
          }
  
-@@ -171,65 +159,56 @@ public class Utils {
+@@ -171,65 +149,56 @@ public class Utils {
          Material material = Material.getMaterial(materialString);
  
          if ((material == null || !material.isBlock()) && !materialString.startsWith("SKULL")) {
@@ -1072,7 +1146,7 @@ index de4123f..48833cc 100644
  
                  String transportPath = path + "." + recipe + "." + transportType;
  
-@@ -237,23 +216,23 @@ public class Utils {
+@@ -237,23 +206,23 @@ public class Utils {
                  if (config.getString(transportPath + ".1") == null) {
  
                      // Move old values to their new sublocations
@@ -1106,7 +1180,7 @@ index de4123f..48833cc 100644
                  }
              }
          }
-@@ -261,12 +240,10 @@ public class Utils {
+@@ -261,12 +230,10 @@ public class Utils {
          config.save();
      }
  
@@ -1122,7 +1196,7 @@ index de4123f..48833cc 100644
          Bukkit.getLogger().log(Level.WARNING, "Your " + key + " was reformatted to have a placeable option! " +
                  "Read " + Links.ADDING_YOUR_ITEM + " to learn what this new option does!");
          Bukkit.getLogger().log(Level.SEVERE, "This option is false by default, so if you have a block you need " +
-@@ -274,12 +251,11 @@ public class Utils {
+@@ -274,12 +241,11 @@ public class Utils {
          config.save();
      }
  
@@ -1138,7 +1212,7 @@ index de4123f..48833cc 100644
              return null;
          } else {
              ItemStack item = new Config(serializedItemFile.getPath()).getItem("item");
-@@ -288,9 +264,9 @@ public class Utils {
+@@ -288,9 +254,9 @@ public class Utils {
          }
      }
  
@@ -1150,7 +1224,7 @@ index de4123f..48833cc 100644
              return null;
          }
          switch (str) {
-@@ -298,7 +274,7 @@ public class Utils {
+@@ -298,7 +264,7 @@ public class Utils {
                  return null;
              case "ENCHANTED_CRAFTING_TABLE":
                  Bukkit.getLogger().log(Level.WARNING, "Hey buddy, it's the ENHANCED crafting table, not ENCHANTED. " +
@@ -1159,7 +1233,7 @@ index de4123f..48833cc 100644
                  return RecipeType.ENHANCED_CRAFTING_TABLE;
              case "ENHANCED_CRAFTING_TABLE":
                  return RecipeType.ENHANCED_CRAFTING_TABLE;
-@@ -321,35 +297,32 @@ public class Utils {
+@@ -321,35 +287,32 @@ public class Utils {
          }
      }
  
@@ -1201,7 +1275,7 @@ index de4123f..48833cc 100644
          switch (i) {
              default:
                  return "ERR";
-@@ -360,19 +333,18 @@ public class Utils {
+@@ -360,19 +323,18 @@ public class Utils {
          }
      }
  

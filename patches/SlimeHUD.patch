@@ -1,12 +1,12 @@
-From 299d382c2d1ff599c69d163a2f2b557e3e73fd4c Mon Sep 17 00:00:00 2001
+From 972f067688246fe9dd55eb6af3f8f55494b1a659 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 10 Mar 2024 14:47:15 +0700
+Date: Sun, 24 Mar 2024 11:43:16 +0700
 Subject: [PATCH] SlimeHUD
 
 ---
  pom.xml                                       | 118 +--------
  .../sfa_loader/addons/slimehud/SlimeHUD.java  |  55 +++++
- .../slimehud/command/SlimeHUDCommand.java     |  78 ++++++
+ .../slimehud/command/SlimeHUDCommand.java     |  80 ++++++
  .../slimehud/placeholder/PlaceholderHook.java |  12 +-
  .../placeholder/PlaceholderManager.java       |  14 ++
  .../translation/TranslationManager.java       |  26 +-
@@ -28,7 +28,7 @@ Subject: [PATCH] SlimeHUD
  .../{ => addons-config/SlimeHUD}/player.yml   |   0
  src/main/resources/plugin.yml                 |  31 ---
  .../slimehud/tests/UtilTests.java             |  64 -----
- 24 files changed, 529 insertions(+), 810 deletions(-)
+ 24 files changed, 531 insertions(+), 810 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimehud/SlimeHUD.java
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimehud/command/SlimeHUDCommand.java
  rename src/main/java/{io/github/schntgaispock => id/universenetwork/sfa_loader/addons}/slimehud/placeholder/PlaceholderHook.java (79%)
@@ -285,23 +285,23 @@ index 0000000..fdde978
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/command/SlimeHUDCommand.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/command/SlimeHUDCommand.java
 new file mode 100644
-index 0000000..9699d96
+index 0000000..9870468
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimehud/command/SlimeHUDCommand.java
-@@ -0,0 +1,78 @@
+@@ -0,0 +1,80 @@
 +package id.universenetwork.sfa_loader.addons.slimehud.command;
 +
-+import cloud.commandframework.annotations.Argument;
-+import cloud.commandframework.annotations.CommandDescription;
-+import cloud.commandframework.annotations.CommandMethod;
-+import cloud.commandframework.annotations.suggestions.Suggestions;
-+import cloud.commandframework.context.CommandContext;
 +import id.universenetwork.sfa_loader.addons.slimehud.SlimeHUD;
 +import id.universenetwork.sfa_loader.addons.slimehud.waila.PlayerWAILA;
 +import id.universenetwork.sfa_loader.addons.slimehud.waila.WAILAManager;
 +import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
-+import org.bukkit.command.CommandSender;
++import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
 +import org.bukkit.entity.Player;
++import org.incendo.cloud.annotations.Argument;
++import org.incendo.cloud.annotations.Command;
++import org.incendo.cloud.annotations.CommandDescription;
++import org.incendo.cloud.annotations.suggestion.Suggestions;
++import org.incendo.cloud.context.CommandContext;
 +
 +import java.util.Collections;
 +import java.util.List;
@@ -311,12 +311,14 @@ index 0000000..9699d96
 +/**
 + * Functionality for the '/slimehud' command
 + */
++@SuppressWarnings("unused")
 +public class SlimeHUDCommand {
-+    @CommandMethod("slimehud|sfhud|sfh [arg]")
++    @Command("slimehud|sfhud|sfh [arg]")
 +    @CommandDescription("/slimehud")
-+    public void hudCommand(CommandSender sender, @Argument(value = "arg", suggestions = "arg") String arg) {
-+        if (sender instanceof Player) {
-+            Player player = (Player) sender;
++    public void hudCommand(final SpecialCommandSender sender,
++                           final @Argument(value = "arg", suggestions = "arg") String arg) {
++        if (sender.isPlayer()) {
++            Player player = sender.getPlayer();
 +
 +            if (arg == null) {
 +                sendInfo(player);
@@ -352,7 +354,7 @@ index 0000000..9699d96
 +    }
 +
 +    @Suggestions("arg")
-+    public List<String> arg(CommandContext<CommandSender> sender, String context) {
++    public List<String> arg(CommandContext<SpecialCommandSender> sender, String context) {
 +        return Collections.singletonList("toggle");
 +    }
 +

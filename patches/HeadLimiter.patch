@@ -1,6 +1,6 @@
-From 70ea09553e4e16712ed2d39d9cd867dfa523cc38 Mon Sep 17 00:00:00 2001
+From 309b199f2dbf4c7a606715add732fe0dfb920c25 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 3 Mar 2024 10:54:07 +0700
+Date: Sun, 24 Mar 2024 11:40:40 +0700
 Subject: [PATCH] HeadLimiter
 
 ---
@@ -9,21 +9,21 @@ Subject: [PATCH] HeadLimiter
  .../dev/j3fftw/headlimiter/HeadLimiter.java   | 103 ------------------
  .../j3fftw/headlimiter/MetricsService.java    |  30 -----
  .../addons/headlimiter/CountCommand.java      |  50 +++++++++
- .../addons}/headlimiter/CountResult.java      |   5 +-
+ .../addons}/headlimiter/CountResult.java      |  12 +-
  .../addons/headlimiter/HeadLimiter.java       |  90 +++++++++++++++
- .../sfa_loader/addons}/headlimiter/Utils.java |  51 ++++-----
+ .../sfa_loader/addons}/headlimiter/Utils.java |  52 +++------
  .../blocklimiter/BlockLimiter.java            |  87 ++++++---------
  .../blocklimiter/BlockListener.java           |  45 +++-----
  .../blocklimiter/ChunkContent.java            |  19 ++--
  .../headlimiter/blocklimiter/Group.java       |  63 +++--------
  .../HeadLimiter}/config.yml                   |   0
  src/main/resources/plugin.yml                 |  15 ---
- 14 files changed, 239 insertions(+), 476 deletions(-)
+ 14 files changed, 241 insertions(+), 482 deletions(-)
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/CountCommand.java
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/HeadLimiter.java
  delete mode 100644 src/main/java/dev/j3fftw/headlimiter/MetricsService.java
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/CountCommand.java
- rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/CountResult.java (90%)
+ rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/CountResult.java (83%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/HeadLimiter.java
  rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/Utils.java (76%)
  rename src/main/java/{dev/j3fftw => id/universenetwork/sfa_loader/addons}/headlimiter/blocklimiter/BlockLimiter.java (58%)
@@ -382,24 +382,25 @@ index 18cb23e..0000000
 -}
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/CountCommand.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/CountCommand.java
 new file mode 100644
-index 0000000..a0f2e92
+index 0000000..2c1baf8
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/CountCommand.java
 @@ -0,0 +1,50 @@
 +package id.universenetwork.sfa_loader.addons.headlimiter;
 +
-+import cloud.commandframework.annotations.CommandMethod;
++import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
 +import org.bukkit.ChatColor;
-+import org.bukkit.command.CommandSender;
 +import org.bukkit.entity.Player;
++import org.incendo.cloud.annotations.Command;
 +
 +import java.util.Map;
 +
++@SuppressWarnings("unused")
 +public class CountCommand {
-+    @CommandMethod("headlimiter|hl count")
-+    public void cmdCount(final CommandSender sender) {
-+        if (sender instanceof Player) {
-+            Player player = (Player) sender;
++    @Command("headlimiter|hl count")
++    public void cmdCount(final SpecialCommandSender sender) {
++        if (sender.isPlayer()) {
++            Player player = sender.getPlayer();
 +
 +            Utils.count(player.getChunk(), result -> {
 +                StringBuilder message = new StringBuilder();
@@ -430,33 +431,46 @@ index 0000000..a0f2e92
 +        }
 +    }
 +
-+    @CommandMethod("headlimiter|hl")
-+    public void cmdMain(final CommandSender sender) {
-+        sender.sendMessage(ChatColor.GOLD + "/hl count"
-+                + ChatColor.GRAY + " - Counts how many heads are in this chunk");
++    @Command("headlimiter|hl")
++    public void cmdMain(final SpecialCommandSender sender) {
++        sender.sendMessage("&6/hl count &7- Counts how many heads are in this chunk");
 +    }
 +}
 \ No newline at end of file
 diff --git a/src/main/java/dev/j3fftw/headlimiter/CountResult.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/CountResult.java
-similarity index 90%
+similarity index 83%
 rename from src/main/java/dev/j3fftw/headlimiter/CountResult.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/CountResult.java
-index 23ab396..c5acda0 100644
+index 23ab396..e2817f7 100644
 --- a/src/main/java/dev/j3fftw/headlimiter/CountResult.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/CountResult.java
-@@ -1,10 +1,9 @@
+@@ -1,10 +1,12 @@
 -package dev.j3fftw.headlimiter;
 +package id.universenetwork.sfa_loader.addons.headlimiter;
++
++import lombok.Getter;
  
  import javax.annotation.Nonnull;
  import java.util.Map;
  
  public class CountResult {
 -
++    @Getter
      private final int total;
      private final Map<String, Integer> counts;
  
-@@ -25,4 +24,4 @@ public class CountResult {
+@@ -13,10 +15,6 @@ public class CountResult {
+         this.counts = counts;
+     }
+ 
+-    public int getTotal() {
+-        return total;
+-    }
+-
+     public int getCount(@Nonnull String id) {
+         return counts.getOrDefault(id, 0);
+     }
+@@ -25,4 +23,4 @@ public class CountResult {
      public Map<String, Integer> getCounts() {
          return counts;
      }
@@ -564,7 +578,7 @@ diff --git a/src/main/java/dev/j3fftw/headlimiter/Utils.java b/src/main/java/id/
 similarity index 76%
 rename from src/main/java/dev/j3fftw/headlimiter/Utils.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/Utils.java
-index 764723e..520f4a1 100644
+index 764723e..ea6a435 100644
 --- a/src/main/java/dev/j3fftw/headlimiter/Utils.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/Utils.java
 @@ -1,14 +1,11 @@
@@ -585,7 +599,7 @@ index 764723e..520f4a1 100644
  import org.bukkit.block.Block;
  import org.bukkit.block.BlockState;
  import org.bukkit.configuration.ConfigurationSection;
-@@ -25,34 +22,28 @@ import java.util.concurrent.Executors;
+@@ -25,34 +22,25 @@ import java.util.concurrent.Executors;
  import java.util.function.Consumer;
  
  public final class Utils {
@@ -602,9 +616,7 @@ index 764723e..520f4a1 100644
      private static final String BYPASS_PERMISSION = "headlimiter.bypass";
  
 -    private Utils() {}
-+    private Utils() {
-+    }
- 
+-
      protected static void loadPermissions() {
          final ConfigurationSection permissionSection = HeadLimiter.getInstance().getConfig()
 -            .getConfigurationSection("permission");
@@ -629,7 +641,7 @@ index 764723e..520f4a1 100644
          return getDefaultMax();
      }
  
-@@ -76,7 +67,7 @@ public final class Utils {
+@@ -76,7 +64,7 @@ public final class Utils {
              int total = 0;
              for (BlockState state : tileEntities) {
                  final SlimefunItem slimefunItem = BlockStorage.check(state.getLocation());
@@ -638,7 +650,7 @@ index 764723e..520f4a1 100644
                  if (slimefunItem != null && HeadLimiter.getInstance().isCargo(slimefunItem)) {
                      counts.merge(slimefunItem.getId(), 1, Integer::sum);
                      total++;
-@@ -91,26 +82,24 @@ public final class Utils {
+@@ -91,26 +79,24 @@ public final class Utils {
      public static void onCheck(Player player, Block block, int maxAmount, int count, SlimefunItem sfItem) {
          boolean isPlacingRestricted = isPlacingRestricted(block);
          if (count > maxAmount || isPlacingRestricted) {
@@ -670,7 +682,7 @@ index 764723e..520f4a1 100644
       * @param block The block to be checked
       * @return Whether the placement is prohibited or not
       */
-@@ -121,8 +110,6 @@ public final class Utils {
+@@ -121,8 +107,6 @@ public final class Utils {
  
              // This is intentionally redundant to allow for expandability by adding more booleans and returning their || chain
              return isTownyWilderness;
@@ -679,7 +691,9 @@ index 764723e..520f4a1 100644
 -        }
 +        } else return false;
      }
- }
+-}
++}
+\ No newline at end of file
 diff --git a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockLimiter.java b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockLimiter.java
 similarity index 58%
 rename from src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockLimiter.java

@@ -8,8 +8,8 @@ website: ${project.parent.url}
 author: ARVIN3108 ID
 prefix: SFALoader
 libraries:
-  - cloud.commandframework:cloud-core:${cloud.version}
-  - cloud.commandframework:cloud-annotations:${cloud.version}
-  - cloud.commandframework:cloud-paper:${cloud.version}
+  - org.incendo:cloud-core:${cloud.version}
+  - org.incendo:cloud-annotations:${cloud.version}
+  - org.incendo:cloud-paper:2.0.0-beta.5
   - org.apache.commons:commons-lang3:3.12.0
   - org.javassist:javassist:3.28.0-GA
