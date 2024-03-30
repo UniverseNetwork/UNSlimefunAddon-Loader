@@ -1,6 +1,6 @@
-From 5a33ee5bbeb959122918ef4f118404645335f87d Mon Sep 17 00:00:00 2001
+From f4a50c7bda4775f0fcc0e4b9e25cfaecb9a64ee4 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Fri, 8 Mar 2024 21:31:06 +0700
+Date: Sat, 30 Mar 2024 14:47:42 +0700
 Subject: [PATCH] ExoticGarden
 
 ---
@@ -369,7 +369,7 @@ diff --git a/src/main/java/io/github/thebusybiscuit/exoticgarden/ExoticGarden.ja
 similarity index 77%
 rename from src/main/java/io/github/thebusybiscuit/exoticgarden/ExoticGarden.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/ExoticGarden.java
-index cb9fd4a..4a19ad0 100644
+index cb9fd4a..158bfed 100644
 --- a/src/main/java/io/github/thebusybiscuit/exoticgarden/ExoticGarden.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/exoticgarden/ExoticGarden.java
 @@ -1,17 +1,16 @@
@@ -457,7 +457,7 @@ index cb9fd4a..4a19ad0 100644
 -    private final File schematicsFolder = new File(getDataFolder(), "schematics");
 +    private final String schematicsPath = "schematics/";
 +    @Getter
-+    private final File schematicsFolder = new File(AbstractAddon.getInstance().getDataFolder(), schematicsPath);
++    private final File schematicsFolder = new File(getAddonFolder(), schematicsPath);
  
      private final List<Berry> berries = new ArrayList<>();
      private final List<Tree> trees = new ArrayList<>();
@@ -622,7 +622,7 @@ index cb9fd4a..4a19ad0 100644
  
      private void saveSchematic(@Nonnull String id) {
 -        try (InputStream input = getClass().getResourceAsStream("/schematics/" + id + ".schematic")) {
-+        try (InputStream input = AbstractAddon.getInstance().getResource(schematicsPath + id + ".schematic")) {
++        try (InputStream input = getResource(schematicsPath + id + ".schematic")) {
              try (FileOutputStream output = new FileOutputStream(new File(schematicsFolder, id + ".schematic"))) {
                  byte[] buffer = new byte[1024];
                  int len;
