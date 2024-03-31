@@ -1,29 +1,29 @@
-From 9fc5a7b1fda70be218c0e43fd17e273d7e864c00 Mon Sep 17 00:00:00 2001
+From 759e126a0ba46dd90238981e1a3d0970999d79b7 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 24 Mar 2024 11:41:16 +0700
+Date: Sun, 31 Mar 2024 11:23:16 +0700
 Subject: [PATCH] SFCalc
 
 ---
  README.md                                     | 10 +-
  pom.xml                                       | 86 ++----------------
  .../sfa_loader/addons/sfcalc/CalcCommand.java | 23 +++++
- .../sfa_loader/addons}/sfcalc/Calculator.java | 85 ++++++++---------
+ .../sfa_loader/addons}/sfcalc/Calculator.java | 82 +++++++----------
  .../addons/sfcalc/NeededCommand.java          | 67 ++++++++++++++
  .../sfa_loader/addons}/sfcalc/SFCalc.java     | 62 ++++---------
  .../addons}/sfcalc/StringRegistry.java        | 26 ++----
  .../io/github/seggan/sfcalc/CalcCommand.java  | 91 -------------------
  .../github/seggan/sfcalc/SFCalcMetrics.java   | 54 -----------
- .../{ => addons-config/SFCalc}/config.yml     |  2 -
+ .../{ => addons-config/SFCalc}/config.yml     |  6 +-
  src/main/resources/plugin.yml                 | 13 ---
- 11 files changed, 171 insertions(+), 348 deletions(-)
+ 11 files changed, 169 insertions(+), 351 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/CalcCommand.java
- rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/Calculator.java (61%)
+ rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/Calculator.java (64%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java
  rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/SFCalc.java (50%)
  rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/StringRegistry.java (79%)
  delete mode 100644 src/main/java/io/github/seggan/sfcalc/CalcCommand.java
  delete mode 100644 src/main/java/io/github/seggan/sfcalc/SFCalcMetrics.java
- rename src/main/resources/{ => addons-config/SFCalc}/config.yml (96%)
+ rename src/main/resources/{ => addons-config/SFCalc}/config.yml (94%)
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/README.md b/README.md
@@ -232,10 +232,10 @@ index 0000000..2d2527e
 +}
 \ No newline at end of file
 diff --git a/src/main/java/io/github/seggan/sfcalc/Calculator.java b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/Calculator.java
-similarity index 61%
+similarity index 64%
 rename from src/main/java/io/github/seggan/sfcalc/Calculator.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/Calculator.java
-index b0e328c..f3e0ade 100644
+index 3581cca..b896704 100644
 --- a/src/main/java/io/github/seggan/sfcalc/Calculator.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/Calculator.java
 @@ -1,5 +1,7 @@
@@ -256,12 +256,14 @@ index b0e328c..f3e0ade 100644
  /**
   * The main class for the calculator
   *
-@@ -22,34 +22,31 @@ import static io.github.seggan.sfcalc.StringRegistry.format;
+@@ -22,12 +22,11 @@ import static io.github.seggan.sfcalc.StringRegistry.format;
   * @author TheBusyBiscuit
   */
  public class Calculator {
 -    private final SFCalc plugin;
+-
 +    private final SFCalc instance;
+     private final ThreadLocal<SlimefunItem> top = new ThreadLocal<>();
  
 -    public Calculator(SFCalc pl) {
 -        this.plugin = pl;
@@ -270,16 +272,13 @@ index b0e328c..f3e0ade 100644
      }
  
      /**
-      * Calculates the resources for the item and prints the out to the specified {@link CommandSender}
-      *
+@@ -36,22 +35,19 @@ public class Calculator {
       * @param sender the sender to send the calculation to
--     * @param item the Slimefun item to calculate
-+     * @param item   the Slimefun item to calculate
+      * @param item   the Slimefun item to calculate
       * @param amount the amount to calculate for
 -     * @param needed whether it should print out how many are needed. Requires {@code sender instanceof Player}
--     * to be {@code true}
 +     * @param needed whether it should print out how many are needed. Requires {@code sender.isPlayer()}
-+     *               to be {@code true}
+      *               to be {@code true}
       */
 -    public void printResults(@Nonnull CommandSender sender, @Nonnull SlimefunItem item, long amount, boolean needed) {
 -        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -302,7 +301,7 @@ index b0e328c..f3e0ade 100644
  
              sender.sendMessage(header);
  
-@@ -57,8 +54,8 @@ public class Calculator {
+@@ -59,8 +55,8 @@ public class Calculator {
              List<Map.Entry<ItemStack, Long>> entries = new ArrayList<>(results.entrySet());
              entries.sort(Comparator.comparingLong(Map.Entry::getValue));
  
@@ -313,7 +312,7 @@ index b0e328c..f3e0ade 100644
  
                  for (Map.Entry<ItemStack, Long> entry : entries) {
                      long inInventory = inv.getOrDefault(entry.getKey(), 0L);
-@@ -67,12 +64,10 @@ public class Calculator {
+@@ -69,12 +65,10 @@ public class Calculator {
                      if (a < 0) a = 0;
                      String parsedAmount;
                      int maxStackSize = entry.getKey().getMaxStackSize();
@@ -330,7 +329,7 @@ index b0e328c..f3e0ade 100644
                  }
              } else {
                  for (Map.Entry<ItemStack, Long> entry : entries) {
-@@ -80,12 +75,10 @@ public class Calculator {
+@@ -82,12 +76,10 @@ public class Calculator {
                      if (originalValues <= 0) continue;
                      String parsedAmount;
                      int maxStackSize = entry.getKey().getMaxStackSize();
@@ -347,7 +346,7 @@ index b0e328c..f3e0ade 100644
                  }
              }
          });
-@@ -97,9 +90,7 @@ public class Calculator {
+@@ -99,9 +91,7 @@ public class Calculator {
  
          for (ItemStack item : player.getInventory().getContents()) {
              // if the Item is null or air, it will return null too
@@ -358,45 +357,46 @@ index b0e328c..f3e0ade 100644
              add(inv, item, item.getAmount());
          }
  
-@@ -110,16 +101,16 @@ public class Calculator {
-     public Map<ItemStack, Long> calculate(@Nonnull SlimefunItem parent, long amount) {
- 
+@@ -113,7 +103,7 @@ public class Calculator {
+         top.set(parent);
          Map<ItemStack, Long> result = new HashMap<>();
--		
--		// uncraft the material first to bypass the blacklist
--		int multiplier = parent.getRecipeOutput().getAmount();
--		long operations = (amount + multiplier - 1) / multiplier; //ceiling(needed/multiplier) but abusing fast ints
-+
+ 
+-        // uncraft the material first to bypass the blacklist
 +        // Uncraft the material first to bypass the blacklist
-+        int multiplier = parent.getRecipeOutput().getAmount();
-+        long operations = (amount + multiplier - 1) / multiplier; //ceiling(needed/multiplier) but abusing fast ints
+         int multiplier = parent.getRecipeOutput().getAmount();
+         long operations = (amount + multiplier - 1) / multiplier; // ceiling(needed/multiplier) but abusing fast ints
          for (ItemStack item : parent.getRecipe()) {
-             if (item == null) continue;
+@@ -121,7 +111,7 @@ public class Calculator {
              add(result, item, item.getAmount() * operations);
          }
  
--        //uncraft submaterials
+-        // uncraft submaterials
 +        // Uncraft submaterials
          SlimefunItemStack next = getNextItem(result);
          while (next != null) {
              multiplier = next.getItem().getRecipeOutput().getAmount();
-@@ -144,17 +135,15 @@ public class Calculator {
+@@ -147,20 +137,16 @@ public class Calculator {
       */
      @Nullable
      private SlimefunItemStack getNextItem(Map<ItemStack, Long> map) {
 -        for (Map.Entry<ItemStack, Long> entry : map.entrySet()) {
 -            if (entry.getKey() instanceof SlimefunItemStack ingredient) {
-+        for (Map.Entry<ItemStack, Long> entry : map.entrySet())
-+            if (entry.getKey() instanceof SlimefunItemStack) {
-+                SlimefunItemStack ingredient = (SlimefunItemStack) entry.getKey();
-                 if (ingredient.getItem() != null &&
--                    !plugin.getBlacklistedRecipes().contains(ingredient.getItem().getRecipeType()) &&
--					!plugin.getBlacklistedIds().contains(ingredient.getItem().getId())) {
+-                if (
+-                        ingredient.getItem() != null &&
+-                                !plugin.getBlacklistedRecipes().contains(ingredient.getItem().getRecipeType()) &&
+-                                !plugin.getBlacklistedIds().contains(ingredient.getItem().getId()) &&
+-                                top.get() != ingredient.getItem()
+-                ) {
 -                    if (entry.getValue() > 0) {
 -                        return ingredient;
 -                    }
++        for (Map.Entry<ItemStack, Long> entry : map.entrySet())
++            if (entry.getKey() instanceof SlimefunItemStack) {
++                SlimefunItemStack ingredient = (SlimefunItemStack) entry.getKey();
++                if (ingredient.getItem() != null &&
 +                        !instance.getBlacklistedRecipes().contains(ingredient.getItem().getRecipeType()) &&
-+                        !instance.getBlacklistedIds().contains(ingredient.getItem().getId())) {
++                        !instance.getBlacklistedIds().contains(ingredient.getItem().getId()) &&
++                        top.get() != ingredient.getItem()) {
 +                    if (entry.getValue() > 0) return ingredient;
                  }
              }
@@ -404,7 +404,7 @@ index b0e328c..f3e0ade 100644
          return null;
      }
  
-@@ -168,4 +157,4 @@ public class Calculator {
+@@ -174,4 +160,4 @@ public class Calculator {
      private String getBasicName(ItemStack stack) {
          return ChatColor.stripColor(ItemUtils.getItemName(stack));
      }
@@ -831,10 +831,10 @@ index a138aa0..0000000
 -    }
 -}
 diff --git a/src/main/resources/config.yml b/src/main/resources/addons-config/SFCalc/config.yml
-similarity index 96%
+similarity index 94%
 rename from src/main/resources/config.yml
 rename to src/main/resources/addons-config/SFCalc/config.yml
-index 094add2..cf67239 100644
+index 8ef45c8..545cc2b 100644
 --- a/src/main/resources/config.yml
 +++ b/src/main/resources/addons-config/SFCalc/config.yml
 @@ -1,5 +1,3 @@
@@ -843,6 +843,15 @@ index 094add2..cf67239 100644
  # Auto error reporting. Recommended to be true. No data other than error and
  # SFCalc/Slimefun/Minecraft version is collected
  error-reports: true
+@@ -52,6 +50,4 @@ invalid-number-string: "&cInvalid number!"
+ 
+ options:
+   # Use carbon as a base material instead of coal in calculations
+-  use-carbon-instead-of-coal: true
+-
+-
++  use-carbon-instead-of-coal: true
+\ No newline at end of file
 diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
 deleted file mode 100644
 index 48349f4..0000000
