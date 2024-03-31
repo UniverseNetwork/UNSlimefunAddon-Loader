@@ -36,6 +36,19 @@ public class SpecialCommandSender implements Permissible {
         return sender instanceof ConsoleCommandSender;
     }
 
+    public ConsoleCommandSender getConsole() {
+        return (ConsoleCommandSender) sender;
+    }
+
+    public <T> boolean isAs(Class<T> type) {
+        return sender.getClass().isAssignableFrom(type);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends CommandSender> T getAs(Class<T> type) {
+        return (T) sender;
+    }
+
     public void sendMessage(@NotNull String s) {
         TextUtils.send(sender, s);
     }
