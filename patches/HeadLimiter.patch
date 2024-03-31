@@ -1,6 +1,6 @@
-From 309b199f2dbf4c7a606715add732fe0dfb920c25 Mon Sep 17 00:00:00 2001
+From df87eb1e15b5324545af4357010048a0f82c5906 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 24 Mar 2024 11:40:40 +0700
+Date: Sun, 31 Mar 2024 10:25:52 +0700
 Subject: [PATCH] HeadLimiter
 
 ---
@@ -34,7 +34,7 @@ Subject: [PATCH] HeadLimiter
  delete mode 100644 src/main/resources/plugin.yml
 
 diff --git a/pom.xml b/pom.xml
-index 6a9c156..ebd5930 100644
+index a23ec8b..ebd5930 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,9 +1,14 @@
@@ -151,7 +151,7 @@ index 6a9c156..ebd5930 100644
 -        <dependency>
 -            <groupId>com.github.Slimefun</groupId>
 -            <artifactId>Slimefun4</artifactId>
--            <version>1aeb0e8</version>
+-            <version>RC-37</version>
 -            <scope>provided</scope>
 -        </dependency>
 -
@@ -698,7 +698,7 @@ diff --git a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockLimiter.java
 similarity index 58%
 rename from src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockLimiter.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockLimiter.java
-index 09b5c96..182a14f 100644
+index 1debbdd..72988d6 100644
 --- a/src/main/java/dev/j3fftw/headlimiter/blocklimiter/BlockLimiter.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/headlimiter/blocklimiter/BlockLimiter.java
 @@ -1,62 +1,53 @@
@@ -767,7 +767,7 @@ index 09b5c96..182a14f 100644
 -                for (Map.Entry<Location, Config> entry : worldStorage.getRawStorage().entrySet()) {
 -                    Location location = entry.getKey();
 -                    String id = entry.getValue().getString("id");
--                    ChunkPosition chunkPosition = new ChunkPosition(location.getChunk());
+-                    ChunkPosition chunkPosition = new ChunkPosition(location);
 -                    ChunkContent content = contentMap.get(chunkPosition);
 -                    if (content == null) {
 -                        content = new ChunkContent();
@@ -781,7 +781,7 @@ index 09b5c96..182a14f 100644
 +            else for (Map.Entry<Location, Config> entry : worldStorage.getRawStorage().entrySet()) {
 +                Location location = entry.getKey();
 +                String id = entry.getValue().getString("id");
-+                ChunkPosition chunkPosition = new ChunkPosition(location.getChunk());
++                ChunkPosition chunkPosition = new ChunkPosition(location);
 +                ChunkContent content = contentMap.get(chunkPosition);
 +                if (content == null) {
 +                    content = new ChunkContent();
