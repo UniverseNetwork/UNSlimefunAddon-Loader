@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 @Getter
-public class SpecialCommandSender implements Permissible {
+public final class SpecialCommandSender implements Permissible {
     private final CommandSender sender;
 
     public SpecialCommandSender(CommandSender sender) {

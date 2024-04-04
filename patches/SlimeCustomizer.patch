@@ -1,6 +1,6 @@
-From 91704fd62a5f44eb579b89a84fcbfdcf764ccd3a Mon Sep 17 00:00:00 2001
+From c787591fb7c6fea5ddee3e0da83898c23b3f5782 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 24 Mar 2024 11:45:07 +0700
+Date: Thu, 4 Apr 2024 10:46:58 +0700
 Subject: [PATCH] SlimeCustomizer
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH] SlimeCustomizer
  .../addons/slimecustomizer/Links.java         |  19 +
  .../addons}/slimecustomizer/Registry.java     |  10 +-
  .../addons/slimecustomizer/SCCommand.java     | 326 ++++++++++++++
- .../slimecustomizer/SlimeCustomizer.java      | 108 +++++
+ .../slimecustomizer/SlimeCustomizer.java      | 111 +++++
  .../addons}/slimecustomizer/Utils.java        | 226 ++++------
  .../objects/CustomGenerator.java              |  25 +-
  .../objects/CustomMachine.java                |  42 +-
@@ -42,7 +42,7 @@ Subject: [PATCH] SlimeCustomizer
  .../SlimeCustomizer}/solar-generators.yml     |   0
  src/main/resources/config.yml                 |   2 -
  src/main/resources/plugin.yml                 |  93 ----
- 38 files changed, 983 insertions(+), 1492 deletions(-)
+ 38 files changed, 986 insertions(+), 1492 deletions(-)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/Events.java (72%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Links.java
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/Registry.java (52%)
@@ -736,14 +736,16 @@ index 0000000..618df5e
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SlimeCustomizer.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SlimeCustomizer.java
 new file mode 100644
-index 0000000..ed221c0
+index 0000000..cbc37c9
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SlimeCustomizer.java
-@@ -0,0 +1,108 @@
+@@ -0,0 +1,111 @@
 +package id.universenetwork.sfa_loader.addons.slimecustomizer;
 +
 +import id.universenetwork.sfa_loader.addons.slimecustomizer.registration.*;
 +import id.universenetwork.sfa_loader.annotations.AddonLibrary;
++import id.universenetwork.sfa_loader.annotations.AddonLoadOrder;
++import id.universenetwork.sfa_loader.enums.LoadPriority;
 +import id.universenetwork.sfa_loader.libraries.guizhanlib.common.Event;
 +import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
 +import id.universenetwork.sfa_loader.managers.CommandManager;
@@ -767,6 +769,7 @@ index 0000000..ed221c0
 +        artifactId = "extrautils",
 +        version = "73e76ac"
 +)
++@AddonLoadOrder(LoadPriority.LOWEST)
 +public class SlimeCustomizer extends AddonTemplate {
 +    @Getter
 +    public static SlimeCustomizer instance;

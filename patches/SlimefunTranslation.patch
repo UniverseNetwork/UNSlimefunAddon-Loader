@@ -1,6 +1,6 @@
-From 4309618d60b3379ed7e0b1bf2236bd32bc8ab10b Mon Sep 17 00:00:00 2001
+From c539a5aaf48382a9873015a739b1188c3fb1fde1 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 24 Mar 2024 11:36:42 +0700
+Date: Thu, 4 Apr 2024 10:45:52 +0700
 Subject: [PATCH] SlimefunTranslation
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] SlimefunTranslation
  .../SlimefunTranslation.java                  |  68 ++++++
  .../api/SlimefunTranslationAPI.java           |  27 +-
  .../api/config/TranslationConditions.java     |   8 +-
- .../api/config/TranslationConfiguration.java  | 188 +++++++-------
+ .../api/config/TranslationConfiguration.java  | 190 +++++++-------
  .../TranslationConfigurationDefaults.java     |   2 +-
  .../TranslationConfigurationFields.java       |   2 +-
  .../api/config/Translations.java              |   5 +-
@@ -144,6 +144,7 @@ Subject: [PATCH] SlimefunTranslation
  .../vi/slimefun/energy-and-electricity.yml    |   0
  .../translations/vi/slimefun/food.yml         |   0
  .../translations/vi/slimefun/gps.yml          |   0
+ .../translations/vi/slimefun/guide.yml        |   0
  .../translations/vi/slimefun/lore-builder.yml |   0
  .../vi/slimefun/magical-armor.yml             |   0
  .../vi/slimefun/magical-gadgets.yml           |   0
@@ -167,6 +168,7 @@ Subject: [PATCH] SlimefunTranslation
  .../slimefun/energy-and-electricity.yml       |   0
  .../translations/zh-Hans/slimefun/food.yml    |   0
  .../translations/zh-Hans/slimefun/gps.yml     |   0
+ .../translations/zh-Hans/slimefun/guide.yml   |   0
  .../zh-Hans/slimefun/lore-builder.yml         |   0
  .../zh-Hans/slimefun/magical-armor.yml        |   0
  .../zh-Hans/slimefun/magical-gadgets.yml      |   0
@@ -183,7 +185,7 @@ Subject: [PATCH] SlimefunTranslation
  .../translations/zh-Hans/slimefun/ui.yml      |   0
  .../zh-Hans/slimefun/useful-items.yml         |   0
  .../translations/zh-Hans/slimefun/weapons.yml |   0
- 179 files changed, 1070 insertions(+), 1531 deletions(-)
+ 181 files changed, 1071 insertions(+), 1532 deletions(-)
  create mode 100644 pom.xml
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/SlimefunTranslation.java
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/SlimefunTranslationAPI.java (82%)
@@ -210,7 +212,7 @@ Subject: [PATCH] SlimefunTranslation
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/subcommands/translation/ReloadCommand.java
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/factories/MessageFactory.java (79%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/CommandService.java
- rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/services/ConfigurationService.java (76%)
+ rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/services/ConfigurationService.java (78%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/IntegrationService.java
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/ListenerService.java
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/PacketListenerService.java
@@ -324,6 +326,7 @@ Subject: [PATCH] SlimefunTranslation
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/energy-and-electricity.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/food.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/gps.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/guide.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/lore-builder.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/magical-armor.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/vi/slimefun/magical-gadgets.yml (100%)
@@ -347,6 +350,7 @@ Subject: [PATCH] SlimefunTranslation
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/zh-Hans/slimefun/energy-and-electricity.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/zh-Hans/slimefun/food.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/zh-Hans/slimefun/gps.yml (100%)
+ rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/zh-Hans/slimefun/guide.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/zh-Hans/slimefun/lore-builder.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/zh-Hans/slimefun/magical-armor.yml (100%)
  rename src/main/resources/{ => addons-config/SlimefunTranslation}/translations/zh-Hans/slimefun/magical-gadgets.yml (100%)
@@ -629,7 +633,7 @@ diff --git a/src/main/java/net/guizhanss/slimefuntranslation/api/config/Translat
 similarity index 50%
 rename from src/main/java/net/guizhanss/slimefuntranslation/api/config/TranslationConfiguration.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/TranslationConfiguration.java
-index 2cf0eae..d50aaf4 100644
+index e495b23..5f08ca8 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/api/config/TranslationConfiguration.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/TranslationConfiguration.java
 @@ -1,6 +1,7 @@
@@ -661,7 +665,15 @@ index 2cf0eae..d50aaf4 100644
  import lombok.AccessLevel;
  import lombok.Getter;
  import lombok.RequiredArgsConstructor;
-@@ -82,58 +84,46 @@ public class TranslationConfiguration {
+@@ -81,65 +83,53 @@ public class TranslationConfiguration {
+         String lang = SlimefunTranslation.getConfigService().getMappedLanguage(language);
+ 
+         if (SlimefunTranslation.getConfigService().getDisabledLanguages().contains(lang)) {
+-            SlimefunTranslation.log(Level.INFO, "Language {0} is disabled, ignoring.", lang);
++            LogUtils.log(Level.INFO, "Language {0} is disabled, ignoring.", (Object) lang);
+             return Optional.empty();
+         }
+ 
          String itemIdPrefix = config.getString(fields.getPrefix(), defaults.getPrefix());
          String itemIdSuffix = config.getString(fields.getSuffix(), defaults.getSuffix());
  
@@ -748,7 +760,7 @@ index 2cf0eae..d50aaf4 100644
          }
  
          return Optional.of(new TranslationConfiguration(name, lang, translations));
-@@ -143,21 +133,21 @@ public class TranslationConfiguration {
+@@ -149,21 +139,21 @@ public class TranslationConfiguration {
          Map<String, ItemTranslation> translations,
          ConfigurationSection guidesSection
      ) {
@@ -777,7 +789,7 @@ index 2cf0eae..d50aaf4 100644
              translations.put(mode, translation);
          }
      }
-@@ -171,70 +161,63 @@ public class TranslationConfiguration {
+@@ -177,70 +167,63 @@ public class TranslationConfiguration {
          String suffix
      ) {
          int count = 0;
@@ -879,7 +891,7 @@ index 2cf0eae..d50aaf4 100644
              translations.put(itemId, translation);
              count++;
          }
-@@ -242,23 +225,22 @@ public class TranslationConfiguration {
+@@ -248,23 +231,22 @@ public class TranslationConfiguration {
      }
  
      public void register(@Nonnull SlimefunAddon addon) {
@@ -912,7 +924,7 @@ index 2cf0eae..d50aaf4 100644
          registerTranslations(pluginMessageTranslations, lang, translations.getMessage());
  
          setAddon(addon);
-@@ -266,7 +248,7 @@ public class TranslationConfiguration {
+@@ -272,7 +254,7 @@ public class TranslationConfiguration {
      }
  
      private <V> void registerTranslations(Map<String, Map<String, V>> allTranslations, String lang, Map<String, V> translations) {
@@ -1628,10 +1640,10 @@ index 0000000..d86887e
 +    }
 +}
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/core/services/ConfigurationService.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/ConfigurationService.java
-similarity index 76%
+similarity index 78%
 rename from src/main/java/net/guizhanss/slimefuntranslation/core/services/ConfigurationService.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/ConfigurationService.java
-index cc051fb..e5735ba 100644
+index a712f93..cf051a0 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/core/services/ConfigurationService.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/ConfigurationService.java
 @@ -1,4 +1,4 @@
@@ -1654,7 +1666,7 @@ index cc051fb..e5735ba 100644
  import lombok.AccessLevel;
  import lombok.Getter;
  
-@@ -28,8 +27,8 @@ public final class ConfigurationService {
+@@ -29,8 +28,8 @@ public final class ConfigurationService {
      private Set<Material> partialOverrideMaterials;
      private Set<String> disabledItems;
  
@@ -4969,6 +4981,10 @@ diff --git a/src/main/resources/translations/vi/slimefun/gps.yml b/src/main/reso
 similarity index 100%
 rename from src/main/resources/translations/vi/slimefun/gps.yml
 rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/gps.yml
+diff --git a/src/main/resources/translations/vi/slimefun/guide.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/guide.yml
+similarity index 100%
+rename from src/main/resources/translations/vi/slimefun/guide.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/guide.yml
 diff --git a/src/main/resources/translations/vi/slimefun/lore-builder.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/vi/slimefun/lore-builder.yml
 similarity index 100%
 rename from src/main/resources/translations/vi/slimefun/lore-builder.yml
@@ -5061,6 +5077,10 @@ diff --git a/src/main/resources/translations/zh-Hans/slimefun/gps.yml b/src/main
 similarity index 100%
 rename from src/main/resources/translations/zh-Hans/slimefun/gps.yml
 rename to src/main/resources/addons-config/SlimefunTranslation/translations/zh-Hans/slimefun/gps.yml
+diff --git a/src/main/resources/translations/zh-Hans/slimefun/guide.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/zh-Hans/slimefun/guide.yml
+similarity index 100%
+rename from src/main/resources/translations/zh-Hans/slimefun/guide.yml
+rename to src/main/resources/addons-config/SlimefunTranslation/translations/zh-Hans/slimefun/guide.yml
 diff --git a/src/main/resources/translations/zh-Hans/slimefun/lore-builder.yml b/src/main/resources/addons-config/SlimefunTranslation/translations/zh-Hans/slimefun/lore-builder.yml
 similarity index 100%
 rename from src/main/resources/translations/zh-Hans/slimefun/lore-builder.yml

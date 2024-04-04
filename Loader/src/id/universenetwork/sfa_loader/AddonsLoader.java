@@ -1,10 +1,10 @@
 package id.universenetwork.sfa_loader;
 
-import id.universenetwork.sfa_loader.annotations.*;
-import id.universenetwork.sfa_loader.enums.PaperRequirementLevel;
+import id.universenetwork.sfa_loader.enums.LoadPriority;
 import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.SlimefunAddonInstance;
-import id.universenetwork.sfa_loader.managers.LibraryManager;
+import id.universenetwork.sfa_loader.managers.AddonManager;
+import id.universenetwork.sfa_loader.objects.Addon;
 import id.universenetwork.sfa_loader.template.AddonTemplate;
 import id.universenetwork.sfa_loader.utils.LogUtils;
 import id.universenetwork.sfa_loader.utils.TextUtils;
@@ -16,85 +16,112 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.reflections.Reflections;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 @UtilityClass
 public class AddonsLoader {
     @Getter
-    private final Set<Class<? extends AddonTemplate>> allAddonsClasses = new HashSet<>();
-    private final Set<Class<? extends AddonTemplate>> addonsWithHooksClasses = new HashSet<>();
+    private AddonManager addonManager;
+    private Set<Addon> addonsWithHooks = new HashSet<>();
     @Getter
     private final Set<AddonTemplate> loadedAddons = new HashSet<>();
-    private final Map<Class<? extends AddonTemplate>, String> addonName = new HashMap<>();
 
     public void loadEnabledAddons() {
         Reflections reflections = new Reflections("id.universenetwork.sfa_loader.addons");
-        allAddonsClasses.addAll(reflections.getSubTypesOf(AddonTemplate.class));
+        addonManager = new AddonManager(reflections.getSubTypesOf(AddonTemplate.class));
 
         new SlimefunAddonInstance("UniverseNetwork", "SlimefunAddon-Loader").initialize();
 
         LogUtils.info("&eStart loading the enabled addons in the configuration file...");
         TookTimeUtils tookTime = new TookTimeUtils();
 
-        for (Class<? extends AddonTemplate> addon : allAddonsClasses) {
-            String name = getAddonName(addon);
-            if (AbstractAddon.getAddonConfig().getBoolean("addons." + name.toLowerCase()))
-                loadAddon(addon, name);
-        }
-        if (!addonsWithHooksClasses.isEmpty())
-            for (Iterator<Class<? extends AddonTemplate>> i = addonsWithHooksClasses.iterator(); i.hasNext(); )
+        AddonManager.Filter filtered = addonManager.getWithFilter();
+
+        filtered.wasEnabled().hasPriority(LoadPriority.HIGHEST).hasHook(false);
+        for (Addon addon : filtered.getResult()) loadAddon(addon);
+
+        filtered.clearFilter().wasEnabled().hasPriority(LoadPriority.HIGHEST).hasHook();
+        addonsWithHooks = filtered.getResult();
+        if (!addonsWithHooks.isEmpty())
+            for (Iterator<Addon> i = addonsWithHooks.iterator(); i.hasNext(); )
+                loadAddonWithHooks(i);
+
+        filtered.clearFilter().wasEnabled().hasPriority(LoadPriority.HIGH).hasHook(false);
+        for (Addon addon : filtered.getResult()) loadAddon(addon);
+
+        filtered.clearFilter().wasEnabled().hasPriority(LoadPriority.HIGH).hasHook();
+        addonsWithHooks = filtered.getResult();
+        if (!addonsWithHooks.isEmpty())
+            for (Iterator<Addon> i = addonsWithHooks.iterator(); i.hasNext(); )
+                loadAddonWithHooks(i);
+
+        filtered.clearFilter().wasEnabled().hasPriority(LoadPriority.NORMAL).hasHook(false);
+        for (Addon addon : filtered.getResult()) loadAddon(addon);
+
+        filtered.clearFilter().wasEnabled().hasPriority(LoadPriority.NORMAL).hasHook();
+        addonsWithHooks = filtered.getResult();
+        if (!addonsWithHooks.isEmpty())
+            for (Iterator<Addon> i = addonsWithHooks.iterator(); i.hasNext(); )
+                loadAddonWithHooks(i);
+
+        filtered.clearFilter().wasEnabled().hasPriority(LoadPriority.LOW).hasHook(false);
+        for (Addon addon : filtered.getResult()) loadAddon(addon);
+
+        filtered.clearFilter().wasEnabled().hasPriority(LoadPriority.LOW).hasHook();
+        addonsWithHooks = filtered.getResult();
+        if (!addonsWithHooks.isEmpty())
+            for (Iterator<Addon> i = addonsWithHooks.iterator(); i.hasNext(); )
+                loadAddonWithHooks(i);
+
+        filtered.clearFilter().wasEnabled().hasPriority(LoadPriority.LOWEST).hasHook(false);
+        for (Addon addon : filtered.getResult()) loadAddon(addon);
+
+        filtered.clearFilter().wasEnabled().hasPriority(LoadPriority.LOWEST).hasHook();
+        addonsWithHooks = filtered.getResult();
+        if (!addonsWithHooks.isEmpty())
+            for (Iterator<Addon> i = addonsWithHooks.iterator(); i.hasNext(); )
                 loadAddonWithHooks(i);
 
         String str = "&bTook " + tookTime.getTime() + "ms &ato load all enabled addons to Slimefun!";
         LogUtils.info(str);
     }
 
-    private void loadAddon(Class<? extends AddonTemplate> addonClass, String name) {
-        if (addonClass.isAnnotationPresent(AddonHooks.class)) {
-            addonsWithHooksClasses.add(addonClass);
-            addonName.put(addonClass, name);
-            return;
-        }
+    private void loadAddon(Addon addonObj) {
+        final String name = addonObj.getName();
 
         try {
-            final AddonTemplate addon = addonClass.getConstructor().newInstance();
+            final AddonTemplate addon = addonObj.createNewInstance();
 
             if (loadedAddons.contains(addon)) throw new IllegalStateException(
                     name + " addon is already loaded!");
 
-            if (addonClass.isAnnotationPresent(AddonLibrary.class))
-                loadAddonLibraries(addonClass.getAnnotationsByType(AddonLibrary.class));
-
-            else if (addonClass.isAnnotationPresent(AddonLibraries.class))
-                loadAddonLibraries(addonClass.getAnnotation(AddonLibraries.class).value());
-
-            final AddonDependencies dependencies = addonClass.getAnnotation(AddonDependencies.class);
-            boolean hasDependency = false;
+            if (addonObj.requireLibrary()) addonObj.loadLibraries();
 
             String str = "&bSuccessfully loaded &d" + name + " &baddon!";
 
-            if (dependencies != null) {
-                hasDependency = true;
-                for (String dpy : dependencies.value())
+            final String[] dependencies = addonObj.getDependencies();
+            if (addonObj.hasDependency()) {
+                for (String dpy : dependencies)
                     if (!Bukkit.getPluginManager().isPluginEnabled(dpy)) {
-                        str = "&e" + TextUtils.convertArraysToString(dependencies.value()) +
+                        str = "&e" + TextUtils.convertArraysToString(dependencies) +
                                 " not found. &cYou need &e" +
-                                TextUtils.convertArraysToString(dependencies.value()) + " to use &d"
+                                TextUtils.convertArraysToString(dependencies) + " to use &d"
                                 + name + " &caddon!";
                         LogUtils.severe(str);
                         return;
                     }
             }
 
-            if (!PaperLib.isPaper()) if (!passPaperRequirements(addonClass, name)) return;
+            if (!PaperLib.isPaper()) if (!addonObj.passPaperRequirement()) return;
 
             addon.onLoad();
             loadedAddons.add(addon);
 
-            if (hasDependency) str = StringUtils.replace(str, "&bS", "&a" +
-                    TextUtils.convertArraysToString(dependencies.value()) + " found. &bS");
+            if (addonObj.hasDependency()) str = StringUtils.replace(str, "&bS", "&a" +
+                    TextUtils.convertArraysToString(dependencies) + " found. &bS");
 
             LogUtils.info(str);
         } catch (Exception e) {
@@ -103,54 +130,46 @@ public class AddonsLoader {
         }
     }
 
-    private void loadAddonWithHooks(Iterator<Class<? extends AddonTemplate>> addonIterator) {
-        final Class<? extends AddonTemplate> addonClass = addonIterator.next();
-        final Set<String> hooks = Arrays.stream(addonClass.getAnnotation(AddonHooks.class)
-                .value()).collect(Collectors.toSet());
+    private void loadAddonWithHooks(Iterator<Addon> addonIterator) {
+        final Addon addonObj = addonIterator.next();
+        final Set<String> hooks = addonObj.getHooks();
         for (Iterator<String> iterator = hooks.iterator(); iterator.hasNext(); ) {
             String hook = iterator.next();
             if (AbstractAddon.getAddonConfig().getBoolean("addons." + hook.toLowerCase())) {
                 if (isAddonLoaded(hook)) continue;
                 addonIterator.remove();
-                addonsWithHooksClasses.add(addonClass);
+                addonsWithHooks.add(addonObj);
                 return;
             }
             iterator.remove();
         }
 
-        String name = addonName.get(addonClass);
+        final String name = addonObj.getName();
 
         try {
-            final AddonTemplate addon = addonClass.getConstructor().newInstance();
+            final AddonTemplate addon = addonObj.createNewInstance();
 
             if (loadedAddons.contains(addon)) throw new IllegalStateException(
                     name + " addon is already loaded!");
 
-            if (addonClass.isAnnotationPresent(AddonLibrary.class))
-                loadAddonLibraries(addonClass.getAnnotationsByType(AddonLibrary.class));
-
-            else if (addonClass.isAnnotationPresent(AddonLibraries.class))
-                loadAddonLibraries(addonClass.getAnnotation(AddonLibraries.class).value());
-
-            final AddonDependencies dependencies = addonClass.getAnnotation(AddonDependencies.class);
-            boolean hasDependency = false;
+            if (addonObj.requireLibrary()) addonObj.loadLibraries();
 
             String str = "&bSuccessfully loaded &d" + name + " &baddon!";
 
-            if (dependencies != null) {
-                hasDependency = true;
-                for (String dpy : dependencies.value())
+            final String[] dependencies = addonObj.getDependencies();
+            if (addonObj.hasDependency()) {
+                for (String dpy : dependencies)
                     if (!Bukkit.getPluginManager().isPluginEnabled(dpy)) {
-                        str = "&e" + TextUtils.convertArraysToString(dependencies.value()) +
+                        str = "&e" + TextUtils.convertArraysToString(dependencies) +
                                 " not found. &cYou need &e" +
-                                TextUtils.convertArraysToString(dependencies.value()) + " to use &d"
+                                TextUtils.convertArraysToString(dependencies) + " to use &d"
                                 + name + " &caddon!";
                         LogUtils.severe(str);
                         return;
                     }
             }
 
-            if (!PaperLib.isPaper()) if (!passPaperRequirements(addonClass, name)) return;
+            if (!PaperLib.isPaper()) if (!addonObj.passPaperRequirement()) return;
 
             addon.onLoad();
             loadedAddons.add(addon);
@@ -158,8 +177,8 @@ public class AddonsLoader {
             if (!hooks.isEmpty()) str = StringUtils.replace(str, "!", ", &awith &d" +
                     TextUtils.convertArraysToString(hooks.toArray(new String[0])) + " &asupport!");
 
-            if (hasDependency) str = StringUtils.replace(str, "&bS", "&a" +
-                    TextUtils.convertArraysToString(dependencies.value()) + " found. &bS");
+            if (addonObj.hasDependency()) str = StringUtils.replace(str, "&bS", "&a" +
+                    TextUtils.convertArraysToString(dependencies) + " found. &bS");
 
             LogUtils.info(str);
         } catch (Exception e) {
@@ -175,70 +194,5 @@ public class AddonsLoader {
 
     public void unloadAllAddons() {
         for (AddonTemplate addon : loadedAddons) addon.onUnload();
-    }
-
-    private void loadAddonLibraries(AddonLibrary[] libraries) {
-        for (AddonLibrary lib : libraries) {
-            String packageRelocation = lib.packageRelocation();
-            String packageRelocationName = lib.packageRelocationName();
-            String repository = lib.repository();
-
-            if (packageRelocation.isEmpty()) packageRelocation = null;
-            if (packageRelocationName.isEmpty()) packageRelocationName = null;
-            if (repository.isEmpty()) repository = null;
-
-            LibraryManager.loadLibraries(
-                    LibraryManager.createLibrary(
-                            lib.groupId(),
-                            lib.artifactId(),
-                            lib.version(),
-                            packageRelocation,
-                            packageRelocationName,
-                            repository
-                    )
-            );
-        }
-    }
-
-    private boolean passPaperRequirements(Class<? extends AddonTemplate> addon, String name) {
-        if (addon.isAnnotationPresent(AddonInfo.class)) {
-            PaperRequirementLevel lvl = addon.getAnnotation(AddonInfo.class).requirePaper();
-            List<String> txt = new ArrayList<>();
-            txt.add("====================================================");
-            if (lvl.equals(PaperRequirementLevel.MUST)) txt.add(" " + name + " only works if you use Paper");
-            if (lvl.equals(PaperRequirementLevel.RECOMMENDED)) {
-                txt.add(" " + name + " works better if you use Paper");
-                txt.add(" as your server software.");
-            }
-            if (System.getProperty("paperlib.shown-benefits") == null) {
-                System.setProperty("paperlib.shown-benefits", "1");
-                txt.add("");
-                txt.add(" Paper offers significant performance improvements,");
-                txt.add(" bug fixes, security enhancements and optional");
-                txt.add(" features for server owners to enhance their server.");
-                txt.add("");
-                txt.add(" Paper includes Timings v2, which is significantly");
-                txt.add(" better at diagnosing lag problems over v1.");
-                txt.add("");
-                txt.add(" All of your plugins should still work, and the");
-                txt.add(" Paper community will gladly help you fix any issues.");
-                txt.add("");
-                txt.add(" Join the Paper Community @ https://papermc.io");
-            }
-            txt.add("====================================================");
-            if (lvl.equals(PaperRequirementLevel.MUST)) {
-                for (String s : txt) LogUtils.severe(s);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public String getAddonName(Class<? extends AddonTemplate> addon) {
-        if (addon.isAnnotationPresent(AddonInfo.class)) {
-            String id = addon.getAnnotation(AddonInfo.class).name();
-            if (!id.isEmpty()) return id;
-        }
-        return addon.getSimpleName();
     }
 }
