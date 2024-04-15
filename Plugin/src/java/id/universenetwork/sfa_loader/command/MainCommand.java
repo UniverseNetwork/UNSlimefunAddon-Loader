@@ -4,6 +4,7 @@ package id.universenetwork.sfa_loader.command;
 import id.universenetwork.sfa_loader.AddonsLoader;
 import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AbstractAddon;
 import id.universenetwork.sfa_loader.libraries.guizhanlib.slimefun.addon.AddonConfig;
+import id.universenetwork.sfa_loader.objects.Addon;
 import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
 import id.universenetwork.sfa_loader.template.AddonTemplate;
 import id.universenetwork.sfa_loader.utils.LogUtils;
@@ -56,8 +57,8 @@ public final class MainCommand {
 
     @Command("slimefunaddon-loader|sfa-loader|sfal|sfa reload-config addons [addon]")
     @Permission("sfaloader.command.reload.addons")
-    public void cmdReloadPlugin(final SpecialCommandSender sender,
-                                final @Argument(value = "addon", suggestions = "enabledAddonsList") @Default("all") String addonName) {
+    public void cmdReloadAddon(final SpecialCommandSender sender,
+                               final @Argument(value = "addon", suggestions = "enabledAddonsList") @Default("all") String addonName) {
         final Set<AddonTemplate> loadedAddon = AddonsLoader.getLoadedAddons();
         if (addonName.equals("all")) {
             LogUtils.info("&eReloading all addons configuration files...");
@@ -70,32 +71,28 @@ public final class MainCommand {
             LogUtils.info("&aAll addons configuration files have been reloaded!");
         } else if (AddonsLoader.isAddonLoaded(addonName)) {
             Set<AddonTemplate> filtered = loadedAddon.stream().filter(addon ->
-                            addon.getClass().getSimpleName().equalsIgnoreCase(addonName))
+                            new Addon(addon.getClass()).getName().equalsIgnoreCase(addonName))
                     .collect(Collectors.toSet());
             for (AddonTemplate addon : filtered) {
+                final String name = new Addon(addon.getClass()).getName();
                 final AddonConfig cfg = addon.getConfig();
                 if (cfg == null) {
-                    TextUtils.send(sender, "%p% &d" + addon.getClass().getSimpleName() +
-                            " &caddon has no configuration file!");
+                    TextUtils.send(sender, "%p% &d" + name + " &caddon has no configuration file!");
                     return;
                 }
-                LogUtils.info("&eReloading the &d" + addon.getClass().getSimpleName() +
-                        " &eaddon configuration file...");
+                LogUtils.info("&eReloading the &d" + name + " &eaddon configuration file...");
                 cfg.reload();
-                if (sender.isPlayer()) TextUtils.send(sender, "%p% &d" + addon.getClass()
-                        .getSimpleName() + " &aaddon configuration file have been reloaded!");
-                LogUtils.info("&d" + addon.getClass().getSimpleName() +
-                        " &aaddon configuration file have been reloaded!");
+                if (sender.isPlayer())
+                    TextUtils.send(sender, "%p% &d" + name + " &aaddon configuration file have been reloaded!");
+                LogUtils.info("&d" + name + " &aaddon configuration file have been reloaded!");
             }
         } else TextUtils.send(sender, "%p% &cPlease provide a valid addon name!");
     }
 
     @Suggestions("enabledAddonsList")
     public List<String> enabledAddonsList(CommandContext<SpecialCommandSender> sender, String context) {
-        final List<String> list = new ArrayList<>();
-        for (AddonTemplate addon : AddonsLoader.getLoadedAddons())
-            if (addon.getConfig() != null) list.add(addon.getClass().getSimpleName());
-        return list;
+        return AddonsLoader.getLoadedAddons().stream().filter(a -> a.getConfig() != null)
+                .map(a -> new Addon(a.getClass()).getName()).collect(Collectors.toList());
     }
 
     @ExceptionHandler(NoPermissionException.class)

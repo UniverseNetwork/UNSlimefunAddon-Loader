@@ -1,21 +1,20 @@
-From 759e126a0ba46dd90238981e1a3d0970999d79b7 Mon Sep 17 00:00:00 2001
+From 18fd69c6465d578a81d0a34dee84909f1d1de31b Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Sun, 31 Mar 2024 11:23:16 +0700
+Date: Mon, 15 Apr 2024 05:59:45 +0700
 Subject: [PATCH] SFCalc
 
 ---
- README.md                                     | 10 +-
- pom.xml                                       | 86 ++----------------
+ pom.xml                                       | 83 ++---------------
  .../sfa_loader/addons/sfcalc/CalcCommand.java | 23 +++++
- .../sfa_loader/addons}/sfcalc/Calculator.java | 82 +++++++----------
- .../addons/sfcalc/NeededCommand.java          | 67 ++++++++++++++
+ .../sfa_loader/addons}/sfcalc/Calculator.java | 82 +++++++---------
+ .../addons/sfcalc/NeededCommand.java          | 66 +++++++++++++
  .../sfa_loader/addons}/sfcalc/SFCalc.java     | 62 ++++---------
  .../addons}/sfcalc/StringRegistry.java        | 26 ++----
- .../io/github/seggan/sfcalc/CalcCommand.java  | 91 -------------------
+ .../io/github/seggan/sfcalc/CalcCommand.java  | 93 -------------------
  .../github/seggan/sfcalc/SFCalcMetrics.java   | 54 -----------
  .../{ => addons-config/SFCalc}/config.yml     |  6 +-
  src/main/resources/plugin.yml                 | 13 ---
- 11 files changed, 169 insertions(+), 351 deletions(-)
+ 10 files changed, 161 insertions(+), 347 deletions(-)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/CalcCommand.java
  rename src/main/java/{io/github/seggan => id/universenetwork/sfa_loader/addons}/sfcalc/Calculator.java (64%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java
@@ -26,42 +25,11 @@ Subject: [PATCH] SFCalc
  rename src/main/resources/{ => addons-config/SFCalc}/config.yml (94%)
  delete mode 100644 src/main/resources/plugin.yml
 
-diff --git a/README.md b/README.md
-index b738bfd..4825e14 100644
---- a/README.md
-+++ b/README.md
-@@ -1,18 +1,20 @@
- # SFCalc
- A calculator for the plugin Slimefun. This is based off of john000708's SlimeCalculator.
- 
--Find most recent build [here](https://blob.build/project/SFCalc/Dev).
-+Find most recent build [here](https://thebusybiscuit.github.io/builds/Seggan/SFCalc/master).
- 
- ## Usage
- 
- This addon for Slimefun adds a new command: /sfcalc. This command can calculate how much basic slimefun resources you need to make the specified item.
- 
--Usage: `/sfcalc [required: item] [optional: amount]`
-+Usage: `/sfcalc calc [required: item] [optional: amount]`
- 
- Item is the id of the item you want to craft. An item id is like this: "electric_motor", "carbonado", "solar_generator" (basic solar generator), etc. For tiered machines that are not lowest tier, add the tier number after the id. For example: "solar_generator_3" (carbonado solar generator), "lava_generator_2" (advanced lava generator), "carbon_press" (carbon press [tier 1]), etc.
- 
- Amount is the number of items you want to craft. It defaults to 1 if you don't specify any amount.
- 
--Minecraft version: 1.16+
-+Using `/sfcalc needed` instead of `/sfcalc calc` will show the items needed for the calculated item.
- 
--Slimefun version: RC-36 or newer
-\ No newline at end of file
-+Minecraft version: 1.15-1.17
-+
-+Slimefun version: RC-20 or newer
-\ No newline at end of file
 diff --git a/pom.xml b/pom.xml
-index 7ce30c7..9fc1a64 100644
+index 7ce30c7..7403ea9 100644
 --- a/pom.xml
 +++ b/pom.xml
-@@ -4,12 +4,17 @@
+@@ -4,6 +4,12 @@
           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
      <modelVersion>4.0.0</modelVersion>
  
@@ -74,17 +42,10 @@ index 7ce30c7..9fc1a64 100644
      <groupId>io.github.seggan.sfcalc</groupId>
      <artifactId>SFCalc</artifactId>
      <version>UNOFFICIAL</version>
- 
-     <properties>
--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-         <author>Seggan</author>
-         <sonar.projectKey>Seggan_SFCalc</sonar.projectKey>
-         <sonar.organization>seggan</sonar.organization>
-@@ -17,63 +22,18 @@
-     </properties>
+@@ -18,62 +24,17 @@
  
      <build>
--        <finalName>${project.name}</finalName>
+         <finalName>${project.name}</finalName>
 -        <defaultGoal>clean package -T 2.0C</defaultGoal>
 -
 -        <resources>
@@ -96,7 +57,6 @@ index 7ce30c7..9fc1a64 100644
 -                    <include>config.yml</include>
 -                </includes>
 -            </resource>
-+        <finalName>${project.name} v${project.version}</finalName>
  
 -            <resource>
 -                <directory>${basedir}</directory>
@@ -147,7 +107,7 @@ index 7ce30c7..9fc1a64 100644
                          </relocation>
                      </relocations>
                  </configuration>
-@@ -90,11 +50,6 @@
+@@ -90,11 +51,6 @@
      </build>
  
      <repositories>
@@ -159,7 +119,7 @@ index 7ce30c7..9fc1a64 100644
          <repository>
              <id>spigot-repo</id>
              <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-@@ -109,20 +64,6 @@
+@@ -109,20 +65,6 @@
              <scope>provided</scope>
          </dependency>
  
@@ -180,7 +140,7 @@ index 7ce30c7..9fc1a64 100644
          <dependency>
              <groupId>com.google.code.findbugs</groupId>
              <artifactId>jsr305</artifactId>
-@@ -130,18 +71,11 @@
+@@ -130,18 +72,11 @@
              <scope>provided</scope>
          </dependency>
  
@@ -413,10 +373,10 @@ index 3581cca..b896704 100644
 \ No newline at end of file
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java
 new file mode 100644
-index 0000000..9436475
+index 0000000..d826dd7
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/sfcalc/NeededCommand.java
-@@ -0,0 +1,67 @@
+@@ -0,0 +1,66 @@
 +package id.universenetwork.sfa_loader.addons.sfcalc;
 +
 +import id.universenetwork.sfa_loader.objects.SpecialCommandSender;
@@ -475,8 +435,7 @@ index 0000000..9436475
 +
 +        SFCalc.REPORTER.executeOrElseReport(() -> {
 +            if (ids.isEmpty()) for (SlimefunItem item : Slimefun.getRegistry().getEnabledSlimefunItems())
-+                ids.add(item.getId().toLowerCase(Locale.ROOT));
-+
++                if (!item.isHidden()) ids.add(item.getId().toLowerCase(Locale.ROOT));
 +
 +            for (String id : ids) if (id.contains(context.toLowerCase(Locale.ROOT))) tabs.add(id);
 +        });
@@ -675,10 +634,10 @@ index e3ea036..bf1fe93 100644
 \ No newline at end of file
 diff --git a/src/main/java/io/github/seggan/sfcalc/CalcCommand.java b/src/main/java/io/github/seggan/sfcalc/CalcCommand.java
 deleted file mode 100644
-index fb9107c..0000000
+index 315f18c..0000000
 --- a/src/main/java/io/github/seggan/sfcalc/CalcCommand.java
 +++ /dev/null
-@@ -1,91 +0,0 @@
+@@ -1,93 +0,0 @@
 -package io.github.seggan.sfcalc;
 -
 -import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -755,7 +714,9 @@ index fb9107c..0000000
 -        SFCalc.REPORTER.executeOrElseReport(() -> {
 -            if (ids.isEmpty()) {
 -                for (SlimefunItem item : Slimefun.getRegistry().getEnabledSlimefunItems()) {
--                    ids.add(item.getId().toLowerCase(Locale.ROOT));
+-                    if (!item.isHidden()) {
+-                        ids.add(item.getId().toLowerCase(Locale.ROOT));
+-                    }
 -                }
 -            }
 -

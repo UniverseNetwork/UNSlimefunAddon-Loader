@@ -1,6 +1,6 @@
-From c787591fb7c6fea5ddee3e0da83898c23b3f5782 Mon Sep 17 00:00:00 2001
+From 9d6e593330bdbb78864c7824e7a94af39ebd05ae Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Thu, 4 Apr 2024 10:46:58 +0700
+Date: Mon, 15 Apr 2024 06:15:54 +0700
 Subject: [PATCH] SlimeCustomizer
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] SlimeCustomizer
  .../addons}/slimecustomizer/Events.java       |  59 +--
  .../addons/slimecustomizer/Links.java         |  19 +
  .../addons}/slimecustomizer/Registry.java     |  10 +-
- .../addons/slimecustomizer/SCCommand.java     | 326 ++++++++++++++
+ .../addons/slimecustomizer/SCCommand.java     | 353 +++++++++++++++
  .../slimecustomizer/SlimeCustomizer.java      | 111 +++++
  .../addons}/slimecustomizer/Utils.java        | 226 ++++------
  .../objects/CustomGenerator.java              |  25 +-
@@ -42,7 +42,7 @@ Subject: [PATCH] SlimeCustomizer
  .../SlimeCustomizer}/solar-generators.yml     |   0
  src/main/resources/config.yml                 |   2 -
  src/main/resources/plugin.yml                 |  93 ----
- 38 files changed, 986 insertions(+), 1492 deletions(-)
+ 38 files changed, 1013 insertions(+), 1492 deletions(-)
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/Events.java (72%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/Links.java
  rename src/main/java/{io/ncbpfluffybear => id/universenetwork/sfa_loader/addons}/slimecustomizer/Registry.java (52%)
@@ -403,10 +403,10 @@ index 918e576..687968a 100644
  }
 diff --git a/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SCCommand.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SCCommand.java
 new file mode 100644
-index 0000000..618df5e
+index 0000000..c308085
 --- /dev/null
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimecustomizer/SCCommand.java
-@@ -0,0 +1,326 @@
+@@ -0,0 +1,353 @@
 +package id.universenetwork.sfa_loader.addons.slimecustomizer;
 +
 +import id.universenetwork.sfa_loader.addons.slimecustomizer.objects.*;
@@ -536,7 +536,10 @@ index 0000000..618df5e
 +     * @param p     the player that will be viewing this menu
 +     */
 +    private void populateMenu(SCMenu menu, List<Pair<String, ItemStack>> items, int page, Player p) {
-+        for (int i = 45; i < 54; i++) menu.replaceExistingItem(i, ChestMenuUtils.getBackground());
++        for (int i = 45; i < 54; i++) {
++            menu.replaceExistingItem(i, ChestMenuUtils.getBackground());
++            menu.addMenuClickHandler(i, ChestMenuUtils.getEmptyClickHandler());
++        }
 +
 +        menu.wipe(0, 44, true);
 +
@@ -589,51 +592,53 @@ index 0000000..618df5e
 +    /**
 +     * Populates the saveditem gui. 45 items per page.
 +     *
-+     * @param menu   the SCMenu to populate
-+     * @param groups the List of groups
-+     * @param page   the page number
-+     * @param p      the player that will be viewing this menu
++     * @param menu the SCMenu to populate
++     * @param maps the Map List of groups
++     * @param page the page number
++     * @param p    the player that will be viewing this menu
 +     */
-+    private void populateMenu2(SCMenu menu, List<ItemGroup> groups, int page, Player p) {
-+        for (int i = 45; i < 54; i++) menu.replaceExistingItem(i, ChestMenuUtils.getBackground());
++    private void populateMenu(SCMenu menu, Map<Integer, List<ItemGroup>> maps, int page, Player p) {
++        for (int i = 45; i < 54; i++) {
++            menu.replaceExistingItem(i, ChestMenuUtils.getBackground());
++            menu.addMenuClickHandler(i, ChestMenuUtils.getEmptyClickHandler());
++        }
 +
 +        menu.wipe(0, 44, true);
 +
-+        for (int i = 0; i < 45; i++) {
-+            int groupIndex = i + 1 + (page - 1) * 45;
-+            ItemGroup group = getGroupOrNull(groups, groupIndex);
-+            if (group != null) {
-+                ItemStack item = group.getItem(p).clone();
-+                ItemMeta im = item.getItemMeta();
-+                if (im == null) {
-+                    Utils.notify("An item has no metadata! Is it corrupted? " + item);
-+                    continue;
-+                }
-+                List<String> lore = im.getLore();
-+
-+                lore.set(lore.size() - 1, TextUtils.translateColor(
-+                        "&6ID: " + group.getKey().getNamespace() + ":" + group.getKey().getKey())
-+                );
-+
-+                im.setLore(lore);
-+                item.setItemMeta(im);
-+                menu.replaceExistingItem(i, item);
-+                menu.addMenuClickHandler(i, ChestMenuUtils.getEmptyClickHandler());
++        List<ItemGroup> groups = maps.get(page);
++        int i = 0;
++        for (ItemGroup group : groups) {
++            ItemStack item = group.getItem(p).clone();
++            ItemMeta im = item.getItemMeta();
++            if (im == null) {
++                Utils.notify("An item has no metadata! Is it corrupted? " + item);
++                continue;
 +            }
++            List<String> lore = im.getLore();
++
++            lore.set(lore.size() - 1, TextUtils.translateColor(
++                    "&6ID: " + group.getKey().getNamespace() + ":" + group.getKey().getKey())
++            );
++
++            im.setLore(lore);
++            item.setItemMeta(im);
++            menu.replaceExistingItem(i, item);
++            menu.addMenuClickHandler(i, ChestMenuUtils.getEmptyClickHandler());
++            i++;
 +        }
 +
-+        if (page != 1) {
++        if (page != 0) {
 +            menu.replaceExistingItem(46, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&aPrevious Page"));
 +            menu.addMenuClickHandler(46, (pl, s, is, action) -> {
-+                populateMenu2(menu, groups, page - 1, p);
++                populateMenu(menu, maps, page - 1, p);
 +                return false;
 +            });
 +        }
 +
-+        if (groups.get(45 * page) != null) {
++        if (page < maps.size() - 1) {
 +            menu.replaceExistingItem(52, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&aNext Page"));
 +            menu.addMenuClickHandler(52, (pl, s, is, action) -> {
-+                populateMenu2(menu, groups, page + 1, p);
++                populateMenu(menu, maps, page + 1, p);
 +                return false;
 +            });
 +        }
@@ -649,10 +654,10 @@ index 0000000..618df5e
 +        return item;
 +    }
 +
-+    private ItemGroup getGroupOrNull(List<ItemGroup> items, int index) {
++    private ItemGroup getGroupOrNull(List<ItemGroup> groups, int index) {
 +        ItemGroup item;
 +        try {
-+            item = items.get(index);
++            item = groups.get(index);
 +        } catch (IndexOutOfBoundsException e) {
 +            item = null;
 +        }
@@ -698,12 +703,34 @@ index 0000000..618df5e
 +        if (!sender.isPlayer()) return;
 +        Player p = sender.getPlayer();
 +
-+        List<ItemGroup> groups = Slimefun.getRegistry().getAllItemGroups();
++        List<ItemGroup> groups = new ArrayList<>(Slimefun.getRegistry().getAllItemGroups());
 +        SCMenu menu = new SCMenu("&6Category Namespace Guide");
 +        menu.setSize(54);
 +        int i = 0;
-+        if (groups.size() >= 54) populateMenu2(menu, groups, i, p);
-+        else for (ItemGroup group : groups) {
++        sender.sendMessage("Size: " + groups.size());
++        if (groups.size() >= 54) {
++            final Map<Integer, List<ItemGroup>> maps = new HashMap<>();
++
++            int page = 0;
++            List<ItemGroup> list = new ArrayList<>();
++            for (; i < 46; i++) {
++                ItemGroup g = getGroupOrNull(groups, i);
++                if (i < 45 && g != null) list.add(g);
++                else {
++                    maps.put(page, list);
++                    if (g == null) {
++                        page = 0;
++                        break;
++                    }
++                    page++;
++                    groups.removeAll(list);
++                    list = new ArrayList<>();
++                    i = 0;
++                }
++            }
++
++            populateMenu(menu, maps, page, p);
++        } else for (ItemGroup group : groups) {
 +            ItemStack catItem = group.getItem(p).clone();
 +            ItemMeta catMeta = catItem.getItemMeta();
 +            List<String> catLore = catMeta.getLore();

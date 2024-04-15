@@ -1,6 +1,6 @@
-From b5fc2e5b70e9fbaa326a896e9fc06556cbbaf436 Mon Sep 17 00:00:00 2001
+From ab32a7985a1d633c68457e471751e8dce047c830 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Fri, 8 Mar 2024 21:38:22 +0700
+Date: Mon, 15 Apr 2024 06:10:11 +0700
 Subject: [PATCH] FluffyMachines
 
 ---
@@ -1729,7 +1729,7 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/items/MiniBarrel.jav
 similarity index 90%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/items/MiniBarrel.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/MiniBarrel.java
-index 2b9fa10..1cc1dca 100644
+index 5ceea3f..961e01b 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/items/MiniBarrel.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/items/MiniBarrel.java
 @@ -1,5 +1,6 @@
@@ -1765,7 +1765,7 @@ index 2b9fa10..1cc1dca 100644
          addItemHandler(onPlace());
      }
  
-@@ -81,10 +82,8 @@ public class MiniBarrel extends Barrel {
+@@ -82,10 +83,8 @@ public class MiniBarrel extends Barrel {
  
      public static int getDisplayCapacity() {
          int capacity = Slimefun.getItemCfg().getInt("MINI_FLUFFY_BARREL.capacity");
@@ -5823,7 +5823,7 @@ diff --git a/src/main/java/io/ncbpfluffybear/fluffymachines/machines/SmartFactor
 similarity index 84%
 rename from src/main/java/io/ncbpfluffybear/fluffymachines/machines/SmartFactory.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/machines/SmartFactory.java
-index eb8a514..a955071 100644
+index 758ce75..9c4eafa 100644
 --- a/src/main/java/io/ncbpfluffybear/fluffymachines/machines/SmartFactory.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/fluffymachines/machines/SmartFactory.java
 @@ -1,5 +1,6 @@
@@ -5878,7 +5878,7 @@ index eb8a514..a955071 100644
  
          buildPreset();
          addItemHandler(onBreak());
-@@ -108,13 +102,11 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -110,13 +104,11 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
              public void newInstance(@Nonnull BlockMenu menu, @Nonnull Block b) {
                  SlimefunItem recipe = SlimefunItem.getByItem(menu.getItemInSlot(RECIPE_SLOT));
  
@@ -5894,7 +5894,7 @@ index eb8a514..a955071 100644
              }
  
              @Override
-@@ -125,28 +117,18 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -127,28 +119,18 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
              // Only allow finishing stack
              @Override
              public int[] getSlotsAccessedByItemTransport(DirtyChestMenu menu, ItemTransportFlow flow, ItemStack item) {
@@ -5927,7 +5927,7 @@ index eb8a514..a955071 100644
  
                  return array;
              }
-@@ -155,7 +137,6 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -157,7 +139,6 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
  
      private BlockBreakHandler onBreak() {
          return new SimpleBlockBreakHandler() {
@@ -5935,7 +5935,7 @@ index eb8a514..a955071 100644
              @Override
              public void onBlockBreak(@Nonnull Block b) {
                  BlockMenu inv = BlockStorage.getInventory(b);
-@@ -174,7 +155,6 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -176,7 +157,6 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
      @Override
      public void preRegister() {
          addItemHandler(new BlockTicker() {
@@ -5943,7 +5943,7 @@ index eb8a514..a955071 100644
              @Override
              public void tick(Block b, SlimefunItem sf, Config data) {
                  SmartFactory.this.tick(b);
-@@ -188,11 +168,8 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -190,11 +170,8 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
      }
  
      protected void tick(Block b) {
@@ -5956,7 +5956,7 @@ index eb8a514..a955071 100644
  
          BlockMenu inv = BlockStorage.getInventory(b);
          final BlockPosition pos = new BlockPosition(b.getWorld(), b.getX(), b.getY(), b.getZ()); // Used to log progress since we have progress bar
-@@ -219,22 +196,17 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -221,22 +198,17 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
          craft(b);
  
          // Consume items
@@ -5982,7 +5982,7 @@ index eb8a514..a955071 100644
  
          HashMap<Integer, Integer> ingredientSlots = new HashMap<>();
  
-@@ -247,12 +219,9 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -249,12 +221,9 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
                  // Match item and amount
                  if (slotItem != null && SlimefunUtils.isItemSimilar(recipeItem, slotItem, true, false)) {
                      if (recipeItem.getType() == Material.COAL) {
@@ -5997,7 +5997,7 @@ index eb8a514..a955071 100644
  
                      exists = true;
                      ingredientSlots.put(slot, recipeItem.getAmount()); // Save slots and amounts of ingredients
-@@ -260,9 +229,7 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -262,9 +231,7 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
                  }
              }
  
@@ -6008,7 +6008,7 @@ index eb8a514..a955071 100644
          }
  
          return ingredientSlots;
-@@ -308,14 +275,10 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -310,14 +277,10 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
          HashMap<SlimefunItem, Integer> rawSlimefun = new HashMap<>();
  
          ItemStack[] recipe = key.getRecipe();
@@ -6025,7 +6025,7 @@ index eb8a514..a955071 100644
              if (!isReduced(item)) {
                  // Recursively add reduced recipe until all vanilla
                  Pair<HashMap<Material, Integer>, HashMap<SlimefunItem, Integer>> reduced = reduceRecipe(SlimefunItem.getByItem(item));
-@@ -327,23 +290,20 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -329,23 +292,20 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
                      rawSlimefun.put(recipeItem, rawSlimefun.getOrDefault(recipeItem, 0) + amt * item.getAmount());
                  });
              } else {
@@ -6062,7 +6062,7 @@ index eb8a514..a955071 100644
                  }
              }
          }
-@@ -388,9 +348,8 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -390,9 +350,8 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
              ItemMeta displayMeta = display.getItemMeta();
  
              List<String> lore = new ArrayList<>();
@@ -6073,7 +6073,7 @@ index eb8a514..a955071 100644
  
              displayMeta.setLore(lore);
              display.setItemMeta(displayMeta);
-@@ -435,4 +394,4 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
+@@ -437,4 +396,4 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
      public int getCapacity() {
          return getEnergyCapacity();
      }

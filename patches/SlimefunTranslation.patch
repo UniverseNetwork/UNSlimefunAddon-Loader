@@ -1,14 +1,14 @@
-From c539a5aaf48382a9873015a739b1188c3fb1fde1 Mon Sep 17 00:00:00 2001
+From e560fb98f75c062539337887451f48d8a823583a Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Thu, 4 Apr 2024 10:45:52 +0700
+Date: Mon, 15 Apr 2024 06:51:58 +0700
 Subject: [PATCH] SlimefunTranslation
 
 ---
  pom.xml                                       |  47 ++++
  .../SlimefunTranslation.java                  |  68 ++++++
- .../api/SlimefunTranslationAPI.java           |  27 +-
+ .../api/SlimefunTranslationAPI.java           |  27 +--
  .../api/config/TranslationConditions.java     |   8 +-
- .../api/config/TranslationConfiguration.java  | 190 +++++++-------
+ .../api/config/TranslationConfiguration.java  | 200 +++++++---------
  .../TranslationConfigurationDefaults.java     |   2 +-
  .../TranslationConfigurationFields.java       |   2 +-
  .../api/config/Translations.java              |   5 +-
@@ -24,17 +24,17 @@ Subject: [PATCH] SlimefunTranslation
  .../slimefuntranslation/core/Registry.java    |   9 +-
  .../core/commands/AbstractSubCommand.java     |  13 +
  .../core/commands/subcommands/IdCommand.java  |  56 +++++
- .../commands/subcommands/SearchCommand.java   |  54 ++--
+ .../commands/subcommands/SearchCommand.java   |  54 ++---
  .../translation/ExtractCommand.java           |  19 ++
- .../translation/GenerateCommand.java          | 121 +++++++++
+ .../translation/GenerateCommand.java          | 121 ++++++++++
  .../translation/ReloadCommand.java            |  20 ++
  .../core/factories/MessageFactory.java        |  31 ++-
  .../core/services/CommandService.java         |  19 ++
  .../core/services/ConfigurationService.java   |  13 +-
  .../core/services/IntegrationService.java     |  59 +++++
  .../core/services/ListenerService.java        |  21 ++
- .../core/services/PacketListenerService.java  |  27 ++
- .../core/services/TranslationService.java     | 231 ++++++------------
+ .../core/services/PacketListenerService.java  |  27 +++
+ .../core/services/TranslationService.java     | 223 ++++++++----------
  .../core/services/UserService.java            |  16 +-
  .../slimefuntranslation/core/users/User.java  |  12 +-
  .../listeners/PlayerJoinListener.java         |   8 +-
@@ -69,16 +69,16 @@ Subject: [PATCH] SlimefunTranslation
  .../utils/constant/Permissions.java           |   2 +-
  .../utils/tags/SlimefunTranslationTag.java    |  46 ++--
  .../utils/tags/TagParser.java                 |  35 ++-
- .../SlimefunTranslation.java                  | 132 ----------
+ .../SlimefunTranslation.java                  | 132 -----------
  .../api/exceptions/package-info.java          |   4 -
  .../api/translation/package-info.java         |   4 -
  .../core/commands/AbstractSubCommand.java     |  49 ----
- .../core/commands/MainCommand.java            |  27 --
- .../core/commands/subcommands/IdCommand.java  |  66 -----
- .../subcommands/TranslationCommand.java       |  27 --
+ .../core/commands/MainCommand.java            |  27 ---
+ .../core/commands/subcommands/IdCommand.java  |  66 ------
+ .../subcommands/TranslationCommand.java       |  27 ---
  .../translation/ExtractCommand.java           |  44 ----
  .../translation/GenerateCommand.java          | 143 -----------
- .../translation/ReloadCommand.java            |  40 ---
+ .../translation/ReloadCommand.java            |  40 ----
  .../core/services/CommandService.java         |  10 -
  .../core/services/IntegrationService.java     |  76 ------
  .../core/services/ListenerService.java        |  22 --
@@ -185,12 +185,12 @@ Subject: [PATCH] SlimefunTranslation
  .../translations/zh-Hans/slimefun/ui.yml      |   0
  .../zh-Hans/slimefun/useful-items.yml         |   0
  .../translations/zh-Hans/slimefun/weapons.yml |   0
- 181 files changed, 1071 insertions(+), 1532 deletions(-)
+ 181 files changed, 1095 insertions(+), 1510 deletions(-)
  create mode 100644 pom.xml
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/SlimefunTranslation.java
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/SlimefunTranslationAPI.java (82%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/config/TranslationConditions.java (93%)
- rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/config/TranslationConfiguration.java (50%)
+ rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/config/TranslationConfiguration.java (51%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/config/TranslationConfigurationDefaults.java (87%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/config/TranslationConfigurationFields.java (93%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/config/Translations.java (75%)
@@ -203,7 +203,7 @@ Subject: [PATCH] SlimefunTranslation
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/translation/TranslationStatus.java (66%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/api/translation/lore/LoreHandler.java (57%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/translation/package-info.java
- rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/Registry.java (75%)
+ rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/Registry.java (77%)
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/AbstractSubCommand.java
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/commands/subcommands/IdCommand.java
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/commands/subcommands/SearchCommand.java (72%)
@@ -216,7 +216,7 @@ Subject: [PATCH] SlimefunTranslation
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/IntegrationService.java
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/ListenerService.java
  create mode 100644 src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/PacketListenerService.java
- rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/services/TranslationService.java (54%)
+ rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/services/TranslationService.java (61%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/services/UserService.java (63%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/core/users/User.java (78%)
  rename src/main/java/{net/guizhanss => id/universenetwork/sfa_loader/addons}/slimefuntranslation/implementation/listeners/PlayerJoinListener.java (56%)
@@ -370,7 +370,7 @@ Subject: [PATCH] SlimefunTranslation
 
 diff --git a/pom.xml b/pom.xml
 new file mode 100644
-index 0000000..548f78d
+index 0000000..c9ec4e5
 --- /dev/null
 +++ b/pom.xml
 @@ -0,0 +1,47 @@
@@ -398,7 +398,7 @@ index 0000000..548f78d
 +            <id>PlaceholderAPI</id>
 +            <url>https://repo.extendedclip.com/content/repositories/placeholderapi</url>
 +        </repository>
-+    </repositories>
++    </repositories><build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><configuration><source>8</source><target>8</target></configuration></plugin></plugins></build>
 +
 +    <dependencies>
 +        <dependency>
@@ -630,10 +630,10 @@ index 9396f76..5ab7479 100644
              .matchName(section.getBoolean(KEY_MATCH_NAME, parent.matchName))
              .matchLore(section.getBoolean(KEY_MATCH_LORE, parent.matchLore))
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/api/config/TranslationConfiguration.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/TranslationConfiguration.java
-similarity index 50%
+similarity index 51%
 rename from src/main/java/net/guizhanss/slimefuntranslation/api/config/TranslationConfiguration.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/TranslationConfiguration.java
-index e495b23..5f08ca8 100644
+index e2498b0..c2e6abb 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/api/config/TranslationConfiguration.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/api/config/TranslationConfiguration.java
 @@ -1,6 +1,7 @@
@@ -665,15 +665,7 @@ index e495b23..5f08ca8 100644
  import lombok.AccessLevel;
  import lombok.Getter;
  import lombok.RequiredArgsConstructor;
-@@ -81,65 +83,53 @@ public class TranslationConfiguration {
-         String lang = SlimefunTranslation.getConfigService().getMappedLanguage(language);
- 
-         if (SlimefunTranslation.getConfigService().getDisabledLanguages().contains(lang)) {
--            SlimefunTranslation.log(Level.INFO, "Language {0} is disabled, ignoring.", lang);
-+            LogUtils.log(Level.INFO, "Language {0} is disabled, ignoring.", (Object) lang);
-             return Optional.empty();
-         }
- 
+@@ -88,58 +90,46 @@ public class TranslationConfiguration {
          String itemIdPrefix = config.getString(fields.getPrefix(), defaults.getPrefix());
          String itemIdSuffix = config.getString(fields.getSuffix(), defaults.getSuffix());
  
@@ -891,7 +883,7 @@ index e495b23..5f08ca8 100644
              translations.put(itemId, translation);
              count++;
          }
-@@ -248,23 +231,22 @@ public class TranslationConfiguration {
+@@ -248,33 +231,30 @@ public class TranslationConfiguration {
      }
  
      public void register(@Nonnull SlimefunAddon addon) {
@@ -923,8 +915,23 @@ index e495b23..5f08ca8 100644
 +        Map<String, Map<String, String>> pluginMessageTranslations = allMessageTranslations.computeIfAbsent(addon.getName(), k -> new HashMap<>());
          registerTranslations(pluginMessageTranslations, lang, translations.getMessage());
  
-         setAddon(addon);
-@@ -272,7 +254,7 @@ public class TranslationConfiguration {
+         // itemNames
+-        // we only record the item names for registered Slimefun items
+-        for (var entry : translations.getItem().entrySet()) {
+-            var sfItem = SlimefunItem.getById(entry.getKey());
+-            if (sfItem == null) {
+-                continue;
+-            }
+-            var itemName = sfItem.getItemName();
++        // We only record the item names for registered Slimefun items
++        for (Map.Entry<String, ItemTranslation> entry : translations.getItem().entrySet()) {
++            SlimefunItem sfItem = SlimefunItem.getById(entry.getKey());
++            if (sfItem == null) continue;
++            String itemName = sfItem.getItemName();
+             registry.getItemNameTranslations().computeIfAbsent(lang, k -> new HashMap<>()).put(itemName, entry.getValue());
+         }
+ 
+@@ -283,7 +263,7 @@ public class TranslationConfiguration {
      }
  
      private <V> void registerTranslations(Map<String, Map<String, V>> allTranslations, String lang, Map<String, V> translations) {
@@ -1139,10 +1146,10 @@ index 0000000..f2a25c6
 + */
 +package id.universenetwork.sfa_loader.addons.slimefuntranslation.api.translation;
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/core/Registry.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/Registry.java
-similarity index 75%
+similarity index 77%
 rename from src/main/java/net/guizhanss/slimefuntranslation/core/Registry.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/Registry.java
-index 4a5b3c8..4be1559 100644
+index f406f6b..e13d5ee 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/core/Registry.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/Registry.java
 @@ -1,4 +1,4 @@
@@ -1803,10 +1810,10 @@ index 0000000..0adcaab
 +    }
 +}
 diff --git a/src/main/java/net/guizhanss/slimefuntranslation/core/services/TranslationService.java b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/TranslationService.java
-similarity index 54%
+similarity index 61%
 rename from src/main/java/net/guizhanss/slimefuntranslation/core/services/TranslationService.java
 rename to src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/TranslationService.java
-index d90324f..4c2e9b2 100644
+index 59128ea..caa0d8e 100644
 --- a/src/main/java/net/guizhanss/slimefuntranslation/core/services/TranslationService.java
 +++ b/src/main/java/id/universenetwork/sfa_loader/addons/slimefuntranslation/core/services/TranslationService.java
 @@ -1,10 +1,13 @@
@@ -1824,15 +1831,16 @@ index d90324f..4c2e9b2 100644
  import java.util.Set;
  import java.util.logging.Level;
  
-@@ -20,22 +23,27 @@ import org.bukkit.configuration.file.FileConfiguration;
+@@ -20,23 +23,29 @@ import org.bukkit.configuration.file.FileConfiguration;
  import org.bukkit.configuration.file.YamlConfiguration;
  import org.bukkit.inventory.ItemStack;
  import org.bukkit.inventory.meta.ItemMeta;
 +import org.bukkit.plugin.java.JavaPlugin;
  
  import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
--import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
+ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
  import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
  
 -import net.guizhanss.slimefuntranslation.SlimefunTranslation;
 -import net.guizhanss.slimefuntranslation.api.config.TranslationConfiguration;
@@ -1864,7 +1872,7 @@ index d90324f..4c2e9b2 100644
  
  /**
   * This class holds all translations and can be used to access these translations
-@@ -45,16 +53,15 @@ import net.guizhanss.slimefuntranslation.utils.constant.Keys;
+@@ -46,16 +55,15 @@ import net.guizhanss.slimefuntranslation.utils.constant.Keys;
   */
  @SuppressWarnings("ConstantConditions")
  public final class TranslationService {
@@ -1887,7 +1895,7 @@ index d90324f..4c2e9b2 100644
  
          extractTranslations(false);
      }
-@@ -75,7 +82,7 @@ public final class TranslationService {
+@@ -76,7 +84,7 @@ public final class TranslationService {
      }
  
      public void clearTranslations() {
@@ -1896,7 +1904,7 @@ index d90324f..4c2e9b2 100644
          registry.getLanguages().clear();
          registry.getItemTranslations().clear();
          registry.getLoreTranslations().clear();
-@@ -88,40 +95,33 @@ public final class TranslationService {
+@@ -89,40 +97,33 @@ public final class TranslationService {
      }
  
      private void loadFixedTranslations() {
@@ -1950,7 +1958,7 @@ index d90324f..4c2e9b2 100644
                  currentTranslations.put(sfItem.getId(), translation);
              }
          }
-@@ -133,17 +133,20 @@ public final class TranslationService {
+@@ -134,17 +135,20 @@ public final class TranslationService {
       * @param replace Whether to replace existing files.
       */
      public void extractTranslations(boolean replace) {
@@ -1979,7 +1987,7 @@ index d90324f..4c2e9b2 100644
          }
      }
  
-@@ -157,13 +160,11 @@ public final class TranslationService {
+@@ -158,13 +162,11 @@ public final class TranslationService {
       */
      @ParametersAreNonnullByDefault
      public String exportItemTranslations(String language, String addonName, Set<String> ids) {
@@ -1996,7 +2004,7 @@ index d90324f..4c2e9b2 100644
          int idx = 1;
          File file;
          String fileName;
-@@ -179,21 +180,17 @@ public final class TranslationService {
+@@ -180,21 +182,17 @@ public final class TranslationService {
          for (String itemId : ids) {
              String path = "translations." + itemId;
              SlimefunItem sfItem = SlimefunItem.getById(itemId);
@@ -2023,7 +2031,7 @@ index d90324f..4c2e9b2 100644
          }
  
          return fileName;
-@@ -210,14 +207,11 @@ public final class TranslationService {
+@@ -211,14 +209,11 @@ public final class TranslationService {
      @Nonnull
      public String getTranslatedItemName(@Nonnull User user, @Nullable SlimefunItem sfItem) {
          Preconditions.checkArgument(user != null, "user cannot be null");
@@ -2042,90 +2050,106 @@ index d90324f..4c2e9b2 100644
              SlimefunTranslation.getRegistry().getItemTranslations(), user, sfItem.getId());
          return transl.map(itemTranslation -> SlimefunTranslation.getIntegrationService().applyPlaceholders(
              user,
-@@ -235,98 +229,33 @@ public final class TranslationService {
+@@ -236,30 +231,22 @@ public final class TranslationService {
       */
      public boolean translateItem(@Nonnull User user, @Nullable ItemStack item) {
          Preconditions.checkArgument(user != null, "user cannot be null");
 -        if (item == null || !item.hasItemMeta()) {
 -            return false;
 -        }
--
++        if (item == null || !item.hasItemMeta()) return false;
+ 
 -        // slimefun guide
--        SlimefunGuideMode guideMode = SlimefunItemUtils.getGuideMode(item);
++        // Slimefun guide
+         SlimefunGuideMode guideMode = SlimefunItemUtils.getGuideMode(item);
 -        if (guideMode != null) {
 -            return translateSfGuide(user, item, guideMode);
 -        }
--
++        if (guideMode != null) return translateSfGuide(user, item, guideMode);
+ 
 -        // slimefun item group
--        String itemGroupKey = SlimefunItemUtils.getItemGroupKey(item);
++        // Slimefun item group
+         String itemGroupKey = SlimefunItemUtils.getItemGroupKey(item);
 -        if (itemGroupKey != null) {
 -            return translateSfItemGroup(user, item, itemGroupKey);
 -        }
--
--        // slimefun item
-+        if (item == null || !item.hasItemMeta()) return false;
-         String sfId = SlimefunItemUtils.getId(item);
--        if (sfId != null) {
--            return translateSfItem(user, item, sfId);
--        }
-+        if (sfId == null) return false;
++        if (itemGroupKey != null) return translateSfItemGroup(user, item, itemGroupKey);
  
--        return false;
-+        return translateItem(user, item, sfId);
-     }
+-        // slimefun item
++        // Slimefun item
+         String sfId = SlimefunItemUtils.getId(item);
+         if (sfId != null) {
+-            if (sfId.equals("_UI_NOT_RESEARCHED")) {
++            if (sfId.equals("_UI_NOT_RESEARCHED"))
+                 return translateNotResearchedItem(user, item, ItemUtils.getItemName(item));
+-            } else {
+-                return translateSfItem(user, item, sfId);
+-            }
++            else return translateSfItem(user, item, sfId);
+         }
+ 
+         return false;
+@@ -267,20 +254,18 @@ public final class TranslationService {
  
      @ParametersAreNonnullByDefault
--    private boolean translateSfGuide(User user, ItemStack item, SlimefunGuideMode guideMode) {
+     private boolean translateSfGuide(User user, ItemStack item, SlimefunGuideMode guideMode) {
 -        var transl = TranslationUtils.findTranslation(
--            SlimefunTranslation.getRegistry().getGuideTranslations(), user, guideMode.name());
++        Optional<ItemTranslation> transl = TranslationUtils.findTranslation(
+             SlimefunTranslation.getRegistry().getGuideTranslations(), user, guideMode.name());
 -        if (transl.isEmpty()) {
 -            return false;
 -        }
--
++        if (!transl.isPresent()) return false;
+ 
 -        var translation = transl.get();
--        final ItemMeta meta = item.getItemMeta();
--
++        ItemTranslation translation = transl.get();
+         final ItemMeta meta = item.getItemMeta();
+ 
 -        var integrationService = SlimefunTranslation.getIntegrationService();
 -        // display name
--        String originalDisplayName = meta.hasDisplayName() ? meta.getDisplayName() : "";
--        meta.setDisplayName(integrationService.applyPlaceholders(user, translation.getDisplayName(user, item, meta, originalDisplayName)));
++        IntegrationService integrationService = SlimefunTranslation.getIntegrationService();
++        // Display name
+         String originalDisplayName = meta.hasDisplayName() ? meta.getDisplayName() : "";
+         meta.setDisplayName(integrationService.applyPlaceholders(user, translation.getDisplayName(user, item, meta, originalDisplayName)));
 -        // lore
--        List<String> originalLore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
--        meta.setLore(integrationService.applyPlaceholders(user, translation.getLore(user, item, meta, originalLore)));
--
--        item.setItemMeta(meta);
--        return true;
--    }
--
--    @ParametersAreNonnullByDefault
--    private boolean translateSfItemGroup(User user, ItemStack item, String itemGroupKey) {
++        // Lore
+         List<String> originalLore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
+         meta.setLore(integrationService.applyPlaceholders(user, translation.getLore(user, item, meta, originalLore)));
+ 
+@@ -290,17 +275,15 @@ public final class TranslationService {
+ 
+     @ParametersAreNonnullByDefault
+     private boolean translateSfItemGroup(User user, ItemStack item, String itemGroupKey) {
 -        var transl = TranslationUtils.findTranslation(
--            SlimefunTranslation.getRegistry().getItemGroupTranslations(), user, itemGroupKey);
++        Optional<String> transl = TranslationUtils.findTranslation(
+             SlimefunTranslation.getRegistry().getItemGroupTranslations(), user, itemGroupKey);
 -        if (transl.isEmpty()) {
 -            return false;
 -        }
--
++        if (!transl.isPresent()) return false;
+ 
 -        var translation = transl.get();
--        final ItemMeta meta = item.getItemMeta();
--
++        String translation = transl.get();
+         final ItemMeta meta = item.getItemMeta();
+ 
 -        var integrationService = SlimefunTranslation.getIntegrationService();
 -        // display name
--        meta.setDisplayName(integrationService.applyPlaceholders(user, translation));
--        item.setItemMeta(meta);
--        return true;
--    }
--
--    @ParametersAreNonnullByDefault
--    private boolean translateSfItem(User user, ItemStack item, String sfId) {
++        IntegrationService integrationService = SlimefunTranslation.getIntegrationService();
++        // Display name
+         meta.setDisplayName(integrationService.applyPlaceholders(user, translation));
+         item.setItemMeta(meta);
+         return true;
+@@ -308,30 +291,26 @@ public final class TranslationService {
+ 
+     @ParametersAreNonnullByDefault
+     private boolean translateSfItem(User user, ItemStack item, String sfId) {
 -        // check if the item is disabled
--        if (SlimefunTranslation.getConfigService().getDisabledItems().contains(sfId)) {
--            return false;
--        }
++        // Check if the item is disabled
+         if (SlimefunTranslation.getConfigService().getDisabledItems().contains(sfId)) {
+             return false;
+         }
 -        // find the translation
 -        var transl = TranslationUtils.findTranslation(
-+    private boolean translateItem(User user, ItemStack item, String sfId) {
-+        // Check if the item is disabled
-+        if (SlimefunTranslation.getConfigService().getDisabledItems().contains(sfId)) return false;
 +        // Find the translation
 +        Optional<ItemTranslation> transl = TranslationUtils.findTranslation(
              SlimefunTranslation.getRegistry().getItemTranslations(), user, sfId);
@@ -2156,7 +2180,31 @@ index d90324f..4c2e9b2 100644
          if (shouldTranslateLore(meta) && status != TranslationStatus.NAME_ONLY) {
              List<String> originalLore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
              meta.setLore(integrationService.applyPlaceholders(user, translation.getLore(user, item, meta, originalLore)));
-@@ -354,7 +283,7 @@ public final class TranslationService {
+@@ -343,17 +322,15 @@ public final class TranslationService {
+ 
+     @ParametersAreNonnullByDefault
+     private boolean translateNotResearchedItem(User user, ItemStack item, String itemName) {
+-        // find the translation
+-        var transl = TranslationUtils.findTranslation(
++        // Find the translation
++        Optional<ItemTranslation> transl = TranslationUtils.findTranslation(
+             SlimefunTranslation.getRegistry().getItemNameTranslations(), user, itemName);
+-        if (transl.isEmpty()) {
+-            return false;
+-        }
+-        var translation = transl.get();
++        if (!transl.isPresent()) return false;
++        ItemTranslation translation = transl.get();
+         final ItemMeta meta = item.getItemMeta();
+ 
+-        var integrationService = SlimefunTranslation.getIntegrationService();
+-        // display name
++        IntegrationService integrationService = SlimefunTranslation.getIntegrationService();
++        // Display name
+         String originalDisplayName = meta.hasDisplayName() ? meta.getDisplayName() : "";
+         meta.setDisplayName(integrationService.applyPlaceholders(user, translation.getDisplayName(user, item, meta, originalDisplayName)));
+ 
+@@ -379,7 +356,7 @@ public final class TranslationService {
      @Nonnull
      @ParametersAreNonnullByDefault
      public String getLore(User user, String id, boolean defaultToId) {
