@@ -1,6 +1,6 @@
-From e560fb98f75c062539337887451f48d8a823583a Mon Sep 17 00:00:00 2001
+From 22f18c2394b47e22e384806ef46d0a29924a1796 Mon Sep 17 00:00:00 2001
 From: ARVIN3108 <70049331+ARVIN3108@users.noreply.github.com>
-Date: Mon, 15 Apr 2024 06:51:58 +0700
+Date: Mon, 15 Apr 2024 07:38:16 +0700
 Subject: [PATCH] SlimefunTranslation
 
 ---
@@ -370,7 +370,7 @@ Subject: [PATCH] SlimefunTranslation
 
 diff --git a/pom.xml b/pom.xml
 new file mode 100644
-index 0000000..c9ec4e5
+index 0000000..548f78d
 --- /dev/null
 +++ b/pom.xml
 @@ -0,0 +1,47 @@
@@ -398,7 +398,7 @@ index 0000000..c9ec4e5
 +            <id>PlaceholderAPI</id>
 +            <url>https://repo.extendedclip.com/content/repositories/placeholderapi</url>
 +        </repository>
-+    </repositories><build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><configuration><source>8</source><target>8</target></configuration></plugin></plugins></build>
++    </repositories>
 +
 +    <dependencies>
 +        <dependency>
